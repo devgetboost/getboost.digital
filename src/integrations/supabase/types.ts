@@ -1265,11 +1265,15 @@ export type Database = {
           raw_payload: Json
           reason: string | null
           received: string | null
+          referrer: string | null
           resolved: boolean
           severity: string | null
           source: string | null
           source_id: string | null
           template: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
           value: string | null
         }
         Insert: {
@@ -1286,11 +1290,15 @@ export type Database = {
           raw_payload?: Json
           reason?: string | null
           received?: string | null
+          referrer?: string | null
           resolved?: boolean
           severity?: string | null
           source?: string | null
           source_id?: string | null
           template?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
           value?: string | null
         }
         Update: {
@@ -1307,11 +1315,15 @@ export type Database = {
           raw_payload?: Json
           reason?: string | null
           received?: string | null
+          referrer?: string | null
           resolved?: boolean
           severity?: string | null
           source?: string | null
           source_id?: string | null
           template?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
           value?: string | null
         }
         Relationships: []
@@ -1944,7 +1956,7 @@ export type Database = {
           id: string
           published: boolean
           published_at: string | null
-          slug: string
+          slug: string | null
           sort_order: number
           status: string
           tags: string[]
@@ -1965,7 +1977,7 @@ export type Database = {
           id?: string
           published?: boolean
           published_at?: string | null
-          slug: string
+          slug?: string | null
           sort_order?: number
           status?: string
           tags?: string[]
@@ -1986,7 +1998,7 @@ export type Database = {
           id?: string
           published?: boolean
           published_at?: string | null
-          slug?: string
+          slug?: string | null
           sort_order?: number
           status?: string
           tags?: string[]
@@ -1994,6 +2006,116 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      product_knowledge: {
+        Row: {
+          cases: Json
+          created_at: string
+          extra: Json
+          faq: Json
+          icp: string | null
+          id: string
+          is_active: boolean
+          objections: Json
+          pitch: string | null
+          pricing: Json
+          product_name: string
+          product_slug: string
+          tone: string | null
+          updated_at: string
+        }
+        Insert: {
+          cases?: Json
+          created_at?: string
+          extra?: Json
+          faq?: Json
+          icp?: string | null
+          id?: string
+          is_active?: boolean
+          objections?: Json
+          pitch?: string | null
+          pricing?: Json
+          product_name: string
+          product_slug: string
+          tone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cases?: Json
+          created_at?: string
+          extra?: Json
+          faq?: Json
+          icp?: string | null
+          id?: string
+          is_active?: boolean
+          objections?: Json
+          pitch?: string | null
+          pricing?: Json
+          product_name?: string
+          product_slug?: string
+          tone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      product_knowledge_versions: {
+        Row: {
+          cases: Json | null
+          created_at: string
+          extra: Json | null
+          faq: Json | null
+          icp: string | null
+          id: string
+          note: string | null
+          objections: Json | null
+          pitch: string | null
+          pricing: Json | null
+          product_knowledge_id: string
+          product_name: string | null
+          tone: string | null
+          version_number: number
+        }
+        Insert: {
+          cases?: Json | null
+          created_at?: string
+          extra?: Json | null
+          faq?: Json | null
+          icp?: string | null
+          id?: string
+          note?: string | null
+          objections?: Json | null
+          pitch?: string | null
+          pricing?: Json | null
+          product_knowledge_id: string
+          product_name?: string | null
+          tone?: string | null
+          version_number: number
+        }
+        Update: {
+          cases?: Json | null
+          created_at?: string
+          extra?: Json | null
+          faq?: Json | null
+          icp?: string | null
+          id?: string
+          note?: string | null
+          objections?: Json | null
+          pitch?: string | null
+          pricing?: Json | null
+          product_knowledge_id?: string
+          product_name?: string | null
+          tone?: string | null
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_knowledge_versions_product_knowledge_id_fkey"
+            columns: ["product_knowledge_id"]
+            isOneToOne: false
+            referencedRelation: "product_knowledge"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -2269,6 +2391,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      social_media_author_limits: {
+        Row: {
+          created_at: string
+          hashtags_max: number | null
+          hashtags_min: number | null
+          id: string
+          max_chars: number | null
+          rede: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          hashtags_max?: number | null
+          hashtags_min?: number | null
+          id?: string
+          max_chars?: number | null
+          rede: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          hashtags_max?: number | null
+          hashtags_min?: number | null
+          id?: string
+          max_chars?: number | null
+          rede?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       social_media_drafts: {
         Row: {
@@ -2570,6 +2725,7 @@ export type Database = {
           conversation_id: string | null
           created_at: string
           direction: string
+          external_id: string | null
           id: string
           sender: string
           status: string | null
@@ -2579,6 +2735,7 @@ export type Database = {
           conversation_id?: string | null
           created_at?: string
           direction: string
+          external_id?: string | null
           id?: string
           sender?: string
           status?: string | null
@@ -2588,6 +2745,7 @@ export type Database = {
           conversation_id?: string | null
           created_at?: string
           direction?: string
+          external_id?: string | null
           id?: string
           sender?: string
           status?: string | null

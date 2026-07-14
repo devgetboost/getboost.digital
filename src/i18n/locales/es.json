@@ -1,0 +1,2034 @@
+{
+  "nav": {
+    "services": "Soluciones",
+    "contact": "Contacto",
+    "home": "Inicio",
+    "portfolio": "Portfolio",
+    "blog": "Blog",
+    "resources": "Recursos",
+    "about": "Sobre",
+    "booking": "Contacte a un especialista",
+    "clientArea": "Iniciar sesión"
+  },
+  "common": {
+    "back": "Volver",
+    "close": "Cerrar"
+  },
+  "cookies": {
+    "title": "Tu privacidad es importante",
+    "description": "Utilizamos cookies para personalizar el contenido, los anuncios y analizar nuestro tráfico. También compartimos información sobre el uso de nuestro sitio con nuestros socios de publicidad y análisis.",
+    "policyLink": "Saber más en la Política de Cookies",
+    "accept": "Aceptar Todo",
+    "decline": "Solo Esenciales",
+    "customize": "Personalizar",
+    "save": "Guardar Preferencias",
+    "manageCookies": "Gestionar cookies",
+    "analytics": "Estadísticas y Análisis",
+    "marketing": "Marketing y Publicidad",
+    "essential": "Cookies Esenciales (Obligatorio)"
+  },
+  "hero": {
+    "title": "Tu negocio podría estar creciendo mucho más — con mucho menos esfuerzo.",
+    "subtitle": "Las pymes y negocios locales pierden clientes cada día por webs anticuadas, procesos manuales y falta de automatización. Mientras tanto, la competencia ya usa IA y sistemas inteligentes para captar clientes 24/7.",
+    "solution": "Getboost ayuda a pymes, freelancers y negocios locales a completar su transición digital: una estructura moderna y automatizada con IA, software y marketing digital.",
+    "cta": "Reserva hoy tu sesión gratuita",
+    "ctaSecondary": "Ver todos los proyectos",
+    "scroll": "Explorar",
+    "badgeNew": "Nuevo",
+    "badgeLabel": "Transformación Digital e IA",
+    "checkProjects": "+1500 Proyectos",
+    "checkYears": "+20 Años de Experiencia",
+    "checkAI": "IA Integrada"
+  },
+  "situation": {
+    "title": "¿En qué punto está tu negocio?",
+    "existing": {
+      "title": "Ya tienes presencia digital… pero el crecimiento se ha estancado",
+      "desc": "Tienes web, redes y anuncios, pero los resultados no acompañan al esfuerzo. El problema no es tu dedicación; es la falta de una estrategia digital inteligente.",
+      "cta": "Vamos a desbloquear el crecimiento"
+    },
+    "new": {
+      "title": "Quieres empezar desde cero — pero bien",
+      "desc": "Construimos contigo tu sistema digital completo: marca, web, automatizaciones e IA integrada desde el día uno.",
+      "cta": "Empezar ahora"
+    }
+  },
+  "marketing": {
+    "title": "Marketing, Software e IA para Pymes",
+    "subtitle": "Getboost combina estrategia, tecnología y automatización para que tu negocio trabaje por ti. Marketing, ingeniería de software e IA aplicada — un único socio pensado para pymes.",
+    "cta": "Descubre cómo escalar con IA",
+    "sectionLabel": "Para Negocios Locales",
+    "items": [
+      "Webs profesionales optimizadas para SEO local",
+      "Gestión de redes sociales con IA",
+      "Google Business Profile",
+      "Google & Meta Ads",
+      "Consultoría estratégica",
+      "Soluciones a medida con IA"
+    ]
+  },
+  "specialist": {
+    "title": "Sobre Getboost",
+    "sectionLabel": "Sobre",
+    "text": "Getboost está liderado por Nuno — Product Owner e Ingeniero de Software enfocado en IA aplicada a pymes. Más de 500 proyectos realizados en Portugal y Brasil. Estrategia, tecnología y ejecución en un solo lugar.",
+    "cta": "Agendar reunión"
+  },
+  "process": {
+    "title": "Cómo trabajamos",
+    "sectionLabel": "Cómo funciona",
+    "steps": [
+      {
+        "label": "Diagnóstico",
+        "desc": "Análisis completo de tu negocio y presencia digital actual"
+      },
+      {
+        "label": "Estrategia",
+        "desc": "Plan personalizado con objetivos claros y medibles"
+      },
+      {
+        "label": "Implementación",
+        "desc": "Ejecución profesional de todas las soluciones definidas"
+      },
+      {
+        "label": "Optimización",
+        "desc": "Monitorización continua y ajustes basados en datos"
+      },
+      {
+        "label": "Crecimiento",
+        "desc": "Escalar resultados y explorar nuevas oportunidades"
+      }
+    ]
+  },
+  "faq": {
+    "title": "Preguntas Frecuentes",
+    "sectionLabel": "FAQ",
+    "items": [
+      {
+        "q": "Mi empresa es pequeña. ¿La transformación digital es para mí?",
+        "a": "Sin duda. La transformación digital es especialmente poderosa para pequeñas empresas: puedes competir con players más grandes, automatizar procesos y llegar a más clientes con menos recursos."
+      },
+      {
+        "q": "¿Necesito una gran inversión?",
+        "a": "No. Creamos soluciones para cada presupuesto. Lo importante es empezar con una estrategia clara y escalar según aparecen los resultados."
+      },
+      {
+        "q": "¿Cuánto tiempo hasta ver resultados?",
+        "a": "Depende de la estrategia, pero los primeros resultados aparecen entre 30 y 90 días. Algunas acciones, como los anuncios, pueden generar resultados inmediatos."
+      },
+      {
+        "q": "¿La IA es difícil de usar?",
+        "a": "No. Getboost integra la IA de forma práctica y accesible: tú usas herramientas sencillas mientras la tecnología trabaja detrás."
+      },
+      {
+        "q": "¿El diagnóstico es gratuito?",
+        "a": "Sí. La primera sesión de diagnóstico es totalmente gratuita y sin compromiso — una oportunidad para ver dónde puede crecer tu negocio."
+      }
+    ]
+  },
+  "finalCta": {
+    "title": "¿Listo para convertir tu negocio en una máquina de crecimiento?",
+    "subtitle": "Construyamos una estructura profesional, automatizada y preparada para el futuro.",
+    "cta": "Reservar sesión gratuita",
+    "ctaSecondary": "Simulador de precio",
+    "qookHero": "Ver cómo funciona",
+    "qookFinal": "Probar Qook ahora",
+    "hostifyHero": "Ver cómo funciona",
+    "hostifyFinal": "Reservar diagnóstico gratuito"
+  },
+  "homepage": {
+    "heroTitle": "Tu negocio podría estar creciendo mucho más — con mucho menos esfuerzo.",
+    "heroSubtitle": "Getboost convierte pymes en máquinas de crecimiento con Marketing, Software e Inteligencia Artificial.",
+    "heroCta": "Reservar Sesión Gratuita",
+    "marketingHeadline": "Convierte tu negocio en una máquina de crecimiento",
+    "marketingDesc1": "Unimos estrategia, tecnología y automatización para que tu negocio trabaje por ti.",
+    "marketingDesc2": "Marketing, Ingeniería de Software e IA aplicada — un único socio pensado para pymes.",
+    "learnMore": "Saber más",
+    "discoverCta": "Descubre cómo escalar con IA",
+    "situationLabel": "En qué punto estás",
+    "situationTitle": "¿En qué punto está tu negocio y hasta dónde quieres llevarlo?",
+    "existingTitle": "Tienes presencia online, pero el crecimiento se ha estancado.",
+    "existingDesc1": "Tienes web, redes y anuncios… pero los resultados no acompañan al esfuerzo. El problema no es tu dedicación — es la falta de una estrategia digital inteligente.",
+    "existingDesc2": "Con automatización e IA transformamos tu presencia actual en resultados reales y medibles.",
+    "existingDesc3": "Haz que tu negocio trabaje por ti todos los días.",
+    "existingCta": "Reservar Sesión Gratuita",
+    "newTitle": "Quieres empezar desde cero, pero no sabes por dónde.",
+    "newDesc1": "Creamos tu sistema digital completo — marca, web, automatizaciones e IA integrada desde el día uno. Empieza con estructura, propósito y estrategia.",
+    "newDesc2": "Lanza un negocio preparado para crecer, no solo para existir.",
+    "newCta": "Reservar Sesión Gratuita",
+    "yearsExperience": "proyectos realizados",
+    "specialistText1": "Nuno — Product Owner e Ingeniero de Software enfocado en IA aplicada a pymes.",
+    "specialistText2": "Más de 500 proyectos realizados en Portugal y Brasil. Estrategia, tecnología y ejecución en un solo lugar.",
+    "tabs": {
+      "socialMedia": "Redes y Contenido",
+      "webDev": "Webs",
+      "software": "Software y SaaS",
+      "ads": "Google y Meta Ads",
+      "consulting": "Consultoría"
+    },
+    "marketingItems": [
+      {
+        "label": "Marketing Digital y Branding",
+        "tagline": "Crea una marca que atrae y convierte — cada día.",
+        "desc": "Estrategia de marca, identidad y campañas que generan demanda constante."
+      },
+      {
+        "label": "Desarrollo de Software y SaaS",
+        "tagline": "Sistemas inteligentes que digitalizan y automatizan tu negocio.",
+        "desc": "Plataformas a medida y productos SaaS pensados para escalar operaciones e ingresos."
+      },
+      {
+        "label": "Automatización e IA Empresarial",
+        "tagline": "Copilots, bots y flujos automáticos que reducen costes.",
+        "desc": "Automatiza procesos internos, atención y ventas con IA aplicada a tu negocio."
+      },
+      {
+        "label": "Gestión de Redes y Contenido",
+        "tagline": "Estrategia, copy y presencia digital con resultados reales.",
+        "desc": "Contenido consistente y estrategia editorial para construir autoridad y comunidad."
+      },
+      {
+        "label": "Webs y Landing Pages",
+        "tagline": "Diseño premium, SEO optimizado y foco en conversión.",
+        "desc": "Webs rápidas y modernas preparadas para convertir visitas en clientes."
+      },
+      {
+        "label": "Consultoría Estratégica para Pymes",
+        "tagline": "Diagnóstico, hoja de ruta e implementación digital completa.",
+        "desc": "Un plan claro para modernizar tu negocio con marketing, software e IA."
+      }
+    ],
+    "testimonials": [
+      {
+        "name": "Maria Silva",
+        "role": "CEO, Verde Natural",
+        "text": "Getboost transformó nuestro proceso comercial con automatización e IA."
+      },
+      {
+        "name": "João Santos",
+        "role": "Founder, Nexus Finance",
+        "text": "La web y las campañas trajeron resultados en menos de 30 días."
+      },
+      {
+        "name": "Ana Rodrigues",
+        "role": "CMO, Aurora Tech",
+        "text": "Profesionalismo, tecnología y resultados. Getboost es el socio digital que faltaba."
+      },
+      {
+        "name": "Pedro Costa",
+        "role": "Director, Luso Digital",
+        "text": "La consultoría de Getboost fue clave para reposicionar nuestra marca en el digital."
+      },
+      {
+        "name": "Sofia Mendes",
+        "role": "Founder, EcoStore",
+        "text": "Desde que trabajamos con Getboost, las ventas online crecieron un 200%."
+      },
+      {
+        "name": "Carlos Ferreira",
+        "role": "CTO, InnovaLab",
+        "text": "Enfoque data-driven e IA aplicada en la combinación perfecta. Los resultados hablan por sí solos."
+      }
+    ]
+  },
+  "services": {
+    "title": "Lo que hago",
+    "subtitle": "Soluciones estratégicas para cada fase de tu negocio",
+    "strategy": {
+      "title": "Estrategia Digital",
+      "desc": "Planes de marketing personalizados, análisis de mercado y posicionamiento de marca."
+    },
+    "branding": {
+      "title": "Branding e Identidad",
+      "desc": "Creación de identidades visuales memorables que comunican tus valores."
+    },
+    "web": {
+      "title": "Web y Rendimiento",
+      "desc": "Sitios web optimizados, SEO avanzado y campañas de alta conversión."
+    },
+    "content": {
+      "title": "Contenido y Social",
+      "desc": "Estrategias de contenido que conectan y convierten tu audiencia."
+    },
+    "tabsTitle": "Soluciones de Transición Digital + IA",
+    "tabsSubtitle": "Servicios pensados para modernizar tu negocio con tecnología de punta",
+    "tabsLabel": "Servicios",
+    "viewDetails": "Ver Detalles",
+    "loading": "Cargando...",
+    "from": "Desde",
+    "serviceHeadlines": {
+      "socialMedia": "Tu marca merece ser vista. Todos los días.",
+      "webDev": "Tu sitio web es la primera impresión. Hazla inolvidable.",
+      "softwareDev": "Software a medida para escalar tu negocio.",
+      "ads": "Invierte con inteligencia. Convierte con resultados.",
+      "consultoria": "Claridad estratégica para decisiones que importan.",
+      "drone": "Perspectivas que elevan tu marca. Literalmente."
+    },
+    "serviceSubheadlines": {
+      "socialMedia": "Deja de publicar sin estrategia. Creamos contenido que genera engagement real, atrae al público correcto y convierte seguidores en clientes mientras tú te enfocas en tu negocio.",
+      "webDev": "Un sitio lento, desactualizado o mal diseñado aleja clientes. Creamos sitios web rápidos, modernos y optimizados para SEO que posicionan tu negocio como referencia y convierten visitantes en contactos cualificados.",
+      "softwareDev": "Las herramientas genéricas limitan tu crecimiento. Desarrollamos software personalizado que automatiza procesos, elimina tareas manuales e integra todos tus sistemas, ahorrando tiempo y dinero desde el primer día.",
+      "ads": "Deja de desperdiciar presupuesto en anuncios que no convierten. Creamos campañas data-driven en Google y Meta que alcanzan al público correcto, en el momento correcto, con ROI medible e informes transparentes.",
+      "consultoria": "¿Tienes ideas pero te falta enfoque y dirección? En una sesión estratégica, analizamos tu negocio, identificamos oportunidades y creamos un plan de acción claro para acelerar tu crecimiento con confianza.",
+      "drone": "Captación profesional de fotografía y vídeo aéreo con dron DJI Air 2S. Imágenes cinematográficas que dan a tu negocio, evento o propiedad una visión única e impactante que ninguna cámara terrestre puede lograr."
+    }
+  },
+  "portfolio": {
+    "title": "Trabajos Seleccionados",
+    "subtitle": "Proyectos que marcaron la diferencia",
+    "viewAll": "Ver todos los proyectos",
+    "viewAllShort": "Ver todos",
+    "sectionLabel": "Portfolio",
+    "filters": {
+      "all": "Todos",
+      "branding": "Branding",
+      "web": "Web",
+      "strategy": "Estrategia"
+    }
+  },
+  "testimonials": {
+    "title": "Lo que dicen",
+    "subtitle": "Feedback de quienes ya trabajaron con Getboost",
+    "clientLabel": "Cliente"
+  },
+  "cta": {
+    "title": "Nos encantaría conocer tu proyecto y trabajar contigo.",
+    "subtitle": "Vamos a crear algo extraordinario.",
+    "button": "Hablemos"
+  },
+  "about": {
+    "title": "Sobre Mí",
+    "subtitle": "La historia detrás de la estrategia",
+    "story": "Con más de 20 años de experiencia en marketing digital, ayudo a empresas a encontrar su voz y crecer de forma sostenible. Creo que cada marca tiene una historia única para contar.",
+    "skills": "Competencias",
+    "timeline": "Trayectoria",
+    "badge": "Sobre Mí",
+    "heroTitle": "Estrategia, Creatividad",
+    "heroHighlight": "y Resultados",
+    "heroSubtitle": "Más de 20 años ayudando a empresas a transformar su presencia digital en crecimiento real y sostenible.",
+    "heroCta": "Hablemos",
+    "heroSecondaryCta": "Ver Portfolio",
+    "checkExperience": "<strong>20+</strong> años de experiencia",
+    "checkProjects": "<strong>1500+</strong> proyectos completados",
+    "checkClients": "<strong>15</strong> clientes activos",
+    "stats": {
+      "years": "Años de Experiencia",
+      "projects": "Proyectos Entregados",
+      "satisfaction": "Clientes Satisfechos",
+      "roi": "ROI Promedio"
+    },
+    "whoAmI": "Quién soy",
+    "transformTitle": "Transformo desafíos digitales en",
+    "transformHighlight": "oportunidades de crecimiento",
+    "storyExtended": "Creo que el marketing digital no se trata solo de herramientas o tácticas. Se trata de entender profundamente tu negocio, tu público y crear estrategias que generen impacto real y medible. Cada proyecto es tratado como si fuera mío.",
+    "quote": "Me encantaría conocer tu proyecto y trabajar contigo. Vamos a crear algo extraordinario.",
+    "valuesLabel": "Mis principios",
+    "valuesTitle": "Cómo trabajo",
+    "valuesSubtitle": "Valores que guían cada decisión y cada proyecto.",
+    "skillsLabel": "Competencias",
+    "timelineLabel": "Trayectoria",
+    "ctaTitle": "¿Listo para transformar tu negocio?",
+    "ctaSubtitle": "Hablemos sobre cómo puedo ayudarte a crecer.",
+    "ctaCta": "Agendar Consulta Gratuita",
+    "ctaSecondaryCta": "Ver Portfolio",
+    "yearsExp": "Años de\nExperiencia",
+    "values": {
+      "excellence": {
+        "title": "Excelencia",
+        "desc": "Cada proyecto recibe el mismo nivel de dedicación y rigor, independientemente del tamaño."
+      },
+      "partnership": {
+        "title": "Asociación",
+        "desc": "Trabajo como extensión de tu equipo, alineado con tus objetivos de negocio."
+      },
+      "results": {
+        "title": "Resultados",
+        "desc": "Enfoque obsesivo en métricas que importan y crecimiento medible."
+      },
+      "innovation": {
+        "title": "Innovación",
+        "desc": "Herramientas y estrategias de vanguardia para ventaja competitiva real."
+      }
+    },
+    "skillsList": {
+      "strategy": {
+        "label": "Estrategia Digital",
+        "desc": "Planes personalizados con enfoque en crecimiento y ROI"
+      },
+      "branding": {
+        "label": "Branding e Identidad",
+        "desc": "Marcas memorables que comunican valor"
+      },
+      "seo": {
+        "label": "SEO & SEM",
+        "desc": "Posicionamiento orgánico y campañas pagadas"
+      },
+      "content": {
+        "label": "Content Marketing",
+        "desc": "Contenido que educa, inspira y convierte"
+      },
+      "growth": {
+        "label": "Growth Hacking",
+        "desc": "Tácticas creativas para crecimiento acelerado"
+      },
+      "analytics": {
+        "label": "Analytics & Data",
+        "desc": "Decisiones basadas en datos reales"
+      },
+      "consulting": {
+        "label": "Consultoría",
+        "desc": "Orientación estratégica para líderes y equipos"
+      },
+      "automation": {
+        "label": "Automatización",
+        "desc": "Procesos optimizados con tecnología inteligente"
+      }
+    },
+    "timelineItems": {
+      "2004": {
+        "title": "Diseñador Gráfico",
+        "desc": "Inicio de carrera como diseñador gráfico, trabajando en proyectos diversos, edición de periódicos y desarrollo de la primera página web."
+      },
+      "2014": {
+        "title": "Marketing Specialist",
+        "desc": "Inicio de carrera en marketing digital, con enfoque en SEO, redes sociales y creación de contenido estratégico."
+      },
+      "2017": {
+        "title": "Digital Marketing Manager",
+        "desc": "Gestión de campañas multicanal y presencia digital para múltiples clientes B2B y B2C en diversos sectores."
+      },
+      "2020": {
+        "title": "Head of Marketing",
+        "desc": "Liderazgo de equipo multidisciplinar de marketing en una empresa de tecnología. Responsable de estrategia, branding y performance."
+      },
+      "2024": {
+        "title": "Consultor Independiente & Fundador",
+        "desc": "Fundación de GetBoost Digital. Consultoría estratégica para empresas y startups que quieren escalar con marketing digital inteligente."
+      }
+    }
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Insights y estrategias de marketing",
+    "readMore": "Leer más",
+    "search": "Buscar artículos...",
+    "all": "Todos",
+    "noResults": "No se encontraron artículos.",
+    "heroTitle": "Conocimiento que",
+    "heroHighlight": "Impulsa Resultados",
+    "heroSubtitle": "Artículos, guías y análisis sobre marketing digital, branding y estrategia — para mantenerte por delante de la competencia.",
+    "backToBlog": "Volver al Blog",
+    "tableOfContents": "En este artículo abordamos:",
+    "needHelp": "¿Necesitas ayuda con",
+    "needHelpSubtitle": "Agenda una consulta gratuita y definamos la mejor estrategia para tu negocio.",
+    "bookFree": "Agendar Consulta Gratuita",
+    "relatedArticles": "Artículos Relacionados",
+    "checkWeekly": "Artículos semanales",
+    "checkGuides": "Guías prácticas",
+    "checkTrends": "Tendencias del mercado",
+    "share": "Compartir",
+    "contactUs": "¡Contáctanos!",
+    "aboutAuthor": "Sobre el autor",
+    "authorBio": "Nuno es especialista en marketing digital e inteligencia artificial, con más de 20 años de experiencia y más de 1500 proyectos entregados. Apasionado por ayudar a empresas a crecer a través de estrategias digitales innovadoras.",
+    "comments": "Comentarios",
+    "leaveComment": "Deja tu comentario",
+    "replyTo": "Responder a {{name}}",
+    "reply": "Responder",
+    "cancel": "Cancelar",
+    "moderationNote": "Los comentarios son moderados antes de ser publicados.",
+    "commentName": "Nombre",
+    "commentEmail": "Email",
+    "emailNotPublished": "(no será publicado)",
+    "commentLabel": "Comentario",
+    "commentPlaceholder": "Escribe tu comentario...",
+    "namePlaceholder": "Tu nombre",
+    "emailPlaceholder": "Tu email",
+    "sendReply": "Enviar Respuesta",
+    "sendComment": "Enviar Comentario",
+    "sending": "Enviando...",
+    "loadingComments": "Cargando comentarios...",
+    "noComments": "Aún no hay comentarios. ¡Sé el primero en comentar!",
+    "replyCount_one": "{{count}} respuesta",
+    "replyCount_other": "{{count}} respuestas",
+    "errorWait": "Espera un momento antes de enviar otro comentario.",
+    "errorRequired": "Rellena todos los campos obligatorios.",
+    "errorEmail": "Introduce un email válido.",
+    "errorLength": "El comentario debe tener entre 5 y 2000 caracteres.",
+    "errorNameLong": "El nombre es demasiado largo.",
+    "errorSend": "Error al enviar comentario. Inténtalo de nuevo.",
+    "successComment": "¡Comentario enviado! Será publicado tras aprobación.",
+    "featureSocial": "Redes Sociales",
+    "featureStrategy": "Estrategia"
+  },
+  "resources": {
+    "title": "Recursos",
+    "subtitle": "Herramientas y guías para tu negocio",
+    "download": "Descargar",
+    "accessTool": "Acceder a Herramienta",
+    "filters": {
+      "all": "Todos",
+      "guides": "Guías",
+      "templates": "Templates",
+      "tools": "Herramientas"
+    },
+    "heroBadge": "Recursos Gratuitos",
+    "heroTitle": "Herramientas para",
+    "heroHighlight": "Acelerar Tu Marketing",
+    "heroSubtitle": "Templates, guías y checklists creados para ayudarte a implementar estrategias de marketing eficaces — sin costo.",
+    "checkFree": "100% gratuitos",
+    "checkImmediate": "Descarga inmediata",
+    "checkReady": "Listos para usar",
+    "descriptions": {
+      "1": "Lista completa con 50+ ítems para optimizar cada página de tu sitio web.",
+      "2": "Plantilla editable para planificar tu estrategia de marketing anual.",
+      "3": "Herramienta para calcular el retorno sobre la inversión de tus campañas.",
+      "4": "Cómo construir y gestionar tu marca personal en el mundo digital.",
+      "5": "Organiza tu contenido mensual con esta plantilla práctica.",
+      "6": "Herramienta de diagnóstico para identificar problemas en tu sitio web.",
+      "7": "Analiza tu sitio web y descubre cómo mejorar tu posicionamiento en buscadores.",
+      "8": "Escribe tu nicho y recibe ideas creativas para posts, reels, artículos, stories y carruseles."
+    }
+  },
+  "booking": {
+    "title": "Agendar Consulta",
+    "subtitle": "Elige el mejor momento para conversar",
+    "step1": "Seleccionar Fecha",
+    "step2": "Seleccionar Hora",
+    "step3": "Tus Datos",
+    "step4": "Confirmación",
+    "name": "Nombre completo",
+    "email": "Email",
+    "phone": "Teléfono (opcional)",
+    "company": "Empresa (opcional)",
+    "website": "¿Cuál es tu sitio web actual?",
+    "challenges": "¿Cuáles son tus mayores desafíos de marketing?",
+    "challengesPlaceholder": "Describe los desafíos que enfrentas...",
+    "timezone": "Zona horaria",
+    "timezones": {
+      "lisbon": "Portugal (Lisboa)",
+      "madeira": "Madeira (WET/WEST)",
+      "azores": "Azores (AZOT/AZOST)",
+      "brazil": "Brasil – Brasília (BRT)"
+    },
+    "next": "Siguiente",
+    "back": "Volver",
+    "confirm": "Confirmar Reserva",
+    "confirmed": "¡Reserva Confirmada!",
+    "confirmedMsg": "Recibirás un email de confirmación en breve.",
+    "selectTime": "Elige un horario disponible",
+    "morning": "Mañana",
+    "afternoon": "Tarde",
+    "heroBadge": "Agendar Reunión",
+    "heroTitle": "Planifiquemos Tu",
+    "heroHighlight": "Próximo Paso",
+    "heroSubtitle": "Reserva una consultoría gratuita y descubre cómo puedo ayudar a tu negocio a crecer con estrategias de marketing comprobadas.",
+    "check30min": "<strong>30 min</strong> gratuitos",
+    "checkNoCommitment": "Sin compromiso",
+    "checkVideo": "Videollamada",
+    "benefitVideo": "Videollamada gratuita",
+    "benefitNoCommitment": "Sin compromiso",
+    "benefitCancel": "Cancelación fácil",
+    "meetingTypes": {
+      "discovery": {
+        "title": "Consulta de Descubrimiento",
+        "desc": "Una llamada de 30 minutos para conocer tu negocio y discutir cómo puedo ayudar."
+      },
+      "strategy": {
+        "title": "Sesión de Estrategia",
+        "desc": "Una sesión de 60 minutos para desarrollar una estrategia de marketing personalizada."
+      }
+    },
+    "chooseMeetingType": "Elige el tipo de reunión",
+    "selectDate": "Selecciona una fecha",
+    "selectTime2": "Selecciona la hora",
+    "yourData": "Tus datos",
+    "namePlaceholder": "Tu nombre",
+    "emailPlaceholder": "email@ejemplo.com",
+    "phonePlaceholder": "+351 912 345 678",
+    "companyPlaceholder": "Nombre de tu empresa",
+    "minutes": "minutos",
+    "meeting": "Reunión",
+    "date": "Fecha",
+    "time": "Hora",
+    "errorSchedule": "Error al agendar. Inténtalo de nuevo.",
+    "confirmLabels": {
+      "discovery": "Consulta de Descubrimiento (30 min)",
+      "strategy": "Sesión de Estrategia (60 min)"
+    }
+  },
+  "footer": {
+    "rights": "Todos los derechos reservados.",
+    "privacy": "Privacidad",
+    "terms": "Términos",
+    "newsletter": "Suscríbete al newsletter",
+    "emailPlaceholder": "Tu email",
+    "subscribe": "Suscribirse",
+    "brandDesc": "Marketing estratégico que transforma negocios. Vamos a crear algo extraordinario juntos.",
+    "links": "Links",
+    "servicesTitle": "Servicios",
+    "newsletterDesc": "Recibe tips exclusivos de marketing, tendencias y estrategias directamente en tu email. Sin spam, solo contenido de valor.",
+    "namePlaceholder": "Tu nombre",
+    "consent": "Autorizo el envío de newsletters y campañas referentes a productos y servicios de Getboost Digital. Puedo cancelar en cualquier momento.",
+    "priceSimulator": "Simulador de Precio",
+    "investors": "Inversores",
+    "privacyPolicy": "Política de Privacidad",
+    "cookiePolicy": "Política de Cookies",
+    "disputes": "Resolución Alternativa de Litigios",
+    "complaints": "Libro de Reclamaciones Online",
+    "fillNameEmail": "Completa el nombre y email.",
+    "consentRequired": "Debes autorizar el envío de newsletters para continuar.",
+    "alreadySubscribed": "Este email ya está suscrito.",
+    "errorSubscribe": "Error al suscribirse. Inténtalo de nuevo.",
+    "successSubscribe": "¡Suscrito con éxito!",
+    "brandDescFull": "Especialista en Estrategia Digital, IA y Automatización",
+    "brandDescBody": "Acelero el crecimiento de empresas a través de soluciones inteligentes, automatización avanzada y marketing estratégico de alto rendimiento.",
+    "brandDescClose": "Juntos, creamos una estructura digital sólida, moderna y preparada para escalar.",
+    "contactTitle": "Contacto",
+    "mobileNote": "(llamada a la red móvil nacional)",
+    "addressTitle": "Dirección"
+  },
+  "contact": {
+    "title": "Contacto",
+    "subtitle": "Hablemos sobre tu proyecto",
+    "phone": "Teléfono",
+    "location": "Ubicación",
+    "namePlaceholder": "Tu nombre",
+    "emailPlaceholder": "Tu email",
+    "messagePlaceholder": "Tu mensaje...",
+    "send": "Enviar mensaje",
+    "badge": "Contacto",
+    "heroTitle": "Hablemos sobre",
+    "heroHighlight": "¿tu proyecto?",
+    "heroSubtitle": "Completa el formulario y me pondré en contacto contigo en menos de 24 horas.",
+    "heroCta": "Agendar Diagnóstico Gratuito",
+    "quote": "Me encantaría conocer tu proyecto y trabajar contigo.",
+    "notSure": "¿Aún no estás seguro?",
+    "notSureDesc": "Comienza con un diagnóstico gratuito de 7 minutos y descubre el potencial de tu presencia digital.",
+    "freeDiagnostic": "Hacer Diagnóstico Gratuito →",
+    "fullName": "Nombre completo",
+    "emailAddress": "Dirección de email",
+    "mobile": "Móvil (opcional)",
+    "businessName": "Nombre del negocio",
+    "currentWebsite": "Sitio web actual (opcional)",
+    "interestedService": "¿Qué servicio te interesa?",
+    "selectService": "Selecciona un servicio",
+    "monthlyBudget": "Presupuesto mensual aproximado",
+    "selectOption": "Selecciona una opción",
+    "whenStart": "¿Cuándo quieres empezar?",
+    "message": "Mensaje",
+    "messagePlaceholderLong": "Cuéntame sobre tu proyecto, negocio o desafíos de marketing digital...",
+    "submitting": "Enviando...",
+    "submitButton": "Enviar solicitud de propuesta",
+    "required": "*",
+    "errorRequired": "Por favor completa todos los campos obligatorios.",
+    "errorEmail": "Por favor ingresa un email válido.",
+    "errorSend": "Error al enviar. Inténtalo de nuevo.",
+    "successSend": "¡Mensaje enviado con éxito! Nos pondremos en contacto pronto.",
+    "serviceOptions": {
+      "estrategia": "Estrategia Digital",
+      "seo": "SEO & SEM",
+      "branding": "Branding",
+      "content": "Content Marketing",
+      "social": "Social Media",
+      "consultoria": "Consultoría"
+    },
+    "budgetOptions": {
+      "500": "Hasta 500€",
+      "1000": "500€ - 1.000€",
+      "2500": "1.000€ - 2.500€",
+      "5000": "2.500€ - 5.000€",
+      "5000+": "Más de 5.000€"
+    },
+    "timelineOptions": {
+      "imediato": "Inmediatamente",
+      "1mes": "Dentro de 1 mes",
+      "3meses": "Dentro de 3 meses",
+      "explorar": "Solo estoy explorando"
+    },
+    "businessNamePlaceholder": "Ej: Restaurante Sabores del Mar",
+    "websitePlaceholder": "https://www.ejemplo.com",
+    "phonePlaceholder": "+351 912 345 678",
+    "emailInputPlaceholder": "tu@email.com",
+    "phoneLabel": "Teléfono",
+    "mobileNote": "(llamada a la red móvil nacional)",
+    "phoneHours": "Lun-Vie, 9h-18h",
+    "whatsappQuickReply": "Respuestas rápidas por WhatsApp",
+    "chatNow": "Conversar Ahora",
+    "office": "Oficina"
+  },
+  "servicesPage": {
+    "badge": "Soluciones Premium de Marketing Digital",
+    "badgeAccent": "Nuevo",
+    "title": "Servicios que Generan",
+    "titleHighlight": "Resultados Reales",
+    "subtitle": "Estrategias personalizadas de marketing digital que transforman tu presencia online en resultados medibles y crecimiento sostenible.",
+    "heroCta": "Agendar Consultoría Gratuita",
+    "heroSecondaryCta": "Ver Portfolio",
+    "checkSatisfaction": "<strong>98%</strong> satisfacción de clientes",
+    "checkROI": "<strong>3.2x</strong> ROI promedio",
+    "checkProjects": "<strong>50+</strong> proyectos entregados",
+    "stats": {
+      "projects": "Proyectos Entregados",
+      "satisfaction": "Satisfacción"
+    },
+    "items": {
+      "socialMedia": {
+        "title": "Gestión de Redes Sociales",
+        "desc": "Presencia online consistente que atrae y convierte seguidores en clientes"
+      },
+      "webDev": {
+        "title": "Desarrollo Web",
+        "desc": "Sitios web modernos, rápidos y optimizados para conversión y SEO"
+      },
+      "softwareDev": {
+        "title": "Desarrollo de Software",
+        "desc": "Soluciones digitales personalizadas para automatizar y escalar tu negocio"
+      },
+      "googleBusiness": {
+        "title": "Google Business Profile",
+        "desc": "Optimización de tu presencia local en Google para atraer más clientes"
+      },
+      "ads": {
+        "title": "Google & Meta Ads",
+        "desc": "Campañas de publicidad digital enfocadas en ROI y resultados medibles"
+      },
+      "consultoria": {
+        "title": "Consultoría Estratégica",
+        "desc": "Análisis y planificación estratégica para el crecimiento sostenible de tu negocio"
+      },
+      "custom": {
+        "title": "Solución Personalizada",
+        "desc": "Proyectos a medida para las necesidades específicas de tu negocio"
+      },
+      "drone": {
+        "title": "Fotografía & Vídeo Aéreo",
+        "desc": "Captación profesional de imágenes aéreas con Drone DJI Air 2S para tu negocio"
+      }
+    },
+    "tabCustom": "Servicios a Medida",
+    "tabSaas": "Soluciones SaaS",
+    "customTitle": "Servicios a Medida",
+    "customDesc": "Soluciones 100% personalizadas y adaptadas a las necesidades de tu negocio. Desde sitios web y redes sociales hasta estrategias completas de marketing digital — todo hecho a tu medida.",
+    "saasTitle": "Soluciones SaaS Para Tu Negocio",
+    "saasDesc": "Productos digitales listos para usar, diseñados para resolver problemas reales de negocios específicos. Plataformas intuitivas con tecnología de vanguardia e inteligencia artificial integrada.",
+    "saasComingSoon": "Próximamente",
+    "saasLearnMore": "Saber más próximamente",
+    "saasProducts": {
+      "hostify": {
+        "desc": "Plataforma de alojamiento local con gestión automatizada de reservas, check-in digital y comunicación con huéspedes."
+      },
+      "prosafe360": {
+        "desc": "Software de gestión de seguridad y salud laboral con informes automáticos y cumplimiento legal."
+      },
+      "qook": {
+        "desc": "Sistema de gestión para restaurantes con menú digital, pedidos online y control de stock inteligente."
+      },
+      "motivae": {
+        "desc": "Plataforma de bienestar y productividad para equipos con desafíos, métricas y gamificación."
+      },
+      "pikto": {
+        "desc": "Herramienta de creación de contenido visual con plantillas profesionales e IA integrada."
+      }
+    },
+    "serviceDetail": {
+      "backToServices": "Volver a Servicios",
+      "bookConsultation": "Agendar Consulta",
+      "startingFrom": "Desde",
+      "painPointsTitle": "¿Te identificas con alguna de estas situaciones?",
+      "painPointsSubtitle": "Si respondiste sí a alguna, este servicio fue hecho para ti.",
+      "benefitsTitle": "Lo que vas a recibir",
+      "benefitsSubtitle": "Cada detalle pensado para generar resultados reales y medibles para tu negocio.",
+      "processTitle": "Cómo funciona",
+      "processSubtitle": "Un proceso claro y transparente de principio a fin.",
+      "resultsTitle": "Resultados que hablan por sí solos",
+      "faqTitle": "Preguntas Frecuentes",
+      "ctaTitle": "Me encantaría conocer tu proyecto y trabajar contigo.",
+      "ctaSubtitle": "Vamos a crear algo extraordinario.",
+      "ctaBook": "Agendar Consulta Gratuita",
+      "ctaChat": "Hablemos",
+      "loading": "Cargando..."
+    },
+    "serviceContent": {
+      "socialMedia": {
+        "headline": "Tu marca merece ser vista. Todos los días.",
+        "subheadline": "Deja de publicar sin estrategia. Creamos contenido que genera engagement real, atrae al público correcto y convierte seguidores en clientes mientras tú te enfocas en tu negocio.",
+        "painPoints": [
+          "¿No tienes tiempo para publicar consistentemente?",
+          "¿Tus posts no generan engagement?",
+          "¿No sabes qué publicar para atraer clientes?",
+          "¿La competencia es más visible que tú en redes?"
+        ],
+        "benefits": [
+          {
+            "title": "Contenido Estratégico",
+            "desc": "Planificación editorial mensual con contenidos que educan, inspiran y convierten."
+          },
+          {
+            "title": "Diseño Profesional",
+            "desc": "Creación de visuales que captan atención y refuerzan la identidad de tu marca."
+          },
+          {
+            "title": "Gestión de Comunidad",
+            "desc": "Interacción con tu audiencia, respondiendo comentarios y mensajes."
+          },
+          {
+            "title": "Informes Mensuales",
+            "desc": "Análisis detallado de métricas con insights accionables para crecer."
+          }
+        ],
+        "process": [
+          {
+            "step": "01",
+            "title": "Diagnóstico",
+            "desc": "Análisis de tu presencia actual y definición de objetivos."
+          },
+          {
+            "step": "02",
+            "title": "Estrategia",
+            "desc": "Creación del plan editorial y definición de tono de voz."
+          },
+          {
+            "step": "03",
+            "title": "Ejecución",
+            "desc": "Producción de contenido, publicación y gestión diaria."
+          },
+          {
+            "step": "04",
+            "title": "Optimización",
+            "desc": "Análisis de resultados y ajustes continuos para mejorar performance."
+          }
+        ],
+        "results": [
+          {
+            "value": "+250%",
+            "label": "Engagement promedio"
+          },
+          {
+            "value": "3x",
+            "label": "Más seguidores"
+          },
+          {
+            "value": "+180%",
+            "label": "Alcance orgánico"
+          },
+          {
+            "value": "45%",
+            "label": "Conversión en leads"
+          }
+        ],
+        "faq": [
+          {
+            "q": "¿Cuántas publicaciones por semana?",
+            "a": "El plan base incluye 4-5 publicaciones semanales, ajustable según tu necesidad."
+          },
+          {
+            "q": "¿En qué plataformas?",
+            "a": "Instagram, Facebook, LinkedIn y TikTok. Elegimos las más relevantes para tu negocio."
+          },
+          {
+            "q": "¿Puedo aprobar el contenido antes?",
+            "a": "¡Sí! Envío la planificación semanal para aprobación antes de la publicación."
+          }
+        ]
+      },
+      "webDev": {
+        "headline": "Tu sitio web es la primera impresión. Hazla inolvidable.",
+        "subheadline": "Un sitio lento, desactualizado o mal diseñado aleja clientes. Creamos sitios web rápidos, modernos y optimizados para SEO que posicionan tu negocio como referencia y convierten visitantes en contactos cualificados.",
+        "painPoints": [
+          "¿Tu sitio actual parece desactualizado?",
+          "¿Los visitantes se van sin convertir?",
+          "¿Tu sitio no aparece en Google?",
+          "¿No es responsive en dispositivos móviles?"
+        ],
+        "benefits": [
+          {
+            "title": "Diseño Premium",
+            "desc": "Interfaz moderna y profesional que transmite credibilidad y confianza."
+          },
+          {
+            "title": "SEO Integrado",
+            "desc": "Optimización técnica y de contenido para posicionar en el top de Google."
+          },
+          {
+            "title": "Alto Rendimiento",
+            "desc": "Carga rápida, código limpio y experiencia fluida en todos los dispositivos."
+          },
+          {
+            "title": "Conversión Optimizada",
+            "desc": "Estructura pensada para guiar al visitante a la acción deseada."
+          }
+        ],
+        "process": [
+          {
+            "step": "01",
+            "title": "Briefing",
+            "desc": "Entendemos tu negocio, público y objetivos del sitio."
+          },
+          {
+            "step": "02",
+            "title": "Diseño",
+            "desc": "Creación del layout y prototipo interactivo para aprobación."
+          },
+          {
+            "step": "03",
+            "title": "Desarrollo",
+            "desc": "Programación con las mejores tecnologías y prácticas del mercado."
+          },
+          {
+            "step": "04",
+            "title": "Lanzamiento",
+            "desc": "Pruebas finales, optimización y publicación del sitio."
+          }
+        ],
+        "results": [
+          {
+            "value": "+340%",
+            "label": "Tráfico orgánico"
+          },
+          {
+            "value": "2.5s",
+            "label": "Tiempo de carga"
+          },
+          {
+            "value": "+200%",
+            "label": "Tasa de conversión"
+          },
+          {
+            "value": "99%",
+            "label": "Uptime garantizado"
+          }
+        ],
+        "faq": [
+          {
+            "q": "¿Cuánto tiempo demora?",
+            "a": "En promedio 3-4 semanas, dependiendo de la complejidad del proyecto."
+          },
+          {
+            "q": "¿Incluye hosting?",
+            "a": "Sí, incluimos configuración de hosting y dominio en el primer año."
+          },
+          {
+            "q": "¿Puedo editar el contenido después?",
+            "a": "¡Sí! Entrego con un panel de gestión simple para actualizaciones."
+          }
+        ]
+      },
+      "softwareDev": {
+        "headline": "Software a medida para escalar tu negocio.",
+        "subheadline": "Las herramientas genéricas limitan tu crecimiento. Desarrollamos software personalizado que automatiza procesos, elimina tareas manuales e integra todos tus sistemas, ahorrando tiempo y dinero desde el primer día.",
+        "painPoints": [
+          "¿Procesos manuales que consumen tiempo?",
+          "¿Herramientas genéricas que no se adaptan?",
+          "¿Falta de integración entre sistemas?",
+          "¿Dificultad para escalar operaciones?"
+        ],
+        "benefits": [
+          {
+            "title": "Solución Personalizada",
+            "desc": "Software desarrollado específicamente para las necesidades de tu negocio."
+          },
+          {
+            "title": "Automatización",
+            "desc": "Eliminación de tareas repetitivas y optimización de procesos internos."
+          },
+          {
+            "title": "Integración",
+            "desc": "Conexión con todas las herramientas y plataformas que ya utilizas."
+          },
+          {
+            "title": "Escalabilidad",
+            "desc": "Arquitectura preparada para crecer conforme tu negocio evoluciona."
+          }
+        ],
+        "process": [
+          {
+            "step": "01",
+            "title": "Análisis",
+            "desc": "Levantamiento detallado de requisitos y flujos de trabajo."
+          },
+          {
+            "step": "02",
+            "title": "Arquitectura",
+            "desc": "Diseño de la solución técnica y planificación del desarrollo."
+          },
+          {
+            "step": "03",
+            "title": "Desarrollo",
+            "desc": "Construcción iterativa con validaciones regulares."
+          },
+          {
+            "step": "04",
+            "title": "Deploy & Soporte",
+            "desc": "Implementación, formación del equipo y soporte continuo."
+          }
+        ],
+        "results": [
+          {
+            "value": "-60%",
+            "label": "Tiempo en procesos"
+          },
+          {
+            "value": "4x",
+            "label": "Más productividad"
+          },
+          {
+            "value": "-35%",
+            "label": "Costos operativos"
+          },
+          {
+            "value": "100%",
+            "label": "Personalizado"
+          }
+        ],
+        "faq": [
+          {
+            "q": "¿Qué tecnologías utilizan?",
+            "a": "React, Node.js, Python y cloud providers como AWS y GCP, según el proyecto."
+          },
+          {
+            "q": "¿Ofrecen mantenimiento?",
+            "a": "Sí, tenemos planes de mantenimiento y evolución continua del software."
+          },
+          {
+            "q": "¿Cuál es el plazo promedio?",
+            "a": "Depende de la complejidad, pero proyectos típicos toman 2-4 meses."
+          }
+        ]
+      },
+      "googleBusiness": {
+        "headline": "Sé encontrado por quienes buscan lo que ofreces.",
+        "subheadline": "Optimización del Google Business Profile para dominar las búsquedas locales y atraer más clientes.",
+        "painPoints": [
+          "¿No apareces en las búsquedas locales?",
+          "¿Tu perfil de Google está incompleto?",
+          "¿No recibes evaluaciones de clientes?",
+          "¿La competencia aparece antes que tú?"
+        ],
+        "benefits": [
+          {
+            "title": "Perfil Optimizado",
+            "desc": "Configuración completa con toda la información, fotos y categorías correctas."
+          },
+          {
+            "title": "Gestión de Reviews",
+            "desc": "Estrategia para obtener más evaluaciones positivas y responder profesionalmente."
+          },
+          {
+            "title": "Posts Regulares",
+            "desc": "Publicaciones en Google Business para mantener el perfil activo y relevante."
+          },
+          {
+            "title": "Informes de Visibilidad",
+            "desc": "Monitoreo de posiciones, impresiones y acciones de los usuarios."
+          }
+        ],
+        "process": [
+          {
+            "step": "01",
+            "title": "Auditoría",
+            "desc": "Análisis del perfil actual y oportunidades de mejora."
+          },
+          {
+            "step": "02",
+            "title": "Optimización",
+            "desc": "Configuración completa del perfil con mejores prácticas."
+          },
+          {
+            "step": "03",
+            "title": "Contenido",
+            "desc": "Publicación regular de posts, fotos y actualizaciones."
+          },
+          {
+            "step": "04",
+            "title": "Monitoreo",
+            "desc": "Seguimiento continuo de performance y ajustes."
+          }
+        ],
+        "results": [
+          {
+            "value": "+300%",
+            "label": "Visibilidad local"
+          },
+          {
+            "value": "4.8★",
+            "label": "Rating promedio"
+          },
+          {
+            "value": "+180%",
+            "label": "Llamadas recibidas"
+          },
+          {
+            "value": "+220%",
+            "label": "Solicitudes de dirección"
+          }
+        ],
+        "faq": [
+          {
+            "q": "¿Necesito ya tener un perfil?",
+            "a": "No, puedo crear y verificar el perfil desde cero para tu negocio."
+          },
+          {
+            "q": "¿Funciona para cualquier negocio?",
+            "a": "Sí, especialmente para negocios con atención local o presencial."
+          },
+          {
+            "q": "¿Cuánto tiempo para ver resultados?",
+            "a": "Los primeros resultados aparecen en 2-4 semanas después de la optimización."
+          }
+        ]
+      },
+      "ads": {
+        "headline": "Invierte con inteligencia. Convierte con resultados.",
+        "subheadline": "Deja de desperdiciar presupuesto en anuncios que no convierten. Creamos campañas data-driven en Google y Meta que alcanzan al público correcto, en el momento correcto, con ROI medible e informes transparentes.",
+        "painPoints": [
+          "¿Gastas en anuncios sin ver retorno?",
+          "¿No sabes cuánto invertir en ads?",
+          "¿Las campañas no convierten?",
+          "¿No tienes tiempo para gestionar anuncios?"
+        ],
+        "benefits": [
+          {
+            "title": "Estrategia Data-Driven",
+            "desc": "Decisiones basadas en datos reales, no en suposiciones."
+          },
+          {
+            "title": "Segmentación Precisa",
+            "desc": "Alcanzar al público correcto, en el momento correcto, con el mensaje correcto."
+          },
+          {
+            "title": "Optimización Continua",
+            "desc": "Tests A/B y ajustes diarios para maximizar el ROI."
+          },
+          {
+            "title": "Informes Transparentes",
+            "desc": "Visibilidad total sobre inversión, resultados y métricas."
+          }
+        ],
+        "process": [
+          {
+            "step": "01",
+            "title": "Research",
+            "desc": "Análisis de mercado, competencia y definición de públicos."
+          },
+          {
+            "step": "02",
+            "title": "Configuración",
+            "desc": "Creación de campañas, anuncios y landing pages optimizadas."
+          },
+          {
+            "step": "03",
+            "title": "Lanzamiento",
+            "desc": "Activación de las campañas con monitoreo en tiempo real."
+          },
+          {
+            "step": "04",
+            "title": "Escala",
+            "desc": "Optimización de performance y escala de las campañas ganadoras."
+          }
+        ],
+        "results": [
+          {
+            "value": "5.2x",
+            "label": "ROI promedio"
+          },
+          {
+            "value": "-45%",
+            "label": "Costo por lead"
+          },
+          {
+            "value": "+320%",
+            "label": "Conversiones"
+          },
+          {
+            "value": "24h",
+            "label": "Tiempo de respuesta"
+          }
+        ],
+        "faq": [
+          {
+            "q": "¿Cuál es la inversión mínima en ads?",
+            "a": "Recomiendo a partir de 500€/mes en media spend, además de la gestión."
+          },
+          {
+            "q": "¿Google o Meta Ads?",
+            "a": "Depende de tu negocio. Analizo y recomiendo la mejor estrategia."
+          },
+          {
+            "q": "¿Crean las landing pages?",
+            "a": "Sí, puedo crear landing pages optimizadas para las campañas."
+          }
+        ]
+      },
+      "consultoria": {
+        "headline": "Claridad estratégica para decisiones que importan.",
+        "subheadline": "¿Tienes ideas pero te falta enfoque y dirección? En una sesión estratégica, analizamos tu negocio, identificamos oportunidades y creamos un plan de acción claro para acelerar tu crecimiento con confianza.",
+        "painPoints": [
+          "¿No sabes por dónde empezar en marketing?",
+          "¿Tienes muchas ideas pero sin enfoque?",
+          "¿Necesitas una segunda opinión estratégica?",
+          "¿Quieres validar tu plan de marketing?"
+        ],
+        "benefits": [
+          {
+            "title": "Visión Externa",
+            "desc": "Perspectiva imparcial y experimentada sobre tu negocio y mercado."
+          },
+          {
+            "title": "Plan de Acción",
+            "desc": "Roadmap claro y priorizado con los próximos pasos concretos."
+          },
+          {
+            "title": "Mentoría",
+            "desc": "Acompañamiento continuo para garantizar la ejecución de la estrategia."
+          },
+          {
+            "title": "Flexibilidad",
+            "desc": "Sesiones adaptadas a tu ritmo, presencial u online."
+          }
+        ],
+        "process": [
+          {
+            "step": "01",
+            "title": "Conversación Inicial",
+            "desc": "Sesión gratuita de 30 min para entender tus desafíos."
+          },
+          {
+            "step": "02",
+            "title": "Diagnóstico",
+            "desc": "Análisis profundo del negocio, mercado y competencia."
+          },
+          {
+            "step": "03",
+            "title": "Estrategia",
+            "desc": "Desarrollo del plan estratégico personalizado."
+          },
+          {
+            "step": "04",
+            "title": "Seguimiento",
+            "desc": "Sesiones regulares de follow-up y ajustes."
+          }
+        ],
+        "results": [
+          {
+            "value": "+200%",
+            "label": "Crecimiento promedio"
+          },
+          {
+            "value": "50+",
+            "label": "Negocios ayudados"
+          },
+          {
+            "value": "98%",
+            "label": "Satisfacción"
+          },
+          {
+            "value": "10+",
+            "label": "Años experiencia"
+          }
+        ],
+        "faq": [
+          {
+            "q": "¿La primera sesión es gratuita?",
+            "a": "¡Sí! Ofrezco una conversación inicial de 30 minutos sin compromiso."
+          },
+          {
+            "q": "¿Es presencial u online?",
+            "a": "¡Ambos! Puedes elegir según tu preferencia y ubicación."
+          },
+          {
+            "q": "¿Cuántas sesiones necesito?",
+            "a": "Depende de los objetivos. Algunos clientes necesitan 1, otros prefieren seguimiento mensual."
+          }
+        ]
+      },
+      "drone": {
+        "headline": "Perspectivas que elevan tu marca. Literalmente.",
+        "subheadline": "Captación profesional de fotografía y vídeo aéreo con Drone DJI Air 2S. Imágenes cinematográficas que dan a tu negocio, evento o propiedad una visión única e impactante.",
+        "painPoints": [
+          "¿Necesitas imágenes aéreas para tu negocio?",
+          "¿Quieres destacar una propiedad o terreno?",
+          "¿Tu evento merece una cobertura épica?",
+          "¿Necesitas contenido diferenciador para las redes?"
+        ],
+        "benefits": [
+          {
+            "title": "Calidad 5.4K",
+            "desc": "Cámara con sensor de 1 pulgada y 20MP para imágenes nítidas y vídeo cinematográfico."
+          },
+          {
+            "title": "Piloto Certificado",
+            "desc": "Operador con licencia y seguro, cumpliendo todas las regulaciones de la ANAC."
+          },
+          {
+            "title": "Edición Profesional",
+            "desc": "Post-producción completa con corrección de color, estabilización y montaje."
+          },
+          {
+            "title": "Entrega Rápida",
+            "desc": "Archivos editados entregados en 48-72 horas después de la captación."
+          }
+        ],
+        "process": [
+          {
+            "step": "01",
+            "title": "Planificación",
+            "desc": "Definición del lugar, encuadres y autorizaciones de vuelo necesarias."
+          },
+          {
+            "step": "02",
+            "title": "Captación",
+            "desc": "Sesión de vuelo con múltiples pasadas para garantizar las mejores imágenes."
+          },
+          {
+            "step": "03",
+            "title": "Edición",
+            "desc": "Selección, tratamiento y montaje profesional del material captado."
+          },
+          {
+            "step": "04",
+            "title": "Entrega",
+            "desc": "Archivos finales en alta resolución, listos para usar en cualquier plataforma."
+          }
+        ],
+        "results": [
+          {
+            "value": "5.4K",
+            "label": "Resolución de vídeo"
+          },
+          {
+            "value": "20MP",
+            "label": "Fotografías aéreas"
+          },
+          {
+            "value": "48h",
+            "label": "Entrega rápida"
+          },
+          {
+            "value": "100%",
+            "label": "Cumplimiento legal"
+          }
+        ],
+        "faq": [
+          {
+            "q": "¿Dónde se pueden hacer los vuelos?",
+            "a": "En cualquier zona permitida por la ANAC. Nos encargamos de todas las autorizaciones necesarias."
+          },
+          {
+            "q": "¿Qué drone se utiliza?",
+            "a": "DJI Air 2S con cámara de 1\" y capacidad de vídeo 5.4K."
+          },
+          {
+            "q": "¿Incluyen edición?",
+            "a": "¡Sí! Todas las sesiones incluyen edición profesional y entrega de los archivos finales."
+          }
+        ]
+      },
+      "custom": {
+        "headline": "Tu desafío es único. La solución también.",
+        "subheadline": "Paquetes personalizados que combinan múltiples servicios para resolver tu desafío específico.",
+        "painPoints": [
+          "¿Necesitas más que un servicio aislado?",
+          "¿Quieres una solución integrada?",
+          "¿Ningún paquete estándar encaja?",
+          "¿Tienes un desafío complejo y específico?"
+        ],
+        "benefits": [
+          {
+            "title": "A Tu Medida",
+            "desc": "Combinación de servicios pensada exclusivamente para tu caso."
+          },
+          {
+            "title": "Gestión Centralizada",
+            "desc": "Un único punto de contacto para todos los servicios contratados."
+          },
+          {
+            "title": "Sinergia",
+            "desc": "Servicios integrados que se potencian mutuamente para mejores resultados."
+          },
+          {
+            "title": "Precio Optimizado",
+            "desc": "Paquete con condiciones especiales vs. contratación individual."
+          }
+        ],
+        "process": [
+          {
+            "step": "01",
+            "title": "Conversación",
+            "desc": "Entendemos el desafío y los objetivos de tu negocio."
+          },
+          {
+            "step": "02",
+            "title": "Propuesta",
+            "desc": "Creamos una propuesta personalizada con los servicios ideales."
+          },
+          {
+            "step": "03",
+            "title": "Ejecución",
+            "desc": "Implementación coordinada de todos los servicios."
+          },
+          {
+            "step": "04",
+            "title": "Evolución",
+            "desc": "Adaptación continua según los resultados y nuevos objetivos."
+          }
+        ],
+        "results": [
+          {
+            "value": "360°",
+            "label": "Solución completa"
+          },
+          {
+            "value": "-20%",
+            "label": "Vs. servicios individuales"
+          },
+          {
+            "value": "1",
+            "label": "Punto de contacto"
+          },
+          {
+            "value": "∞",
+            "label": "Posibilidades"
+          }
+        ],
+        "faq": [
+          {
+            "q": "¿Cómo funciona el presupuesto?",
+            "a": "Después de la conversación inicial, presento una propuesta detallada con valores."
+          },
+          {
+            "q": "¿Puedo ajustar el paquete después?",
+            "a": "¡Sí! El paquete evoluciona conforme tus necesidades cambian."
+          },
+          {
+            "q": "¿Cuál es el contrato mínimo?",
+            "a": "Depende de los servicios, pero normalmente propongo períodos de 3 meses."
+          }
+        ]
+      }
+    }
+  },
+  "portfolioPage": {
+    "badge": "Trabajos Seleccionados",
+    "heroTitle": "Proyectos que",
+    "heroHighlight": "Cuentan Historias",
+    "heroSubtitle": "Cada proyecto es una alianza única. Descubre cómo ayudé a marcas a crecer con estrategias de marketing que entregan resultados concretos.",
+    "heroCta": "Agendar Consultoría",
+    "heroSecondaryCta": "Ver Servicios",
+    "checkClients": "<strong>40+</strong> clientes satisfechos",
+    "checkGrowth": "<strong>180%</strong> crecimiento promedio",
+    "checkLeads": "<strong>3x</strong> más leads"
+  },
+  "simulator": {
+    "title": "Simulador de Precio",
+    "heroTitle": "Tu empresa aún no está verdaderamente online. Y eso está frenando tu crecimiento.",
+    "heroSubtitle": "Simula en menos de 60 segundos la inversión necesaria para crear una presencia digital profesional, automatizada y preparada para el futuro.",
+    "startSimulation": "Iniciar Simulación",
+    "howItWorks": "Cómo Funciona",
+    "howItWorksSubtitle": "3 pasos simples para obtener tu estimación",
+    "step1Title": "Elige los Servicios",
+    "step1Desc": "Selecciona el tipo de solución y los servicios que necesitas.",
+    "step2Title": "Define la Complejidad",
+    "step2Desc": "Indica el nivel de complejidad y el tamaño de tu negocio.",
+    "step3Title": "Recibe la Estimación",
+    "step3Desc": "Obtén un rango de precio estimado al instante.",
+    "step": "Paso",
+    "interactiveTitle": "Simulador Interactivo",
+    "interactiveSubtitle": "Responde 5 preguntas rápidas",
+    "solutionType": "Tipo de Solución",
+    "servicesLabel": "Servicios",
+    "complexity": "Complejidad",
+    "business": "Negocio",
+    "objective": "Objetivo",
+    "whatSolution": "¿Qué tipo de solución buscas?",
+    "whatServices": "¿Qué servicios necesitas?",
+    "selectMultiple": "selecciona varios",
+    "whatComplexity": "¿Cuál es el nivel de complejidad?",
+    "whatSize": "¿Cuál es el tamaño de tu negocio?",
+    "whatObjective": "¿Cuál es tu objetivo principal?",
+    "back": "Volver",
+    "next": "Siguiente",
+    "seeEstimate": "Ver Estimación",
+    "estimateTitle": "Estimación de Inversión",
+    "estimateBased": "Basada en tus respuestas",
+    "noVAT": "Valor indicativo · Sin IVA",
+    "selectedServices": "Servicios seleccionados:",
+    "getProposal": "Recibir Propuesta Completa",
+    "simulateAgain": "Simular de Nuevo",
+    "proposalTitle": "Recibir Propuesta Personalizada",
+    "proposalSubtitle": "Completa tus datos y recibe una propuesta en hasta 48h",
+    "fullName": "Nombre completo *",
+    "emailLabel": "Email *",
+    "mobileLabel": "Móvil",
+    "businessName": "Nombre del negocio",
+    "currentWebsite": "Sitio web actual",
+    "objectiveLabel": "Objetivo",
+    "whenStart": "¿Cuándo quieres empezar?",
+    "select": "Seleccionar...",
+    "immediately": "Inmediatamente",
+    "within1month": "Dentro de 1 mes",
+    "within3months": "Dentro de 3 meses",
+    "exploring": "Explorando opciones",
+    "messageOptional": "Mensaje (opcional)",
+    "submitting": "Enviando...",
+    "submitProposal": "Enviar Solicitud de Propuesta",
+    "requestSent": "¡Solicitud Enviada!",
+    "requestSentMsg": "Recibirás una propuesta personalizada en hasta 48 horas hábiles.",
+    "backToHome": "Volver al Inicio",
+    "aboutSpecialist": "Sobre el Especialista",
+    "specialistDesc": "Especialista en Marketing Digital y Transformación Digital con más de 20 años de experiencia. Ayudo a empresas locales y PYMEs a modernizar sus negocios con estrategia, tecnología e inteligencia artificial — siempre con enfoque en resultados.",
+    "scheduleMeeting": "Agendar Reunión",
+    "faqTitle": "Preguntas Frecuentes",
+    "readyTitle": "¿Listo para descubrir la inversión ideal?",
+    "readySubtitle": "Simula ahora y recibe una propuesta personalizada sin compromiso.",
+    "talkSpecialist": "Hablar con un Especialista",
+    "fillNameEmail": "Completa el nombre y email.",
+    "requestSuccess": "¡Solicitud enviada con éxito!",
+    "errorSend": "Error al enviar. Inténtalo de nuevo.",
+    "solutionTypes": {
+      "new": "Crear presencia digital desde cero",
+      "upgrade": "Mejorar/renovar presencia existente",
+      "specific": "Solución específica"
+    },
+    "serviceOptions": {
+      "website": "Sitio Web Profesional",
+      "social": "Gestión de Redes Sociales",
+      "google-business": "Google Business Profile",
+      "ads": "Google & Meta Ads",
+      "consultoria": "Consultoría Estratégica",
+      "software": "Desarrollo de Software",
+      "drone": "Fotografía & Vídeo Aéreo",
+      "ai": "Soluciones con IA"
+    },
+    "complexityLevels": {
+      "basic": {
+        "label": "Básico",
+        "desc": "Funcionalidades esenciales"
+      },
+      "standard": {
+        "label": "Estándar",
+        "desc": "Funcionalidades avanzadas"
+      },
+      "premium": {
+        "label": "Premium",
+        "desc": "Solución completa y personalizada"
+      }
+    },
+    "businessSizes": {
+      "freelancer": "Freelancer / Profesional",
+      "micro": "Microempresa (1-5 personas)",
+      "small": "Pequeña empresa (6-20 personas)",
+      "medium": "PYME (21-100 personas)"
+    },
+    "objectives": {
+      "visibility": "Aumentar visibilidad online",
+      "leads": "Generar más leads / clientes",
+      "automate": "Automatizar procesos",
+      "rebrand": "Renovar imagen de marca",
+      "scale": "Escalar el negocio"
+    },
+    "faqs": [
+      {
+        "q": "¿El simulador da un precio final?",
+        "a": "No. El simulador proporciona una estimación indicativa. El valor final se define después de un análisis personalizado de tu proyecto."
+      },
+      {
+        "q": "¿La simulación es gratuita?",
+        "a": "Sí, totalmente gratuita y sin compromiso. Puedes simular cuantas veces quieras."
+      },
+      {
+        "q": "¿Cuánto tiempo tarda en recibir una propuesta?",
+        "a": "Después de enviar el formulario, recibirás una propuesta personalizada en hasta 48 horas hábiles."
+      },
+      {
+        "q": "¿Puedo elegir varios servicios?",
+        "a": "¡Sí! Puedes seleccionar cuantos servicios quieras. El simulador calcula la inversión total combinada."
+      },
+      {
+        "q": "¿Los precios incluyen IVA?",
+        "a": "Los valores presentados son indicativos y no incluyen IVA. El valor final con IVA será detallado en la propuesta."
+      },
+      {
+        "q": "¿Existe algún compromiso al usar el simulador?",
+        "a": "Absolutamente ninguno. El simulador es una herramienta informativa para ayudarte a planificar tu inversión."
+      }
+    ]
+  },
+  "resourceDetail": {
+    "backToResources": "Volver a Recursos",
+    "socialProof": "Únete a miles de profesionales que usan este recurso.",
+    "whyUseTool": "¿Por qué usar esta herramienta?",
+    "whyDownload": "¿Por qué descargar?",
+    "whyUseToolDesc": "Esta herramienta fue creada para ayudarte a tomar decisiones estratégicas en tu negocio, de forma simple y eficaz.",
+    "whyDownloadDesc": "Este recurso fue creado para ayudarte a implementar estrategias profesionales en tu negocio, sin complicaciones.",
+    "accessFreeToolCta": "¡Accede a la herramienta gratis rellenando el formulario!",
+    "downloadFreeCta": "¡Descarga ahora gratis rellenando el formulario!",
+    "formTitle": "Rellena y recibe el recurso",
+    "successTitle": "¡Enviado con éxito!",
+    "successMsg": "Revisa tu email para acceder al recurso.",
+    "viewMoreResources": "Ver más recursos",
+    "labelName": "Nombre",
+    "labelEmail": "Email profesional",
+    "labelPhone": "Teléfono",
+    "placeholderName": "Tu nombre completo",
+    "placeholderEmail": "nombre@empresa.com",
+    "submitting": "Enviando...",
+    "privacyNote": "Prometemos no utilizar tu información para enviar ningún tipo de SPAM. Respetamos tu privacidad.",
+    "errorNameEmail": "Por favor rellena el nombre y el email.",
+    "errorEmail": "Por favor introduce un email válido.",
+    "errorCargo": "Por favor selecciona tu cargo.",
+    "errorBusinessArea": "Por favor selecciona el área de actuación.",
+    "errorSend": "Error al enviar. Inténtalo de nuevo.",
+    "successSend": "¡Gracias! El recurso ha sido enviado a tu email.",
+    "formSubtitle": "Solo tienes que rellenar tus datos abajo",
+    "nextStep": "Siguiente paso",
+    "prevStep": "Volver",
+    "labelCargo": "Cargo",
+    "labelBusinessArea": "Área de actuación de la empresa",
+    "labelWebsite": "Sitio web",
+    "selectPlaceholder": "Seleccione",
+    "cargoOptions": [
+      "CEO / Fundador",
+      "Director(a) de Marketing",
+      "Gestor(a) de Proyecto",
+      "Diseñador(a)",
+      "Programador(a)",
+      "Freelancer",
+      "Consultor(a)",
+      "Otro"
+    ],
+    "businessAreaOptions": [
+      "Tecnología",
+      "E-commerce",
+      "Salud",
+      "Educación",
+      "Inmobiliario",
+      "Restauración",
+      "Turismo",
+      "Servicios Profesionales",
+      "Industria",
+      "Otro"
+    ],
+    "items": {
+      "1": {
+        "headline": "Checklist de SEO On-Page",
+        "subheadline": "Optimiza cada página de tu sitio web con esta lista de verificación completa con más de 50 elementos esenciales.",
+        "ctaText": "¡Quiero la Checklist!",
+        "benefits": [
+          "Verificación completa de meta tags, títulos y descripciones",
+          "Análisis de rendimiento y velocidad de carga",
+          "Optimización de imágenes y contenido multimedia",
+          "Estructura de enlaces internos y externos",
+          "Checklist de accesibilidad y mobile-first"
+        ]
+      },
+      "2": {
+        "headline": "Plan de Marketing Anual",
+        "subheadline": "Plantilla completa y editable para planificar toda tu estrategia de marketing de principio a fin.",
+        "ctaText": "¡Quiero la Plantilla!",
+        "benefits": [
+          "Estructura de objetivos SMART y KPIs por trimestre",
+          "Calendario editorial con planificación mensual",
+          "Asignación de presupuesto por canal y campaña",
+          "Plantillas de informes de rendimiento",
+          "Guía de análisis de competencia incluida"
+        ]
+      },
+      "3": {
+        "headline": "Calculadora de ROI de Marketing",
+        "subheadline": "Calcula el retorno real de tus campañas y toma decisiones basadas en datos concretos.",
+        "ctaText": "¡Quiero la Calculadora!",
+        "benefits": [
+          "Cálculo automático de ROI por canal (Google, Meta, Email)",
+          "Comparación de rendimiento entre campañas",
+          "Proyecciones de crecimiento con diferentes escenarios",
+          "Informe visual listo para presentar a la dirección",
+          "Fórmulas preconfiguradas. Solo introduce tus datos"
+        ]
+      },
+      "4": {
+        "headline": "Guía de Branding Personal",
+        "subheadline": "Construye una marca personal fuerte y auténtica que te posicione como referencia en tu mercado.",
+        "ctaText": "¡Quiero la Guía!",
+        "benefits": [
+          "Framework completo de posicionamiento personal",
+          "Estrategia de contenido para LinkedIn y redes sociales",
+          "Plantillas de bio y \"elevator pitch\" profesional",
+          "Guía de fotografía e identidad visual personal",
+          "Plan de acción de 30 días para lanzar tu marca"
+        ]
+      },
+      "5": {
+        "headline": "Calendario Editorial Mensual",
+        "subheadline": "Planifica, organiza y publica contenido de forma consistente con esta plantilla profesional.",
+        "ctaText": "¡Quiero el Calendario!",
+        "benefits": [
+          "Planificación de contenido para 4 plataformas simultáneamente",
+          "Categorías y pilares de contenido predefinidos",
+          "Seguimiento de rendimiento por publicación",
+          "Ideas de contenido para 12 meses del año",
+          "Integración con fechas conmemorativas y tendencias"
+        ]
+      },
+      "6": {
+        "headline": "Auditoría Completa de Sitio Web",
+        "subheadline": "Identifica problemas técnicos, de SEO y de usabilidad que están perjudicando tu sitio web.",
+        "ctaText": "¡Quiero la Auditoría!",
+        "benefits": [
+          "Diagnóstico técnico de velocidad y Core Web Vitals",
+          "Análisis de SEO on-page y off-page",
+          "Verificación de usabilidad y experiencia del usuario",
+          "Informe de seguridad y certificados SSL",
+          "Recomendaciones priorizadas por impacto en el negocio"
+        ]
+      },
+      "7": {
+        "headline": "Análisis SEO Gratuito",
+        "subheadline": "Descubre cómo tu sitio web se comporta en los motores de búsqueda. Identifica problemas y recibe recomendaciones prácticas.",
+        "ctaText": "Analizar Mi Sitio Web",
+        "benefits": [
+          "Puntuación SEO general con análisis de 4 categorías",
+          "Métricas detalladas de SEO on-page y técnico",
+          "Análisis de rendimiento y velocidad de carga",
+          "Verificación de seguridad y certificados SSL",
+          "Problemas críticos y recomendaciones priorizadas"
+        ]
+      },
+      "8": {
+        "headline": "Generador de Ideas de Contenido con IA",
+        "subheadline": "Dinos tu nicho y la inteligencia artificial genera decenas de ideas creativas para tus redes sociales y blog.",
+        "ctaText": "Generar Ideas Gratis",
+        "benefits": [
+          "Ideas de posts con hashtags y mejores horarios",
+          "Conceptos de Reels con hooks creativos",
+          "Temas de artículos con palabras clave y estructura",
+          "Ideas de Stories interactivos",
+          "Contenido para carruseles con slides listos"
+        ]
+      }
+    }
+  },
+  "login": {
+    "seoTitle": "Iniciar Sesión",
+    "seoDesc": "Acceso al panel administrativo.",
+    "brandSubtitle": "Accede al panel de gestión y controla tus citas.",
+    "backToSite": "Volver al sitio",
+    "welcomeBack": "Bienvenido de nuevo",
+    "signInSubtitle": "Inicia sesión en tu cuenta",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Introduce tu email",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "Introduce tu contraseña",
+    "signingIn": "Entrando...",
+    "signIn": "Iniciar Sesión",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "errorCredentials": "Credenciales inválidas. Inténtalo de nuevo.",
+    "successLogin": "¡Sesión iniciada con éxito!",
+    "errorEmailFirst": "Introduce tu email primero.",
+    "errorResetSend": "Error al enviar email de recuperación.",
+    "successReset": "¡Email de recuperación enviado! Revisa tu bandeja de entrada."
+  },
+  "investors": {
+    "seoTitle": "Inversores — Startups y Proyectos Digitales",
+    "seoDesc": "Invierte en startups y proyectos digitales con alto potencial de crecimiento. Modelos SaaS escalables con IA integrada, liderados por Getboost Digital.",
+    "badge": "Inversores",
+    "heroTitle": "Invierte en Startups y Proyectos Digitales con Alto Potencial de Crecimiento",
+    "heroSubtitle": "Estamos construyendo un ecosistema de productos SaaS para mercados en expansión. Ahora abrimos oportunidades para inversores que quieren participar desde el inicio.",
+    "ctaPresentation": "Solicitar Presentación",
+    "ctaMeeting": "Agendar Reunión con el Fundador",
+    "ctaMeetingFounder": "Agendar Reunión con el Fundador",
+    "ctaMeetingShort": "Agendar Reunión",
+    "opportunitiesTitle": "Oportunidades de Inversión",
+    "opportunitiesSubtitle": "Ofrecemos diferentes modalidades para adecuarse al perfil de cada inversor.",
+    "types": {
+      "angel": {
+        "title": "Inversión Ángel",
+        "desc": "Capital inicial a cambio de equity. Ideal para inversores individuales que quieren apoyar startups en fase early-stage con mentoría y red de contactos."
+      },
+      "safe": {
+        "title": "SAFE",
+        "desc": "Simple Agreement for Future Equity — inversión convertible sin definir valoración inmediata. Simple, rápido y favorable para ambas partes."
+      },
+      "equity": {
+        "title": "Equity Directo",
+        "desc": "Participación directa en el capital social de la empresa. Indicado para inversores que quieren una posición clara desde el inicio."
+      },
+      "seed": {
+        "title": "Seed Investment",
+        "desc": "Rondas pre-seed y seed para acelerar el desarrollo del producto y validación de mercado. Para fondos e inversores estratégicos."
+      }
+    },
+    "portfolioTitle": "Portafolio de Proyectos",
+    "portfolioSubtitle": "Startups y productos SaaS en diferentes fases de desarrollo.",
+    "whyTitle": "Por Qué Invertir Con Nosotros",
+    "whyInvest": [
+      "Mercados reales y en crecimiento",
+      "Modelos SaaS escalables",
+      "Productos con IA integrada",
+      "Estrategia clara de monetización",
+      "Experiencia del fundador (+20 años)",
+      "Oportunidad de entrada en fase inicial"
+    ],
+    "founderTitle": "Sobre el Fundador",
+    "founderDesc1": "Getboost Digital tiene más de 20 años de experiencia en marketing digital, desarrollo web y transformación digital. Con más de 1500 proyectos entregados, combina visión estratégica con ejecución técnica para construir productos digitales escalables.",
+    "founderDesc2": "Lidera actualmente el desarrollo de un ecosistema de startups SaaS enfocadas en mercados de alto crecimiento, con integración de inteligencia artificial y un enfoque product-led growth.",
+    "ctaFinalTitle": "¿Listo para invertir en el futuro?",
+    "ctaFinalSubtitle": "Únete a nosotros en la construcción de soluciones digitales con impacto real.",
+    "phases": {
+      "launch": "Lanzamiento"
+    },
+    "countries": {
+      "brazil": "Brasil",
+      "portugal": "Portugal",
+      "spain": "España"
+    },
+    "labels": {
+      "market": "Mercado",
+      "status": "Estado",
+      "minTicket": "Ticket mínimo",
+      "modality": "Modalidad"
+    },
+    "modalities": {
+      "angelSafeSeed": "Ángel / SAFE / Seed",
+      "angelSafeEquity": "Ángel / SAFE / Equity",
+      "angelSafe": "Ángel / SAFE",
+      "angelSeed": "Ángel / Seed"
+    },
+    "badges": {
+      "growingMarket": "Mercado en expansión",
+      "aiIntegrated": "IA integrada",
+      "highScalability": "Alta escalabilidad",
+      "earlyStage": "Oportunidad early-stage",
+      "globalProduct": "Producto global",
+      "recurringRevenue": "Ingresos recurrentes",
+      "regulatedMarket": "Mercado regulado"
+    },
+    "projects": {
+      "qook": {
+        "subtitle": "Gestión de Restaurantes (Brasil)",
+        "tagline": "SaaS para gestión de restaurantes, cafés y dark kitchens. Mercado brasileño en fuerte expansión."
+      },
+      "hostify": {
+        "subtitle": "Gestión de Alojamientos (Brasil)",
+        "tagline": "Plataforma para posadas, hoteles y alojamientos locales. Mercado fragmentado con gran necesidad de digitalización."
+      },
+      "motivae": {
+        "subtitle": "Coach Personal con IA (Global)",
+        "tagline": "Aplicación de productividad y desarrollo personal con IA. Multilingüe y con potencial mundial."
+      },
+      "trackfy": {
+        "subtitle": "Rastreo de Vehículos",
+        "tagline": "SaaS para rastrear vehículos personales y empresariales en tiempo real."
+      },
+      "prosafe360": {
+        "subtitle": "Seguridad Laboral",
+        "tagline": "SaaS para gestión de seguridad laboral, salud ocupacional y conformidad legal en empresas."
+      },
+      "pikto": {
+        "subtitle": "Gestión de Horarios y RH",
+        "tagline": "Plataforma SaaS para control de horarios de empleados, gestión de asistencia y recursos humanos."
+      }
+    },
+    "form": {
+      "title": "Solicitar Pitch Deck",
+      "subtitle": "Rellena el formulario y recibe la presentación completa de nuestros proyectos.",
+      "name": "Nombre",
+      "email": "Email",
+      "phone": "Teléfono",
+      "country": "País",
+      "investorType": "Tipo de inversor",
+      "investorAngel": "Inversor Ángel",
+      "investorFund": "Fondo de Inversión",
+      "investorCorporate": "Corporate Venture",
+      "investorOther": "Otro",
+      "ticket": "Ticket deseado (€)",
+      "projectsInterest": "Proyecto(s) de interés",
+      "message": "Mensaje",
+      "submitting": "Enviando...",
+      "submit": "Solicitar Pitch Deck",
+      "fillRequired": "Rellena los campos obligatorios",
+      "successTitle": "¡Gracias por tu interés!",
+      "successDesc": "Nos pondremos en contacto pronto.",
+      "errorTitle": "Error al enviar",
+      "errorDesc": "Inténtalo de nuevo más tarde."
+    },
+    "phaseNames": {
+      "ideation": "Ideación",
+      "mvp": "MVP",
+      "beta": "Beta",
+      "launch": "Lanzamiento",
+      "scale": "Escala"
+    },
+    "currentValuation": "Valoración actual",
+    "viewProject": "Ver Proyecto",
+    "marketValues": {
+      "qook": "+12% al año",
+      "hostify": "+25% turismo post-pandemia",
+      "motivae": "$50B+ bienestar global",
+      "trackfy": "+15% al año (IoT)",
+      "prosafe360": "$2.5B EHS global",
+      "pikto": "$4B+ HR Tech global"
+    }
+  },
+  "brandingGuide": {
+    "seoTitle": "Guía de Branding Personal — Getboost Digital",
+    "seoDesc": "Guía completa para construir una marca personal fuerte y auténtica en el mundo digital.",
+    "badge": "Guía Exclusiva",
+    "heroTitle": "Guía Completa de Branding Personal",
+    "heroSubtitle": "Todo lo que necesitas para construir una marca personal fuerte, auténtica y que te posicione como referencia en tu mercado.",
+    "downloadPdf": "Descargar en PDF",
+    "s1Title": "Framework de Posicionamiento Personal",
+    "s1Subtitle": "Define quién eres, qué haces y para quién — de forma clara y diferenciadora.",
+    "s1Step1Title": "1. Autoconocimiento y Valores",
+    "s1Step1Items": [
+      "Identifica tus 5 valores fundamentales",
+      "Define tu misión personal en 1 frase",
+      "Lista tus puntos fuertes y competencias únicas",
+      "Descubre lo que te diferencia de otros profesionales"
+    ],
+    "s1Step2Title": "2. Público Objetivo y Posicionamiento",
+    "s1Step2Items": [
+      "Define el perfil ideal de tu cliente o audiencia",
+      "Identifica los dolores y necesidades de tu público",
+      "Crea tu propuesta de valor única (PVU)",
+      "Posiciónate en un nicho específico y relevante"
+    ],
+    "s1Step3Title": "3. Mensaje y Tono de Voz",
+    "s1Step3Items": [
+      "Define el tono de comunicación (formal, casual, inspirador)",
+      "Crea 3-5 pilares de contenido alineados con tu marca",
+      "Establece palabras clave y frases de firma",
+      "Mantén consistencia en todas las plataformas"
+    ],
+    "s2Title": "Estrategia de Contenido para Redes Sociales",
+    "s2Subtitle": "Planifica y publica contenido que refuerce tu marca personal en cada plataforma.",
+    "s2LinkedIn": [
+      "Publica 3-5x por semana con insights profesionales",
+      "Comparte casos de éxito y lecciones aprendidas",
+      "Comenta e interactúa con líderes de tu sector",
+      "Usa artículos largos para demostrar autoridad"
+    ],
+    "s2Instagram": [
+      "Crea carruseles educativos con consejos prácticos",
+      "Usa Stories para mostrar tu día a día profesional",
+      "Publica Reels con contenido de valor en menos de 60s",
+      "Mantén una estética visual consistente en tu feed"
+    ],
+    "s2Facebook": [
+      "Participa en grupos relevantes de tu nicho",
+      "Comparte contenido de blog y artículos de opinión",
+      "Crea eventos y lives para interactuar con tu audiencia",
+      "Usa Facebook para networking y comunidad"
+    ],
+    "s2BlogLabel": "Blog / Website",
+    "s2Blog": [
+      "Publica 2-4 artículos por mes con SEO optimizado",
+      "Crea contenido evergreen que atraiga tráfico orgánico",
+      "Incluye CTAs en todos los artículos",
+      "Usa tu blog como el hub central de tu marca personal"
+    ],
+    "s3Title": "Templates de Bio y Elevator Pitch",
+    "s3Subtitle": "Modelos listos para usar y presentarte de forma profesional y memorable.",
+    "s3Bio1Label": "BIO PARA LINKEDIN",
+    "s3Bio1Template": "Ayudo a [público objetivo] a [resultado deseado] a través de [método/servicio]. Con [X años] de experiencia en [área], he ayudado a [número] profesionales/empresas a [resultado concreto]. 📩 [CTA]",
+    "s3Bio2Label": "BIO PARA INSTAGRAM",
+    "s3Bio2Template": "🎯 [Lo que haces] para [quién]\n💡 [Resultado principal que entregas]\n📍 [Ubicación]\n🔗 [Link a recurso gratuito o web]",
+    "s3PitchLabel": "ELEVATOR PITCH (30 SEGUNDOS)",
+    "s3PitchTemplate": "Hola, soy [nombre] y ayudo a [público objetivo] a [resolver problema específico]. La mayoría de [público] enfrenta [dolor principal], y yo les ayudo a superarlo con [solución/método]. En los últimos [tiempo], he ayudado a [número] clientes a lograr [resultado medible].",
+    "s4Title": "Fotografía e Identidad Visual",
+    "s4Subtitle": "Guía práctica para crear una imagen profesional consistente y memorable.",
+    "s4Photo": "Fotografía Profesional",
+    "s4PhotoItems": [
+      "Invierte en una sesión fotográfica profesional",
+      "Toma fotos con fondo neutro y buena iluminación",
+      "Incluye primeros planos, media distancia y fotos de trabajo",
+      "Mantén una expresión accesible y segura",
+      "Actualiza tus fotos cada 12-18 meses"
+    ],
+    "s4Visual": "Identidad Visual",
+    "s4VisualItems": [
+      "Elige 2-3 colores que representen tu marca",
+      "Define 1-2 tipografías principales",
+      "Crea templates consistentes para posts y presentaciones",
+      "Usa el mismo avatar/foto de perfil en todas las plataformas",
+      "Desarrolla un logo personal o monograma"
+    ],
+    "s5Title": "Plan de Acción de 30 Días",
+    "s5Subtitle": "Un roadmap paso a paso para lanzar tu marca personal en solo 30 días.",
+    "s5Week1Title": "Semana 1 — Fundación",
+    "s5Week1Items": [
+      "Completa el ejercicio de autoconocimiento y valores",
+      "Define tu público objetivo y propuesta de valor",
+      "Agenda una sesión fotográfica profesional",
+      "Crea o actualiza tu perfil en LinkedIn"
+    ],
+    "s5Week2Title": "Semana 2 — Presencia Digital",
+    "s5Week2Items": [
+      "Optimiza todos los perfiles en redes sociales",
+      "Crea tu sitio web o página personal",
+      "Escribe tu bio y elevator pitch",
+      "Define tus pilares de contenido"
+    ],
+    "s5Week3Title": "Semana 3 — Contenido",
+    "s5Week3Items": [
+      "Publica tu primer artículo o post de valor",
+      "Crea un calendario editorial para 30 días",
+      "Inicia networking activo (5 conexiones/día en LinkedIn)",
+      "Comparte tu historia profesional en las redes"
+    ],
+    "s5Week4Title": "Semana 4 — Crecimiento",
+    "s5Week4Items": [
+      "Analiza métricas y ajusta la estrategia",
+      "Solicita recomendaciones a colegas y clientes",
+      "Crea tu primer recurso gratuito (ebook, checklist)",
+      "Define objetivos para los próximos 90 días"
+    ],
+    "ctaTitle": "¿Listo para construir tu marca personal?",
+    "ctaDesc": "Descarga esta guía en PDF y empieza hoy mismo a implementar tu estrategia de branding personal."
+  },
+  "email": {
+    "booking": {
+      "confirmation": {
+        "subject": "Tu reunión está confirmada",
+        "preview": "Tu reunión con {{siteName}} está confirmada",
+        "greeting": "¡Hola {{name}}, tu reunión está confirmada!",
+        "greetingGeneric": "¡Tu reunión está confirmada!",
+        "intro": "Gracias por programar una reunión con nosotros. Aquí están los detalles:",
+        "type": "Tipo",
+        "date": "Fecha",
+        "time": "Hora",
+        "company": "Empresa",
+        "linkNote": "Recibirás un enlace para la videollamada antes de la reunión. Si necesitas reprogramar o cancelar, responde a este correo electrónico.",
+        "closing": "Saludos cordiales,",
+        "team": "El equipo de {{siteName}}"
+      }
+    }
+  },
+  "droneCalculator": {
+    "title": "Planes de Fotografía y Vídeo con Dron",
+    "subtitle": "Elige el plan ideal para tu proyecto y calcula automáticamente el coste final según tu ubicación.",
+    "basePlan": "Sesión Sin Edición",
+    "editedPlan": "Sesión Con Edición",
+    "basePrice": "Precio base",
+    "includes": "Incluye",
+    "extraCost": "Coste adicional",
+    "calculateBtn": "Calcular precio final",
+    "popular": "Popular",
+    "calcTitle": "Calculadora de Desplazamiento",
+    "calcDesc": "Introduce la dirección donde se realizará la sesión para calcular el precio total con desplazamiento incluido.",
+    "addressPlaceholder": "Calle, Ciudad o Código Postal...",
+    "calcAction": "Calcular",
+    "infoNote": "El cálculo se hace desde Figueira da Foz. ¡Los primeros 15 km son gratis!",
+    "totalDist": "Distancia total",
+    "extraKm": "Km adicionales",
+    "addCost": "Coste adicional",
+    "estimatedValue": "Precio Estimado",
+    "reserve": "Reservar",
+    "toastSuccess": "¡Distancia calculada con éxito!",
+    "toastError": "Error al calcular la distancia. Inténtalo de nuevo más tarde.",
+    "addressError": "Por favor, introduce una dirección.",
+    "notFoundError": "Dirección no encontrada. Intenta ser más específico."
+  },
+  "seoHome": {
+    "title": "Getboost — Máquina de crecimiento con Marketing, Software e IA",
+    "description": "Ayudamos a pymes a crecer con marketing digital, software a medida e IA aplicada. +500 proyectos en Portugal y Brasil. Agenda tu sesión gratuita."
+  }
+}

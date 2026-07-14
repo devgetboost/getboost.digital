@@ -1,0 +1,509 @@
+/* Font loaded via index.html preload for better performance */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 27% 95%;
+    --foreground: 0 0% 10%;
+
+    --card: 40 20% 91%;
+    --card-foreground: 0 0% 10%;
+
+    --popover: 40 27% 95%;
+    --popover-foreground: 0 0% 10%;
+
+    --primary: 14 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 40 20% 89%;
+    --secondary-foreground: 0 0% 10%;
+
+    --muted: 40 15% 90%;
+    --muted-foreground: 0 0% 25%;
+
+    --accent: 15 80% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 40 15% 83%;
+    --input: 40 15% 83%;
+    --ring: 14 100% 50%;
+
+    --radius: 0.875rem;
+
+    --section-alt: 38 30% 95%;
+
+    --sidebar-background: 40 20% 91%;
+    --sidebar-foreground: 0 0% 10%;
+    --sidebar-primary: 14 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 15 80% 45%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 40 15% 83%;
+    --sidebar-ring: 14 100% 50%;
+
+    /* Admin (Semrush-inspired light) tokens */
+    --admin-surface: 0 0% 100%;
+    --admin-border: 220 13% 91%;
+    --admin-fg: 220 39% 11%;
+    --admin-fg-muted: 220 9% 46%;
+    --admin-fg-subtle: 220 9% 65%;
+    --admin-hover: 220 14% 96%;
+    --admin-active: 218 21% 95%;
+    --admin-active-bar: 220 39% 11%;
+  }
+
+  .dark {
+    --background: 0 0% 4%;
+    --foreground: 40 27% 95%;
+
+    --card: 0 0% 7%;
+    --card-foreground: 40 27% 95%;
+
+    --popover: 0 0% 4%;
+    --popover-foreground: 40 27% 95%;
+
+    --primary: 14 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 40 27% 95%;
+
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 85%;
+
+    --accent: 15 80% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 16%;
+    --input: 0 0% 16%;
+    --ring: 14 100% 50%;
+
+    --section-alt: 0 0% 7%;
+
+    --sidebar-background: 0 0% 4%;
+    --sidebar-foreground: 40 27% 95%;
+    --sidebar-primary: 14 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 15 80% 55%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 16%;
+    --sidebar-ring: 14 100% 50%;
+  }
+}
+
+/*
+ * Admin scope — remaps semantic shadcn tokens to admin-* tokens so
+ * every primitive (Card, Input, Select, Table, Dialog, Badge, Button ghost/outline)
+ * inside the admin area inherits the Semrush-light look of the sidebar,
+ * without touching individual pages.
+ */
+@layer base {
+  .admin-scope,
+  body[data-admin="true"] [role="dialog"],
+  body[data-admin="true"] [data-radix-popper-content-wrapper],
+  body[data-admin="true"] [data-sonner-toaster] {
+    --background: var(--admin-hover);
+    --foreground: var(--admin-fg);
+
+    --card: var(--admin-surface);
+    --card-foreground: var(--admin-fg);
+
+    --popover: var(--admin-surface);
+    --popover-foreground: var(--admin-fg);
+
+    --muted: var(--admin-hover);
+    --muted-foreground: var(--admin-fg-muted);
+
+    --accent: var(--admin-active);
+    --accent-foreground: var(--admin-fg);
+
+    --border: var(--admin-border);
+    --input: var(--admin-border);
+    --ring: var(--admin-fg);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.025em;
+  }
+}
+
+/* Rich text and TipTap editor styles */
+.tiptap,
+.blog-rich-content {
+  outline: none;
+}
+
+.tiptap {
+  line-height: 1.75;
+}
+
+.blog-rich-content {
+  color: hsl(var(--foreground) / 0.82);
+  font-size: 1.125rem;
+  line-height: 1.85;
+}
+
+/* On dark surfaces (used in BlogPost detail) force light readable text */
+.blog-rich-content.prose-invert {
+  color: rgba(255, 255, 255, 0.78);
+}
+.blog-rich-content.prose-invert h1,
+.blog-rich-content.prose-invert h2,
+.blog-rich-content.prose-invert h3,
+.blog-rich-content.prose-invert h4,
+.blog-rich-content.prose-invert strong {
+  color: #ffffff;
+}
+.blog-rich-content.prose-invert blockquote {
+  color: rgba(255, 255, 255, 0.85);
+}
+.blog-rich-content.prose-invert a {
+  color: #ff4000;
+}
+.blog-rich-content.prose-invert hr {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+.blog-rich-content.prose-invert code {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffd9c9;
+}
+.blog-rich-content.prose-invert th {
+  background: rgba(255, 255, 255, 0.05);
+}
+.blog-rich-content.prose-invert th,
+.blog-rich-content.prose-invert td {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: hsl(var(--muted-foreground));
+  opacity: 0.5;
+  pointer-events: none;
+  height: 0;
+}
+
+.tiptap p,
+.blog-rich-content p {
+  margin: 0 0 1.5rem;
+}
+
+.tiptap h1,
+.blog-rich-content h1 {
+  font-size: 2em;
+  font-weight: 700;
+  margin: 1.2em 0 0.6em;
+  color: hsl(var(--foreground));
+}
+
+.tiptap h2,
+.blog-rich-content h2 {
+  font-size: 1.5em;
+  font-weight: 700;
+  margin: 1.2em 0 0.6em;
+  color: hsl(var(--foreground));
+}
+
+.tiptap h3,
+.blog-rich-content h3 {
+  font-size: 1.25em;
+  font-weight: 600;
+  margin: 1em 0 0.5em;
+  color: hsl(var(--foreground));
+}
+
+.tiptap h4,
+.blog-rich-content h4 {
+  font-size: 1.1em;
+  font-weight: 600;
+  margin: 0.8em 0 0.4em;
+  color: hsl(var(--foreground));
+}
+
+.tiptap ul,
+.blog-rich-content ul {
+  list-style: disc;
+  padding-left: 1.5em;
+  margin: 0 0 1.5rem;
+}
+
+.tiptap ol,
+.blog-rich-content ol {
+  list-style: decimal;
+  padding-left: 1.5em;
+  margin: 0 0 1.5rem;
+}
+
+.tiptap li,
+.blog-rich-content li {
+  margin-bottom: 0.5rem;
+}
+
+.tiptap blockquote,
+.blog-rich-content blockquote {
+  border-left: 3px solid hsl(var(--primary));
+  padding-left: 1em;
+  margin: 1.5em 0;
+  color: hsl(var(--foreground) / 0.8);
+  font-style: italic;
+}
+
+.tiptap code,
+.blog-rich-content code {
+  background: hsl(var(--muted));
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.tiptap pre,
+.blog-rich-content pre {
+  background: hsl(var(--muted));
+  padding: 1em;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 0 0 1.5rem;
+}
+
+.tiptap pre code,
+.blog-rich-content pre code {
+  background: none;
+  padding: 0;
+}
+
+.tiptap img,
+.blog-rich-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+}
+
+.tiptap hr,
+.blog-rich-content hr {
+  border: none;
+  border-top: 1px solid hsl(var(--border));
+  margin: 2rem 0;
+}
+
+.tiptap table,
+.blog-rich-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 0 1.5rem;
+}
+
+.tiptap th,
+.tiptap td,
+.blog-rich-content th,
+.blog-rich-content td {
+  border: 1px solid hsl(var(--border));
+  padding: 0.5em 0.75em;
+  text-align: left;
+}
+
+.tiptap th,
+.blog-rich-content th {
+  background: hsl(var(--muted));
+  font-weight: 600;
+}
+
+.tiptap mark,
+.blog-rich-content mark {
+  background: hsl(var(--primary) / 0.2);
+  padding: 0.1em 0.2em;
+  border-radius: 2px;
+}
+
+.blog-rich-content a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.blog-rich-content strong {
+  color: hsl(var(--foreground));
+  font-weight: 700;
+}
+
+.blog-rich-content :last-child {
+  margin-bottom: 0;
+}
+
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+
+  .text-gradient-accent {
+    @apply bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent;
+  }
+
+  .bg-gradient-primary {
+    @apply bg-gradient-to-r from-primary to-accent;
+  }
+
+  .bg-gradient-accent {
+    @apply bg-gradient-to-r from-accent to-primary;
+  }
+
+  .glass {
+    @apply bg-background/80 backdrop-blur-xl border-b border-border/60;
+  }
+
+  .section-padding {
+    @apply px-6 py-20 md:px-12 lg:px-24 lg:py-32;
+  }
+
+  /* Boost card border effect — used across pages for consistent card style */
+  .card-boost {
+    @apply rounded-xl border border-border transition-all duration-300;
+  }
+  .card-boost-hover {
+    @apply hover:shadow-lg;
+  }
+}
+
+
+@keyframes blob-morph {
+  0%, 100% {
+    border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
+  }
+  25% {
+    border-radius: 50% 60% 40% 60% / 60% 40% 55% 45%;
+  }
+  50% {
+    border-radius: 40% 55% 60% 45% / 45% 50% 60% 40%;
+  }
+  75% {
+    border-radius: 55% 45% 45% 55% / 50% 55% 45% 55%;
+  }
+}
+
+/* ================================================================
+   Recorte da hero em forma de onda com vale central.
+   Usa CSS mask com 2 camadas:
+     A) rectângulo sólido a cobrir o topo (100% - --wave-h)
+     B) SVG (bottom) com a zona ACIMA da linha da onda preenchida
+        — o espaço do vale fica transparente, deixando ver a secção
+        seguinte, seja qual for a sua cor.
+   ================================================================ */
+.hero-wave-clip {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' preserveAspectRatio='none'><path fill='black' d='M0,0 L1440,0 L1440,760 C 1200,760 960,760 880,760 C 800,760 780,820 720,820 C 660,820 640,760 560,760 C 480,760 240,760 0,760 Z'/></svg>");
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' preserveAspectRatio='none'><path fill='black' d='M0,0 L1440,0 L1440,760 C 1200,760 960,760 880,760 C 800,760 780,820 720,820 C 660,820 640,760 560,760 C 480,760 240,760 0,760 Z'/></svg>");
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+/* DEBUG: adiciona a classe `hero-wave-debug` ao <html> ou <body>
+   (ex: document.documentElement.classList.add('hero-wave-debug'))
+   para ver a área do recorte, o contorno da onda, o overlay ciano
+   e um badge que indica se está ativo `mask-image` ou o fallback
+   `clip-path`. */
+.hero-wave-debug .hero-wave-clip {
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  clip-path: none !important;
+  outline: 3px dashed #ff00ff !important;
+  outline-offset: -3px;
+  position: relative;
+}
+.hero-wave-debug .hero-wave-clip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' preserveAspectRatio='none'><path fill='rgba(0,220,255,0.35)' stroke='%23ff0000' stroke-width='4' d='M0,0 L1440,0 L1440,760 C 1200,760 960,760 880,760 C 800,760 780,820 720,820 C 660,820 640,760 560,760 C 480,760 240,760 0,760 Z'/></svg>") center / 100% 100% no-repeat;
+}
+
+/* Badge por defeito: assume mask-image (verde). */
+.hero-wave-debug .hero-wave-clip::before {
+  content: "DEBUG • MODO: mask-image (SVG)";
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10000;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font: 700 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #04220f;
+  background: #22c55e;
+  border: 2px solid #04220f;
+  box-shadow: 0 2px 0 #04220f;
+  pointer-events: none;
+}
+
+/* Se o browser não suporta mask-image, o fallback clip-path está ativo:
+   badge muda para laranja. */
+@supports not ((mask-image: url("#")) or (-webkit-mask-image: url("#"))) {
+  .hero-wave-debug .hero-wave-clip::before {
+    content: "DEBUG • MODO: clip-path (fallback)";
+    background: #ff8a00;
+    color: #2a1400;
+    border-color: #2a1400;
+    box-shadow: 0 2px 0 #2a1400;
+  }
+}
+
+/* Fallback: browsers sem suporte a CSS mask-image usam clip-path.
+   Aproxima a mesma onda com uma curva Bézier (polygon não suporta curvas,
+   mas path() com clip-path funciona no Chrome/Edge/Safari recentes;
+   caímos para polygon com muitos pontos se path() não existir). */
+/* Fallback 100% em % — mesma proporção da SVG mask (viewBox 1440x900).
+   Linha base y = 760/900 = 84.444%   Vale y = 820/900 = 91.111%
+   Vale x entre 560/1440 (38.889%) e 880/1440 (61.111%), mínimo em 50%. */
+@supports not ((mask-image: url("#")) or (-webkit-mask-image: url("#"))) {
+  .hero-wave-clip {
+    clip-path: polygon(
+      0% 0%, 100% 0%,
+      100% 84.444%,
+      61.111% 84.444%,
+      58% 85.4%,
+      55% 87.2%,
+      52.5% 89.4%,
+      50% 91.111%,
+      47.5% 89.4%,
+      45% 87.2%,
+      42% 85.4%,
+      38.889% 84.444%,
+      0% 84.444%
+    );
+  }
+}
+
+/* Override tracking-[0.22em] utility */
+.tracking-\[0\.22em\] {
+  letter-spacing: 0.07em;
+}

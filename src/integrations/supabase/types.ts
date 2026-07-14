@@ -2429,50 +2429,71 @@ export type Database = {
         Row: {
           account_id: string | null
           action: string | null
+          approved_at: string | null
+          approved_by: string | null
+          brand: Json
           content: string
           created_at: string
+          created_by: string | null
           hashtags: string[]
           id: string
           metadata: Json
+          model: string | null
           notes: string | null
           output: Json
+          payload: Json
           published_at: string | null
           rede: string | null
           scheduled_at: string | null
           status: string
           updated_at: string
+          validation: Json
         }
         Insert: {
           account_id?: string | null
           action?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          brand?: Json
           content?: string
           created_at?: string
+          created_by?: string | null
           hashtags?: string[]
           id?: string
           metadata?: Json
+          model?: string | null
           notes?: string | null
           output?: Json
+          payload?: Json
           published_at?: string | null
           rede?: string | null
           scheduled_at?: string | null
           status?: string
           updated_at?: string
+          validation?: Json
         }
         Update: {
           account_id?: string | null
           action?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          brand?: Json
           content?: string
           created_at?: string
+          created_by?: string | null
           hashtags?: string[]
           id?: string
           metadata?: Json
+          model?: string | null
           notes?: string | null
           output?: Json
+          payload?: Json
           published_at?: string | null
           rede?: string | null
           scheduled_at?: string | null
           status?: string
           updated_at?: string
+          validation?: Json
         }
         Relationships: [
           {
@@ -2557,36 +2578,57 @@ export type Database = {
       }
       solucao_routing: {
         Row: {
+          active: boolean
           add_to_brevo: boolean
           brevo_list_id: number | null
+          cc_emails: string[]
           created_at: string
+          crm_pipeline: string | null
+          crm_stage: string | null
           id: string
           is_active: boolean
-          notify_email: boolean
+          notes: string | null
+          notify_email: string
+          owner_name: string | null
           recipients: string[]
           slug: string
+          title: string | null
           updated_at: string
         }
         Insert: {
+          active?: boolean
           add_to_brevo?: boolean
           brevo_list_id?: number | null
+          cc_emails?: string[]
           created_at?: string
+          crm_pipeline?: string | null
+          crm_stage?: string | null
           id?: string
           is_active?: boolean
-          notify_email?: boolean
+          notes?: string | null
+          notify_email: string
+          owner_name?: string | null
           recipients?: string[]
           slug: string
+          title?: string | null
           updated_at?: string
         }
         Update: {
+          active?: boolean
           add_to_brevo?: boolean
           brevo_list_id?: number | null
+          cc_emails?: string[]
           created_at?: string
+          crm_pipeline?: string | null
+          crm_stage?: string | null
           id?: string
           is_active?: boolean
-          notify_email?: boolean
+          notes?: string | null
+          notify_email?: string
+          owner_name?: string | null
           recipients?: string[]
           slug?: string
+          title?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -2683,6 +2725,42 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      vip_subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          metadata: Json
+          name: string
+          phone: string | null
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          metadata?: Json
+          name: string
+          phone?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          metadata?: Json
+          name?: string
+          phone?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
         }
         Relationships: []
       }

@@ -1238,6 +1238,48 @@ export type Database = {
         }
         Relationships: []
       }
+      email_accounts: {
+        Row: {
+          connection_key: string | null
+          created_at: string
+          display_name: string | null
+          email: string
+          id: string
+          last_sync_at: string | null
+          metadata: Json
+          provider: string
+          status: string
+          sync_enabled: boolean
+          updated_at: string
+        }
+        Insert: {
+          connection_key?: string | null
+          created_at?: string
+          display_name?: string | null
+          email: string
+          id?: string
+          last_sync_at?: string | null
+          metadata?: Json
+          provider?: string
+          status?: string
+          sync_enabled?: boolean
+          updated_at?: string
+        }
+        Update: {
+          connection_key?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string
+          id?: string
+          last_sync_at?: string | null
+          metadata?: Json
+          provider?: string
+          status?: string
+          sync_enabled?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       email_drafts: {
         Row: {
           account_id: string | null
@@ -1353,6 +1395,111 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      email_link_clicks: {
+        Row: {
+          clicked_at: string
+          created_at: string
+          id: string
+          kind: string | null
+          message_id: string | null
+          metadata: Json
+          recipient_email: string | null
+          template_name: string | null
+          url: string | null
+        }
+        Insert: {
+          clicked_at?: string
+          created_at?: string
+          id?: string
+          kind?: string | null
+          message_id?: string | null
+          metadata?: Json
+          recipient_email?: string | null
+          template_name?: string | null
+          url?: string | null
+        }
+        Update: {
+          clicked_at?: string
+          created_at?: string
+          id?: string
+          kind?: string | null
+          message_id?: string | null
+          metadata?: Json
+          recipient_email?: string | null
+          template_name?: string | null
+          url?: string | null
+        }
+        Relationships: []
+      }
+      email_opens: {
+        Row: {
+          created_at: string
+          id: string
+          message_id: string | null
+          metadata: Json
+          opened_at: string
+          recipient_email: string | null
+          template_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message_id?: string | null
+          metadata?: Json
+          opened_at?: string
+          recipient_email?: string | null
+          template_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message_id?: string | null
+          metadata?: Json
+          opened_at?: string
+          recipient_email?: string | null
+          template_name?: string | null
+        }
+        Relationships: []
+      }
+      email_send_log: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          message_id: string | null
+          metadata: Json
+          recipient_email: string | null
+          sent_at: string | null
+          status: string
+          template_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          message_id?: string | null
+          metadata?: Json
+          recipient_email?: string | null
+          sent_at?: string | null
+          status?: string
+          template_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          message_id?: string | null
+          metadata?: Json
+          recipient_email?: string | null
+          sent_at?: string | null
+          status?: string
+          template_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       email_templates: {
         Row: {
@@ -1708,11 +1855,17 @@ export type Database = {
           created_at: string
           description: string
           duration: string | null
+          duration_seconds: number | null
+          episode_number: number | null
+          eyebrow: string | null
           guest_name: string | null
           id: string
+          published: boolean
           published_at: string | null
           slug: string
+          sort_order: number
           status: string
+          tags: string[]
           title: string
           updated_at: string
         }
@@ -1722,11 +1875,17 @@ export type Database = {
           created_at?: string
           description?: string
           duration?: string | null
+          duration_seconds?: number | null
+          episode_number?: number | null
+          eyebrow?: string | null
           guest_name?: string | null
           id?: string
+          published?: boolean
           published_at?: string | null
           slug: string
+          sort_order?: number
           status?: string
+          tags?: string[]
           title: string
           updated_at?: string
         }
@@ -1736,11 +1895,17 @@ export type Database = {
           created_at?: string
           description?: string
           duration?: string | null
+          duration_seconds?: number | null
+          episode_number?: number | null
+          eyebrow?: string | null
           guest_name?: string | null
           id?: string
+          published?: boolean
           published_at?: string | null
           slug?: string
+          sort_order?: number
           status?: string
+          tags?: string[]
           title?: string
           updated_at?: string
         }
@@ -1785,6 +1950,7 @@ export type Database = {
           client: string
           created_at: string
           description: string
+          gallery: string[]
           id: string
           image: string
           results: string
@@ -1800,6 +1966,7 @@ export type Database = {
           client?: string
           created_at?: string
           description?: string
+          gallery?: string[]
           id?: string
           image?: string
           results?: string
@@ -1815,6 +1982,7 @@ export type Database = {
           client?: string
           created_at?: string
           description?: string
+          gallery?: string[]
           id?: string
           image?: string
           results?: string

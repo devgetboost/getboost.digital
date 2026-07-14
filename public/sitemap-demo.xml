@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://getboostsoft.lovable.app/demo</loc>
-    <lastmod>2026-07-09</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt" href="https://getboostsoft.lovable.app/demo"/>
@@ -12,25 +12,25 @@
   </url>
   <url>
     <loc>https://getboostsoft.lovable.app/demo?produto=pikto</loc>
-    <lastmod>2026-07-09</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://getboostsoft.lovable.app/demo?produto=prosafe360</loc>
-    <lastmod>2026-07-09</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://getboostsoft.lovable.app/demo?produto=motivae</loc>
-    <lastmod>2026-07-09</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://getboostsoft.lovable.app/demo?produto=qook</loc>
-    <lastmod>2026-07-09</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt" href="https://getboostsoft.lovable.app/demo?produto=qook"/>
@@ -40,7 +40,7 @@
   </url>
   <url>
     <loc>https://getboostsoft.lovable.app/demo?produto=qook&lang=en</loc>
-    <lastmod>2026-07-09</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="pt" href="https://getboostsoft.lovable.app/demo?produto=qook"/>
@@ -50,7 +50,7 @@
   </url>
   <url>
     <loc>https://getboostsoft.lovable.app/demo?produto=qook&lang=es</loc>
-    <lastmod>2026-07-09</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="pt" href="https://getboostsoft.lovable.app/demo?produto=qook"/>
@@ -60,13 +60,13 @@
   </url>
   <url>
     <loc>https://getboostsoft.lovable.app/demo?produto=hostify</loc>
-    <lastmod>2026-07-09</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://getboostsoft.lovable.app/demo?produto=trackfy</loc>
-    <lastmod>2026-07-09</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

@@ -141,7 +141,7 @@ export function AdminSidebar() {
         {groups.map((group) => {
           const groupActive = group.items.some((i) => isActive(i.url));
           return (
-            <SidebarGroup key={group.label} defaultOpen={groupActive}>
+            <SidebarGroup key={group.label} data-active={groupActive || undefined}>
               {!collapsed && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
               <SidebarGroupContent>
                 <SidebarMenu>

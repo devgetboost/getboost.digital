@@ -397,7 +397,10 @@ export type Database = {
       agentic_scenario_runs: {
         Row: {
           agent_fn: string
+          batch_id: string | null
           created_at: string
+          duration_ms: number | null
+          error: string | null
           http_status: number | null
           id: string
           latency_ms: number | null
@@ -410,7 +413,10 @@ export type Database = {
         }
         Insert: {
           agent_fn: string
+          batch_id?: string | null
           created_at?: string
+          duration_ms?: number | null
+          error?: string | null
           http_status?: number | null
           id?: string
           latency_ms?: number | null
@@ -423,7 +429,10 @@ export type Database = {
         }
         Update: {
           agent_fn?: string
+          batch_id?: string | null
           created_at?: string
+          duration_ms?: number | null
+          error?: string | null
           http_status?: number | null
           id?: string
           latency_ms?: number | null
@@ -753,6 +762,9 @@ export type Database = {
           created_at: string
           from_status: string | null
           id: string
+          metadata: Json
+          notes: string | null
+          source: string | null
           to_status: string | null
         }
         Insert: {
@@ -762,6 +774,9 @@ export type Database = {
           created_at?: string
           from_status?: string | null
           id?: string
+          metadata?: Json
+          notes?: string | null
+          source?: string | null
           to_status?: string | null
         }
         Update: {
@@ -771,6 +786,9 @@ export type Database = {
           created_at?: string
           from_status?: string | null
           id?: string
+          metadata?: Json
+          notes?: string | null
+          source?: string | null
           to_status?: string | null
         }
         Relationships: [
@@ -1159,81 +1177,141 @@ export type Database = {
       }
       commercial_audit_reports: {
         Row: {
+          admin_notes: string | null
           answers: Json
           company: string | null
+          contact_company: string | null
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
           created_at: string
           email: string | null
           id: string
+          industry: string | null
+          lead_id: string | null
           name: string | null
           notes: string | null
           phone: string | null
+          report: Json
+          report_status: string
           score: number | null
           status: string
           updated_at: string
+          verdict: string | null
           website: string | null
         }
         Insert: {
+          admin_notes?: string | null
           answers?: Json
           company?: string | null
+          contact_company?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
           created_at?: string
           email?: string | null
           id?: string
+          industry?: string | null
+          lead_id?: string | null
           name?: string | null
           notes?: string | null
           phone?: string | null
+          report?: Json
+          report_status?: string
           score?: number | null
           status?: string
           updated_at?: string
+          verdict?: string | null
           website?: string | null
         }
         Update: {
+          admin_notes?: string | null
           answers?: Json
           company?: string | null
+          contact_company?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
           created_at?: string
           email?: string | null
           id?: string
+          industry?: string | null
+          lead_id?: string | null
           name?: string | null
           notes?: string | null
           phone?: string | null
+          report?: Json
+          report_status?: string
           score?: number | null
           status?: string
           updated_at?: string
+          verdict?: string | null
           website?: string | null
         }
         Relationships: []
       }
       crm_validation_failures: {
         Row: {
+          click_id: string | null
           created_at: string
+          expected: string | null
           field: string | null
+          field_name: string | null
           id: string
+          issues: Json
+          location: string | null
+          page_url: string | null
           payload: Json
+          raw_payload: Json
           reason: string | null
+          received: string | null
           resolved: boolean
+          severity: string | null
           source: string | null
           source_id: string | null
+          template: string | null
           value: string | null
         }
         Insert: {
+          click_id?: string | null
           created_at?: string
+          expected?: string | null
           field?: string | null
+          field_name?: string | null
           id?: string
+          issues?: Json
+          location?: string | null
+          page_url?: string | null
           payload?: Json
+          raw_payload?: Json
           reason?: string | null
+          received?: string | null
           resolved?: boolean
+          severity?: string | null
           source?: string | null
           source_id?: string | null
+          template?: string | null
           value?: string | null
         }
         Update: {
+          click_id?: string | null
           created_at?: string
+          expected?: string | null
           field?: string | null
+          field_name?: string | null
           id?: string
+          issues?: Json
+          location?: string | null
+          page_url?: string | null
           payload?: Json
+          raw_payload?: Json
           reason?: string | null
+          received?: string | null
           resolved?: boolean
+          severity?: string | null
           source?: string | null
           source_id?: string | null
+          template?: string | null
           value?: string | null
         }
         Relationships: []
@@ -1339,6 +1417,7 @@ export type Database = {
           name: string
           sort_order: number
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           color?: string
@@ -1347,6 +1426,7 @@ export type Database = {
           name: string
           sort_order?: number
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           color?: string
@@ -1355,6 +1435,7 @@ export type Database = {
           name?: string
           sort_order?: number
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -1852,6 +1933,7 @@ export type Database = {
         Row: {
           audio_url: string | null
           cover_image: string | null
+          cover_url: string | null
           created_at: string
           description: string
           duration: string | null
@@ -1872,6 +1954,7 @@ export type Database = {
         Insert: {
           audio_url?: string | null
           cover_image?: string | null
+          cover_url?: string | null
           created_at?: string
           description?: string
           duration?: string | null
@@ -1892,6 +1975,7 @@ export type Database = {
         Update: {
           audio_url?: string | null
           cover_image?: string | null
+          cover_url?: string | null
           created_at?: string
           description?: string
           duration?: string | null
@@ -1914,31 +1998,40 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          company: string | null
           created_at: string
           display_name: string | null
           email: string | null
           full_name: string | null
           id: string
+          notes: string | null
+          phone: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           avatar_url?: string | null
+          company?: string | null
           created_at?: string
           display_name?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
+          notes?: string | null
+          phone?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           avatar_url?: string | null
+          company?: string | null
           created_at?: string
           display_name?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
+          notes?: string | null
+          phone?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -2180,11 +2273,14 @@ export type Database = {
       social_media_drafts: {
         Row: {
           account_id: string | null
+          action: string | null
           content: string
           created_at: string
           hashtags: string[]
           id: string
           metadata: Json
+          notes: string | null
+          output: Json
           published_at: string | null
           rede: string | null
           scheduled_at: string | null
@@ -2193,11 +2289,14 @@ export type Database = {
         }
         Insert: {
           account_id?: string | null
+          action?: string | null
           content?: string
           created_at?: string
           hashtags?: string[]
           id?: string
           metadata?: Json
+          notes?: string | null
+          output?: Json
           published_at?: string | null
           rede?: string | null
           scheduled_at?: string | null
@@ -2206,11 +2305,14 @@ export type Database = {
         }
         Update: {
           account_id?: string | null
+          action?: string | null
           content?: string
           created_at?: string
           hashtags?: string[]
           id?: string
           metadata?: Json
+          notes?: string | null
+          output?: Json
           published_at?: string | null
           rede?: string | null
           scheduled_at?: string | null
@@ -2227,23 +2329,73 @@ export type Database = {
           },
         ]
       }
+      social_media_drafts_audit: {
+        Row: {
+          action: string
+          actor_email: string | null
+          created_at: string
+          draft_id: string | null
+          from_status: string | null
+          id: string
+          metadata: Json
+          notes: string | null
+          scheduled_at: string | null
+          to_status: string | null
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          created_at?: string
+          draft_id?: string | null
+          from_status?: string | null
+          id?: string
+          metadata?: Json
+          notes?: string | null
+          scheduled_at?: string | null
+          to_status?: string | null
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          created_at?: string
+          draft_id?: string | null
+          from_status?: string | null
+          id?: string
+          metadata?: Json
+          notes?: string | null
+          scheduled_at?: string | null
+          to_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_media_drafts_audit_draft_id_fkey"
+            columns: ["draft_id"]
+            isOneToOne: false
+            referencedRelation: "social_media_drafts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       social_media_notification_settings: {
         Row: {
           enabled: boolean
           id: number
           recipients: string[]
+          statuses: string[]
           updated_at: string
         }
         Insert: {
           enabled?: boolean
           id?: number
           recipients?: string[]
+          statuses?: string[]
           updated_at?: string
         }
         Update: {
           enabled?: boolean
           id?: number
           recipients?: string[]
+          statuses?: string[]
           updated_at?: string
         }
         Relationships: []

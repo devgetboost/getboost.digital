@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Allow: /demo
+Allow: /demo?produto=
+Disallow: /admin/
+Disallow: /cliente/
+Disallow: /login
+Disallow: /reset-password
+Disallow: /unsubscribe
+Disallow: /api/
+
+# Sitemaps
+Sitemap: https://getboostsoft.lovable.app/sitemap.xml
+Sitemap: https://getboostsoft.lovable.app/sitemap-demo.xml

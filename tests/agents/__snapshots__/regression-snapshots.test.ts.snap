@@ -1,0 +1,86 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Regressão — snapshots de respostas > Booking Assistant — confirmação 1`] = `
+{
+  "action": "confirm",
+  "includesLink": true,
+  "message": "Confirmamos a tua reunião para amanhã às 10h.",
+}
+`;
+
+exports[`Regressão — snapshots de respostas > Campaign Strategist — nurturing 1`] = `
+{
+  "estimatedReach": 1240,
+  "firstParagraph": "Olá — este mês reunimos os aprendizados com mais impacto.",
+  "preheader": "Curto, útil, direto ao ponto.",
+  "segment": "leads utm=linkedin",
+  "subjectLines": [
+    "Guia rápido: IA sem enganos",
+    "A tua vantagem competitiva",
+    "Pequenos passos",
+  ],
+}
+`;
+
+exports[`Regressão — snapshots de respostas > Content Editor — artigo base 1`] = `
+{
+  "body": "Este artigo cobre os passos essenciais para escalar operações com IA.",
+  "cta": "Fala connosco para um diagnóstico gratuito.",
+  "metaDescription": "Guia prático para PMEs adotarem IA sem enganos, com passos claros e métricas.",
+  "outline": [
+    "Contexto",
+    "Onde começar",
+    "Erros comuns",
+    "Métricas",
+  ],
+  "slug": "escalar-operacoes-ia-2026",
+  "tags": [
+    "ia",
+    "operacoes",
+    "pmes",
+  ],
+  "title": "Como escalar operações com IA em 2026",
+}
+`;
+
+exports[`Regressão — snapshots de respostas > Lead Qualifier — cargo médio 1`] = `
+{
+  "classification": "morno",
+  "justification": "Contacto de nível médio",
+  "nextAction": "Nutrir com conteúdo",
+  "score": 45,
+  "tags": [
+    "channel-direct",
+    "utm-none",
+  ],
+}
+`;
+
+exports[`Regressão — snapshots de respostas > Lead Qualifier — cargo sénior 1`] = `
+{
+  "classification": "quente",
+  "justification": "Cargo decisor sénior",
+  "nextAction": "Agendar demo",
+  "score": 80,
+  "tags": [
+    "channel-direct",
+    "utm-linkedin",
+  ],
+}
+`;
+
+exports[`Regressão — snapshots de respostas > WhatsApp Concierge — handoff urgência 1`] = `
+{
+  "handoff": true,
+  "handoffCategory": "urgency",
+  "reply": "Vou passar já a um colega humano.",
+}
+`;
+
+exports[`Regressão — snapshots de respostas > WhatsApp Concierge — mensagem normal 1`] = `
+{
+  "handoff": false,
+  "handoffCategory": "none",
+  "reply": "Olá! Como posso ajudar?",
+}
+`;

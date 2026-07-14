@@ -1,0 +1,47 @@
+# Getboost Digital — Marketing Digital & IA
+
+> Especialista em Marketing Digital, Transformação Digital e Inteligência Artificial na Figueira da Foz, Portugal. +20 anos de experiência e +1500 projetos entregues.
+
+## Pages
+
+- [Home](/): Apresentação e principais serviços.
+- [Sobre](/about): Percurso, valores e abordagem de trabalho.
+- [Serviços](/services): Gestão de redes sociais, desenvolvimento web, Google Ads, consultoria e mais.
+- [Portfólio](/portfolio): Projetos e casos de estudo.
+- [Investidores](/investidores): Projetos com participação como investidor (Qook, Hostify, Motivae, entre outros).
+- [Blog](/blog): Artigos sobre marketing digital, IA e transformação digital.
+- [Recursos](/resources): Guias, ebooks e ferramentas gratuitas.
+- [Contacto](/contact): Formulário de contacto e dados de contacto.
+- [Agendamento](/booking): Marcar diagnóstico gratuito de 7 minutos.
+
+## Serviços principais
+
+- [Gestão de Redes Sociais](/services/gestao-redes-sociais)
+- [Desenvolvimento Web](/services/desenvolvimento-web)
+- [Google & Meta Ads](/services/google-meta-ads)
+- [Consultoria Estratégica](/services/consultoria-estrategica)
+- [Google Business Profile](/services/google-business-profile)
+- [Fotografia & Drone](/services/fotografia-drone)
+
+## Optional
+
+- [Simulador de Preços](/simulador): Calcular orçamento estimado.
+- [Calculadora de ROI](/tools/roi-calculator): Estimar retorno de campanhas.
+- [Analisador SEO](/tools/seo-analyzer): Análise SEO gratuita.
+- [Ideias de Conteúdo](/tools/content-ideas): Gerador de ideias para conteúdo.
+- [Política de Privacidade](/politica-de-privacidade)
+- [Política de Cookies](/politica-de-cookies)
+
+## SEO Local - Cidades servidas
+
+- [Figueira da Foz (sede)](/agencia-marketing-digital-figueira-da-foz): Agência de marketing digital, software e IA para PMEs da Figueira da Foz. Turismo, hotelaria, restauração, indústria e comércio local.
+- [Coimbra](/agencia-marketing-digital-coimbra): Trabalhamos com startups tecnológicas, saúde, universidade e comércio da Baixa. ~40 min da sede.
+- [Leiria](/agencia-marketing-digital-leiria): Indústria de moldes, plásticos, metalomecânica e vidro. ~50 min da sede.
+- [Pombal](/agencia-marketing-digital-pombal): Logística, agroindústria e indústria transformadora. ~35 min da sede.
+
+## Contactos
+
+- **Morada**: Rua Passeio Infante Dom Henrique, 22, Sala 33, 1º Piso, 3080-042 Figueira da Foz, Portugal
+- **Telefone**: +351 963 574 400
+- **Email**: geral@getboost.digital
+- **Horário**: Segunda a sexta, 09:00 às 18:30

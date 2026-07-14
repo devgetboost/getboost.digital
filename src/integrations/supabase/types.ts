@@ -1334,6 +1334,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           email: string
+          email_address: string | null
           id: string
           last_sync_at: string | null
           metadata: Json
@@ -1347,6 +1348,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           email: string
+          email_address?: string | null
           id?: string
           last_sync_at?: string | null
           metadata?: Json
@@ -1360,6 +1362,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           email?: string
+          email_address?: string | null
           id?: string
           last_sync_at?: string | null
           metadata?: Json
@@ -1453,6 +1456,7 @@ export type Database = {
       }
       email_lead_links: {
         Row: {
+          account_id: string | null
           created_at: string
           direction: string | null
           id: string
@@ -1462,6 +1466,7 @@ export type Database = {
           subject: string | null
         }
         Insert: {
+          account_id?: string | null
           created_at?: string
           direction?: string | null
           id?: string
@@ -1471,6 +1476,7 @@ export type Database = {
           subject?: string | null
         }
         Update: {
+          account_id?: string | null
           created_at?: string
           direction?: string | null
           id?: string
@@ -1591,6 +1597,30 @@ export type Database = {
           status?: string
           template_name?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      email_stars: {
+        Row: {
+          account_id: string
+          created_at: string
+          id: string
+          message_id: string
+          user_id: string
+        }
+        Insert: {
+          account_id: string
+          created_at?: string
+          id?: string
+          message_id: string
+          user_id: string
+        }
+        Update: {
+          account_id?: string
+          created_at?: string
+          id?: string
+          message_id?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -2767,31 +2797,61 @@ export type Database = {
       whatsapp_assistant_config: {
         Row: {
           assistant_name: string
+          business_hours: Json
+          business_hours_only: boolean
+          chunk_delay_ms: number
+          chunk_max_chars: number
+          chunk_strategy: string
           default_instance_id: string | null
+          enabled: boolean
           escalation_email: string | null
           id: number
           is_active: boolean
           knowledge_base: string
+          max_chunks_per_reply: number
+          max_replies_per_hour: number
+          model: string
+          offline_message: string
           system_prompt: string
           updated_at: string
         }
         Insert: {
           assistant_name?: string
+          business_hours?: Json
+          business_hours_only?: boolean
+          chunk_delay_ms?: number
+          chunk_max_chars?: number
+          chunk_strategy?: string
           default_instance_id?: string | null
+          enabled?: boolean
           escalation_email?: string | null
           id?: number
           is_active?: boolean
           knowledge_base?: string
+          max_chunks_per_reply?: number
+          max_replies_per_hour?: number
+          model?: string
+          offline_message?: string
           system_prompt?: string
           updated_at?: string
         }
         Update: {
           assistant_name?: string
+          business_hours?: Json
+          business_hours_only?: boolean
+          chunk_delay_ms?: number
+          chunk_max_chars?: number
+          chunk_strategy?: string
           default_instance_id?: string | null
+          enabled?: boolean
           escalation_email?: string | null
           id?: number
           is_active?: boolean
           knowledge_base?: string
+          max_chunks_per_reply?: number
+          max_replies_per_hour?: number
+          model?: string
+          offline_message?: string
           system_prompt?: string
           updated_at?: string
         }
@@ -2867,30 +2927,54 @@ export type Database = {
       }
       whatsapp_concierge_alert_settings: {
         Row: {
+          bookings_drop_pct: number
+          cooldown_hours: number
           email_recipients: string[]
           enabled: boolean
           id: number
+          invites_drop_pct: number
+          min_samples: number
+          recipients: string[]
+          slack_webhook_urls: string[]
           telegram_chat_ids: string[]
           updated_at: string
+          valid_pct_min: number
           violation_threshold: number
+          violations_spike_pct: number
           webhook_url: string | null
         }
         Insert: {
+          bookings_drop_pct?: number
+          cooldown_hours?: number
           email_recipients?: string[]
           enabled?: boolean
           id?: number
+          invites_drop_pct?: number
+          min_samples?: number
+          recipients?: string[]
+          slack_webhook_urls?: string[]
           telegram_chat_ids?: string[]
           updated_at?: string
+          valid_pct_min?: number
           violation_threshold?: number
+          violations_spike_pct?: number
           webhook_url?: string | null
         }
         Update: {
+          bookings_drop_pct?: number
+          cooldown_hours?: number
           email_recipients?: string[]
           enabled?: boolean
           id?: number
+          invites_drop_pct?: number
+          min_samples?: number
+          recipients?: string[]
+          slack_webhook_urls?: string[]
           telegram_chat_ids?: string[]
           updated_at?: string
+          valid_pct_min?: number
           violation_threshold?: number
+          violations_spike_pct?: number
           webhook_url?: string | null
         }
         Relationships: []
@@ -3019,7 +3103,10 @@ export type Database = {
       whatsapp_handoffs: {
         Row: {
           assigned_to: string | null
+          canned_reply: string | null
           category: string | null
+          contact_name: string | null
+          contact_phone: string | null
           conversation_id: string | null
           created_at: string
           first_human_reply_at: string | null
@@ -3031,17 +3118,23 @@ export type Database = {
           notes: string | null
           queue_priority: number
           reassign_count: number
+          reassign_reason: string | null
           resolved_at: string | null
           resolved_by: string | null
           sla_breached_at: string | null
           sla_due_at: string | null
+          sla_minutes: number | null
           source: string | null
           status: string
+          trigger_message: string | null
           updated_at: string
         }
         Insert: {
           assigned_to?: string | null
+          canned_reply?: string | null
           category?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
           conversation_id?: string | null
           created_at?: string
           first_human_reply_at?: string | null
@@ -3053,17 +3146,23 @@ export type Database = {
           notes?: string | null
           queue_priority?: number
           reassign_count?: number
+          reassign_reason?: string | null
           resolved_at?: string | null
           resolved_by?: string | null
           sla_breached_at?: string | null
           sla_due_at?: string | null
+          sla_minutes?: number | null
           source?: string | null
           status?: string
+          trigger_message?: string | null
           updated_at?: string
         }
         Update: {
           assigned_to?: string | null
+          canned_reply?: string | null
           category?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
           conversation_id?: string | null
           created_at?: string
           first_human_reply_at?: string | null
@@ -3075,12 +3174,15 @@ export type Database = {
           notes?: string | null
           queue_priority?: number
           reassign_count?: number
+          reassign_reason?: string | null
           resolved_at?: string | null
           resolved_by?: string | null
           sla_breached_at?: string | null
           sla_due_at?: string | null
+          sla_minutes?: number | null
           source?: string | null
           status?: string
+          trigger_message?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -3100,6 +3202,7 @@ export type Database = {
           id: string
           instance_id: string
           is_active: boolean
+          notes: string | null
         }
         Insert: {
           agent_id?: string | null
@@ -3107,6 +3210,7 @@ export type Database = {
           id?: string
           instance_id: string
           is_active?: boolean
+          notes?: string | null
         }
         Update: {
           agent_id?: string | null
@@ -3114,6 +3218,7 @@ export type Database = {
           id?: string
           instance_id?: string
           is_active?: boolean
+          notes?: string | null
         }
         Relationships: [
           {
@@ -3134,31 +3239,55 @@ export type Database = {
       }
       whatsapp_instances: {
         Row: {
+          api_key: string | null
           connected_number: string | null
           created_at: string
           id: string
+          instance_name: string | null
+          last_connected_at: string | null
           metadata: Json
           name: string
+          pairing_code: string | null
+          qrcode_base64: string | null
+          qrcode_expires_at: string | null
+          server_url: string | null
           status: string
           updated_at: string
+          webhook_configured: boolean
         }
         Insert: {
+          api_key?: string | null
           connected_number?: string | null
           created_at?: string
           id: string
+          instance_name?: string | null
+          last_connected_at?: string | null
           metadata?: Json
           name: string
+          pairing_code?: string | null
+          qrcode_base64?: string | null
+          qrcode_expires_at?: string | null
+          server_url?: string | null
           status?: string
           updated_at?: string
+          webhook_configured?: boolean
         }
         Update: {
+          api_key?: string | null
           connected_number?: string | null
           created_at?: string
           id?: string
+          instance_name?: string | null
+          last_connected_at?: string | null
           metadata?: Json
           name?: string
+          pairing_code?: string | null
+          qrcode_base64?: string | null
+          qrcode_expires_at?: string | null
+          server_url?: string | null
           status?: string
           updated_at?: string
+          webhook_configured?: boolean
         }
         Relationships: []
       }

@@ -1265,11 +1265,15 @@ export type Database = {
           raw_payload: Json
           reason: string | null
           received: string | null
+          referrer: string | null
           resolved: boolean
           severity: string | null
           source: string | null
           source_id: string | null
           template: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
           value: string | null
         }
         Insert: {
@@ -1286,11 +1290,15 @@ export type Database = {
           raw_payload?: Json
           reason?: string | null
           received?: string | null
+          referrer?: string | null
           resolved?: boolean
           severity?: string | null
           source?: string | null
           source_id?: string | null
           template?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
           value?: string | null
         }
         Update: {
@@ -1307,11 +1315,15 @@ export type Database = {
           raw_payload?: Json
           reason?: string | null
           received?: string | null
+          referrer?: string | null
           resolved?: boolean
           severity?: string | null
           source?: string | null
           source_id?: string | null
           template?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
           value?: string | null
         }
         Relationships: []
@@ -1322,6 +1334,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           email: string
+          email_address: string | null
           id: string
           last_sync_at: string | null
           metadata: Json
@@ -1335,6 +1348,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           email: string
+          email_address?: string | null
           id?: string
           last_sync_at?: string | null
           metadata?: Json
@@ -1348,6 +1362,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           email?: string
+          email_address?: string | null
           id?: string
           last_sync_at?: string | null
           metadata?: Json
@@ -1441,6 +1456,7 @@ export type Database = {
       }
       email_lead_links: {
         Row: {
+          account_id: string | null
           created_at: string
           direction: string | null
           id: string
@@ -1450,6 +1466,7 @@ export type Database = {
           subject: string | null
         }
         Insert: {
+          account_id?: string | null
           created_at?: string
           direction?: string | null
           id?: string
@@ -1459,6 +1476,7 @@ export type Database = {
           subject?: string | null
         }
         Update: {
+          account_id?: string | null
           created_at?: string
           direction?: string | null
           id?: string
@@ -1579,6 +1597,30 @@ export type Database = {
           status?: string
           template_name?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      email_stars: {
+        Row: {
+          account_id: string
+          created_at: string
+          id: string
+          message_id: string
+          user_id: string
+        }
+        Insert: {
+          account_id: string
+          created_at?: string
+          id?: string
+          message_id: string
+          user_id: string
+        }
+        Update: {
+          account_id?: string
+          created_at?: string
+          id?: string
+          message_id?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -1944,7 +1986,7 @@ export type Database = {
           id: string
           published: boolean
           published_at: string | null
-          slug: string
+          slug: string | null
           sort_order: number
           status: string
           tags: string[]
@@ -1965,7 +2007,7 @@ export type Database = {
           id?: string
           published?: boolean
           published_at?: string | null
-          slug: string
+          slug?: string | null
           sort_order?: number
           status?: string
           tags?: string[]
@@ -1986,7 +2028,7 @@ export type Database = {
           id?: string
           published?: boolean
           published_at?: string | null
-          slug?: string
+          slug?: string | null
           sort_order?: number
           status?: string
           tags?: string[]
@@ -1994,6 +2036,116 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      product_knowledge: {
+        Row: {
+          cases: Json
+          created_at: string
+          extra: Json
+          faq: Json
+          icp: string | null
+          id: string
+          is_active: boolean
+          objections: Json
+          pitch: string | null
+          pricing: Json
+          product_name: string
+          product_slug: string
+          tone: string | null
+          updated_at: string
+        }
+        Insert: {
+          cases?: Json
+          created_at?: string
+          extra?: Json
+          faq?: Json
+          icp?: string | null
+          id?: string
+          is_active?: boolean
+          objections?: Json
+          pitch?: string | null
+          pricing?: Json
+          product_name: string
+          product_slug: string
+          tone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cases?: Json
+          created_at?: string
+          extra?: Json
+          faq?: Json
+          icp?: string | null
+          id?: string
+          is_active?: boolean
+          objections?: Json
+          pitch?: string | null
+          pricing?: Json
+          product_name?: string
+          product_slug?: string
+          tone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      product_knowledge_versions: {
+        Row: {
+          cases: Json | null
+          created_at: string
+          extra: Json | null
+          faq: Json | null
+          icp: string | null
+          id: string
+          note: string | null
+          objections: Json | null
+          pitch: string | null
+          pricing: Json | null
+          product_knowledge_id: string
+          product_name: string | null
+          tone: string | null
+          version_number: number
+        }
+        Insert: {
+          cases?: Json | null
+          created_at?: string
+          extra?: Json | null
+          faq?: Json | null
+          icp?: string | null
+          id?: string
+          note?: string | null
+          objections?: Json | null
+          pitch?: string | null
+          pricing?: Json | null
+          product_knowledge_id: string
+          product_name?: string | null
+          tone?: string | null
+          version_number: number
+        }
+        Update: {
+          cases?: Json | null
+          created_at?: string
+          extra?: Json | null
+          faq?: Json | null
+          icp?: string | null
+          id?: string
+          note?: string | null
+          objections?: Json | null
+          pitch?: string | null
+          pricing?: Json | null
+          product_knowledge_id?: string
+          product_name?: string | null
+          tone?: string | null
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_knowledge_versions_product_knowledge_id_fkey"
+            columns: ["product_knowledge_id"]
+            isOneToOne: false
+            referencedRelation: "product_knowledge"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -2270,54 +2422,108 @@ export type Database = {
           },
         ]
       }
+      social_media_author_limits: {
+        Row: {
+          created_at: string
+          hashtags_max: number | null
+          hashtags_min: number | null
+          id: string
+          max_chars: number | null
+          rede: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          hashtags_max?: number | null
+          hashtags_min?: number | null
+          id?: string
+          max_chars?: number | null
+          rede: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          hashtags_max?: number | null
+          hashtags_min?: number | null
+          id?: string
+          max_chars?: number | null
+          rede?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       social_media_drafts: {
         Row: {
           account_id: string | null
           action: string | null
+          approved_at: string | null
+          approved_by: string | null
+          brand: Json
           content: string
           created_at: string
+          created_by: string | null
           hashtags: string[]
           id: string
           metadata: Json
+          model: string | null
           notes: string | null
           output: Json
+          payload: Json
           published_at: string | null
           rede: string | null
           scheduled_at: string | null
           status: string
           updated_at: string
+          validation: Json
         }
         Insert: {
           account_id?: string | null
           action?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          brand?: Json
           content?: string
           created_at?: string
+          created_by?: string | null
           hashtags?: string[]
           id?: string
           metadata?: Json
+          model?: string | null
           notes?: string | null
           output?: Json
+          payload?: Json
           published_at?: string | null
           rede?: string | null
           scheduled_at?: string | null
           status?: string
           updated_at?: string
+          validation?: Json
         }
         Update: {
           account_id?: string | null
           action?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          brand?: Json
           content?: string
           created_at?: string
+          created_by?: string | null
           hashtags?: string[]
           id?: string
           metadata?: Json
+          model?: string | null
           notes?: string | null
           output?: Json
+          payload?: Json
           published_at?: string | null
           rede?: string | null
           scheduled_at?: string | null
           status?: string
           updated_at?: string
+          validation?: Json
         }
         Relationships: [
           {
@@ -2402,36 +2608,57 @@ export type Database = {
       }
       solucao_routing: {
         Row: {
+          active: boolean
           add_to_brevo: boolean
           brevo_list_id: number | null
+          cc_emails: string[]
           created_at: string
+          crm_pipeline: string | null
+          crm_stage: string | null
           id: string
           is_active: boolean
-          notify_email: boolean
+          notes: string | null
+          notify_email: string
+          owner_name: string | null
           recipients: string[]
           slug: string
+          title: string | null
           updated_at: string
         }
         Insert: {
+          active?: boolean
           add_to_brevo?: boolean
           brevo_list_id?: number | null
+          cc_emails?: string[]
           created_at?: string
+          crm_pipeline?: string | null
+          crm_stage?: string | null
           id?: string
           is_active?: boolean
-          notify_email?: boolean
+          notes?: string | null
+          notify_email: string
+          owner_name?: string | null
           recipients?: string[]
           slug: string
+          title?: string | null
           updated_at?: string
         }
         Update: {
+          active?: boolean
           add_to_brevo?: boolean
           brevo_list_id?: number | null
+          cc_emails?: string[]
           created_at?: string
+          crm_pipeline?: string | null
+          crm_stage?: string | null
           id?: string
           is_active?: boolean
-          notify_email?: boolean
+          notes?: string | null
+          notify_email?: string
+          owner_name?: string | null
           recipients?: string[]
           slug?: string
+          title?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -2531,34 +2758,100 @@ export type Database = {
         }
         Relationships: []
       }
+      vip_subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          metadata: Json
+          name: string
+          phone: string | null
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          metadata?: Json
+          name: string
+          phone?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          metadata?: Json
+          name?: string
+          phone?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       whatsapp_assistant_config: {
         Row: {
           assistant_name: string
+          business_hours: Json
+          business_hours_only: boolean
+          chunk_delay_ms: number
+          chunk_max_chars: number
+          chunk_strategy: string
           default_instance_id: string | null
+          enabled: boolean
           escalation_email: string | null
           id: number
           is_active: boolean
           knowledge_base: string
+          max_chunks_per_reply: number
+          max_replies_per_hour: number
+          model: string
+          offline_message: string
           system_prompt: string
           updated_at: string
         }
         Insert: {
           assistant_name?: string
+          business_hours?: Json
+          business_hours_only?: boolean
+          chunk_delay_ms?: number
+          chunk_max_chars?: number
+          chunk_strategy?: string
           default_instance_id?: string | null
+          enabled?: boolean
           escalation_email?: string | null
           id?: number
           is_active?: boolean
           knowledge_base?: string
+          max_chunks_per_reply?: number
+          max_replies_per_hour?: number
+          model?: string
+          offline_message?: string
           system_prompt?: string
           updated_at?: string
         }
         Update: {
           assistant_name?: string
+          business_hours?: Json
+          business_hours_only?: boolean
+          chunk_delay_ms?: number
+          chunk_max_chars?: number
+          chunk_strategy?: string
           default_instance_id?: string | null
+          enabled?: boolean
           escalation_email?: string | null
           id?: number
           is_active?: boolean
           knowledge_base?: string
+          max_chunks_per_reply?: number
+          max_replies_per_hour?: number
+          model?: string
+          offline_message?: string
           system_prompt?: string
           updated_at?: string
         }
@@ -2570,6 +2863,7 @@ export type Database = {
           conversation_id: string | null
           created_at: string
           direction: string
+          external_id: string | null
           id: string
           sender: string
           status: string | null
@@ -2579,6 +2873,7 @@ export type Database = {
           conversation_id?: string | null
           created_at?: string
           direction: string
+          external_id?: string | null
           id?: string
           sender?: string
           status?: string | null
@@ -2588,6 +2883,7 @@ export type Database = {
           conversation_id?: string | null
           created_at?: string
           direction?: string
+          external_id?: string | null
           id?: string
           sender?: string
           status?: string | null
@@ -2631,30 +2927,54 @@ export type Database = {
       }
       whatsapp_concierge_alert_settings: {
         Row: {
+          bookings_drop_pct: number
+          cooldown_hours: number
           email_recipients: string[]
           enabled: boolean
           id: number
+          invites_drop_pct: number
+          min_samples: number
+          recipients: string[]
+          slack_webhook_urls: string[]
           telegram_chat_ids: string[]
           updated_at: string
+          valid_pct_min: number
           violation_threshold: number
+          violations_spike_pct: number
           webhook_url: string | null
         }
         Insert: {
+          bookings_drop_pct?: number
+          cooldown_hours?: number
           email_recipients?: string[]
           enabled?: boolean
           id?: number
+          invites_drop_pct?: number
+          min_samples?: number
+          recipients?: string[]
+          slack_webhook_urls?: string[]
           telegram_chat_ids?: string[]
           updated_at?: string
+          valid_pct_min?: number
           violation_threshold?: number
+          violations_spike_pct?: number
           webhook_url?: string | null
         }
         Update: {
+          bookings_drop_pct?: number
+          cooldown_hours?: number
           email_recipients?: string[]
           enabled?: boolean
           id?: number
+          invites_drop_pct?: number
+          min_samples?: number
+          recipients?: string[]
+          slack_webhook_urls?: string[]
           telegram_chat_ids?: string[]
           updated_at?: string
+          valid_pct_min?: number
           violation_threshold?: number
+          violations_spike_pct?: number
           webhook_url?: string | null
         }
         Relationships: []
@@ -2783,7 +3103,10 @@ export type Database = {
       whatsapp_handoffs: {
         Row: {
           assigned_to: string | null
+          canned_reply: string | null
           category: string | null
+          contact_name: string | null
+          contact_phone: string | null
           conversation_id: string | null
           created_at: string
           first_human_reply_at: string | null
@@ -2795,17 +3118,23 @@ export type Database = {
           notes: string | null
           queue_priority: number
           reassign_count: number
+          reassign_reason: string | null
           resolved_at: string | null
           resolved_by: string | null
           sla_breached_at: string | null
           sla_due_at: string | null
+          sla_minutes: number | null
           source: string | null
           status: string
+          trigger_message: string | null
           updated_at: string
         }
         Insert: {
           assigned_to?: string | null
+          canned_reply?: string | null
           category?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
           conversation_id?: string | null
           created_at?: string
           first_human_reply_at?: string | null
@@ -2817,17 +3146,23 @@ export type Database = {
           notes?: string | null
           queue_priority?: number
           reassign_count?: number
+          reassign_reason?: string | null
           resolved_at?: string | null
           resolved_by?: string | null
           sla_breached_at?: string | null
           sla_due_at?: string | null
+          sla_minutes?: number | null
           source?: string | null
           status?: string
+          trigger_message?: string | null
           updated_at?: string
         }
         Update: {
           assigned_to?: string | null
+          canned_reply?: string | null
           category?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
           conversation_id?: string | null
           created_at?: string
           first_human_reply_at?: string | null
@@ -2839,12 +3174,15 @@ export type Database = {
           notes?: string | null
           queue_priority?: number
           reassign_count?: number
+          reassign_reason?: string | null
           resolved_at?: string | null
           resolved_by?: string | null
           sla_breached_at?: string | null
           sla_due_at?: string | null
+          sla_minutes?: number | null
           source?: string | null
           status?: string
+          trigger_message?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -2864,6 +3202,7 @@ export type Database = {
           id: string
           instance_id: string
           is_active: boolean
+          notes: string | null
         }
         Insert: {
           agent_id?: string | null
@@ -2871,6 +3210,7 @@ export type Database = {
           id?: string
           instance_id: string
           is_active?: boolean
+          notes?: string | null
         }
         Update: {
           agent_id?: string | null
@@ -2878,6 +3218,7 @@ export type Database = {
           id?: string
           instance_id?: string
           is_active?: boolean
+          notes?: string | null
         }
         Relationships: [
           {
@@ -2898,54 +3239,93 @@ export type Database = {
       }
       whatsapp_instances: {
         Row: {
+          api_key: string | null
           connected_number: string | null
           created_at: string
           id: string
+          instance_name: string | null
+          last_connected_at: string | null
           metadata: Json
           name: string
+          pairing_code: string | null
+          qrcode_base64: string | null
+          qrcode_expires_at: string | null
+          server_url: string | null
           status: string
           updated_at: string
+          webhook_configured: boolean
         }
         Insert: {
-          connected_number?: string | null
-          created_at?: string
-          id: string
-          metadata?: Json
-          name: string
-          status?: string
-          updated_at?: string
-        }
-        Update: {
+          api_key?: string | null
           connected_number?: string | null
           created_at?: string
           id?: string
+          instance_name?: string | null
+          last_connected_at?: string | null
           metadata?: Json
-          name?: string
+          name: string
+          pairing_code?: string | null
+          qrcode_base64?: string | null
+          qrcode_expires_at?: string | null
+          server_url?: string | null
           status?: string
           updated_at?: string
+          webhook_configured?: boolean
+        }
+        Update: {
+          api_key?: string | null
+          connected_number?: string | null
+          created_at?: string
+          id?: string
+          instance_name?: string | null
+          last_connected_at?: string | null
+          metadata?: Json
+          name?: string
+          pairing_code?: string | null
+          qrcode_base64?: string | null
+          qrcode_expires_at?: string | null
+          server_url?: string | null
+          status?: string
+          updated_at?: string
+          webhook_configured?: boolean
         }
         Relationships: []
       }
       whatsapp_media: {
         Row: {
           created_at: string
+          created_by: string | null
           file_name: string | null
           id: string
           mime_type: string | null
+          name: string | null
+          size_bytes: number | null
+          storage_path: string | null
+          tags: string[]
           url: string
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           file_name?: string | null
           id?: string
           mime_type?: string | null
+          name?: string | null
+          size_bytes?: number | null
+          storage_path?: string | null
+          tags?: string[]
           url: string
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           file_name?: string | null
           id?: string
           mime_type?: string | null
+          name?: string | null
+          size_bytes?: number | null
+          storage_path?: string | null
+          tags?: string[]
           url?: string
         }
         Relationships: []
@@ -3034,6 +3414,7 @@ export type Database = {
         Row: {
           content: string
           created_at: string
+          created_by: string | null
           id: string
           is_active: boolean
           media_mime: string | null
@@ -3048,6 +3429,7 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string
+          created_by?: string | null
           id?: string
           is_active?: boolean
           media_mime?: string | null
@@ -3062,6 +3444,7 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string
+          created_by?: string | null
           id?: string
           is_active?: boolean
           media_mime?: string | null

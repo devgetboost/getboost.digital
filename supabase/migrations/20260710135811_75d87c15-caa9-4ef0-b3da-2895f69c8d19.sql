@@ -1,0 +1,1 @@
+ALTER TABLE public.whatsapp_quotes ADD COLUMN IF NOT EXISTS proposal_pdf_url text;

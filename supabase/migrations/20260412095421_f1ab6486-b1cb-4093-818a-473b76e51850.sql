@@ -1,0 +1,1 @@
+ALTER TABLE public.chat_conversations ADD COLUMN visitor_phone text DEFAULT NULL;

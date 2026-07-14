@@ -1,0 +1,2 @@
+ALTER TABLE public.whatsapp_conversations ADD COLUMN IF NOT EXISTS archived boolean NOT NULL DEFAULT false;
+CREATE INDEX IF NOT EXISTS idx_whatsapp_conversations_archived ON public.whatsapp_conversations(archived);

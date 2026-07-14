@@ -3294,6 +3294,7 @@ export type Database = {
       whatsapp_media: {
         Row: {
           created_at: string
+          created_by: string | null
           file_name: string | null
           id: string
           mime_type: string | null
@@ -3305,6 +3306,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           file_name?: string | null
           id?: string
           mime_type?: string | null
@@ -3316,6 +3318,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           file_name?: string | null
           id?: string
           mime_type?: string | null
@@ -3411,6 +3414,7 @@ export type Database = {
         Row: {
           content: string
           created_at: string
+          created_by: string | null
           id: string
           is_active: boolean
           media_mime: string | null
@@ -3425,6 +3429,7 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string
+          created_by?: string | null
           id?: string
           is_active?: boolean
           media_mime?: string | null
@@ -3439,6 +3444,7 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string
+          created_by?: string | null
           id?: string
           is_active?: boolean
           media_mime?: string | null

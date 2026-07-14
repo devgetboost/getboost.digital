@@ -3259,7 +3259,7 @@ export type Database = {
           api_key?: string | null
           connected_number?: string | null
           created_at?: string
-          id: string
+          id?: string
           instance_name?: string | null
           last_connected_at?: string | null
           metadata?: Json
@@ -3297,6 +3297,10 @@ export type Database = {
           file_name: string | null
           id: string
           mime_type: string | null
+          name: string | null
+          size_bytes: number | null
+          storage_path: string | null
+          tags: string[]
           url: string
         }
         Insert: {
@@ -3304,6 +3308,10 @@ export type Database = {
           file_name?: string | null
           id?: string
           mime_type?: string | null
+          name?: string | null
+          size_bytes?: number | null
+          storage_path?: string | null
+          tags?: string[]
           url: string
         }
         Update: {
@@ -3311,6 +3319,10 @@ export type Database = {
           file_name?: string | null
           id?: string
           mime_type?: string | null
+          name?: string | null
+          size_bytes?: number | null
+          storage_path?: string | null
+          tags?: string[]
           url?: string
         }
         Relationships: []

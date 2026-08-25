@@ -1,8 +1,8 @@
 
 -- 1) Revoke EXECUTE from anon/authenticated on internal-only SECURITY DEFINER functions
 REVOKE EXECUTE ON FUNCTION public.check_email_delivery_health() FROM PUBLIC, anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.email_queue_dispatch() FROM PUBLIC, anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.email_queue_wake() FROM PUBLIC, anon, authenticated;
+-- REVOKE EXECUTE ON FUNCTION public.email_queue_dispatch() FROM PUBLIC, anon, authenticated;
+-- REVOKE EXECUTE ON FUNCTION public.email_queue_wake() FROM PUBLIC, anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.trg_email_send_log_alert() FROM PUBLIC, anon, authenticated;
 
 -- 2) Set explicit search_path on functions currently without one

@@ -23,15 +23,15 @@ REVOKE EXECUTE ON FUNCTION public.handle_new_user_role() FROM PUBLIC, anon, auth
 REVOKE EXECUTE ON FUNCTION public.update_updated_at_column() FROM PUBLIC, anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.read_email_batch(text, integer, integer) FROM PUBLIC, anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.validate_demo_lead_product() FROM PUBLIC, anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.trg_lead_whatsapp() FROM PUBLIC, anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.trg_booking_whatsapp() FROM PUBLIC, anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.cron_whatsapp_reminders_24h() FROM PUBLIC, anon, authenticated;
+--REVOKE EXECUTE ON FUNCTION public.trg_lead_whatsapp() FROM PUBLIC, anon, authenticated;
+--REVOKE EXECUTE ON FUNCTION public.trg_booking_whatsapp() FROM PUBLIC, anon, authenticated;
+--REVOKE EXECUTE ON FUNCTION public.cron_whatsapp_reminders_24h() FROM PUBLIC, anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.auto_tag_lead() FROM PUBLIC, anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.enqueue_email(text, jsonb) FROM PUBLIC, anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.delete_email(text, bigint) FROM PUBLIC, anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.trg_booking_completed_whatsapp() FROM PUBLIC, anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.dispatch_whatsapp_trigger(text, text, uuid, text, text, jsonb) FROM PUBLIC, anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.trg_lead_tag_whatsapp() FROM PUBLIC, anon, authenticated;
+--REVOKE EXECUTE ON FUNCTION public.trg_booking_completed_whatsapp() FROM PUBLIC, anon, authenticated;
+--REVOKE EXECUTE ON FUNCTION public.dispatch_whatsapp_trigger(text, text, uuid, text, text, jsonb) FROM PUBLIC, anon, authenticated;
+--REVOKE EXECUTE ON FUNCTION public.trg_lead_tag_whatsapp() FROM PUBLIC, anon, authenticated;
 
 -- Re-grant only where the client legitimately needs to call the function
 GRANT EXECUTE ON FUNCTION public.get_assistant_public() TO anon, authenticated;

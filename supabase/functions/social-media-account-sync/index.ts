@@ -28,7 +28,7 @@ async function syncLinkedIn(): Promise<SyncResult> {
   });
   if (!res.ok) return { ok: false, error: `linkedin userinfo ${res.status}: ${await res.text()}` };
   const j: any = await res.json().catch(() => ({}));
-  const name = j?.name ?? [j?.given_name, j?.family_name].filter(Boolean).join(" ") || null;
+  const name = j?.name ?? ([j?.given_name, j?.family_name].filter(Boolean).join(" ") || null);
   const perms: string[] = [];
   if (j?.email) perms.push("email");
   if (j?.sub) perms.push("openid");

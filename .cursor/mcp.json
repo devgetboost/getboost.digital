@@ -1,11 +1,17 @@
 {
-    "mcpServers": {
-      "context7": {
-        "url": "https://mcp.context7.com/mcp",
-        "headers": {
-          "CONTEXT7_API_KEY": "ctx7sk-86feafb3-8b34-4b9b-a40e-5791705449a8"
-        }
+  "mcpServers": {
+    "context7": {
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "ctx7sk-86feafb3-8b34-4b9b-a40e-5791705449a8"
+      }
+    },
+    "lovable": {
+      "type": "http",
+      "url": "https://mcp.lovable.dev/?src=settings",
+      "auth": {
+        "CLIENT_ID": "6d465f583e1e4ce5801b1616f735670c"
       }
     }
   }
-  
+}

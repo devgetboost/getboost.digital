@@ -36,12 +36,15 @@ CREATE TABLE IF NOT EXISTS public.vip_subscribers (
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.vip_subscribers TO authenticated;
 GRANT ALL ON public.vip_subscribers TO service_role;
 ALTER TABLE public.vip_subscribers ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins manage vip_subscribers" ON public.vip_subscribers;
 CREATE POLICY "Admins manage vip_subscribers" ON public.vip_subscribers
   FOR ALL TO authenticated
   USING (public.has_role(auth.uid(), 'admin'))
   WITH CHECK (public.has_role(auth.uid(), 'admin'));
+DROP POLICY IF EXISTS "Anyone can subscribe VIP" ON public.vip_subscribers;
 CREATE POLICY "Anyone can subscribe VIP" ON public.vip_subscribers
   FOR INSERT TO anon, authenticated
   WITH CHECK (true);
+DROP TRIGGER IF EXISTS vip_subscribers_updated_at ON public.vip_subscribers;
 CREATE TRIGGER vip_subscribers_updated_at BEFORE UPDATE ON public.vip_subscribers
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

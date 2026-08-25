@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS public.email_stars (
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.email_stars TO authenticated;
 GRANT ALL ON public.email_stars TO service_role;
 ALTER TABLE public.email_stars ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users manage own email stars" ON public.email_stars;
 CREATE POLICY "Users manage own email stars" ON public.email_stars
   FOR ALL TO authenticated
   USING (auth.uid() = user_id OR public.has_role(auth.uid(), 'admin'))

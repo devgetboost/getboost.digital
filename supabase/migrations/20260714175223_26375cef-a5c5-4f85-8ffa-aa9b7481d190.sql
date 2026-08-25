@@ -6,8 +6,12 @@ ALTER TABLE public.crm_validation_failures
   ADD COLUMN IF NOT EXISTS utm_medium text,
   ADD COLUMN IF NOT EXISTS utm_campaign text;
 
--- 2) podcast_episodes: make slug optional (auto-generated when missing)
-ALTER TABLE public.podcast_episodes ALTER COLUMN slug DROP NOT NULL;
+-- 2) podcast_episodes: ensure slug exists and is optional
+ALTER TABLE public.podcast_episodes ADD COLUMN IF NOT EXISTS slug text;
+DO $$ BEGIN
+  ALTER TABLE public.podcast_episodes ALTER COLUMN slug DROP NOT NULL;
+EXCEPTION WHEN undefined_column THEN NULL;
+END $$;
 
 -- 3) whatsapp_chat_messages: add external_id
 ALTER TABLE public.whatsapp_chat_messages
@@ -33,10 +37,12 @@ CREATE TABLE IF NOT EXISTS public.product_knowledge (
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.product_knowledge TO authenticated;
 GRANT ALL ON public.product_knowledge TO service_role;
 ALTER TABLE public.product_knowledge ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins manage product_knowledge" ON public.product_knowledge;
 CREATE POLICY "Admins manage product_knowledge" ON public.product_knowledge
   FOR ALL TO authenticated
   USING (public.has_role(auth.uid(), 'admin'))
   WITH CHECK (public.has_role(auth.uid(), 'admin'));
+DROP TRIGGER IF EXISTS product_knowledge_updated_at ON public.product_knowledge;
 CREATE TRIGGER product_knowledge_updated_at BEFORE UPDATE ON public.product_knowledge
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
@@ -60,6 +66,7 @@ CREATE TABLE IF NOT EXISTS public.product_knowledge_versions (
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.product_knowledge_versions TO authenticated;
 GRANT ALL ON public.product_knowledge_versions TO service_role;
 ALTER TABLE public.product_knowledge_versions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins manage product_knowledge_versions" ON public.product_knowledge_versions;
 CREATE POLICY "Admins manage product_knowledge_versions" ON public.product_knowledge_versions
   FOR ALL TO authenticated
   USING (public.has_role(auth.uid(), 'admin'))
@@ -80,9 +87,11 @@ CREATE TABLE IF NOT EXISTS public.social_media_author_limits (
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.social_media_author_limits TO authenticated;
 GRANT ALL ON public.social_media_author_limits TO service_role;
 ALTER TABLE public.social_media_author_limits ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users manage own author limits" ON public.social_media_author_limits;
 CREATE POLICY "Users manage own author limits" ON public.social_media_author_limits
   FOR ALL TO authenticated
   USING (auth.uid() = user_id OR public.has_role(auth.uid(), 'admin'))
   WITH CHECK (auth.uid() = user_id OR public.has_role(auth.uid(), 'admin'));
+DROP TRIGGER IF EXISTS social_media_author_limits_updated_at ON public.social_media_author_limits;
 CREATE TRIGGER social_media_author_limits_updated_at BEFORE UPDATE ON public.social_media_author_limits
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

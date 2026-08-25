@@ -19,8 +19,13 @@ const Unsubscribe = () => {
 
     const validate = async () => {
       try {
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-        const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+        const anonKey = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+          import.meta.env.VITE_SUPABASE_ANON_KEY) as string | undefined;
+        if (!supabaseUrl || !anonKey) {
+          setStatus('error');
+          return;
+        }
         const res = await fetch(
           `${supabaseUrl}/functions/v1/handle-email-unsubscribe?token=${token}`,
           { headers: { apikey: anonKey } }

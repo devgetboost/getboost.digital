@@ -26,19 +26,19 @@ GRANT EXECUTE ON FUNCTION public.read_email_batch(text, integer, integer) TO ser
 REVOKE ALL ON FUNCTION public.move_to_dlq(text, text, bigint, jsonb) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.move_to_dlq(text, text, bigint, jsonb) TO service_role;
 
-REVOKE ALL ON FUNCTION public.dispatch_whatsapp_trigger(text, text, uuid, text, text, jsonb) FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.dispatch_whatsapp_trigger(text, text, uuid, text, text, jsonb) TO service_role;
+-- REVOKE ALL ON FUNCTION public.dispatch_whatsapp_trigger(text, text, uuid, text, text, jsonb) FROM PUBLIC, anon, authenticated;
+-- GRANT EXECUTE ON FUNCTION public.dispatch_whatsapp_trigger(text, text, uuid, text, text, jsonb) TO service_role;
 
-REVOKE ALL ON FUNCTION public.cron_whatsapp_reminders_24h() FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.cron_whatsapp_reminders_24h() TO service_role;
+-- REVOKE ALL ON FUNCTION public.cron_whatsapp_reminders_24h() FROM PUBLIC, anon, authenticated;
+-- GRANT EXECUTE ON FUNCTION public.cron_whatsapp_reminders_24h() TO service_role;
 
 -- Trigger-only functions: no callers need EXECUTE
 REVOKE ALL ON FUNCTION public.auto_tag_lead() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.handle_new_user_role() FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION public.trg_booking_whatsapp() FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION public.trg_booking_completed_whatsapp() FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION public.trg_lead_whatsapp() FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION public.trg_lead_tag_whatsapp() FROM PUBLIC, anon, authenticated;
+-- REVOKE ALL ON FUNCTION public.trg_booking_whatsapp() FROM PUBLIC, anon, authenticated;
+-- REVOKE ALL ON FUNCTION public.trg_booking_completed_whatsapp() FROM PUBLIC, anon, authenticated;
+-- REVOKE ALL ON FUNCTION public.trg_lead_whatsapp() FROM PUBLIC, anon, authenticated;
+-- REVOKE ALL ON FUNCTION public.trg_lead_tag_whatsapp() FROM PUBLIC, anon, authenticated;
 
 -- get_chat_messages_by_id: allow only authenticated (RLS in query is gated in-app to admins)
 REVOKE ALL ON FUNCTION public.get_chat_messages_by_id(uuid) FROM PUBLIC, anon;

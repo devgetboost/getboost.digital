@@ -8,11 +8,11 @@ export type MailFolder = "inbox" | "starred" | "snoozed" | "sent" | "drafts" | "
 const FOLDERS: { id: MailFolder; title: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: "inbox", title: "Caixa de entrada", icon: Inbox },
   { id: "site_chat", title: "Chat do site", icon: MessageSquare },
-  { id: "starred", title: "Estrelado", icon: Star },
-  { id: "snoozed", title: "Cochilou", icon: Clock },
+  { id: "starred", title: "Com estrela", icon: Star },
+  { id: "snoozed", title: "Adiado", icon: Clock },
   { id: "sent", title: "Enviado", icon: Send },
   { id: "drafts", title: "Rascunhos", icon: FileEdit },
-  { id: "trash", title: "Lixo", icon: Trash2 },
+  { id: "trash", title: "Lixeira", icon: Trash2 },
 ];
 
 type Props = {

@@ -6,45 +6,45 @@
 
 @layer base {
   :root {
-    --background: 40 27% 95%;
-    --foreground: 0 0% 10%;
+    --background: 0 0% 100%;
+    --foreground: 220 39% 11%;
 
-    --card: 40 20% 91%;
-    --card-foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 39% 11%;
 
-    --popover: 40 27% 95%;
-    --popover-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 39% 11%;
 
     --primary: 14 100% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 40 20% 89%;
-    --secondary-foreground: 0 0% 10%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 39% 11%;
 
-    --muted: 40 15% 90%;
-    --muted-foreground: 0 0% 25%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
 
-    --accent: 15 80% 45%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 14 100% 97%;
+    --accent-foreground: 14 70% 50%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 40 15% 83%;
-    --input: 40 15% 83%;
-    --ring: 14 100% 50%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 14 70% 50%;
 
     --radius: 0.875rem;
 
     --section-alt: 38 30% 95%;
 
-    --sidebar-background: 40 20% 91%;
-    --sidebar-foreground: 0 0% 10%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 39% 11%;
     --sidebar-primary: 14 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 15 80% 45%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 40 15% 83%;
+    --sidebar-accent: 14 100% 97%;
+    --sidebar-accent-foreground: 14 70% 50%;
+    --sidebar-border: 220 13% 91%;
     --sidebar-ring: 14 100% 50%;
 
     /* Admin (Semrush-inspired light) tokens */
@@ -58,46 +58,7 @@
     --admin-active-bar: 14 70% 50%;
   }
 
-  .dark {
-    --background: 0 0% 4%;
-    --foreground: 40 27% 95%;
-
-    --card: 0 0% 7%;
-    --card-foreground: 40 27% 95%;
-
-    --popover: 0 0% 4%;
-    --popover-foreground: 40 27% 95%;
-
-    --primary: 14 100% 50%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 40 27% 95%;
-
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 85%;
-
-    --accent: 15 80% 55%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 16%;
-    --input: 0 0% 16%;
-    --ring: 14 100% 50%;
-
-    --section-alt: 0 0% 7%;
-
-    --sidebar-background: 0 0% 4%;
-    --sidebar-foreground: 40 27% 95%;
-    --sidebar-primary: 14 100% 50%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 15 80% 55%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 16%;
-    --sidebar-ring: 14 100% 50%;
-  }
+  /* Dark mode disabled per user request */
 }
 
 /*
@@ -108,27 +69,28 @@
  */
 @layer base {
   .admin-scope,
-  body[data-admin="true"] [role="dialog"],
-  body[data-admin="true"] [data-radix-popper-content-wrapper],
-  body[data-admin="true"] [data-sonner-toaster] {
-    --background: var(--admin-surface);
-    --foreground: var(--admin-fg);
+  [data-admin="true"] [role="dialog"],
+  [data-admin="true"] [data-radix-popper-content-wrapper],
+  [data-admin="true"] [data-sonner-toaster] {
+    color-scheme: light !important;
+    --background: 0 0% 100% !important;
+    --foreground: 220 39% 11% !important;
 
-    --card: var(--admin-surface);
-    --card-foreground: var(--admin-fg);
+    --card: 0 0% 100% !important;
+    --card-foreground: 220 39% 11% !important;
 
-    --popover: var(--admin-surface);
-    --popover-foreground: var(--admin-fg);
+    --popover: 0 0% 100% !important;
+    --popover-foreground: 220 39% 11% !important;
 
-    --muted: var(--admin-hover);
-    --muted-foreground: var(--admin-fg-muted);
+    --muted: 220 14% 96% !important;
+    --muted-foreground: 220 9% 46% !important;
 
-    --accent: var(--admin-active);
-    --accent-foreground: var(--admin-fg);
+    --accent: 14 100% 97% !important;
+    --accent-foreground: 14 70% 50% !important;
 
-    --border: var(--admin-border);
-    --input: var(--admin-border);
-    --ring: var(--admin-fg);
+    --border: 220 13% 91% !important;
+    --input: 220 13% 91% !important;
+    --ring: 14 70% 50% !important;
   }
 }
 

@@ -44,10 +44,10 @@ const AdminLayout = () => {
 
   return (
     <SidebarProvider style={ADMIN_SIDEBAR_STYLE}>
-      <div className="min-h-screen flex w-full bg-background">
+      <div className="min-h-screen flex w-full bg-white admin-scope">
         <AdminSidebar />
-        <div className="flex-1 flex flex-col min-w-0">
-          <header className="h-14 border-b border-border/40 flex items-center justify-between px-4 md:px-6 sticky top-0 z-40 bg-background/80 backdrop-blur-xl">
+        <div className="flex-1 flex flex-col min-w-0 bg-white">
+          <header className="h-14 border-b border-border/40 flex items-center justify-between px-4 md:px-6 sticky top-0 z-40 bg-white/80 backdrop-blur-xl">
             <div className="flex items-center gap-2">
               <SidebarTrigger />
               <NavLink to="/admin" className="text-sm font-semibold">Admin</NavLink>

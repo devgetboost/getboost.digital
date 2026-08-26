@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { ArrowLeft, Star, MoreVertical, Reply, ReplyAll, Forward, Send, User, Sparkles, AlertCircle, Check, Pencil, X, UserPlus, MessageCircle, Link2, Copy } from "lucide-react";
+import { 
+  ArrowLeft, Star, MoreVertical, Reply, ReplyAll, Forward, 
+  Send, User, Sparkles, AlertCircle, Check, Pencil, X, 
+  UserPlus, MessageCircle, Link2, Copy 
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -11,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import DOMPurify from "dompurify";
 
 export type ReaderMessage = {
   id?: string;
@@ -20,6 +25,7 @@ export type ReaderMessage = {
   subject: string;
   date: string;
   bodyHtml: string;
+  starred?: boolean;
   badges?: { label: string; tone: "danger" | "warn" | "info" | "neutral" }[];
   lead?: { id: string; name: string | null; email: string } | null;
 };
@@ -29,6 +35,7 @@ type Props = {
   onCompose?: () => void;
   onReply?: (mode: "reply" | "replyAll" | "forward", draft?: string) => void;
   onLinkLead?: () => void;
+  onToggleStar?: (id: string, starred: boolean) => void;
   message?: ReaderMessage | null;
 };
 
@@ -53,11 +60,10 @@ function formatDatePT(input: string): string {
   }).format(d);
 }
 
-export function MailReader({ onBack, onCompose, onReply, message }: Props) {
+export function MailReader({ onBack, onCompose, onReply, onLinkLead, onToggleStar, message }: Props) {
   const [draft, setDraft] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [status, setStatus] = useState<"pending" | "done">("pending");
-  const [starred, setStarred] = useState(false);
 
   if (!message) {
     return (
@@ -86,7 +92,10 @@ export function MailReader({ onBack, onCompose, onReply, message }: Props) {
     if (!message) return;
     try {
       if (message.lead?.id) {
-        await supabase.from("leads").update({ last_email_subject: message.subject, last_email_at: new Date().toISOString() } as any).eq("id", message.lead.id);
+        await supabase.from("leads").update({ 
+          last_email_subject: message.subject, 
+          last_email_at: new Date().toISOString() 
+        } as any).eq("id", message.lead.id);
         toast.success("Actualizado no CRM.");
         return;
       }
@@ -116,6 +125,8 @@ export function MailReader({ onBack, onCompose, onReply, message }: Props) {
     toast.success("Email copiado.");
   };
 
+  const sanitizedBody = DOMPurify.sanitize(message.bodyHtml);
+
   return (
     <div className="flex-1 min-w-0 flex flex-col overflow-hidden bg-background">
       {/* Top bar */}
@@ -134,10 +145,19 @@ export function MailReader({ onBack, onCompose, onReply, message }: Props) {
                 Existe um rascunho
               </span>
             )}
-            {message.lead && (
+            {message.lead ? (
               <span className="text-[11px] px-2.5 py-0.5 rounded-full border bg-primary/10 text-primary border-primary/20 inline-flex items-center gap-1">
                 <User className="h-3 w-3" /> Lead: {message.lead.name ?? message.lead.email}
               </span>
+            ) : (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-6 text-[11px] px-2 rounded-full border border-dashed text-muted-foreground hover:text-primary hover:border-primary/50"
+                onClick={onLinkLead}
+              >
+                <UserPlus className="h-3 w-3 mr-1" /> Associar Lead
+              </Button>
             )}
             {message.badges?.map((b, i) => (
               <span key={i} className={`text-[11px] px-2.5 py-0.5 rounded-full border ${toneMap[b.tone]}`}>{b.label}</span>
@@ -149,10 +169,10 @@ export function MailReader({ onBack, onCompose, onReply, message }: Props) {
           <Button
             size="icon"
             variant="ghost"
-            aria-label={starred ? "Remover estrela" : "Marcar com estrela"}
-            onClick={() => setStarred((v) => !v)}
+            aria-label={message.starred ? "Remover estrela" : "Marcar com estrela"}
+            onClick={() => onToggleStar?.(message.id ?? "", !message.starred)}
           >
-            <Star className={`h-4 w-4 ${starred ? "fill-amber-400 text-amber-400" : ""}`} />
+            <Star className={`h-4 w-4 ${message.starred ? "fill-amber-400 text-amber-400" : ""}`} />
           </Button>
           <Button size="icon" variant="ghost" aria-label="Responder" onClick={() => onReply?.("reply")}>
             <Reply className="h-4 w-4" />
@@ -181,9 +201,9 @@ export function MailReader({ onBack, onCompose, onReply, message }: Props) {
                 <MessageCircle className="h-4 w-4 mr-2" /> Enviar por WhatsApp
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setStarred((v) => !v)}>
-                <Star className={`h-4 w-4 mr-2 ${starred ? "fill-amber-400 text-amber-400" : ""}`} />
-                {starred ? "Remover estrela" : "Marcar com estrela"}
+              <DropdownMenuItem onClick={() => onToggleStar?.(message.id ?? "", !message.starred)}>
+                <Star className={`h-4 w-4 mr-2 ${message.starred ? "fill-amber-400 text-amber-400" : ""}`} />
+                {message.starred ? "Remover estrela" : "Marcar com estrela"}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={copyEmail}>
                 <Copy className="h-4 w-4 mr-2" /> Copiar endereço
@@ -212,7 +232,7 @@ export function MailReader({ onBack, onCompose, onReply, message }: Props) {
             <p className="text-xs text-muted-foreground">{formatDatePT(message.date)}</p>
           </div>
 
-          <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: message.bodyHtml }} />
+          <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizedBody }} />
 
           {/* AI draft suggestion */}
           {!draft ? (
@@ -311,3 +331,5 @@ export function MailReader({ onBack, onCompose, onReply, message }: Props) {
     </div>
   );
 }
+
+export default MailReader;

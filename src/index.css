@@ -54,8 +54,8 @@
     --admin-fg-muted: 220 9% 46%;
     --admin-fg-subtle: 220 9% 65%;
     --admin-hover: 220 14% 96%;
-    --admin-active: 218 21% 95%;
-    --admin-active-bar: 220 39% 11%;
+    --admin-active: 14 100% 97%;
+    --admin-active-bar: 14 70% 50%;
   }
 
   .dark {
@@ -111,7 +111,7 @@
   body[data-admin="true"] [role="dialog"],
   body[data-admin="true"] [data-radix-popper-content-wrapper],
   body[data-admin="true"] [data-sonner-toaster] {
-    --background: var(--admin-hover);
+    --background: var(--admin-surface);
     --foreground: var(--admin-fg);
 
     --card: var(--admin-surface);

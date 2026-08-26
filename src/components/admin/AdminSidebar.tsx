@@ -1,166 +1,179 @@
+import { useState, useEffect, useMemo } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import {
-  LayoutDashboard,
-  Calendar,
-  Users,
-  FileText,
-  BookOpen,
-  FolderKanban,
-  Briefcase,
-  Mail,
-  Send,
-  Bot,
-  MessageSquare,
-  Inbox,
-  Bell,
-  Settings,
-  ShieldCheck,
-  BarChart3,
-  Image as ImageIcon,
-  GraduationCap,
-  Mic,
-  Crown,
-  Building2,
-  Headphones,
-  Activity,
-} from "lucide-react";
+import { Search, X, ChevronRight } from "lucide-react";
+import { ADMIN_NAV, RailCategory } from "./adminNav";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
 
-type Item = { title: string; url: string; icon: React.ComponentType<{ className?: string }> };
-type Group = { label: string; items: Item[] };
-
-const groups: Group[] = [
-  {
-    label: "Visão geral",
-    items: [
-      { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
-      { title: "Notificações", url: "/admin/notifications", icon: Bell },
-      { title: "Diagnóstico", url: "/admin/diagnostico-integracoes", icon: Activity },
-    ],
-  },
-  {
-    label: "Agenda & Reuniões",
-    items: [
-      { title: "Agenda", url: "/admin/agenda", icon: Calendar },
-      { title: "Funil de reuniões", url: "/admin/bookings-funnel", icon: BarChart3 },
-    ],
-  },
-  {
-    label: "CRM & Leads",
-    items: [
-      { title: "Leads", url: "/admin/leads", icon: Users },
-      { title: "Analytics de leads", url: "/admin/leads-analytics", icon: BarChart3 },
-      { title: "Auditorias CRM", url: "/admin/auditorias-crm", icon: ShieldCheck },
-      { title: "Validação CRM", url: "/admin/crm-validation-failures", icon: ShieldCheck },
-      { title: "Entrega CRM", url: "/admin/crm-delivery-status", icon: Send },
-      { title: "Routing soluções", url: "/admin/solucoes-routing", icon: FolderKanban },
-      { title: "Clientes", url: "/admin/clientes", icon: Building2 },
-      { title: "Investidores", url: "/admin/investidores", icon: Crown },
-      { title: "VIP", url: "/admin/vip", icon: Crown },
-    ],
-  },
-  {
-    label: "Conteúdo",
-    items: [
-      { title: "Blog", url: "/admin/blog", icon: FileText },
-      { title: "Comentários", url: "/admin/comentarios", icon: MessageSquare },
-      { title: "Recursos", url: "/admin/recursos", icon: BookOpen },
-      { title: "Projetos", url: "/admin/projetos", icon: FolderKanban },
-      { title: "Serviços", url: "/admin/servicos", icon: Briefcase },
-      { title: "Hero banners", url: "/admin/hero-banners", icon: ImageIcon },
-      { title: "Academy", url: "/admin/academy", icon: GraduationCap },
-      { title: "Podcast", url: "/admin/podcast", icon: Mic },
-    ],
-  },
-  {
-    label: "Email Marketing",
-    items: [
-      { title: "Email Marketing", url: "/admin/email-marketing", icon: Mail },
-      { title: "Campanhas", url: "/admin/campanhas", icon: Send },
-      { title: "Modelos", url: "/admin/campanhas/modelos", icon: FileText },
-      { title: "Email Auth", url: "/admin/email-auth", icon: ShieldCheck },
-    ],
-  },
-  {
-    label: "Inbox & Atendimento",
-    items: [
-      { title: "Inbox", url: "/admin/inbox", icon: Inbox },
-      { title: "Inbox Mail", url: "/admin/inbox-mail", icon: Mail },
-      { title: "Calendário Inbox", url: "/admin/inbox-calendar", icon: Calendar },
-      { title: "Atendimento", url: "/admin/atendimento", icon: Headphones },
-      { title: "WhatsApp", url: "/admin/whatsapp", icon: MessageSquare },
-    ],
-  },
-  {
-    label: "Agentic AI",
-    items: [
-      { title: "Agentes", url: "/admin/agentic-ai", icon: Bot },
-      { title: "Prompts", url: "/admin/agentic-ai/prompts", icon: FileText },
-      { title: "Monitorização", url: "/admin/agentic-ai/monitoring", icon: Activity },
-      { title: "Alertas", url: "/admin/agentic-ai/alertas", icon: Bell },
-      { title: "Aprovações", url: "/admin/agentic-ai/aprovacoes", icon: ShieldCheck },
-      { title: "Cenários", url: "/admin/agentic-ai/cenarios", icon: FolderKanban },
-      { title: "Relatório", url: "/admin/agentic-ai/relatorio", icon: BarChart3 },
-      { title: "Product Knowledge", url: "/admin/agentic-ai/product-knowledge", icon: BookOpen },
-      { title: "Social drafts", url: "/admin/agentic-ai/social-media-drafts", icon: FileText },
-      { title: "Social publisher", url: "/admin/agentic-ai/social-media-publisher", icon: Send },
-      { title: "Social accounts", url: "/admin/agentic-ai/social-media-accounts", icon: Users },
-      { title: "Meta accounts", url: "/admin/agentic-ai/meta-accounts", icon: Users },
-      { title: "Configurações", url: "/admin/agentic-ai/configuracoes", icon: Settings },
-    ],
-  },
-  {
-    label: "Sistema",
-    items: [
-      { title: "Definições", url: "/admin/definicoes", icon: Settings },
-    ],
-  },
-];
-
 export function AdminSidebar() {
-  const { state } = useSidebar();
-  const collapsed = state === "collapsed";
   const { pathname } = useLocation();
+  const { setOpen, open } = useSidebar();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Determine which rail category is active based on the current URL
+  const activeRailId = useMemo(() => {
+    for (const cat of ADMIN_NAV) {
+      for (const group of cat.groups) {
+        if (group.items.some(item => 
+          item.url === "/admin" ? pathname === "/admin" : pathname.startsWith(item.url)
+        )) {
+          return cat.id;
+        }
+      }
+    }
+    return "overview"; // Default
+  }, [pathname]);
+
+  const [selectedRailId, setSelectedRailId] = useState<string>(activeRailId);
+
+  // Sync selected rail with active rail on navigation, 
+  // but only if the user hasn't manually switched rail recently
+  useEffect(() => {
+    setSelectedRailId(activeRailId);
+  }, [activeRailId]);
+
+  const selectedCategory = useMemo(() => 
+    ADMIN_NAV.find(c => c.id === selectedRailId) || ADMIN_NAV[0],
+  [selectedRailId]);
+
+  const filteredGroups = useMemo(() => {
+    if (!searchQuery.trim()) return selectedCategory.groups;
+    
+    const query = searchQuery.toLowerCase();
+    return selectedCategory.groups.map(group => ({
+      ...group,
+      items: group.items.filter(item => 
+        item.title.toLowerCase().includes(query) || 
+        group.label.toLowerCase().includes(query)
+      )
+    })).filter(group => group.items.length > 0);
+  }, [selectedCategory, searchQuery]);
 
   const isActive = (url: string) =>
     url === "/admin" ? pathname === "/admin" : pathname === url || pathname.startsWith(url + "/");
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarContent>
-        {groups.map((group) => {
-          const groupActive = group.items.some((i) => isActive(i.url));
+    <Sidebar collapsible="none" className="border-r-0 flex-row w-[var(--sidebar-width)] overflow-hidden bg-background">
+      {/* 1. ICON RAIL (Left) */}
+      <div className="w-14 flex flex-col items-center py-4 gap-4 border-r border-border/40 bg-background shrink-0 z-20">
+        {ADMIN_NAV.map((cat) => {
+          const isCurrentActive = activeRailId === cat.id;
+          const isSelected = selectedRailId === cat.id;
+          
           return (
-            <SidebarGroup key={group.label} data-active={groupActive || undefined}>
-              {!collapsed && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {group.items.map((item) => (
-                    <SidebarMenuItem key={item.url}>
-                      <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title}>
-                        <NavLink to={item.url} end={item.url === "/admin"} className="flex items-center gap-2">
-                          <item.icon className="h-4 w-4 shrink-0" />
-                          {!collapsed && <span className="truncate">{item.title}</span>}
-                        </NavLink>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
+            <button
+              key={cat.id}
+              onClick={() => {
+                setSelectedRailId(cat.id);
+                if (!open) setOpen(true);
+              }}
+              className={cn(
+                "w-10 h-10 flex items-center justify-center rounded-lg transition-all relative group",
+                isSelected 
+                  ? "bg-primary/10 text-primary" 
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+              title={cat.label}
+            >
+              <cat.icon className="h-5 w-5" />
+              {isCurrentActive && (
+                <div className="absolute left-0 w-0.5 h-6 bg-primary rounded-r-full" />
+              )}
+              
+              {/* Tooltip on hover if sidebar is collapsed (though rail is always visible) */}
+              <div className="absolute left-14 px-2 py-1 bg-popover text-popover-foreground text-xs rounded shadow-md opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
+                {cat.label}
+              </div>
+            </button>
           );
         })}
-      </SidebarContent>
+      </div>
+
+      {/* 2. CONTEXTUAL SUBPANEL (Right) */}
+      <div className={cn(
+        "flex-1 flex flex-col bg-background/50 backdrop-blur-sm border-r border-border/40 transition-all duration-300",
+        !open ? "w-0 opacity-0 invisible" : "w-56 opacity-100 visible"
+      )}>
+        <div className="p-4 flex flex-col gap-4 shrink-0">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold text-foreground tracking-tight px-1">
+              {selectedCategory.label}
+            </h2>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-6 w-6 text-muted-foreground hover:text-foreground"
+              onClick={() => setOpen(false)}
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+          
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              placeholder="Pesquisar..."
+              className="h-8 pl-8 text-xs bg-muted/50 border-none focus-visible:ring-1 focus-visible:ring-primary/30"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <ScrollArea className="flex-1 px-2 pb-4">
+          <div className="space-y-6">
+            {filteredGroups.map((group) => (
+              <div key={group.label} className="space-y-1">
+                <h3 className="px-3 text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-2">
+                  {group.label}
+                </h3>
+                <div className="space-y-0.5">
+                  {group.items.map((item) => {
+                    const active = isActive(item.url);
+                    return (
+                      <NavLink
+                        key={item.url}
+                        to={item.url}
+                        end={item.url === "/admin"}
+                        className={({ isActive: linkActive }) => cn(
+                          "group flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors relative",
+                          active
+                            ? "bg-primary/5 text-primary font-medium"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        )}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          {item.icon && <item.icon className={cn(
+                            "h-4 w-4 shrink-0 transition-colors",
+                            active ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                          )} />}
+                          <span className="truncate">{item.title}</span>
+                        </div>
+                        {active && (
+                          <div className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-primary rounded-r-full" />
+                        )}
+                      </NavLink>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+            
+            {filteredGroups.length === 0 && searchQuery && (
+              <div className="px-3 py-8 text-center">
+                <p className="text-xs text-muted-foreground">Nenhum resultado encontrado.</p>
+              </div>
+            )}
+          </div>
+        </ScrollArea>
+      </div>
     </Sidebar>
   );
 }

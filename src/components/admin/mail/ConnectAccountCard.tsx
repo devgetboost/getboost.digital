@@ -83,7 +83,7 @@ export function ConnectAccountCard({ onConnected }: Props) {
             <Button variant="outline" onClick={() => setImapOpen(true)}>IMAP/SMTP</Button>
           </div>
           <p className="text-[11px] text-muted-foreground pt-2">
-            Autorizas o Gmail via Google OAuth. Os tokens são geridos pelo gateway seguro da Lovable — nunca ficam guardados na app.
+            Autorizas o Gmail via Google OAuth. Os tokens são geridos de forma segura — nunca ficam guardados em claro na app.
           </p>
         </CardContent>
       </Card>

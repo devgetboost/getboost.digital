@@ -69,9 +69,15 @@ async function doInvoke<T>(
   try {
     const res = await supabase.functions.invoke(fn, options as never);
     data = (res.data ?? null) as T | null;
-    error = res.error ? { message: res.error.message } : null;
     const bodyErr = (data as unknown as { error?: string } | null)?.error;
-    if (!error && bodyErr) error = { message: String(bodyErr) };
+    // Prefer JSON body error from edge functions (non-2xx often hides the real cause).
+    if (bodyErr) {
+      error = { message: String(bodyErr) };
+    } else if (res.error) {
+      error = { message: res.error.message };
+    } else {
+      error = null;
+    }
   } catch (e) {
     error = { message: e instanceof Error ? e.message : String(e) };
   }

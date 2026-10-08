@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { analytics } from '@/lib/analytics';
 
@@ -385,7 +385,7 @@ export default function DemoRequest() {
     setSubmitting(true);
     const message = `Pedido de demonstração — ${product.name}\nPaís: ${data.country}\nTamanho da empresa: ${data.companySize || 'n/d'}\nNewsletter: ${data.newsletter ? 'sim' : 'não'}`;
 
-    const { error } = await supabase.from('leads').insert({
+    const { error } = await legacySupabase.from('leads').insert({
       source: `demo:${product.slug}`,
       name: data.name,
       email: data.email,
@@ -411,7 +411,7 @@ export default function DemoRequest() {
       return;
     }
 
-    const { error: emailError } = await supabase.functions.invoke('send-transactional-email', {
+    const { error: emailError } = await legacySupabase.functions.invoke('send-transactional-email', {
       body: {
         templateName: 'lead-notification',
         recipientEmail: 'nunocruz@getboost.digital',

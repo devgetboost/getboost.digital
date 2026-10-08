@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Briefcase, CreditCard, LifeBuoy, Bell, ArrowRight } from 'lucide-react';
@@ -34,18 +34,18 @@ const ClientDashboard = () => {
   }, []);
 
   const loadData = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await legacySupabase.auth.getSession();
     if (!session) return;
     const uid = session.user.id;
 
-    const { data: profile } = await supabase.from('profiles').select('display_name').eq('user_id', uid).maybeSingle();
+    const { data: profile } = await legacySupabase.from('profiles').select('display_name').eq('user_id', uid).maybeSingle();
     setUserName(profile?.display_name || session.user.email?.split('@')[0] || 'Cliente');
 
     const [svc, inv, tkt, notif] = await Promise.all([
-      supabase.from('client_services').select('*').eq('user_id', uid).order('created_at', { ascending: false }).limit(5),
-      supabase.from('client_invoices').select('*').eq('user_id', uid).eq('status', 'pending').order('due_date', { ascending: true }).limit(5),
-      supabase.from('support_tickets').select('*').eq('user_id', uid).neq('status', 'closed').order('created_at', { ascending: false }).limit(5),
-      supabase.from('client_notifications').select('*').eq('user_id', uid).eq('is_read', false).order('created_at', { ascending: false }).limit(5),
+      legacySupabase.from('client_services').select('*').eq('user_id', uid).order('created_at', { ascending: false }).limit(5),
+      legacySupabase.from('client_invoices').select('*').eq('user_id', uid).eq('status', 'pending').order('due_date', { ascending: true }).limit(5),
+      legacySupabase.from('support_tickets').select('*').eq('user_id', uid).neq('status', 'closed').order('created_at', { ascending: false }).limit(5),
+      legacySupabase.from('client_notifications').select('*').eq('user_id', uid).eq('is_read', false).order('created_at', { ascending: false }).limit(5),
     ]);
     setServices(svc.data || []);
     setInvoices(inv.data || []);

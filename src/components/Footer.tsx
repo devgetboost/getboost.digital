@@ -5,7 +5,7 @@ import { analytics } from '@/lib/analytics';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import logoNunoCruz from '@/assets/logo-getboost-soft-branca.svg';
@@ -35,7 +35,7 @@ const Footer = () => {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.from('newsletter_subscribers').insert({
+    const { error } = await legacySupabase.from('newsletter_subscribers').insert({
       name: name.trim(),
       email: email.trim().toLowerCase(),
       consent: true,

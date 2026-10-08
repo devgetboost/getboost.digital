@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import LeadTagsManager from '@/components/admin/LeadTagsManager';
 import LeadTagPicker from '@/components/admin/LeadTagPicker';
 import LeadAutomationTimeline from '@/components/admin/LeadAutomationTimeline';
@@ -117,9 +117,9 @@ const AdminLeads = () => {
   const fetchLeads = async () => {
     setLoading(true);
     const [leadsRes, tagsRes, assignRes] = await Promise.all([
-      supabase.from('leads').select('*').order('created_at', { ascending: false }),
-      supabase.from('lead_tags').select('id, label, color').order('label'),
-      supabase.from('lead_tag_assignments').select('lead_id, lead_tags(id, label, color)'),
+      legacySupabase.from('leads').select('*').order('created_at', { ascending: false }),
+      legacySupabase.from('lead_tags').select('id, label, color').order('label'),
+      legacySupabase.from('lead_tag_assignments').select('lead_id, lead_tags(id, label, color)'),
     ]);
     if (leadsRes.error) toast.error('Erro ao carregar leads.');
     else setLeads(leadsRes.data || []);
@@ -137,7 +137,7 @@ const AdminLeads = () => {
 
 
   const updateStatus = async (id: string, status: string) => {
-    const { error } = await supabase.from('leads').update({ status }).eq('id', id);
+    const { error } = await legacySupabase.from('leads').update({ status }).eq('id', id);
     if (error) { toast.error('Erro ao atualizar.'); return; }
     toast.success(`Estado atualizado para "${statusLabels[status]}".`);
     fetchLeads();
@@ -145,14 +145,14 @@ const AdminLeads = () => {
 
   const saveNotes = async () => {
     if (!selectedLead) return;
-    const { error } = await supabase.from('leads').update({ notes }).eq('id', selectedLead.id);
+    const { error } = await legacySupabase.from('leads').update({ notes }).eq('id', selectedLead.id);
     if (error) { toast.error('Erro ao guardar notas.'); return; }
     toast.success('Notas guardadas.');
     fetchLeads();
   };
 
   const deleteLead = async (id: string) => {
-    const { error } = await supabase.from('leads').delete().eq('id', id);
+    const { error } = await legacySupabase.from('leads').delete().eq('id', id);
     if (error) { toast.error('Erro ao eliminar.'); return; }
     toast.success('Lead eliminado.');
     fetchLeads();

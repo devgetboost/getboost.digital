@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { z } from 'zod';
 import { ArrowRight, Check, Loader2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { analytics } from '@/lib/analytics';
 import { toast } from 'sonner';
 
@@ -75,7 +75,7 @@ const ConsultantContactForm = ({ open, service }: Props) => {
         form.message && `\nMensagem:\n${form.message}`,
       ].filter(Boolean).join('\n');
 
-      const { error } = await supabase.from('leads').insert({
+      const { error } = await legacySupabase.from('leads').insert({
         source: `consultor:${service.slug}`,
         name: form.name.trim(),
         email: form.email.trim(),
@@ -91,7 +91,7 @@ const ConsultantContactForm = ({ open, service }: Props) => {
 
       // Roteia o lead: consulta solucao_routing por slug, notifica destinatários
       // configurados e adiciona à lista Brevo mapeada.
-      supabase.functions.invoke('route-solucao-lead', {
+      legacySupabase.functions.invoke('route-solucao-lead', {
         body: {
           slug: service.slug,
           lead: {

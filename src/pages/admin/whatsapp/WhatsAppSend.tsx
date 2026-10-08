@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -94,7 +94,7 @@ export default function WhatsAppSend() {
   const { data: instances = [] } = useQuery({
     queryKey: ['whatsapp-instances'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('whatsapp_instances').select('*').order('name');
+      const { data, error } = await legacySupabase.from('whatsapp_instances').select('*').order('name');
       if (error) throw error;
       return data;
     },
@@ -103,7 +103,7 @@ export default function WhatsAppSend() {
   const { data: leads = [] } = useQuery({
     queryKey: ['leads-for-whatsapp'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await legacySupabase
         .from('leads')
         .select('name, email, phone, company, service, cargo, business_area')
         .not('phone', 'is', null);
@@ -115,7 +115,7 @@ export default function WhatsAppSend() {
   const { data: media = [], refetch: refetchMedia } = useQuery({
     queryKey: ['whatsapp-media'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await legacySupabase
         .from('whatsapp_media').select('*').order('created_at', { ascending: false });
       if (error) throw error;
       return data as MediaItem[];
@@ -125,7 +125,7 @@ export default function WhatsAppSend() {
   const { data: templates = [] } = useQuery({
     queryKey: ['whatsapp-templates'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await legacySupabase
         .from('whatsapp_templates').select('*').order('updated_at', { ascending: false });
       if (error) throw error;
       return data as Template[];
@@ -207,17 +207,17 @@ export default function WhatsAppSend() {
     if (file.size > 16 * 1024 * 1024) {
       toast.error('Tamanho máximo 16MB'); return;
     }
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await legacySupabase.auth.getUser();
     const ext = file.name.split('.').pop() || 'bin';
     const path = `${user?.id || 'anon'}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-    const up = await supabase.storage.from('whatsapp-media').upload(path, file, {
+    const up = await legacySupabase.storage.from('whatsapp-media').upload(path, file, {
       cacheControl: '3600', upsert: false, contentType: file.type,
     });
     if (up.error) { toast.error(up.error.message); return; }
-    const { data: signed, error: signErr } = await supabase.storage
+    const { data: signed, error: signErr } = await legacySupabase.storage
       .from('whatsapp-media').createSignedUrl(path, 60 * 60 * 24 * 365);
     if (signErr || !signed) { toast.error(signErr?.message || 'Falha ao assinar URL'); return; }
-    const { error } = await supabase.from('whatsapp_media').insert({
+    const { error } = await legacySupabase.from('whatsapp_media').insert({
       name: file.name, url: signed.signedUrl, storage_path: path,
       mime_type: file.type, size_bytes: file.size, created_by: user?.id || null,
     });
@@ -228,8 +228,8 @@ export default function WhatsAppSend() {
 
   const deleteMedia = async (m: MediaItem) => {
     if (!confirm(`Eliminar "${m.name}"?`)) return;
-    await supabase.storage.from('whatsapp-media').remove([m.storage_path]);
-    await supabase.from('whatsapp_media').delete().eq('id', m.id);
+    await legacySupabase.storage.from('whatsapp-media').remove([m.storage_path]);
+    await legacySupabase.from('whatsapp_media').delete().eq('id', m.id);
     if (selectedMedia?.id === m.id) setSelectedMedia(null);
     refetchMedia();
     toast.success('Eliminado');
@@ -238,7 +238,7 @@ export default function WhatsAppSend() {
   const renameMedia = async (m: MediaItem) => {
     const next = prompt('Novo nome:', m.name);
     if (!next || next === m.name) return;
-    await supabase.from('whatsapp_media').update({ name: next }).eq('id', m.id);
+    await legacySupabase.from('whatsapp_media').update({ name: next }).eq('id', m.id);
     refetchMedia();
   };
 
@@ -247,8 +247,8 @@ export default function WhatsAppSend() {
     if (!newTemplateName.trim() || !message.trim()) {
       toast.error('Nome e conteúdo são obrigatórios'); return;
     }
-    const { data: { user } } = await supabase.auth.getUser();
-    const { error } = await supabase.from('whatsapp_templates').insert({
+    const { data: { user } } = await legacySupabase.auth.getUser();
+    const { error } = await legacySupabase.from('whatsapp_templates').insert({
       name: newTemplateName.trim(),
       content: message,
       media_url: selectedMedia?.url || null,
@@ -277,7 +277,7 @@ export default function WhatsAppSend() {
 
   const deleteTemplate = async (t: Template) => {
     if (!confirm(`Eliminar modelo "${t.name}"?`)) return;
-    await supabase.from('whatsapp_templates').delete().eq('id', t.id);
+    await legacySupabase.from('whatsapp_templates').delete().eq('id', t.id);
     qc.invalidateQueries({ queryKey: ['whatsapp-templates'] });
   };
 
@@ -291,7 +291,7 @@ export default function WhatsAppSend() {
     }
     setSending(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await legacySupabase.auth.getSession();
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/whatsapp-proxy?action=send-messages`,
         {

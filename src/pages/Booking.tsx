@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -94,7 +94,7 @@ const Booking = () => {
 
   useEffect(() => {
     const fetchSettings = async () => {
-      const { data } = await supabase
+      const { data } = await legacySupabase
         .from('booking_settings')
         .select('available_days, available_times')
         .eq('id', 1)
@@ -113,7 +113,7 @@ const Booking = () => {
     const rid = params.get('reschedule') || params.get('booking_id');
     if (!rid) return;
     (async () => {
-      const { data } = await supabase
+      const { data } = await legacySupabase
         .from('bookings')
         .select('id, name, email, phone, company, website, meeting_type, challenges, timezone')
         .eq('id', rid)
@@ -182,7 +182,7 @@ const Booking = () => {
     // Snapshot previous slot before the update, then log the reschedule.
     let previous: { meeting_date: string | null; meeting_time: string | null; timezone: string | null; meeting_link: string | null } | null = null;
     if (isReschedule) {
-      const { data: prev } = await supabase
+      const { data: prev } = await legacySupabase
         .from('bookings')
         .select('meeting_date, meeting_time, timezone, meeting_link')
         .eq('id', bookingId)
@@ -191,7 +191,7 @@ const Booking = () => {
     }
 
     const { error } = isReschedule
-      ? await supabase.from('bookings').update({
+      ? await legacySupabase.from('bookings').update({
           meeting_date: meetingDateStr,
           meeting_time: time,
           timezone: form.timezone,
@@ -199,7 +199,7 @@ const Booking = () => {
           meeting_link: meetingLink,
           status: 'pending',
         }).eq('id', bookingId)
-      : await supabase.from('bookings').insert({
+      : await legacySupabase.from('bookings').insert({
           id: bookingId,
           meeting_type: meetingType,
           meeting_date: meetingDateStr,
@@ -218,7 +218,7 @@ const Booking = () => {
         });
 
     if (!error && isReschedule) {
-      await supabase.from('booking_reschedule_history').insert({
+      await legacySupabase.from('booking_reschedule_history').insert({
         booking_id: bookingId,
         previous_meeting_date: previous?.meeting_date ?? null,
         previous_meeting_time: previous?.meeting_time ?? null,
@@ -274,7 +274,7 @@ const Booking = () => {
         endAtUtc = new Date(startMs + durationMin * 60_000).toISOString();
       }
       try {
-        await supabase.functions.invoke('send-transactional-email', {
+        await legacySupabase.functions.invoke('send-transactional-email', {
           body: {
             templateName: 'booking-confirmation',
             recipientEmail: form.email,
@@ -300,7 +300,7 @@ const Booking = () => {
       } catch (err) {
         console.error('Error sending confirmation email:', err);
       }
-      supabase.functions.invoke('notify-booking', {
+      legacySupabase.functions.invoke('notify-booking', {
         body: {
           templateName: 'booking-confirmation',
           recipientEmail: form.email,
@@ -318,7 +318,7 @@ const Booking = () => {
           },
         },
       }).catch(console.error);
-      supabase.functions.invoke('notify-booking', {
+      legacySupabase.functions.invoke('notify-booking', {
         body: {
           name: form.name,
           email: form.email,

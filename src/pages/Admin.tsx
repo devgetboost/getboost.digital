@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { pt } from 'date-fns/locale';
 import { CalendarIcon, Clock, User, Mail, Phone, Building2, Globe, LogOut, Video, Trash2, CheckCircle, XCircle, Search, Filter } from 'lucide-react';
@@ -62,27 +62,27 @@ const Admin = () => {
   }, []);
 
   const checkAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await legacySupabase.auth.getSession();
     if (!session) {
       navigate('/login');
       return;
     }
     // Check admin role
-    const { data: roles } = await supabase
+    const { data: roles } = await legacySupabase
       .from('user_roles')
       .select('role')
       .eq('user_id', session.user.id)
       .eq('role', 'admin');
     if (!roles || roles.length === 0) {
       toast.error('Acesso restrito a administradores.');
-      await supabase.auth.signOut();
+      await legacySupabase.auth.signOut();
       navigate('/login');
     }
   };
 
   const fetchBookings = async () => {
     setLoading(true);
-    const { data, error } = await supabase
+    const { data, error } = await legacySupabase
       .from('bookings')
       .select('*')
       .order('meeting_date', { ascending: false });
@@ -99,7 +99,7 @@ const Admin = () => {
     if (status === 'confirmed') {
       updates.jitsi_room = `nuno-cruz-${id.slice(0, 8)}`;
     }
-    const { error } = await supabase.from('bookings').update(updates).eq('id', id);
+    const { error } = await legacySupabase.from('bookings').update(updates).eq('id', id);
     if (error) {
       toast.error('Erro ao atualizar');
     } else {
@@ -109,7 +109,7 @@ const Admin = () => {
   };
 
   const deleteBooking = async (id: string) => {
-    const { error } = await supabase.from('bookings').delete().eq('id', id);
+    const { error } = await legacySupabase.from('bookings').delete().eq('id', id);
     if (error) {
       toast.error('Erro ao eliminar');
     } else {
@@ -119,7 +119,7 @@ const Admin = () => {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await legacySupabase.auth.signOut();
     navigate('/login');
   };
 

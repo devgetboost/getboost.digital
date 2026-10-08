@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { analytics } from '@/lib/analytics';
 import { toast } from 'sonner';
 import { Link as RouterLink } from 'react-router-dom';
@@ -158,7 +158,7 @@ const SEOAnalyzer = () => {
       normalizedUrl = `https://${normalizedUrl}`;
     }
 
-    await supabase.from('leads').insert({
+    await legacySupabase.from('leads').insert({
       source: 'seo-analyzer',
       name: name.trim(),
       email: email.trim(),
@@ -169,7 +169,7 @@ const SEOAnalyzer = () => {
     analytics.trackForm('seo_analyzer', 'seo_analyzer_form_success', { website: normalizedUrl, email: email.trim() });
 
     try {
-      const { data, error } = await supabase.functions.invoke('seo-analyzer', {
+      const { data, error } = await legacySupabase.functions.invoke('seo-analyzer', {
         body: { url: normalizedUrl, email: email.trim() },
       });
 

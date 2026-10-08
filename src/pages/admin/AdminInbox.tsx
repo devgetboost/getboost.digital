@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import {
   Bell, Filter, MoreHorizontal, Paperclip, Phone, Search, Send, Settings,
   Smile, Wallet, Pencil, Mail, PhoneCall, UserPlus, Plus, MessageCircle, CheckCheck, Archive, Check, CalendarClock,
@@ -127,7 +127,7 @@ export default function AdminInbox() {
   async function markSelectedAsRead() {
     if (!selectedId) return;
     setConversations((prev) => prev.map((c) => c.id === selectedId ? { ...c, unread_count: 0 } : c));
-    const { error } = await supabase
+    const { error } = await legacySupabase
       .from('whatsapp_conversations')
       .update({ unread_count: 0 })
       .eq('id', selectedId);
@@ -140,7 +140,7 @@ export default function AdminInbox() {
     const id = selectedId;
     setConversations((prev) => prev.filter((c) => c.id !== id));
     setSelectedId((cur) => (cur === id ? null : cur));
-    const { error } = await supabase
+    const { error } = await legacySupabase
       .from('whatsapp_conversations')
       .update({ archived: true } as any)
       .eq('id', id);
@@ -152,7 +152,7 @@ export default function AdminInbox() {
     const ids = Array.from(selectedIds);
     if (!ids.length) return;
     setConversations((prev) => prev.map((c) => ids.includes(c.id) ? { ...c, unread_count: 0 } : c));
-    const { error } = await supabase
+    const { error } = await legacySupabase
       .from('whatsapp_conversations')
       .update({ unread_count: 0 })
       .in('id', ids);
@@ -166,7 +166,7 @@ export default function AdminInbox() {
     if (!ids.length) return;
     setConversations((prev) => prev.filter((c) => !ids.includes(c.id)));
     setSelectedId((cur) => (cur && ids.includes(cur) ? null : cur));
-    const { error } = await supabase
+    const { error } = await legacySupabase
       .from('whatsapp_conversations')
       .update({ archived: true } as any)
       .in('id', ids);
@@ -181,7 +181,7 @@ export default function AdminInbox() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase
+      const { data } = await legacySupabase
         .from('email_accounts')
         .select('id,provider,status')
         .eq('status', 'active')
@@ -195,7 +195,7 @@ export default function AdminInbox() {
   useEffect(() => {
 
     const load = async () => {
-      const { data } = await supabase
+      const { data } = await legacySupabase
         .from('whatsapp_conversations')
         .select('*')
         .or('archived.is.null,archived.eq.false')
@@ -206,7 +206,7 @@ export default function AdminInbox() {
       if (list.length && !selectedId) setSelectedId(list[0].id);
     };
     load();
-    const ch = supabase
+    const ch = legacySupabase
       .channel('inbox-conv')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'whatsapp_conversations' }, () => load())
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'whatsapp_conversations' }, (payload) => {
@@ -240,7 +240,7 @@ export default function AdminInbox() {
         if (oldId) setConversations((prev) => prev.filter((c) => c.id !== oldId));
       })
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => { legacySupabase.removeChannel(ch); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -257,7 +257,7 @@ export default function AdminInbox() {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
     restoreRef.current = null;
     const load = async () => {
-      const { data } = await supabase
+      const { data } = await legacySupabase
         .from('whatsapp_chat_messages')
         .select('*')
         .eq('conversation_id', selectedId)
@@ -266,10 +266,10 @@ export default function AdminInbox() {
       const rows = ((data as Message[]) || []).reverse();
       setMessages(rows);
       setHasMore((data?.length || 0) === PAGE_SIZE);
-      await supabase.from('whatsapp_conversations').update({ unread_count: 0 }).eq('id', selectedId);
+      await legacySupabase.from('whatsapp_conversations').update({ unread_count: 0 }).eq('id', selectedId);
     };
     load();
-    const ch = supabase
+    const ch = legacySupabase
       .channel(`inbox-msg-${selectedId}`)
       .on('postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'whatsapp_chat_messages', filter: `conversation_id=eq.${selectedId}` },
@@ -280,7 +280,7 @@ export default function AdminInbox() {
           // and badges reflect the current read position without a refresh.
           if (m.direction === 'inbound') {
             setConversations((prev) => prev.map((c) => c.id === selectedId ? { ...c, unread_count: 0 } : c));
-            supabase.from('whatsapp_conversations').update({ unread_count: 0 }).eq('id', selectedId).then(() => {});
+            legacySupabase.from('whatsapp_conversations').update({ unread_count: 0 }).eq('id', selectedId).then(() => {});
           }
         })
       .on('postgres_changes',
@@ -290,7 +290,7 @@ export default function AdminInbox() {
           setMessages((prev) => prev.map((x) => x.id === m.id ? m : x));
         })
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => { legacySupabase.removeChannel(ch); };
   }, [selectedId]);
 
   // Captured before older-page fetch so we can restore exact reading position
@@ -306,7 +306,7 @@ export default function AdminInbox() {
     };
     setLoadingMore(true);
     const oldest = messages[0].created_at;
-    const { data } = await supabase
+    const { data } = await legacySupabase
       .from('whatsapp_chat_messages')
       .select('*')
       .eq('conversation_id', selectedId)
@@ -361,7 +361,7 @@ export default function AdminInbox() {
     if (!phone) return;
     const last9 = phone.slice(-9);
     (async () => {
-      const { data } = await supabase
+      const { data } = await legacySupabase
         .from('leads')
         .select('id, name, email, phone, company, service, cargo, notes')
         .ilike('phone', `%${last9}`)
@@ -373,7 +373,7 @@ export default function AdminInbox() {
       setLeadNotes(row?.notes || '');
       setNotesDraft(row?.notes || '');
       if (row?.id) {
-        const { data: ta } = await supabase.from('lead_tag_assignments').select('tag_id').eq('lead_id', row.id);
+        const { data: ta } = await legacySupabase.from('lead_tag_assignments').select('tag_id').eq('lead_id', row.id);
         setLeadTagIds(new Set(((ta as any[]) || []).map((r) => r.tag_id)));
       } else {
         setLeadTagIds(new Set());
@@ -385,8 +385,8 @@ export default function AdminInbox() {
   useEffect(() => {
     (async () => {
       const [{ data: tags }, { data: camps }] = await Promise.all([
-        supabase.from('lead_tags').select('id, label, color').order('label'),
-        supabase.from('campaigns').select('id, name, status, channel').order('created_at', { ascending: false }).limit(100),
+        legacySupabase.from('lead_tags').select('id, label, color').order('label'),
+        legacySupabase.from('campaigns').select('id, name, status, channel').order('created_at', { ascending: false }).limit(100),
       ]);
       setAllTags(((tags as any[]) || []).map((t) => ({ id: t.id, label: t.label, color: t.color })));
       setCampaigns(((camps as any[]) || []).map((c) => ({ id: c.id, name: c.name, status: c.status, channel: c.channel })));
@@ -400,10 +400,10 @@ export default function AdminInbox() {
     has ? next.delete(tagId) : next.add(tagId);
     setLeadTagIds(next);
     if (has) {
-      const { error } = await supabase.from('lead_tag_assignments').delete().eq('lead_id', leadId).eq('tag_id', tagId);
+      const { error } = await legacySupabase.from('lead_tag_assignments').delete().eq('lead_id', leadId).eq('tag_id', tagId);
       if (error) { toast.error('Erro ao remover tag'); setLeadTagIds(leadTagIds); }
     } else {
-      const { error } = await supabase.from('lead_tag_assignments').insert({ lead_id: leadId, tag_id: tagId, assigned_by: 'manual' });
+      const { error } = await legacySupabase.from('lead_tag_assignments').insert({ lead_id: leadId, tag_id: tagId, assigned_by: 'manual' });
       if (error) { toast.error('Erro ao adicionar tag'); setLeadTagIds(leadTagIds); }
       else toast.success('Tag adicionada');
     }
@@ -412,7 +412,7 @@ export default function AdminInbox() {
   async function addToCampaign(campaignId: string, campaignName: string) {
     if (!selected) return;
     const phone = (selected.contact_phone || '').replace(/\D/g, '');
-    const { error } = await supabase.from('campaign_recipients').insert({
+    const { error } = await legacySupabase.from('campaign_recipients').insert({
       campaign_id: campaignId,
       contact_name: leadInfo?.name || selected.contact_name || null,
       contact_email: leadInfo?.email || null,
@@ -443,7 +443,7 @@ export default function AdminInbox() {
     try {
       const next = [{ text, at: new Date().toISOString() }, ...notesList];
       const serialized = JSON.stringify(next);
-      const { error } = await supabase.from('leads').update({ notes: serialized }).eq('id', leadId);
+      const { error } = await legacySupabase.from('leads').update({ notes: serialized }).eq('id', leadId);
       if (error) throw error;
       setLeadNotes(serialized);
       setNotesDraft('');
@@ -459,7 +459,7 @@ export default function AdminInbox() {
     if (!leadId) return;
     const next = notesList.filter((_, i) => i !== idx);
     const serialized = JSON.stringify(next);
-    const { error } = await supabase.from('leads').update({ notes: serialized }).eq('id', leadId);
+    const { error } = await legacySupabase.from('leads').update({ notes: serialized }).eq('id', leadId);
     if (error) { toast.error('Erro ao remover'); return; }
     setLeadNotes(serialized);
     toast.success('Nota removida');
@@ -470,7 +470,10 @@ export default function AdminInbox() {
     const urlRe = /(https?:\/\/[^\s]+)/gi;
     const items: { id: string; url: string; name: string; at: string; direction: string }[] = [];
     messages.forEach((m) => {
-      const matches = m.content?.match(urlRe) || [];
+      // R1C3: the `|| []` fallback widened the union to `never[]`, which made the
+      // match callback argument `never`. Annotating the empty array keeps the
+      // callback argument `string`; the emitted value is unchanged.
+      const matches = m.content?.match(urlRe) || ([] as string[]);
       matches.forEach((u, i) => {
         const clean = u.replace(/[.,;)]+$/, '');
         const name = decodeURIComponent(clean.split('/').pop() || clean).slice(0, 60);
@@ -523,7 +526,7 @@ export default function AdminInbox() {
     }
     setSending(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await legacySupabase.auth.getSession();
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/whatsapp-proxy?action=send-messages`,
         {
@@ -541,7 +544,7 @@ export default function AdminInbox() {
       if (!res.ok) throw new Error(data?.error || 'send failed');
       const result = data?.results?.[0];
       const sent = result?.status === 'sent';
-      await supabase.from('whatsapp_chat_messages').insert({
+      await legacySupabase.from('whatsapp_chat_messages').insert({
         conversation_id: selected.id,
         external_id: result?.external_id || null,
         direction: 'outbound',
@@ -549,7 +552,7 @@ export default function AdminInbox() {
         content: reply,
         status: sent ? 'sent' : 'failed',
       });
-      await supabase.from('whatsapp_conversations').update({
+      await legacySupabase.from('whatsapp_conversations').update({
         handoff_to_human: true,
         last_message_at: new Date().toISOString(),
         last_message_preview: reply.slice(0, 120),
@@ -601,7 +604,7 @@ export default function AdminInbox() {
       const path = `outbound/${selected.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
       // Signed upload URL enables XHR progress events
-      const { data: signed, error: signErr } = await supabase.storage
+      const { data: signed, error: signErr } = await legacySupabase.storage
         .from('whatsapp-media').createSignedUploadUrl(path);
       if (signErr || !signed) throw signErr || new Error('Falha ao preparar upload');
 
@@ -625,7 +628,7 @@ export default function AdminInbox() {
 
       const mediaUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/sign/whatsapp-media/${path}`;
       const caption = reply.trim();
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await legacySupabase.auth.getSession();
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/whatsapp-proxy?action=send-messages`,
         {
@@ -645,7 +648,7 @@ export default function AdminInbox() {
       if (!res.ok) throw new Error(data?.error || 'send failed');
       const result = data?.results?.[0];
       const sent = result?.status === 'sent';
-      await supabase.from('whatsapp_chat_messages').insert({
+      await legacySupabase.from('whatsapp_chat_messages').insert({
         conversation_id: selected.id,
         external_id: result?.external_id || null,
         direction: 'outbound',
@@ -653,7 +656,7 @@ export default function AdminInbox() {
         content: caption || `[Anexo] ${file.name}`,
         status: sent ? 'sent' : 'failed',
       });
-      await supabase.from('whatsapp_conversations').update({
+      await legacySupabase.from('whatsapp_conversations').update({
         handoff_to_human: true,
         last_message_at: new Date().toISOString(),
         last_message_preview: (caption || `📎 ${file.name}`).slice(0, 120),

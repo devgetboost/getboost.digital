@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import {
   Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart,
   Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
@@ -72,7 +72,7 @@ const AdminLeadsAnalytics = () => {
 
   const fetchLeads = async () => {
     setLoading(true);
-    const { data, error } = await supabase
+    const { data, error } = await legacySupabase
       .from('leads')
       .select('id, created_at, name, email, phone, company, source, service, utm_source, utm_medium, utm_campaign, status, landing_page, referrer')
       .order('created_at', { ascending: false })

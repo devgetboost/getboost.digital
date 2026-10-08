@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Ban, CalendarClock, Loader2, Plus, Trash2, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -52,12 +52,12 @@ export default function InboxCalendar() {
   const load = async (uid: string) => {
     setLoading(true);
     const [{ data: b }, { data: k }] = await Promise.all([
-      supabase
+      legacySupabase
         .from('bookings')
         .select('id, name, meeting_date, meeting_time, meeting_type, status')
         .eq('assigned_to' as never, uid as never)
         .order('meeting_date', { ascending: true }),
-      supabase
+      legacySupabase
         .from('admin_calendar_blocks' as never)
         .select('*')
         .eq('user_id', uid)
@@ -69,7 +69,7 @@ export default function InboxCalendar() {
   };
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
+    legacySupabase.auth.getUser().then(({ data }) => {
       const uid = data.user?.id ?? null;
       setUserId(uid);
       if (uid) load(uid);
@@ -112,7 +112,7 @@ export default function InboxCalendar() {
 
   const deleteBlock = async (id: string) => {
     if (!confirm('Remover este bloqueio?')) return;
-    const { error } = await supabase.from('admin_calendar_blocks' as never).delete().eq('id', id);
+    const { error } = await legacySupabase.from('admin_calendar_blocks' as never).delete().eq('id', id);
     if (error) toast.error(error.message);
     else {
       toast.success('Bloqueio removido');
@@ -121,7 +121,7 @@ export default function InboxCalendar() {
   };
 
   const toggleBlock = async (id: string, active: boolean) => {
-    const { error } = await supabase
+    const { error } = await legacySupabase
       .from('admin_calendar_blocks' as never)
       .update({ active } as never)
       .eq('id', id);
@@ -308,7 +308,7 @@ function BlockDialog({
       payload.start_time = startTime;
       payload.end_time = endTime;
     }
-    const { error } = await supabase.from('admin_calendar_blocks' as never).insert(payload as never);
+    const { error } = await legacySupabase.from('admin_calendar_blocks' as never).insert(payload as never);
     setSaving(false);
     if (error) toast.error(error.message);
     else {

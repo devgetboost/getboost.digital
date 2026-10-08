@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -72,15 +72,15 @@ const AdminClients = () => {
   useEffect(() => { loadClients(); }, []);
 
   const loadClients = async () => {
-    const { data: roles } = await supabase.from('user_roles').select('user_id, role').eq('role', 'user');
+    const { data: roles } = await legacySupabase.from('user_roles').select('user_id, role').eq('role', 'user');
     if (!roles || roles.length === 0) { setClients([]); setLoading(false); return; }
     const userIds = roles.map(r => r.user_id);
     const [{ data: profiles }, { data: svcAll }, { data: subAll }, { data: tktAll }, { data: invAll }] = await Promise.all([
-      supabase.from('profiles').select('*').in('user_id', userIds),
-      supabase.from('client_services').select('user_id, status').in('user_id', userIds),
-      supabase.from('client_subscriptions').select('user_id, status, amount, billing_cycle').in('user_id', userIds),
-      supabase.from('support_tickets').select('user_id, status').in('user_id', userIds),
-      supabase.from('client_invoices').select('user_id, status, amount').in('user_id', userIds),
+      legacySupabase.from('profiles').select('*').in('user_id', userIds),
+      legacySupabase.from('client_services').select('user_id, status').in('user_id', userIds),
+      legacySupabase.from('client_subscriptions').select('user_id, status, amount, billing_cycle').in('user_id', userIds),
+      legacySupabase.from('support_tickets').select('user_id, status').in('user_id', userIds),
+      legacySupabase.from('client_invoices').select('user_id, status, amount').in('user_id', userIds),
     ]);
     const enriched = (profiles || []).map((p: any) => {
       const svc = (svcAll || []).filter((s: any) => s.user_id === p.user_id);
@@ -113,10 +113,10 @@ const AdminClients = () => {
     setSelectedClient(client);
     const uid = client.user_id;
     const [svc, sub, inv, tkt] = await Promise.all([
-      supabase.from('client_services').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
-      supabase.from('client_subscriptions').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
-      supabase.from('client_invoices').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
-      supabase.from('support_tickets').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
+      legacySupabase.from('client_services').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
+      legacySupabase.from('client_subscriptions').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
+      legacySupabase.from('client_invoices').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
+      legacySupabase.from('support_tickets').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
     ]);
     setServices(svc.data || []);
     setSubscriptions(sub.data || []);
@@ -130,10 +130,10 @@ const AdminClients = () => {
     setCreating(true);
 
     try {
-      const { data: sessionData } = await supabase.auth.getSession();
+      const { data: sessionData } = await legacySupabase.auth.getSession();
       const token = sessionData?.session?.access_token;
 
-      const { data, error } = await supabase.functions.invoke('create-client', {
+      const { data, error } = await legacySupabase.functions.invoke('create-client', {
         body: {
           email: newEmail.trim(),
           password: newPassword.trim(),
@@ -161,7 +161,7 @@ const AdminClients = () => {
 
   const addService = async () => {
     if (!selectedClient || !svcName.trim()) return;
-    const { error } = await supabase.from('client_services').insert({
+    const { error } = await legacySupabase.from('client_services').insert({
       user_id: selectedClient.user_id,
       service_name: svcName.trim(),
       description: svcDesc.trim(),
@@ -173,7 +173,7 @@ const AdminClients = () => {
 
   const addSubscription = async () => {
     if (!selectedClient || !subName.trim() || !subAmount) return;
-    const { error } = await supabase.from('client_subscriptions').insert({
+    const { error } = await legacySupabase.from('client_subscriptions').insert({
       user_id: selectedClient.user_id,
       name: subName.trim(),
       amount: parseFloat(subAmount),
@@ -185,7 +185,7 @@ const AdminClients = () => {
 
   const addInvoice = async () => {
     if (!selectedClient || !invNumber.trim() || !invAmount) return;
-    const { error } = await supabase.from('client_invoices').insert({
+    const { error } = await legacySupabase.from('client_invoices').insert({
       user_id: selectedClient.user_id,
       invoice_number: invNumber.trim(),
       description: invDesc.trim(),
@@ -197,7 +197,7 @@ const AdminClients = () => {
   };
 
   const updateServiceStatus = async (id: string, status: string) => {
-    await supabase.from('client_services').update({ status }).eq('id', id);
+    await legacySupabase.from('client_services').update({ status }).eq('id', id);
     selectClient(selectedClient);
   };
 
@@ -218,9 +218,9 @@ const AdminClients = () => {
     try {
       const ext = file.name.split('.').pop() || 'png';
       const path = `${selectedClient.user_id}/avatar-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type });
+      const { error: upErr } = await legacySupabase.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type });
       if (upErr) throw upErr;
-      const { data } = supabase.storage.from('avatars').getPublicUrl(path);
+      const { data } = legacySupabase.storage.from('avatars').getPublicUrl(path);
       setEditAvatarUrl(data.publicUrl);
       toast.success('Foto carregada!');
     } catch (err: any) {
@@ -234,7 +234,7 @@ const AdminClients = () => {
     if (!selectedClient) return;
     setSavingEdit(true);
     try {
-      const { error } = await supabase.from('profiles').update({
+      const { error } = await legacySupabase.from('profiles').update({
         display_name: editName.trim() || null,
         email: editEmail.trim() || null,
         phone: editPhone.trim() || null,
@@ -257,21 +257,21 @@ const AdminClients = () => {
 
 
   const updateTicketStatus = async (id: string, status: string) => {
-    await supabase.from('support_tickets').update({ status, ...(status === 'closed' ? { closed_at: new Date().toISOString() } : {}) }).eq('id', id);
+    await legacySupabase.from('support_tickets').update({ status, ...(status === 'closed' ? { closed_at: new Date().toISOString() } : {}) }).eq('id', id);
     selectClient(selectedClient);
   };
 
   const openTicketMessages = async (ticket: any) => {
     setSelectedTicket(ticket);
-    const { data } = await supabase.from('ticket_messages').select('*').eq('ticket_id', ticket.id).order('created_at', { ascending: true });
+    const { data } = await legacySupabase.from('ticket_messages').select('*').eq('ticket_id', ticket.id).order('created_at', { ascending: true });
     setTicketMessages(data || []);
   };
 
   const sendReply = async () => {
     if (!replyMessage.trim() || !selectedTicket) return;
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await legacySupabase.auth.getSession();
     if (!session) return;
-    await supabase.from('ticket_messages').insert({
+    await legacySupabase.from('ticket_messages').insert({
       ticket_id: selectedTicket.id,
       sender_id: session.user.id,
       sender_role: 'admin',

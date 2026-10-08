@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { MessageCircle, X, Send, RefreshCw, Maximize2, Minimize2, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { analytics, buildWhatsAppUrl } from '@/lib/analytics';
 import { WHATSAPP_MESSAGES, WHATSAPP_PHONE } from '@/lib/whatsappMessages';
 
@@ -93,7 +93,7 @@ const ChatWidget = () => {
   const [formError, setFormError] = useState('');
 
   useEffect(() => {
-    supabase.rpc('get_assistant_public').then(({ data }) => {
+    legacySupabase.rpc('get_assistant_public').then(({ data }) => {
       const row = Array.isArray(data) ? data[0] : null;
       if (row) {
         setGreeting(row.greeting_message);
@@ -113,7 +113,7 @@ const ChatWidget = () => {
       setContactEmail(parsed.email);
       setContactPhone(parsed.phone);
       setCountryCode(parsed.countryCode);
-      supabase.rpc('get_chat_messages_by_id', { _conversation_id: stored })
+      legacySupabase.rpc('get_chat_messages_by_id', { _conversation_id: stored })
         .then(({ data }) => {
           if (data && data.length > 0) {
             setMessages(data as Message[]);
@@ -130,7 +130,7 @@ const ChatWidget = () => {
   // Realtime: receive assistant/admin replies pushed from backend (edge fn or Inbox admin)
   useEffect(() => {
     if (!conversationId) return;
-    const channel = supabase
+    const channel = legacySupabase
       .channel(`chat-widget-${conversationId}`)
       .on(
         'postgres_changes',
@@ -143,7 +143,7 @@ const ChatWidget = () => {
         },
       )
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => { legacySupabase.removeChannel(channel); };
   }, [conversationId]);
 
   const validatePhone = (phone: string): boolean => {
@@ -179,7 +179,7 @@ const ChatWidget = () => {
     sessionStorage.setItem(CONTACT_KEY, JSON.stringify(info));
 
     // Save as lead
-    supabase.from('leads').insert({
+    legacySupabase.from('leads').insert({
       name: contactName.trim(),
       email: contactEmail.trim(),
       phone: fullPhone,
@@ -203,7 +203,7 @@ const ChatWidget = () => {
     const contact = sessionStorage.getItem(CONTACT_KEY);
     const parsed = contact ? JSON.parse(contact) : {};
     const fullPhone = parsed.phone ? `${parsed.countryCode || ''}${parsed.phone.replace(/\D/g, '')}` : null;
-    const { data } = await supabase.from('chat_conversations').insert({
+    const { data } = await legacySupabase.from('chat_conversations').insert({
       visitor_name: parsed.name || 'Visitante',
       visitor_email: parsed.email || null,
       visitor_phone: fullPhone,
@@ -234,7 +234,7 @@ const ChatWidget = () => {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('chat-assistant', {
+      const { data, error } = await legacySupabase.functions.invoke('chat-assistant', {
         body: { conversation_id: convId, message: text, visitor_name: contactName },
       });
       if (error) throw error;

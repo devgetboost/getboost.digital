@@ -27,7 +27,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { toast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { analytics } from '@/lib/analytics';
 
 const ACCENT = '#ff4000';
@@ -134,7 +134,7 @@ const AcademyInCompany = () => {
     }
     setSubmitting(true);
     try {
-      const { error } = await supabase.from('leads').insert({
+      const { error } = await legacySupabase.from('leads').insert({
         name: form.name.trim(),
         email: form.email.trim(),
         phone: form.phone.trim() || null,

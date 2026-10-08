@@ -27,7 +27,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { toast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { analytics } from '@/lib/analytics';
 
 const ACCENT = '#ff4000';
@@ -145,7 +145,7 @@ const AcademyCourseDetail = () => {
     if (!slug) return;
     setLoading(true);
     (async () => {
-      const { data } = await supabase
+      const { data } = await legacySupabase
         .from('academy_courses')
         .select('*')
         .eq('slug', slug)
@@ -156,7 +156,7 @@ const AcademyCourseDetail = () => {
         return;
       }
       setCourse(data as Course);
-      const { data: rel } = await supabase
+      const { data: rel } = await legacySupabase
         .from('academy_courses')
         .select('*')
         .eq('is_published', true)
@@ -183,7 +183,7 @@ const AcademyCourseDetail = () => {
     }
     setSubmitting(true);
     try {
-      const { error } = await supabase.from('leads').insert({
+      const { error } = await legacySupabase.from('leads').insert({
         name: form.name.trim(),
         email: form.email.trim(),
         phone: form.phone.trim() || null,

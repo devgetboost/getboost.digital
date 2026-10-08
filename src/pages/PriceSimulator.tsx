@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ArrowLeft, CheckCircle2, Zap, Target, BarChart3, Users, Sparkles, Send, Phone } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
@@ -111,7 +111,7 @@ const PriceSimulator = () => {
     setSubmitting(true);
     const price = calculatePrice();
     try {
-      const { error } = await supabase.from('leads').insert({
+      const { error } = await legacySupabase.from('leads').insert({
         name: leadForm.name.trim().slice(0, 100),
         email: leadForm.email.trim().slice(0, 255),
         phone: leadForm.phone.trim().slice(0, 20) || null,
@@ -125,7 +125,7 @@ const PriceSimulator = () => {
       });
       if (error) throw error;
 
-      await supabase.functions.invoke('send-transactional-email', {
+      await legacySupabase.functions.invoke('send-transactional-email', {
         body: {
           templateName: 'lead-notification',
           recipientEmail: 'nunocruz@getboost.digital',

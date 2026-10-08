@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Bell, Home, Briefcase, CreditCard, LifeBuoy, LogOut, User, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -26,18 +26,18 @@ const ClientLayout = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await legacySupabase.auth.getSession();
       if (!session) { navigate('/login'); return; }
 
       // Check user has 'user' role (not admin)
-      const { data: roles } = await supabase
+      const { data: roles } = await legacySupabase
         .from('user_roles')
         .select('role')
         .eq('user_id', session.user.id);
 
       if (!roles || roles.length === 0) {
         toast.error('Acesso negado.');
-        await supabase.auth.signOut();
+        await legacySupabase.auth.signOut();
         navigate('/login');
         return;
       }
@@ -47,7 +47,7 @@ const ClientLayout = () => {
       if (isAdmin) { navigate('/admin'); return; }
 
       // Get display name
-      const { data: profile } = await supabase
+      const { data: profile } = await legacySupabase
         .from('profiles')
         .select('display_name')
         .eq('user_id', session.user.id)
@@ -61,7 +61,7 @@ const ClientLayout = () => {
   }, [navigate]);
 
   const loadNotifications = async (userId: string) => {
-    const { data } = await supabase
+    const { data } = await legacySupabase
       .from('client_notifications')
       .select('*')
       .eq('user_id', userId)
@@ -74,19 +74,19 @@ const ClientLayout = () => {
   };
 
   const markAllRead = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await legacySupabase.auth.getSession();
     if (!session) return;
     const unreadIds = notifications.filter(n => !n.is_read).map(n => n.id);
     if (unreadIds.length === 0) return;
     for (const id of unreadIds) {
-      await supabase.from('client_notifications').update({ is_read: true }).eq('id', id);
+      await legacySupabase.from('client_notifications').update({ is_read: true }).eq('id', id);
     }
     setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
     setUnreadCount(0);
   };
 
   const handleLogout = useCallback(async () => {
-    await supabase.auth.signOut();
+    await legacySupabase.auth.signOut();
     navigate('/login');
   }, [navigate]);
 

@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const ACCENT = '#ff4000';
@@ -27,7 +27,7 @@ const Contact = () => {
   });
 
   useEffect(() => {
-    supabase
+    legacySupabase
       .from('services')
       .select('key, headline')
       .eq('status', 'published')
@@ -46,7 +46,7 @@ const Contact = () => {
       return;
     }
     setSubmitting(true);
-    const { error } = await supabase.from('leads').insert({
+    const { error } = await legacySupabase.from('leads').insert({
       source: 'contact',
       name: form.name.trim(),
       email: form.email.trim(),
@@ -60,7 +60,7 @@ const Contact = () => {
     });
 
     if (!error) {
-      await supabase.functions.invoke('send-transactional-email', {
+      await legacySupabase.functions.invoke('send-transactional-email', {
         body: {
           templateName: 'lead-notification',
           recipientEmail: 'nunocruz@getboost.digital',

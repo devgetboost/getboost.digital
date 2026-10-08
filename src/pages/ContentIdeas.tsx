@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { analytics } from '@/lib/analytics';
 import { toast } from 'sonner';
 import { Link as RouterLink } from 'react-router-dom';
@@ -70,7 +70,7 @@ const ContentIdeasPage = () => {
     setIdeas(null);
 
     // Save lead
-    await supabase.from('leads').insert({
+    await legacySupabase.from('leads').insert({
       source: 'content-ideas',
       name: name.trim(),
       email: email.trim(),
@@ -81,7 +81,7 @@ const ContentIdeasPage = () => {
     analytics.trackForm('content_ideas', 'content_ideas_form_success', { niche: niche.trim(), email: email.trim() });
 
     try {
-      const { data, error } = await supabase.functions.invoke('content-ideas', {
+      const { data, error } = await legacySupabase.functions.invoke('content-ideas', {
         body: { niche: niche.trim(), language: 'pt', email: email.trim() },
       });
 

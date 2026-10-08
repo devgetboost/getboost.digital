@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { legacySupabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -57,8 +57,8 @@ export default function AdminBookingDetail() {
     if (!id) return;
     setLoading(true);
     const [{ data: b, error: bErr }, { data: a, error: aErr }] = await Promise.all([
-      supabase.from("bookings").select("*").eq("id", id).maybeSingle(),
-      supabase
+      legacySupabase.from("bookings").select("*").eq("id", id).maybeSingle(),
+      legacySupabase
         .from("bookings_lead_status_audit")
         .select("*")
         .eq("booking_id", id)

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { legacySupabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -62,7 +62,7 @@ export default function AdminBookingsFunnel() {
 
   const load = async () => {
     setLoading(true);
-    let q = supabase
+    let q = legacySupabase
       .from("bookings")
       .select("id,name,email,company,meeting_date,meeting_time,status,lead_status,language,meeting_link,jitsi_room,created_at")
       .order("created_at", { ascending: false })

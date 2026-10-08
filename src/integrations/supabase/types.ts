@@ -1,3 +1,44 @@
+/**
+ * R1C2 Wave 1 — Clean Database V1 browser type contract.
+ *
+ * The `Database` schema below is classified in two tiers:
+ *
+ *  1. AUTHORITATIVE — the 15 Clean V1 application tables listed in
+ *     `CLEAN_V1_TABLES` / `CleanV1TableName`. Their Row/Insert/Update shapes
+ *     are derived from the committed Clean V1 migrations
+ *     (`supabase/migrations/2026100810000*_clean_v1_*.sql`), which are the
+ *     schema source of truth. Each one is marked `// [CLEAN V1]`.
+ *     New application code may only depend on these contracts.
+ *
+ *  2. COMPATIBILITY DEBT — every other table, view and function exposed by
+ *     `Database`, reachable through `LegacyCompatTableName`. These are legacy
+ *     CRM / email / WhatsApp / agentic / social / blog contracts that do NOT
+ *     exist in the Clean V1 database. They are retained only so that existing
+ *     frontend code keeps compiling until later Waves retire them.
+ *     They must never be treated as authoritative and no new dependency may be
+ *     added to them.
+ */
+
+export const CLEAN_V1_TABLES = [
+  'admin_audit_log',
+  'bookings',
+  'case_studies',
+  'case_study_localizations',
+  'content_authors',
+  'content_categories',
+  'content_category_localizations',
+  'content_entries',
+  'content_localizations',
+  'leads',
+  'newsletter_subscribers',
+  'products',
+  'product_localizations',
+  'profiles',
+  'user_roles',
+] as const;
+
+export type CleanV1TableName = (typeof CLEAN_V1_TABLES)[number];
+
 export type Json =
   | string
   | number
@@ -82,6 +123,45 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      // [CLEAN V1] governance — who/what/which/when; no snapshots, no secrets.
+      admin_audit_log: {
+        Row: {
+          action: string
+          entity: string
+          entity_id: string | null
+          id: string
+          metadata: Json
+          occurred_at: string
+          actor_id: string | null
+        }
+        Insert: {
+          action: string
+          entity: string
+          entity_id?: string | null
+          id?: string
+          metadata?: Json
+          occurred_at?: string
+          actor_id?: string | null
+        }
+        Update: {
+          action?: string
+          entity?: string
+          entity_id?: string | null
+          id?: string
+          metadata?: Json
+          occurred_at?: string
+          actor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_audit_log_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       admin_notification_reads: {
         Row: {
@@ -691,68 +771,68 @@ export type Database = {
         }
         Relationships: []
       }
+      // [CLEAN V1] commercial — anon/authenticated denied; Edge Function write path.
       bookings: {
         Row: {
-          challenges: string | null
           company: string | null
           created_at: string
-          email: string | null
+          deleted_at: string | null
+          email: string
+          end_at: string
           id: string
-          jitsi_room: string | null
-          language: string | null
-          lead_status: string | null
-          meeting_date: string | null
-          meeting_link: string | null
-          meeting_time: string | null
-          meeting_type: string | null
-          name: string | null
-          phone: string | null
-          status: string
-          timezone: string | null
+          lead_id: string | null
+          locale: string
+          market: "PT" | "BR" | "INTL"
+          name: string
+          notes: string | null
+          start_at: string
+          status: "requested" | "confirmed" | "completed" | "cancelled" | "no_show"
+          timezone: string
           updated_at: string
-          website: string | null
         }
         Insert: {
-          challenges?: string | null
           company?: string | null
           created_at?: string
-          email?: string | null
+          deleted_at?: string | null
+          email: string
+          end_at: string
           id?: string
-          jitsi_room?: string | null
-          language?: string | null
-          lead_status?: string | null
-          meeting_date?: string | null
-          meeting_link?: string | null
-          meeting_time?: string | null
-          meeting_type?: string | null
-          name?: string | null
-          phone?: string | null
-          status?: string
-          timezone?: string | null
+          lead_id?: string | null
+          locale: string
+          market: "PT" | "BR" | "INTL"
+          name: string
+          notes?: string | null
+          start_at: string
+          status?: "requested" | "confirmed" | "completed" | "cancelled" | "no_show"
+          timezone: string
           updated_at?: string
-          website?: string | null
         }
         Update: {
-          challenges?: string | null
           company?: string | null
           created_at?: string
-          email?: string | null
+          deleted_at?: string | null
+          email?: string
+          end_at?: string
           id?: string
-          jitsi_room?: string | null
-          language?: string | null
-          lead_status?: string | null
-          meeting_date?: string | null
-          meeting_link?: string | null
-          meeting_time?: string | null
-          meeting_type?: string | null
-          name?: string | null
-          phone?: string | null
-          status?: string
-          timezone?: string | null
+          lead_id?: string | null
+          locale?: string
+          market?: "PT" | "BR" | "INTL"
+          name?: string
+          notes?: string | null
+          start_at?: string
+          status?: "requested" | "confirmed" | "completed" | "cancelled" | "no_show"
+          timezone?: string
           updated_at?: string
-          website?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bookings_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       bookings_lead_status_audit: {
         Row: {
@@ -921,6 +1001,118 @@ export type Database = {
             columns: ["template_id"]
             isOneToOne: false
             referencedRelation: "email_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      // [CLEAN V1] content taxonomy — per-market localizations.
+      case_studies: {
+        Row: {
+          capabilities: string[]
+          client_name: string
+          created_at: string
+          featured: boolean
+          hero_media_path: string | null
+          id: string
+          industry: string | null
+          published_at: string | null
+          status: "draft" | "published" | "archived"
+          technologies: string[]
+          updated_at: string
+        }
+        Insert: {
+          capabilities?: string[]
+          client_name: string
+          created_at?: string
+          featured?: boolean
+          hero_media_path?: string | null
+          id?: string
+          industry?: string | null
+          published_at?: string | null
+          status?: "draft" | "published" | "archived"
+          technologies?: string[]
+          updated_at?: string
+        }
+        Update: {
+          capabilities?: string[]
+          client_name?: string
+          created_at?: string
+          featured?: boolean
+          hero_media_path?: string | null
+          id?: string
+          industry?: string | null
+          published_at?: string | null
+          status?: "draft" | "published" | "archived"
+          technologies?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      // [CLEAN V1] content localization — market-scoped unique (case_study_id, market) and (market, slug).
+      case_study_localizations: {
+        Row: {
+          case_study_id: string
+          challenge: string | null
+          created_at: string
+          id: string
+          locale: string
+          market: "PT" | "BR" | "INTL"
+          published_at: string | null
+          results: Json
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          solution: string | null
+          status: "draft" | "published" | "archived"
+          strategy: string | null
+          summary: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          case_study_id: string
+          challenge?: string | null
+          created_at?: string
+          id?: string
+          locale: string
+          market: "PT" | "BR" | "INTL"
+          published_at?: string | null
+          results?: Json
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          solution?: string | null
+          status?: "draft" | "published" | "archived"
+          strategy?: string | null
+          summary?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          case_study_id?: string
+          challenge?: string | null
+          created_at?: string
+          id?: string
+          locale?: string
+          market?: "PT" | "BR" | "INTL"
+          published_at?: string | null
+          results?: Json
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          solution?: string | null
+          status?: "draft" | "published" | "archived"
+          strategy?: string | null
+          summary?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_study_localizations_case_study_id_fkey"
+            columns: ["case_study_id"]
+            isOneToOne: false
+            referencedRelation: "case_studies"
             referencedColumns: ["id"]
           },
         ]
@@ -1249,6 +1441,231 @@ export type Database = {
           website?: string | null
         }
         Relationships: []
+      }
+      // [CLEAN V1] editorial identity — NOT auth users.
+      content_authors: {
+        Row: {
+          avatar_path: string | null
+          bio: string | null
+          created_at: string
+          id: string
+          name: string
+          role_title: string | null
+          social_links: Json
+          updated_at: string
+        }
+        Insert: {
+          avatar_path?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          role_title?: string | null
+          social_links?: Json
+          updated_at?: string
+        }
+        Update: {
+          avatar_path?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          role_title?: string | null
+          social_links?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      // [CLEAN V1] stable category key + per-market localizations.
+      content_categories: {
+        Row: {
+          created_at: string
+          id: string
+          key: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      // [CLEAN V1] per-market category localizations (market, slug unique).
+      content_category_localizations: {
+        Row: {
+          category_id: string
+          created_at: string
+          description: string | null
+          id: string
+          locale: string
+          market: "PT" | "BR" | "INTL"
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          locale: string
+          market: "PT" | "BR" | "INTL"
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          locale?: string
+          market?: "PT" | "BR" | "INTL"
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_category_localizations_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "content_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      // [CLEAN V1] insights/guides entries (parent of localizations).
+      content_entries: {
+        Row: {
+          author_id: string | null
+          category_id: string | null
+          content_type: "insight" | "guide"
+          cover_media_path: string | null
+          created_at: string
+          featured: boolean
+          id: string
+          primary_market: "PT" | "BR" | "INTL"
+          published_at: string | null
+          status: "draft" | "published" | "archived"
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          category_id?: string | null
+          content_type: "insight" | "guide"
+          cover_media_path?: string | null
+          created_at?: string
+          featured?: boolean
+          id?: string
+          primary_market: "PT" | "BR" | "INTL"
+          published_at?: string | null
+          status?: "draft" | "published" | "archived"
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          category_id?: string | null
+          content_type?: "insight" | "guide"
+          cover_media_path?: string | null
+          created_at?: string
+          featured?: boolean
+          id?: string
+          primary_market?: "PT" | "BR" | "INTL"
+          published_at?: string | null
+          status?: "draft" | "published" | "archived"
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_entries_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "content_authors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_entries_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "content_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      // [CLEAN V1] per-market content localizations (entry_id, market unique; market, slug unique).
+      content_localizations: {
+        Row: {
+          body: Json | null
+          created_at: string
+          entry_id: string
+          excerpt: string | null
+          id: string
+          locale: string
+          market: "PT" | "BR" | "INTL"
+          og_image_path: string | null
+          published_at: string | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          status: "draft" | "published" | "archived"
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: Json | null
+          created_at?: string
+          entry_id: string
+          excerpt?: string | null
+          id?: string
+          locale: string
+          market: "PT" | "BR" | "INTL"
+          og_image_path?: string | null
+          published_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          status?: "draft" | "published" | "archived"
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: Json | null
+          created_at?: string
+          entry_id?: string
+          excerpt?: string | null
+          id?: string
+          locale?: string
+          market?: "PT" | "BR" | "INTL"
+          og_image_path?: string | null
+          published_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          status?: "draft" | "published" | "archived"
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_localizations_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "content_entries"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       crm_validation_failures: {
         Row: {
@@ -1830,147 +2247,137 @@ export type Database = {
         }
         Relationships: []
       }
+      // [CLEAN V1] commercial - anon/authenticated denied; Edge Function write path.
       leads: {
         Row: {
-          automation_count: number
-          budget: string | null
-          business_area: string | null
-          cargo: string | null
           company: string | null
+          consent_marketing: boolean
+          consent_privacy_at: string
+          country: string | null
           created_at: string
-          crm_error: string | null
-          crm_sent_at: string | null
-          crm_status: string | null
+          deleted_at: string | null
           email: string
           id: string
           landing_page: string | null
-          last_automation_at: string | null
-          last_email_at: string | null
-          last_email_subject: string | null
-          lead_status: string | null
+          locale: string
+          market: "PT" | "BR" | "INTL"
+          marketing_consent_at: string | null
           message: string | null
+          metadata: Json
           name: string
-          notes: string | null
           phone: string | null
-          referrer: string | null
-          resource_id: string | null
-          resource_name: string | null
-          role: string | null
-          service: string | null
+          service_interest: string | null
           source: string
-          status: string
-          timeline: string | null
+          status: "new" | "contacted" | "qualified" | "converted" | "closed" | "spam"
           updated_at: string
           utm_campaign: string | null
+          utm_content: string | null
           utm_medium: string | null
           utm_source: string | null
-          website: string | null
+          utm_term: string | null
         }
         Insert: {
-          automation_count?: number
-          budget?: string | null
-          business_area?: string | null
-          cargo?: string | null
           company?: string | null
+          consent_marketing?: boolean
+          consent_privacy_at: string
+          country?: string | null
           created_at?: string
-          crm_error?: string | null
-          crm_sent_at?: string | null
-          crm_status?: string | null
+          deleted_at?: string | null
           email: string
           id?: string
           landing_page?: string | null
-          last_automation_at?: string | null
-          last_email_at?: string | null
-          last_email_subject?: string | null
-          lead_status?: string | null
+          locale: string
+          market: "PT" | "BR" | "INTL"
+          marketing_consent_at?: string | null
           message?: string | null
+          metadata?: Json
           name: string
-          notes?: string | null
           phone?: string | null
-          referrer?: string | null
-          resource_id?: string | null
-          resource_name?: string | null
-          role?: string | null
-          service?: string | null
-          source?: string
-          status?: string
-          timeline?: string | null
+          service_interest?: string | null
+          source: string
+          status?: "new" | "contacted" | "qualified" | "converted" | "closed" | "spam"
           updated_at?: string
           utm_campaign?: string | null
+          utm_content?: string | null
           utm_medium?: string | null
           utm_source?: string | null
-          website?: string | null
+          utm_term?: string | null
         }
         Update: {
-          automation_count?: number
-          budget?: string | null
-          business_area?: string | null
-          cargo?: string | null
           company?: string | null
+          consent_marketing?: boolean
+          consent_privacy_at?: string
+          country?: string | null
           created_at?: string
-          crm_error?: string | null
-          crm_sent_at?: string | null
-          crm_status?: string | null
+          deleted_at?: string | null
           email?: string
           id?: string
           landing_page?: string | null
-          last_automation_at?: string | null
-          last_email_at?: string | null
-          last_email_subject?: string | null
-          lead_status?: string | null
+          locale?: string
+          market?: "PT" | "BR" | "INTL"
+          marketing_consent_at?: string | null
           message?: string | null
+          metadata?: Json
           name?: string
-          notes?: string | null
           phone?: string | null
-          referrer?: string | null
-          resource_id?: string | null
-          resource_name?: string | null
-          role?: string | null
-          service?: string | null
+          service_interest?: string | null
           source?: string
-          status?: string
-          timeline?: string | null
+          status?: "new" | "contacted" | "qualified" | "converted" | "closed" | "spam"
           updated_at?: string
           utm_campaign?: string | null
+          utm_content?: string | null
           utm_medium?: string | null
           utm_source?: string | null
-          website?: string | null
+          utm_term?: string | null
         }
         Relationships: []
       }
+
+      // [CLEAN V1] newsletter - website owns consent; provider owns delivery.
+      // lower(email) unique index enforced by the database.
       newsletter_subscribers: {
         Row: {
-          consent: boolean
-          consented_at: string | null
+          consent_at: string
           created_at: string
+          deleted_at: string | null
           email: string
           id: string
-          name: string
-          status: string
+          locale: string
+          market: "PT" | "BR" | "INTL"
+          source: string | null
+          status: "subscribed" | "unsubscribed" | "bounced"
+          unsubscribed_at: string | null
           updated_at: string
         }
         Insert: {
-          consent?: boolean
-          consented_at?: string | null
+          consent_at?: string
           created_at?: string
+          deleted_at?: string | null
           email: string
           id?: string
-          name: string
-          status?: string
+          locale: string
+          market: "PT" | "BR" | "INTL"
+          source?: string | null
+          status?: "subscribed" | "unsubscribed" | "bounced"
+          unsubscribed_at?: string | null
           updated_at?: string
         }
         Update: {
-          consent?: boolean
-          consented_at?: string | null
+          consent_at?: string
           created_at?: string
+          deleted_at?: string | null
           email?: string
           id?: string
-          name?: string
-          status?: string
+          locale?: string
+          market?: "PT" | "BR" | "INTL"
+          source?: string | null
+          status?: "subscribed" | "unsubscribed" | "bounced"
+          unsubscribed_at?: string | null
           updated_at?: string
         }
         Relationships: []
       }
+
       podcast_episodes: {
         Row: {
           audio_url: string | null
@@ -2147,48 +2554,143 @@ export type Database = {
           },
         ]
       }
-      profiles: {
+      // [CLEAN V1] products + per-market localizations.
+      products: {
         Row: {
-          avatar_url: string | null
-          company: string | null
+          capabilities: string[]
           created_at: string
-          display_name: string | null
-          email: string | null
-          full_name: string | null
+          featured: boolean
+          hero_media_path: string | null
           id: string
-          notes: string | null
-          phone: string | null
+          logo_path: string | null
+          name: string
+          status: "draft" | "published" | "archived"
           updated_at: string
-          user_id: string
+          website_url: string | null
         }
         Insert: {
-          avatar_url?: string | null
-          company?: string | null
+          capabilities?: string[]
           created_at?: string
-          display_name?: string | null
-          email?: string | null
-          full_name?: string | null
+          featured?: boolean
+          hero_media_path?: string | null
           id?: string
-          notes?: string | null
-          phone?: string | null
+          logo_path?: string | null
+          name: string
+          status?: "draft" | "published" | "archived"
           updated_at?: string
-          user_id: string
+          website_url?: string | null
         }
         Update: {
-          avatar_url?: string | null
-          company?: string | null
+          capabilities?: string[]
           created_at?: string
-          display_name?: string | null
-          email?: string | null
-          full_name?: string | null
+          featured?: boolean
+          hero_media_path?: string | null
           id?: string
-          notes?: string | null
-          phone?: string | null
+          logo_path?: string | null
+          name?: string
+          status?: "draft" | "published" | "archived"
           updated_at?: string
-          user_id?: string
+          website_url?: string | null
         }
         Relationships: []
       }
+      product_localizations: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          locale: string
+          market: "PT" | "BR" | "INTL"
+          product_id: string
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          status: "draft" | "published" | "archived"
+          tagline: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          locale: string
+          market: "PT" | "BR" | "INTL"
+          product_id: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          status?: "draft" | "published" | "archived"
+          tagline?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          locale?: string
+          market?: "PT" | "BR" | "INTL"
+          product_id?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          status?: "draft" | "published" | "archived"
+          tagline?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_localizations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+
+      // [CLEAN V1] identity - 1:1 with auth.users; own-row + admin policies only.
+      profiles: {
+        Row: {
+          avatar_path: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          preferred_locale: string | null
+          preferred_market: "PT" | "BR" | "INTL" | null
+          timezone: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_path?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          preferred_locale?: string | null
+          preferred_market?: "PT" | "BR" | "INTL" | null
+          timezone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_path?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          preferred_locale?: string | null
+          preferred_market?: "PT" | "BR" | "INTL" | null
+          timezone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+
       projects: {
         Row: {
           category: string
@@ -2737,27 +3239,37 @@ export type Database = {
           },
         ]
       }
+      // [CLEAN V1] identity - admin-managed only; no self-escalation path.
       user_roles: {
         Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
+          granted_at: string
+          granted_by: string | null
+          role: "admin" | "collaborator" | "client"
           user_id: string
         }
         Insert: {
-          created_at?: string
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
+          granted_at?: string
+          granted_by?: string | null
+          role: "admin" | "collaborator" | "client"
           user_id: string
         }
         Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
+          granted_at?: string
+          granted_by?: string | null
+          role?: "admin" | "collaborator" | "client"
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
+
       vip_subscribers: {
         Row: {
           created_at: string
@@ -3660,23 +4172,63 @@ export type Database = {
           role: string
         }[]
       }
+      // [CLEAN V1] role helpers — authoritative (text roles, not a legacy enum).
       has_role: {
         Args: {
-          _role: Database["public"]["Enums"]["app_role"]
+          _role: "admin" | "collaborator" | "client"
           _user_id: string
         }
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      set_updated_at: {
+        Args: never
+        Returns: undefined
+      }
+      get_published_insights: {
+        Args: {
+          _locale: string
+          _market: "PT" | "BR" | "INTL"
+        }
+        Returns: {
+          entry_id: string
+          slug: string
+          title: string
+          published_at: string
+        }[]
+      }
+      get_published_case_studies: {
+        Args: {
+          _locale: string
+          _market: "PT" | "BR" | "INTL"
+        }
+        Returns: {
+          case_study_id: string
+          slug: string
+          summary: string
+          published_at: string
+        }[]
+      }
     }
+    // Clean V1 uses TEXT + CHECK constraints for roles and markets: no database enums.
     Enums: {
-      app_role: "admin" | "moderator" | "user" | "collaborator" | "client"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
     }
   }
 }
+
+/**
+ * Legacy-only contracts retained as compatibility debt so existing frontend
+ * code keeps compiling until later Waves retire them. Nothing here exists in
+ * the Clean V1 database.
+ */
+export type LegacyCompatTableName = Exclude<
+  keyof Database["public"]["Tables"],
+  CleanV1TableName
+>;
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
@@ -3797,8 +4349,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      app_role: ["admin", "moderator", "user", "collaborator", "client"],
-    },
+    // Clean V1 carries no database enums. Authoritative role/market values are
+    // mirrored as application contracts in src/config/env.ts (ROLES / MARKETS).
+    Enums: {},
   },
 } as const

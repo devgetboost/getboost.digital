@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,12 +20,12 @@ const AdminSettings = () => {
 
   useEffect(() => {
     const init = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await legacySupabase.auth.getUser();
       if (!user) return;
       setEmail(user.email || '');
       setUserId(user.id);
 
-      const { data: profile } = await supabase
+      const { data: profile } = await legacySupabase
         .from('profiles')
         .select('avatar_url')
         .eq('user_id', user.id)
@@ -56,20 +56,20 @@ const AdminSettings = () => {
       const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
       const filePath = `${userId}/avatar.${ext}`;
 
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadError } = await legacySupabase.storage
         .from('avatars')
         .upload(filePath, file, { upsert: true });
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
+      const { data: { publicUrl } } = legacySupabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
 
       const url = `${publicUrl}?t=${Date.now()}`;
 
       // Upsert profile
-      const { error: profileError } = await supabase
+      const { error: profileError } = await legacySupabase
         .from('profiles')
         .upsert({ user_id: userId, avatar_url: url }, { onConflict: 'user_id' });
 
@@ -88,7 +88,7 @@ const AdminSettings = () => {
   const handleUpdateEmail = async () => {
     if (!email.trim()) return;
     setLoading(true);
-    const { error } = await supabase.auth.updateUser({ email });
+    const { error } = await legacySupabase.auth.updateUser({ email });
     if (error) {
       toast.error('Erro ao atualizar email: ' + error.message);
     } else {
@@ -107,7 +107,7 @@ const AdminSettings = () => {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    const { error } = await legacySupabase.auth.updateUser({ password: newPassword });
     if (error) {
       toast.error('Erro ao atualizar password: ' + error.message);
     } else {

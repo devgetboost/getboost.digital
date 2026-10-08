@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 
 type Lead = { id: string; created_at: string; name: string | null; email: string | null; phone: string | null; source: string | null };
 type Booking = { id: string; created_at: string; name: string | null; email: string | null; phone: string | null };
@@ -54,9 +54,9 @@ const AdminCrmDeliveryStatus = () => {
     setLoading(true);
     const since = new Date(Date.now() - days * 86400 * 1000).toISOString();
     const [leadsRes, bookingsRes, failuresRes] = await Promise.all([
-      supabase.from('leads').select('id,created_at,name,email,phone,source').gte('created_at', since).order('created_at', { ascending: false }).limit(200),
-      supabase.from('bookings').select('id,created_at,name,email,phone').gte('created_at', since).order('created_at', { ascending: false }).limit(200),
-      supabase.from('crm_validation_failures').select('*').gte('created_at', since).order('created_at', { ascending: false }).limit(1000),
+      legacySupabase.from('leads').select('id,created_at,name,email,phone,source').gte('created_at', since).order('created_at', { ascending: false }).limit(200),
+      legacySupabase.from('bookings').select('id,created_at,name,email,phone').gte('created_at', since).order('created_at', { ascending: false }).limit(200),
+      legacySupabase.from('crm_validation_failures').select('*').gte('created_at', since).order('created_at', { ascending: false }).limit(1000),
     ]);
     if (leadsRes.error || bookingsRes.error || failuresRes.error) {
       toast.error('Erro a carregar dados de entrega ao CRM');

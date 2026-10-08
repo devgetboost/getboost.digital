@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -17,7 +17,7 @@ export default function AdminNewsletterSubscribers() {
   const { data: subscribers = [], isLoading } = useQuery({
     queryKey: ['newsletter-subscribers'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await legacySupabase
         .from('newsletter_subscribers')
         .select('*')
         .order('created_at', { ascending: false });
@@ -28,7 +28,7 @@ export default function AdminNewsletterSubscribers() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('newsletter_subscribers').delete().eq('id', id);
+      const { error } = await legacySupabase.from('newsletter_subscribers').delete().eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {

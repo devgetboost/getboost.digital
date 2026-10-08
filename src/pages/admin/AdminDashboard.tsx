@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { legacySupabase } from '@/integrations/supabase/client';
 import {
   CalendarIcon, Users, CheckCircle, Clock, FileText, FolderKanban,
   TrendingUp, ArrowUpRight, AlertTriangle, Mail, BookOpen,
@@ -30,11 +30,11 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchAll = async () => {
       const [leadsRes, bookingsRes, postsRes, projectsRes, resourcesRes] = await Promise.all([
-        supabase.from('leads').select('id, created_at, status, name, email, source').order('created_at', { ascending: false }).limit(100),
-        supabase.from('bookings').select('id, meeting_date, meeting_time, status, name, created_at').order('created_at', { ascending: false }).limit(100),
-        supabase.from('blog_posts').select('id, title, status, updated_at, slug').order('updated_at', { ascending: false }).limit(20),
-        supabase.from('projects').select('id, title, status, updated_at, slug').order('updated_at', { ascending: false }).limit(20),
-        supabase.from('resources').select('id', { count: 'exact', head: true }),
+        legacySupabase.from('leads').select('id, created_at, status, name, email, source').order('created_at', { ascending: false }).limit(100),
+        legacySupabase.from('bookings').select('id, meeting_date, meeting_time, status, name, created_at').order('created_at', { ascending: false }).limit(100),
+        legacySupabase.from('blog_posts').select('id, title, status, updated_at, slug').order('updated_at', { ascending: false }).limit(20),
+        legacySupabase.from('projects').select('id, title, status, updated_at, slug').order('updated_at', { ascending: false }).limit(20),
+        legacySupabase.from('resources').select('id', { count: 'exact', head: true }),
       ]);
       setLeads(leadsRes.data || []);
       setBookings(bookingsRes.data || []);

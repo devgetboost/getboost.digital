@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { legacySupabase } from "@/integrations/supabase/client";
 import { invokeIntegration } from "@/lib/integrationDiag";
 import { ConnectAccountCard } from "@/components/admin/mail/ConnectAccountCard";
 import { MailSidebar, type MailFolder } from "@/components/admin/mail/MailSidebar";
@@ -83,7 +83,7 @@ export default function InboxMail() {
   const [leadLinkOpen, setLeadLinkOpen] = useState(false);
 
   const loadAccounts = async () => {
-    const { data, error } = await supabase
+    const { data, error } = await legacySupabase
       .from("email_accounts")
       .select("id,provider,email_address,display_name,status")
       .eq("status", "active")
@@ -107,7 +107,7 @@ export default function InboxMail() {
     } catch { /* ignore */ }
     
     (async () => {
-      const { data, error } = await supabase
+      const { data, error } = await legacySupabase
         .from("email_stars")
         .select("message_id")
         .eq("account_id", accId);
@@ -128,17 +128,17 @@ export default function InboxMail() {
       return next;
     });
     try {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await legacySupabase.auth.getUser();
       const uid = userRes.user?.id;
       if (!uid) throw new Error("not authenticated");
       if (starred) {
-        await supabase.from("email_stars").upsert({ 
+        await legacySupabase.from("email_stars").upsert({
           user_id: uid, 
           account_id: accId, 
           message_id: id 
         }, { onConflict: "user_id,account_id,message_id" });
       } else {
-        await supabase.from("email_stars").delete().eq("account_id", accId).eq("message_id", id);
+        await legacySupabase.from("email_stars").delete().eq("account_id", accId).eq("message_id", id);
       }
       if (selected && selected.id === id) {
         setSelected({ ...selected, starred });
@@ -168,8 +168,8 @@ export default function InboxMail() {
       
       if (action === "trash") {
         const subjects = items.filter((m) => ids.includes(m.id)).map((m) => m.subject);
-        const { data: user } = await supabase.auth.getUser();
-        await supabase.from("email_deletion_audit").insert({
+        const { data: user } = await legacySupabase.auth.getUser();
+        await legacySupabase.from("email_deletion_audit").insert({
           actor_id: user.user?.id,
           actor_email: user.user?.email,
           account_id: activeAccount.id,
@@ -222,7 +222,7 @@ export default function InboxMail() {
       
       const threadIds = threads.map((t) => t.id);
       const { data: links } = threadIds.length
-        ? await supabase.from("email_lead_links")
+        ? await legacySupabase.from("email_lead_links")
             .select("provider_thread_id, lead_id, leads(name,email)")
             .eq("account_id", activeAccount.id)
             .in("provider_thread_id", threadIds)
@@ -267,7 +267,7 @@ export default function InboxMail() {
       
       const loadLead = async (): Promise<ReaderMessage["lead"]> => {
         if (!leadId) return null;
-        const { data: l } = await supabase.from("leads").select("id,name,email").eq("id", leadId).maybeSingle();
+        const { data: l } = await legacySupabase.from("leads").select("id,name,email").eq("id", leadId).maybeSingle();
         return (l as ReaderMessage["lead"]) ?? null;
       };
 
@@ -322,7 +322,7 @@ export default function InboxMail() {
   const handleLinkLead = async (leadId: string) => {
     if (!activeAccount || !selectedId) return;
     try {
-      const { error } = await supabase.from("email_lead_links").upsert({
+      const { error } = await legacySupabase.from("email_lead_links").upsert({
         account_id: activeAccount.id,
         provider_thread_id: selectedId,
         lead_id: leadId,

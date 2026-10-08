@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { useHasRole, type AppRole } from '@/hooks/useHasRole';
+import { useHasRole } from '@/hooks/useHasRole';
+import type { AppRole } from '@/auth/roles';
 
 type Props = { role?: AppRole; children: ReactNode };
 

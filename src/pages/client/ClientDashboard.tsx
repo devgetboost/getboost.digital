@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { legacySupabase } from '@/integrations/supabase/client';
+import { legacySupabase, supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Briefcase, CreditCard, LifeBuoy, Bell, ArrowRight } from 'lucide-react';
@@ -38,7 +38,13 @@ const ClientDashboard = () => {
     if (!session) return;
     const uid = session.user.id;
 
-    const { data: profile } = await legacySupabase.from('profiles').select('display_name').eq('user_id', uid).maybeSingle();
+    // R1C4: Clean V1 `profiles` is keyed on `auth.users.id`; there is no
+    // `user_id` column any more.
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('display_name')
+      .eq('id', uid)
+      .maybeSingle();
     setUserName(profile?.display_name || session.user.email?.split('@')[0] || 'Cliente');
 
     const [svc, inv, tkt, notif] = await Promise.all([

@@ -1,29 +1,29 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { toHasRoleArg } from '@/integrations/supabase/legacy-compat';
+import { useAuth } from '@/auth/hooks';
+import type { AppRole } from '@/auth/roles';
 
-export type AppRole = 'admin' | 'user' | 'collaborator' | 'client';
+/**
+ * R1C4 Wave 2 — role check backed by the single auth session boundary.
+ *
+ * Behaviour preserved from the previous implementation: answer "does the
+ * current user hold this role", expose `loading` while the session is still
+ * resolving, and never authorise a user without a session.
+ *
+ * What changed: `AppRole` is now the authoritative Clean V1 union
+ * (`admin` | `collaborator` | `client`). The retired `user` and `moderator`
+ * roles are gone — they are not aliases of anything, and passing one is now a
+ * compile error rather than a silent false.
+ */
+export type { AppRole };
 
 export function useHasRole(role: AppRole) {
-  const [state, setState] = useState<{ loading: boolean; allowed: boolean }>({ loading: true, allowed: false });
+  const { status, roles } = useAuth();
+  return {
+    loading: status === 'loading',
+    allowed: roles.includes(role),
+  };
+}
 
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { if (active) setState({ loading: false, allowed: false }); return; }
-// R1C3: the legacy `AppRole` union still contains the retired `'user'` role.
-// The value is forwarded unchanged; only the declared type is widened back to
-// the authoritative Clean V1 signature (see legacy-compat.ts).
-      const { data, error } = await supabase.rpc('has_role', {
-        _user_id: user.id,
-        _role: toHasRoleArg(role),
-      });
-      if (!active) return;
-      setState({ loading: false, allowed: !error && !!data });
-    })();
-    return () => { active = false; };
-  }, [role]);
-
-  return state;
+/** Convenience for the overwhelmingly common admin check. */
+export function useIsAdmin() {
+  return useHasRole('admin');
 }

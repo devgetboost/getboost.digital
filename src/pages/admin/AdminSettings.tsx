@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { legacySupabase } from '@/integrations/supabase/client';
+import { legacySupabase, supabase } from '@/integrations/supabase/client';
+import { avatarPathToUrl } from '@/auth/profiles';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,14 +26,16 @@ const AdminSettings = () => {
       setEmail(user.email || '');
       setUserId(user.id);
 
-      const { data: profile } = await legacySupabase
+      // R1C4: `profiles` is keyed on `auth.users.id` and stores an avatar
+      // *path*; the retired `user_id`/`avatar_url` columns are gone.
+      const { data: profile } = await supabase
         .from('profiles')
-        .select('avatar_url')
-        .eq('user_id', user.id)
+        .select('avatar_path')
+        .eq('id', user.id)
         .maybeSingle();
 
-      if (profile?.avatar_url) {
-        setAvatarUrl(profile.avatar_url);
+      if (profile?.avatar_path) {
+        setAvatarUrl(avatarPathToUrl(profile.avatar_path) || '');
       }
     };
     init();
@@ -56,26 +59,23 @@ const AdminSettings = () => {
       const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
       const filePath = `${userId}/avatar.${ext}`;
 
-      const { error: uploadError } = await legacySupabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file, { upsert: true });
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = legacySupabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
-
-      const url = `${publicUrl}?t=${Date.now()}`;
-
-      // Upsert profile
-      const { error: profileError } = await legacySupabase
+      // Upsert profile — R1C4: Clean V1 keys `profiles` on `auth.users.id` and
+      // stores the avatar object path. The previous `{ user_id, avatar_url }`
+      // upsert targeted retired columns.
+      const { error: profileError } = await supabase
         .from('profiles')
-        .upsert({ user_id: userId, avatar_url: url }, { onConflict: 'user_id' });
+        .upsert({ id: userId, avatar_path: filePath }, { onConflict: 'id' });
 
       if (profileError) throw profileError;
 
-      setAvatarUrl(url);
+      // Display keeps working off a public URL derived from the stored path.
+      setAvatarUrl(avatarPathToUrl(filePath) || '');
       toast.success('Foto de perfil atualizada!');
     } catch (err: any) {
       toast.error('Erro ao fazer upload: ' + (err.message || 'Tenta novamente.'));

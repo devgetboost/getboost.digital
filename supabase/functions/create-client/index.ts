@@ -76,15 +76,17 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Create profile
+    // Create profile. Clean V1 keys `profiles` on `auth.users.id`; the retired
+    // `user_id` column no longer exists.
     await adminClient.from("profiles").insert({
-      user_id: newUser.user.id,
+      id: newUser.user.id,
       display_name: name,
     });
 
-    // Assign 'user' role (trigger may already do this, upsert to be safe)
+    // 'client' is the authoritative role for a customer account. Clean V1
+    // rejects the retired 'user'/'moderator' values via a CHECK constraint.
     await adminClient.from("user_roles").upsert(
-      { user_id: newUser.user.id, role: "user" },
+      { user_id: newUser.user.id, role: "client" },
       { onConflict: "user_id,role" }
     );
 

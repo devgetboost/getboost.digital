@@ -29,6 +29,8 @@ const lazy = <T extends ComponentType<unknown>>(
   factory: () => Promise<{ default: T }>,
 ) => reactLazy(() => retryImport(factory));
 import LanguageManager from "./components/LanguageManager";
+import { AuthProvider } from "@/auth/AuthProvider";
+import { RequireRoles as RequireArea } from "@/auth/guards";
 
 // Eagerly load the homepage for best LCP
 import Index from "./pages/Index.tsx";
@@ -316,6 +318,7 @@ const App = () => (
         <LazyRouteBoundary>
         <Suspense fallback={<PageFallback />}>
           <LanguageManager>
+            <AuthProvider>
             <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/:lang" element={<Index />} />
@@ -494,8 +497,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="agenda" element={<AdminAgenda />} />
+              <Route index element={<AdminDashboard />} />              <Route path="agenda" element={<AdminAgenda />} />
               <Route path="bookings-funnel" element={<AdminBookingsFunnel />} />
               <Route path="bookings-funnel/:id" element={<AdminBookingDetail />} />
               <Route path="blog" element={<AdminBlog />} />
@@ -567,7 +569,14 @@ const App = () => (
               <Route path="financeiro" element={<ClientFinances />} />
               <Route path="suporte" element={<ClientSupport />} />
             </Route>
-            <Route path="/colaborador" element={<CollaboratorDashboard />} />
+            <Route
+              path="/colaborador"
+              element={
+                <RequireArea anyOf={['admin', 'collaborator']}>
+                  <CollaboratorDashboard />
+                </RequireArea>
+              }
+            />
             <Route path="/unsubscribe" element={<Unsubscribe />} />
             <Route path="/tools/roi-calculator" element={<ROICalculator />} />
             <Route path="/:lang/tools/roi-calculator" element={<ROICalculator />} />
@@ -603,6 +612,7 @@ const App = () => (
             
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </AuthProvider>
           </LanguageManager>
         </Suspense>
         </LazyRouteBoundary>

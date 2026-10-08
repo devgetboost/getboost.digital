@@ -16,6 +16,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
 import { ClientAutomationPanel } from '@/components/admin/ClientAutomationPanel';
+import { fetchUserIdsWithRole } from '@/auth/userRoles';
 
 const AdminClients = () => {
   const [clients, setClients] = useState<any[]>([]);
@@ -72,9 +73,11 @@ const AdminClients = () => {
   useEffect(() => { loadClients(); }, []);
 
   const loadClients = async () => {
-    const { data: roles } = await legacySupabase.from('user_roles').select('user_id, role').eq('role', 'user');
-    if (!roles || roles.length === 0) { setClients([]); setLoading(false); return; }
-    const userIds = roles.map(r => r.user_id);
+    // R1C4: `client` is the authoritative role for a customer account. The
+    // retired `user` value is rejected by the Clean V1 CHECK constraint and
+    // would silently match nobody.
+    const userIds = await fetchUserIdsWithRole('client').catch(() => []);
+    if (userIds.length === 0) { setClients([]); setLoading(false); return; }
     const [{ data: profiles }, { data: svcAll }, { data: subAll }, { data: tktAll }, { data: invAll }] = await Promise.all([
       legacySupabase.from('profiles').select('*').in('user_id', userIds),
       legacySupabase.from('client_services').select('user_id, status').in('user_id', userIds),

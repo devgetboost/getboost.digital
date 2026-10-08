@@ -7,6 +7,9 @@ import SEO from '@/components/SEO';
 import logoBranca from '@/assets/logo-getboost-soft-branca.svg';
 import loginVideoAsset from '@/assets/login-office-bg.mp4.asset.json';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/auth/hooks';
+import { fetchOwnRoles } from '@/auth/userRoles';
+import { resolveLandingRoute } from '@/auth/roles';
 import { toast } from 'sonner';
 
 const ACCENT = '#ff4000';
@@ -70,35 +73,45 @@ const ToggleSwitch = ({ checked, onChange, id }: { checked: boolean; onChange: (
 const Login = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { status, refresh } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // An already-authenticated user has no business on the login screen.
+  const { roles } = useAuth();
+  useEffect(() => {
+    if (status !== 'authenticated') return;
+    navigate(resolveLandingRoute(roles), { replace: true });
+  }, [status, roles, navigate]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) return;
     setLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) {
-      toast.error(t('login.errorCredentials'));
-      return;
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        toast.error(t('login.errorCredentials'));
+        return;
+      }
+      toast.success(t('login.successLogin'));
+
+      const userId = data.session?.user?.id;
+      if (!userId) { navigate('/cliente', { replace: true }); return; }
+
+      // Roles are read through the shared accessor rather than the RPCs so the
+      // landing route is derived from one authoritative set of values. Retired
+      // values are dropped by that accessor and can never grant access.
+      const roles = await fetchOwnRoles().catch(() => []);
+      // Keep the provider in step with the freshly issued session.
+      await refresh();
+      navigate(resolveLandingRoute(roles), { replace: true });
+    } finally {
+      setLoading(false);
     }
-    toast.success(t('login.successLogin'));
-    const userId = data.session?.user?.id;
-    if (!userId) { navigate('/cliente'); return; }
-
-    // Use SECURITY DEFINER RPCs to avoid RLS race on freshly-issued session.
-    const [{ data: isAdmin }, { data: isCollab }] = await Promise.all([
-      supabase.rpc('has_role', { _user_id: userId, _role: 'admin' }),
-      supabase.rpc('has_role', { _user_id: userId, _role: 'collaborator' }),
-    ]);
-
-    if (isAdmin) navigate('/admin', { replace: true });
-    else if (isCollab) navigate('/colaborador', { replace: true });
-    else navigate('/cliente', { replace: true });
   };
 
   const handleForgot = async () => {

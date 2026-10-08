@@ -1,45 +1,39 @@
-import { useEffect, useState, useCallback } from "react";
+import { useCallback } from "react";
 import { Outlet, useNavigate, NavLink } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { LogOut } from "lucide-react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { ADMIN_SIDEBAR_STYLE } from "@/components/admin/layout-constants";
+import { useAuth } from "@/auth/AuthProvider";
 
+/**
+ * R1C4 Wave 2 — admin area shell.
+ *
+ * The gate is now the shared auth boundary instead of a bespoke
+ * `getSession()` + `has_role()` pair: a session without the admin role is
+ * bounced to the user's own area, and a session with no roles at all goes to
+ * `/login` rather than being silently signed out.
+ */
 const AdminLayout = () => {
   const navigate = useNavigate();
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { navigate("/login"); return; }
-      const { data: isAdmin } = await supabase.rpc("has_role", {
-        _user_id: session.user.id,
-        _role: "admin",
-      });
-      if (!isAdmin) {
-        toast.error("Acesso restrito ao admin.");
-        navigate("/");
-        return;
-      }
-      setReady(true);
-    })();
-  }, [navigate]);
+  const { status, roles, signOut } = useAuth();
 
   const logout = useCallback(async () => {
-    await supabase.auth.signOut();
+    await signOut();
     navigate("/login");
-  }, [navigate]);
+  }, [signOut, navigate]);
 
-  if (!ready) {
+  if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <p className="text-sm text-muted-foreground">A carregar...</p>
       </div>
     );
+  }
+
+  if (!roles.includes("admin")) {
+    return null;
   }
 
   return (

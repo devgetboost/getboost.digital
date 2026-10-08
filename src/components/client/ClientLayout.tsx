@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { legacySupabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 import { Bell, Home, Briefcase, CreditCard, LifeBuoy, LogOut, User, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/auth/hooks';
+import { avatarPathToUrl } from '@/auth/profiles';
 
 const navItems = [
   { label: 'Dashboard', icon: Home, path: '/cliente' },
@@ -18,47 +19,32 @@ const navItems = [
 const ClientLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [authChecked, setAuthChecked] = useState(false);
-  const [userName, setUserName] = useState('');
+  const { status, roles, session, profile, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
+  /**
+   * R1C4 Wave 2 — the gate is the shared auth boundary.
+   *
+   * Replaces a bespoke check that (a) read `user_roles` directly, (b) filtered
+   * on the retired `'user'` role, and (c) signed users out whenever they held
+   * no roles at all. Now: authenticated + at least one authoritative role is
+   * required, admins are sent to their own area, and a role-less session goes
+   * to `/login` without being destroyed.
+   */
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await legacySupabase.auth.getSession();
-      if (!session) { navigate('/login'); return; }
+    if (status === 'loading') return;
+    if (status === 'anonymous') { navigate('/login', { replace: true }); return; }
+    if (roles.length === 0) { navigate('/login', { replace: true }); return; }
+    if (roles.includes('admin')) { navigate('/admin', { replace: true }); return; }
+  }, [status, roles, navigate]);
 
-      // Check user has 'user' role (not admin)
-      const { data: roles } = await legacySupabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', session.user.id);
-
-      if (!roles || roles.length === 0) {
-        toast.error('Acesso negado.');
-        await legacySupabase.auth.signOut();
-        navigate('/login');
-        return;
-      }
-
-      // If admin, redirect to admin panel
-      const isAdmin = roles.some((r: any) => r.role === 'admin');
-      if (isAdmin) { navigate('/admin'); return; }
-
-      // Get display name
-      const { data: profile } = await legacySupabase
-        .from('profiles')
-        .select('display_name')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
-
-      setUserName(profile?.display_name || session.user.email?.split('@')[0] || 'Cliente');
-      setAuthChecked(true);
-      loadNotifications(session.user.id);
-    };
-    checkAuth();
-  }, [navigate]);
+  useEffect(() => {
+    const userId = session?.user?.id;
+    if (!userId) return;
+    void loadNotifications(userId);
+  }, [session?.user?.id]);
 
   const loadNotifications = async (userId: string) => {
     const { data } = await legacySupabase
@@ -86,11 +72,16 @@ const ClientLayout = () => {
   };
 
   const handleLogout = useCallback(async () => {
-    await legacySupabase.auth.signOut();
-    navigate('/login');
-  }, [navigate]);
+    await signOut();
+    navigate('/login', { replace: true });
+  }, [signOut, navigate]);
 
-  if (!authChecked) {
+  const userName =
+    profile?.display_name || session?.user?.email?.split('@')[0] || 'Cliente';
+  const avatarUrl = avatarPathToUrl(profile?.avatar_path);
+
+  const authorized = status === 'authenticated' && roles.length > 0 && !roles.includes('admin');
+  if (!authorized) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
@@ -160,8 +151,12 @@ const ClientLayout = () => {
           </Popover>
 
           <div className="flex items-center gap-2 ml-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <User className="h-4 w-4 text-primary" />
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <User className="h-4 w-4 text-primary" />
+              )}
             </div>
             <div className="hidden sm:block text-right">
               <p className="text-xs font-medium text-foreground">{userName}</p>

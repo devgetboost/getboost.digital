@@ -24,7 +24,8 @@ dist-ssr
 *.sw?
 
 
-# Editor directories and files
+# Supabase CLI local state (pooler-url may contain live DB credentials)
+supabase/.temp/
 .vscode/*
 !.vscode/extensions.json
 .idea

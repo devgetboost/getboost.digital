@@ -8,7 +8,8 @@ import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
 import PageHero from '@/components/PageHero';
 import heroAnalytics from '@/assets/hero-analytics.jpg';
-import { supabase } from '@/integrations/supabase/client';
+import { useProducts } from '@/hooks/useContent';
+import { mediaUrl } from '@/lib/contentApi';
 import { servicesData } from '@/data/services';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import logoHostify from '@/assets/logos/logo-hostify.svg';
@@ -74,8 +75,6 @@ const saasProducts = [
 const Services = () => {
   const { t, i18n } = useTranslation();
   const location = useLocation();
-  const [services, setServices] = useState<DbService[]>([]);
-  const [loading, setLoading] = useState(true);
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
 
   useEffect(() => {
@@ -91,25 +90,21 @@ const Services = () => {
   }, [location.hash]);
 
 
-  useEffect(() => {
-    const fetchServices = async () => {
-      const { data, error } = await supabase
-        .from('services')
-        .select('key, slug, image, price, icon')
-        .eq('status', 'published')
-        .order('sort_order', { ascending: true });
+  // R1C6: published products from the Clean V1 `products` +
+  // `product_localizations` tables. The static `servicesData` fallback is gone:
+  // an empty catalogue renders the empty state.
+  const { data: products, loading } = useProducts();
+  const productImageMap = Object.fromEntries(
+    (products ?? []).map(product => [product.slug, mediaUrl(product.logoPath) ?? mediaUrl(product.heroMediaPath) ?? '']),
+  );
 
-      if (error || !data || data.length === 0) {
-        setServices(servicesData.map(s => ({ key: s.key, slug: s.slug, image: s.image, price: s.price, icon: s.icon || '' })));
-      } else {
-        setServices(data);
-      }
-      setLoading(false);
-    };
-    fetchServices();
-  }, []);
-
-  const staticImageMap = Object.fromEntries(servicesData.map(s => [s.key, s.image]));
+  const services = (products ?? []).map(product => ({
+    key: product.slug,
+    slug: product.slug,
+    image: mediaUrl(product.logoPath) ?? mediaUrl(product.heroMediaPath) ?? '',
+    price: '',
+    icon: '',
+  }));
 
   return (
     <Layout>
@@ -286,7 +281,7 @@ const Services = () => {
                       <Link to={`/solucoes/${service.slug}`} className="group block h-full" onClick={() => analytics.trackClick('services', `service_card_${service.slug}`, 'consideration')}>
                         <div className="bg-white dark:bg-card rounded-2xl overflow-hidden h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-border/40">
                           <div className="aspect-[16/10] overflow-hidden">
-                            <img src={service.image || staticImageMap[service.key] || ''} alt={t(`servicesPage.items.${service.key}.title`)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" width={800} height={512} />
+                            <img src={service.image || productImageMap[service.key] || ''} alt={t(`servicesPage.items.${service.key}.title`)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" width={800} height={512} />
                           </div>
                           <div className="p-6">
                             <h3 className="text-xl font-bold text-foreground mb-2">{t(`servicesPage.items.${service.key}.title`)}</h3>

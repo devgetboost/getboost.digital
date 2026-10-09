@@ -5,7 +5,8 @@ import { analytics } from '@/lib/analytics';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ChevronDown, Share2, Globe, Code2, MapPin, Megaphone, Lightbulb, Plane, Sparkles, ArrowRight, Palette, PenTool, Search, Target, LayoutTemplate, ClipboardCheck, Smartphone, Cloud, Database, Layers, Shield, Rocket, Bot, MessageSquare, Headphones, Workflow, FileSearch, BarChart3, Brain, GitBranch, Newspaper, BookOpen, LineChart, Mic, Trophy, CalendarDays, Radar, Gauge, GraduationCap, Video, TrendingUp, HelpCircle, QrCode, CreditCard, LayoutGrid, CalendarCheck, Receipt, MessageCircle, Camera, Mail, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
+import { useContentEntries } from '@/hooks/useContent';
+import { mediaUrl } from '@/lib/contentApi';
 import logoNunoCruz from '@/assets/logo-getboost-soft-branca.svg';
 import iconNunoCruz from '@/assets/logo-getboost-soft-branca.svg';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
@@ -228,15 +229,21 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // R1C6: the mega-menu "latest posts" carousel reads published content entries
+  // through the centralized content layer instead of querying a legacy table.
+  const { data: latestEntries } = useContentEntries({ contentType: 'insight', limit: 3 });
   useEffect(() => {
-    supabase
-      .from('blog_posts')
-      .select('id, slug, title, image, category')
-      .eq('status', 'published')
-      .order('created_at', { ascending: false })
-      .limit(3)
-      .then(({ data }) => { if (data) setLatestPosts(data as BlogPreview[]); });
-  }, []);
+    if (!latestEntries) return;
+    setLatestPosts(
+      latestEntries.map((entry) => ({
+        id: entry.id,
+        slug: entry.slug,
+        title: entry.title,
+        image: mediaUrl(entry.ogImagePath ?? entry.coverMediaPath),
+        category: entry.category?.name ?? entry.category?.key ?? null,
+      })),
+    );
+  }, [latestEntries]);
 
   useEffect(() => {
     if (openMenu !== 'resources' || latestPosts.length < 2) return;

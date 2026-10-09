@@ -6,7 +6,8 @@ import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
 import { servicesData, type ServiceData } from '@/data/services';
-import { supabase } from '@/integrations/supabase/client';
+import { useProduct } from '@/hooks/useContent';
+import { mediaUrl } from '@/lib/contentApi';
 import { captureLead } from '@/lib/commercialApi';
 import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { analytics } from '@/lib/analytics';
@@ -37,46 +38,34 @@ const ServiceDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const { t, i18n } = useTranslation();
   const [service, setService] = useState<ServiceData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
+
+  // R1C6: a published product from the Clean V1 `products` +
+  // `product_localizations` tables. The legacy `services` table and the static
+  // `servicesData` fallback are both gone.
+  const { data: product, loading } = useProduct(slug);
+  const notFound = !loading && !product;
 
   useEffect(() => {
-    const fetchService = async () => {
-      const { data, error } = await supabase
-        .from('services')
-        .select('*')
-        .eq('slug', slug || '')
-        .eq('status', 'published')
-        .maybeSingle();
-
-      if (data && !error) {
-        const staticMatch = servicesData.find(s => s.key === data.key);
-        setService({
-          key: data.key,
-          slug: data.slug,
-          image: data.image || staticMatch?.image || '',
-          price: data.price,
-          icon: data.icon || staticMatch?.icon || '',
-          headline: data.headline,
-          subheadline: data.subheadline,
-          painPoints: (data.pain_points as string[]) || [],
-          benefits: (data.benefits as { title: string; desc: string }[]) || [],
-          process: (data.process as { step: string; title: string; desc: string }[]) || [],
-          results: (data.results as { value: string; label: string }[]) || [],
-          faq: (data.faq as { q: string; a: string }[]) || [],
-        });
-      } else {
-        const staticService = servicesData.find(s => s.slug === slug);
-        if (staticService) {
-          setService(staticService);
-        } else {
-          setNotFound(true);
-        }
-      }
-      setLoading(false);
-    };
-    fetchService();
-  }, [slug]);
+    if (!product) return;
+    const image = mediaUrl(product.logoPath) ?? mediaUrl(product.heroMediaPath) ?? '';
+    setService({
+      key: product.slug,
+      slug: product.slug,
+      image,
+      price: '',
+      icon: '',
+      headline: product.tagline ?? '',
+      subheadline: product.description ?? '',
+      // Clean V1 models a product's substance as `capabilities`; the legacy
+      // pain/benefit/process/results/faq arrays have no column yet, so they
+      // resolve empty and the page's i18n copy carries the messaging.
+      painPoints: [],
+      benefits: product.capabilities.map((capability) => ({ title: capability, desc: '' })),
+      process: [],
+      results: [],
+      faq: [],
+    });
+  }, [product]);
 
   if (loading) {
     return <Layout><div className="min-h-screen flex items-center justify-center text-muted-foreground">{t('servicesPage.serviceDetail.loading')}</div></Layout>;

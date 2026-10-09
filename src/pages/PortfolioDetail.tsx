@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
-import { supabase } from '@/integrations/supabase/client';
+import { useCaseStudy, useCaseStudies } from '@/hooks/useContent';
+import { mediaUrl, type CaseStudyView } from '@/lib/contentApi';
 
 type Project = {
   id: string;
@@ -23,6 +24,25 @@ type Project = {
   client: string;
   results: string;
 };
+
+/** R1C6: maps a localized case study onto the shape this page renders. */
+function toProject(study: CaseStudyView): Project {
+  return {
+    id: study.id,
+    slug: study.slug,
+    title: study.title,
+    // The legacy `category` column became `industry` on the case-study parent.
+    category: study.industry ?? 'web',
+    description: study.summary ?? study.challenge ?? '',
+    image: mediaUrl(study.heroMediaPath),
+    // Clean V1 has no gallery column.
+    gallery: [],
+    tags: [...study.capabilities, ...study.technologies],
+    year: study.publishedAt ? study.publishedAt.slice(0, 4) : '',
+    client: study.clientName,
+    results: study.solution ?? study.strategy ?? '',
+  };
+}
 
 function ProjectGallery({ images, title }: { images: string[]; title: string }) {
   const [api, setApi] = useState<CarouselApi>();
@@ -81,36 +101,13 @@ function ProjectGallery({ images, title }: { images: string[]; title: string }) 
 
 const PortfolioDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const [project, setProject] = useState<Project | null>(null);
-  const [allProjects, setAllProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
-
-  useEffect(() => {
-    const fetch = async () => {
-      // Get all published projects for navigation
-      const { data: all } = await supabase
-        .from('projects')
-        .select('id, slug, title, category, description, image, gallery, tags, year, client, results')
-        .eq('status', 'published')
-        .order('created_at', { ascending: false });
-
-      const projects = all || [];
-      setAllProjects(projects);
-
-      // Find by slug first, then id
-      let found = projects.find(p => p.slug === id);
-      if (!found) found = projects.find(p => p.id === id);
-
-      if (!found) {
-        setNotFound(true);
-      } else {
-        setProject(found);
-      }
-      setLoading(false);
-    };
-    fetch();
-  }, [id]);
+  // R1C6: published case studies from the Clean V1 content tables. The list is
+  // fetched for prev/next navigation; the detail is resolved by slug or id.
+  const { data: study, loading, error } = useCaseStudy(id);
+  const { data: studies } = useCaseStudies();
+  const allProjects = (studies ?? []).map(toProject);
+  const project = study ? toProject(study) : null;
+  const notFound = !loading && !error && !project;
 
   if (loading) {
     return <Layout><div className="flex items-center justify-center min-h-[60vh]"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div></Layout>;
@@ -123,8 +120,8 @@ const PortfolioDetail = () => {
 
   const categoryLabel = project.category === 'branding' ? 'Branding' : project.category === 'web' ? 'Web' : 'Estratégia';
 
-  // Build gallery: use gallery array if available, otherwise fall back to main image
-  const galleryImages = project.gallery && project.gallery.length > 0 ? project.gallery : [project.image];
+  // Clean V1 has no gallery column; the hero image is the only visual.
+  const galleryImages = [project.image];
 
   return (
     <Layout>

@@ -6,51 +6,43 @@ import { Search, Clock, ArrowRight, Loader2 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
 import { supabase } from '@/integrations/supabase/client';
+import { useContentEntries } from '@/hooks/useContent';
+import { estimateReadingMinutes, mediaUrl } from '@/lib/contentApi';
 
 const ACCENT = '#ff4000';
 
-type BlogPost = {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  category: string;
-  image: string;
-  read_time: string;
-  featured: boolean;
-  created_at: string;
-};
+// R1C6: the page no longer defines its own row shape. `ContentEntryView` comes
+// from the Clean V1 content layer and already carries the localized fields,
+// the author and the category.
 
 const Blog = () => {
   const { t, i18n } = useTranslation();
   const location = useLocation();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: entries, loading, error } = useContentEntries({ contentType: 'insight' });
+  const posts = useMemo(() => {
+    const visible = (entries ?? []).slice();
+    return visible.sort((a, b) => (b.publishedAt ?? b.createdAt).localeCompare(a.publishedAt ?? a.createdAt));
+  }, [entries]);
 
   const currentPath = useMemo(() => location.pathname, [location.pathname]);
   const dateLocale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'en' ? 'en-GB' : 'pt-PT';
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const { data } = await supabase
-        .from('blog_posts')
-        .select('id, slug, title, excerpt, category, image, read_time, featured, created_at')
-        .eq('status', 'published')
-        .order('created_at', { ascending: false });
-      setPosts((data as BlogPost[]) || []);
-      setLoading(false);
-    };
-    fetchPosts();
-  }, []);
-
-  const categories = ['all', ...Array.from(new Set(posts.map((p) => p.category)))];
+  const categories = [
+    'all',
+    ...Array.from(new Set(posts.map((p) => p.category?.name || p.category?.key || 'outros'))),
+  ];
   const filtered = posts
-    .filter((p) => category === 'all' || p.category === category)
+    .filter((p) => category === 'all' || (p.category?.name || p.category?.key || 'outros') === category)
     .filter((p) => p.title.toLowerCase().includes(search.toLowerCase()));
 
   const featured = posts.find((p) => p.featured);
+  const featuredImage = featured ? mediaUrl(featured.coverMediaPath) : null;
+  const featuredMinutes = featured ? estimateReadingMinutes(featured.body) : 1;
+  const featuredDate = featured
+    ? new Date(featured.publishedAt ?? featured.createdAt).toLocaleDateString(dateLocale)
+    : '';
   const showFeatured = featured && category === 'all' && !search;
   const rest = showFeatured ? filtered.filter((p) => p.id !== featured!.id) : filtered;
 
@@ -209,29 +201,31 @@ const Blog = () => {
                   >
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                       <div className="overflow-hidden aspect-[16/10] lg:aspect-auto lg:min-h-[420px]">
-                        <img
-                          src={featured!.image}
-                          alt={featured!.title}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                          loading="lazy"
-                        />
+                        {featuredImage ? (
+                          <img
+                            src={featuredImage}
+                            alt={featured!.title}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            loading="lazy"
+                          />
+                        ) : null}
                       </div>
                       <div className="flex flex-col justify-center p-8 md:p-12 bg-white/[0.02]">
                         <span
                           className="font-mono text-[11px] uppercase tracking-[0.22em]"
                           style={{ color: ACCENT }}
                         >
-                          Featured · {featured!.category}
+                          Featured · {featured!.category?.name || featured!.category?.key}
                         </span>
                         <h2 className="text-3xl md:text-4xl font-black mt-4 leading-[1.05] tracking-tight group-hover:text-[#ff4000] transition-colors">
                           {featured!.title}
                         </h2>
                         <p className="text-white/70 mt-4 leading-relaxed">{featured!.excerpt}</p>
                         <div className="flex items-center gap-4 mt-6 text-xs font-mono uppercase tracking-[0.18em] text-white/50">
-                          <span>{new Date(featured!.created_at).toLocaleDateString(dateLocale)}</span>
+                          <span>{featuredDate}</span>
                           <span className="flex items-center gap-1.5">
                             <Clock className="h-3.5 w-3.5" />
-                            {featured!.read_time}
+                            {t('blog.readTime', { minutes: featuredMinutes })}
                           </span>
                         </div>
                         <span
@@ -248,7 +242,10 @@ const Blog = () => {
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {rest.map((post, i) => (
+                {rest.map((post, i) => {
+                  const postImage = mediaUrl(post.coverMediaPath);
+                  const postMinutes = estimateReadingMinutes(post.body);
+                  return (
                   <Link key={post.id} to={`/blog/${post.slug}`}>
                     <motion.article
                       initial={{ opacity: 0, y: 20 }}
@@ -258,19 +255,21 @@ const Blog = () => {
                       className="group cursor-pointer h-full border border-white/10 rounded-2xl overflow-hidden hover:border-[#ff4000]/50 hover:bg-white/[0.02] transition-all"
                     >
                       <div className="overflow-hidden aspect-[16/10]">
-                        <img
-                          src={post.image}
-                          alt={post.title}
+                        {postImage ? (
+                          <img
+                            src={postImage}
+                            alt={post.title}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           loading="lazy"
                         />
+                        ) : null}
                       </div>
                       <div className="p-6">
                         <span
                           className="font-mono text-[10px] uppercase tracking-[0.22em]"
                           style={{ color: ACCENT }}
                         >
-                          {post.category}
+                          {post.category?.name || post.category?.key}
                         </span>
                         <h3 className="text-xl font-bold mt-3 leading-tight group-hover:text-[#ff4000] transition-colors">
                           {post.title}
@@ -280,10 +279,10 @@ const Blog = () => {
                         </p>
                         <div className="flex items-center justify-between mt-6 pt-5 border-t border-white/10">
                           <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-[0.18em] text-white/40">
-                            <span>{new Date(post.created_at).toLocaleDateString(dateLocale)}</span>
+                            <span>{new Date(post.createdAt).toLocaleDateString(dateLocale)}</span>
                             <span className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
-                              {post.read_time}
+                              {t('blog.readTime', { minutes: postMinutes })}
                             </span>
                           </div>
                           <ArrowRight
@@ -294,7 +293,8 @@ const Blog = () => {
                       </div>
                     </motion.article>
                   </Link>
-                ))}
+                  );
+                })}
               </div>
 
               {!loading && filtered.length === 0 && (

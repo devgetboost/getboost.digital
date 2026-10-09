@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Loader2 } from 'lucide-react';
@@ -6,7 +6,8 @@ import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
 import PageHero from '@/components/PageHero';
 import heroStrategy from '@/assets/hero-strategy.jpg';
-import { supabase } from '@/integrations/supabase/client';
+import { useCaseStudies } from '@/hooks/useContent';
+import { mediaUrl } from '@/lib/contentApi';
 import {
   ScrollXCarousel,
   ScrollXCarouselContainer,
@@ -20,50 +21,30 @@ import {
 } from '@/components/ui/reveal-on-hover';
 import { Badge } from '@/components/ui/badge';
 
-type Project = { id: string; slug: string; title: string; category: string; description: string; image: string; tags: string[]; year: string; client: string; results: string; };
-
-const sampleProjects: Project[] = [
-  {
-    id: 'sample-1',
-    slug: 'aguas-regiao-aveiro',
-    title: 'Fornecer ao cidadão uma nova experiência para gerir a água.',
-    category: 'web',
-    description: 'Plataforma digital para gestão de serviços de água.',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80',
-    tags: ['React', 'TypeScript', 'Tailwind', 'Supabase', 'Node.js', 'PostgreSQL'],
-    year: '2024',
-    client: 'Águas de Aveiro',
-    results: '+45% engagement',
-  },
-  {
-    id: 'sample-2',
-    slug: 'motivae-app',
-    title: 'Uma app que transforma hábitos em conquistas diárias.',
-    category: 'branding',
-    description: 'Aplicação mobile de produtividade e bem-estar.',
-    image: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=1200&q=80',
-    tags: ['React Native', 'Figma', 'Branding', 'UI/UX'],
-    year: '2024',
-    client: 'Motivae',
-    results: '10k+ downloads',
-  },
-];
+// R1C6: the page renders published case studies from the Clean V1
+// `case_studies` + `case_study_localizations` tables. The previous static
+// `sampleProjects` fallback is gone: an empty result renders the empty state.
 
 const Portfolio = () => {
   const { t, i18n } = useTranslation();
   const [filter, setFilter] = useState<string>('all');
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-  const filters = ['all', 'branding', 'web', 'strategy'] as const;
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      const { data } = await supabase.from('projects').select('id, slug, title, category, description, image, tags, year, client, results').eq('status', 'published').order('created_at', { ascending: false });
-      setProjects(data && data.length > 0 ? data : sampleProjects);
-      setLoading(false);
-    };
-    fetchProjects();
-  }, []);
+  const { data: studies, loading } = useCaseStudies();
+  const projects = (studies ?? []).map((study) => ({
+    id: study.id,
+    slug: study.slug,
+    // The legacy `category` column became `industry` on the case-study parent.
+    category: study.industry ?? 'web',
+    title: study.title,
+    client: study.clientName,
+    // Clean V1 models work as capabilities + technologies rather than one tag list.
+    tags: [...study.capabilities, ...study.technologies],
+    description: study.summary ?? '',
+    image: mediaUrl(study.heroMediaPath),
+    capabilities: study.capabilities,
+    technologies: study.technologies,
+    featured: study.featured,
+  }));
+  const filters = ['all'] as const;
 
   const filtered = filter === 'all' ? projects : projects.filter((p) => p.category === filter);
 

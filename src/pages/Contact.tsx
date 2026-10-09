@@ -13,6 +13,7 @@ import SEO from '@/components/SEO';
 import { legacySupabase, supabase } from '@/integrations/supabase/client';
 import { captureLead, CommercialWriteError } from '@/lib/commercialApi';
 import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
+import { fetchProducts } from '@/lib/contentApi';
 import { toast } from 'sonner';
 
 const ACCENT = '#ff4000';
@@ -29,13 +30,12 @@ const Contact = () => {
     service: '', budget: '', timeline: '', message: '',
   });
 
+  // R1C6: the service dropdown reads published products via the content layer
+  // instead of the retired `services` table.
   useEffect(() => {
-    legacySupabase
-      .from('services')
-      .select('key, headline')
-      .eq('status', 'published')
-      .order('sort_order')
-      .then(({ data }) => { if (data) setServices(data); });
+    fetchProducts({ market: marketForLanguage(i18n.language), locale: localeForLanguage(i18n.language) }).then((products) => {
+      setServices(products.map((product) => ({ key: product.slug, headline: product.name })));
+    }).catch(() => setServices([]));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 import { useParams, Link, Navigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
@@ -7,45 +7,29 @@ import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
 import { supabase } from '@/integrations/supabase/client';
 import { isHtmlContent } from '@/lib/markdown-to-html';
+import { parseContentBody, type ContentBlock } from '@/lib/contentBody';
+import { useContentEntry, useRelatedEntries } from '@/hooks/useContent';
+import { mediaUrl, estimateReadingMinutes } from '@/lib/contentApi';
 import BlogShareContact from '@/components/BlogShareContact';
 import BlogComments from '@/components/BlogComments';
 import DOMPurify from 'dompurify';
 
 const ACCENT = '#ff4000';
 
-type BlogPostType = {
-  id: string; slug: string; title: string; excerpt: string; content: string;
-  category: string; image: string; read_time: string; featured: boolean;
-  created_at: string; updated_at?: string; meta_description?: string; meta_title?: string;
-};
-type RelatedPost = Omit<BlogPostType, 'content'>;
+// R1C6: the row shape comes from the content layer. `ContentEntryView` carries
+// the localized fields (title, excerpt, body, seo_*) plus the parent entry
+// fields (featured, publishedAt, author, category).
 
 const BlogPostPage = () => {
   const { id } = useParams<{ id: string }>();
   const { t, i18n } = useTranslation();
   const location = useLocation();
-  const [post, setPost] = useState<BlogPostType | null>(null);
-  const [related, setRelated] = useState<RelatedPost[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
+  const { data: post, loading, error } = useContentEntry(id);
+  const { data: related } = useRelatedEntries(post);
+  const notFound = !loading && !error && !post;
 
   const currentPath = useMemo(() => location.pathname, [location.pathname]);
   const dateLocale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'en' ? 'en-GB' : 'pt-PT';
-
-  useEffect(() => {
-    const fetchPost = async () => {
-      let { data } = await supabase.from('blog_posts').select('*').eq('slug', id!).eq('status', 'published').maybeSingle();
-      if (!data) {
-        ({ data } = await supabase.from('blog_posts').select('*').eq('id', id!).eq('status', 'published').maybeSingle());
-      }
-      if (!data) { setNotFound(true); setLoading(false); return; }
-      setPost(data);
-      const { data: relatedData } = await supabase.from('blog_posts').select('id, slug, title, excerpt, category, image, read_time, featured, created_at').eq('status', 'published').neq('id', data.id).limit(3);
-      setRelated(relatedData || []);
-      setLoading(false);
-    };
-    fetchPost();
-  }, [id]);
 
   if (loading) return (
     <Layout>
@@ -56,15 +40,36 @@ const BlogPostPage = () => {
   );
   if (notFound || !post) return <Navigate to="/blog" replace />;
 
+  const postCover = mediaUrl(post.ogImagePath ?? post.coverMediaPath);
+  const readMinutes = estimateReadingMinutes(post.body);
+
   const articleSchema = {
     '@context': 'https://schema.org', '@type': 'BlogPosting',
-    headline: post.title, description: post.meta_description || post.excerpt, image: post.image,
-    datePublished: post.created_at, dateModified: post.updated_at || post.created_at,
+    headline: post.title, description: post.seoDescription || post.excerpt || undefined, image: postCover,
+    datePublished: post.publishedAt ?? post.createdAt, dateModified: post.updatedAt,
     author: { '@type': 'Person', name: 'Getboost Digital' },
     publisher: { '@type': 'Organization', name: 'Getboost Digital — Marketing Digital & IA' },
   };
 
   const slugify = (text: string) => text.toLowerCase().replace(/[^\w\sà-ú]/gi, '').replace(/\s+/g, '-').replace(/-+$/, '');
+
+  /** R1C6: extracts the table of contents from either a string or the jsonb body. */
+  const extractTocFromBody = (body: unknown) => {
+    const segments = parseContentBody(body);
+    const entries: { level: number; text: string; id: string }[] = [];
+    for (const segment of segments) {
+      if (segment.kind === 'rich-text') {
+        entries.push(...extractTOC(segment.text));
+      } else {
+        for (const block of segment.blocks) {
+          if (block.type === 'heading' && block.text) {
+            entries.push({ level: block.level ?? 2, text: block.text, id: slugify(block.text) });
+          }
+        }
+      }
+    }
+    return entries;
+  };
 
   const extractTOC = (content: string) => {
     if (isHtmlContent(content)) {
@@ -119,11 +124,73 @@ const BlogPostPage = () => {
     });
   };
 
-  const toc = extractTOC(post.content);
+  // R1C6: Clean V1 stores a block-based jsonb `body`; render whichever shape is
+  // present. Rich-text segments reuse the existing markdown/HTML renderer.
+  const renderBody = (body: unknown) => {
+    const segments = parseContentBody(body);
+    if (segments.length === 0) {
+      return <p className="text-white/50">{t('blog.noContent', 'Conteúdo brevemente disponível.')}</p>;
+    }
+    return segments.map((segment, si) => {
+      if (segment.kind === 'rich-text') {
+        return <Fragment key={`text-${si}`}>{renderContent(segment.text)}</Fragment>;
+      }
+      return (
+        <Fragment key={`blocks-${si}`}>
+          {segment.blocks.map((block, bi) => renderBlock(block, bi))}
+        </Fragment>
+      );
+    });
+  };
+
+  const renderBlock = (block: ContentBlock, key: number) => {
+    switch (block.type) {
+      case 'heading':
+        return block.text ? (
+          <h3 key={key} id={slugify(block.text)} className="text-xl font-semibold mt-8 mb-3 text-white scroll-mt-24">
+            {renderInline(block.text)}
+          </h3>
+        ) : null;
+      case 'list':
+        return (
+          <ul key={key} className="ml-6 mb-4 list-disc text-white/75 leading-relaxed marker:text-[#ff4000]">
+            {(block.items ?? []).map((item, ii) => (
+              <li key={ii}>{renderInline(item)}</li>
+            ))}
+          </ul>
+        );
+      case 'quote':
+        return (
+          <blockquote key={key} className="pl-5 py-2 my-6 text-white/80 italic border-l-2" style={{ borderColor: ACCENT }}>
+            {renderInline(block.text ?? '')}
+          </blockquote>
+        );
+      case 'code':
+        return (
+          <pre key={key} className="my-6 overflow-x-auto rounded-lg border border-white/10 bg-black/40 p-4 text-sm text-white/80">
+            <code>{block.text ?? ''}</code>
+          </pre>
+        );
+      case 'image':
+        return block.src ? (
+          <figure key={key} className="my-8">
+            <img src={block.src} alt={block.alt ?? ''} className="w-full rounded-xl border border-white/10" loading="lazy" />
+            {block.caption ? <figcaption className="mt-2 text-center text-xs text-white/40">{block.caption}</figcaption> : null}
+          </figure>
+        ) : null;
+      case 'divider':
+        return <hr key={key} className="my-10 border-white/10" />;
+      default:
+        return block.text ? <p key={key} className="text-white/75 leading-relaxed mb-4 text-base md:text-lg">{renderInline(block.text)}</p> : null;
+    }
+  };
+
+  const toc = extractTocFromBody(post.body);
+
 
   return (
     <Layout>
-      <SEO title={post.meta_title || post.title} description={post.meta_description || post.excerpt} canonical={currentPath} image={post.image} type="article" jsonLd={articleSchema} lang={i18n.language as 'pt' | 'en' | 'es'} />
+      <SEO title={post.seoTitle || post.title} description={post.seoDescription || post.excerpt || undefined} canonical={currentPath} image={postCover} type="article" jsonLd={articleSchema} lang={i18n.language as 'pt' | 'en' | 'es'} />
 
       {/* HERO — manifesto style */}
       <section className="relative overflow-hidden bg-[#0a0603] text-white">
@@ -162,7 +229,7 @@ const BlogPostPage = () => {
             style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
-            {post.category}
+            {post.category?.name || post.category?.key}
           </motion.div>
 
           <motion.h1
@@ -189,11 +256,11 @@ const BlogPostPage = () => {
             className="mt-6 flex items-center gap-5 text-xs font-mono uppercase tracking-[0.22em] text-white/50"
           >
             <span>
-              {new Date(post.created_at).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })}
+              {new Date(post.publishedAt ?? post.createdAt).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })}
             </span>
             <span className="flex items-center gap-1.5">
               <Clock className="h-3.5 w-3.5" />
-              {post.read_time}
+              {t('blog.readTime', { minutes: readMinutes })}
             </span>
           </motion.div>
         </div>
@@ -208,7 +275,7 @@ const BlogPostPage = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="overflow-hidden rounded-2xl border border-white/10 aspect-[16/8]"
           >
-            <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
+            {postCover ? <img src={postCover} alt={post.title} className="w-full h-full object-cover" /> : null}
           </motion.div>
         </div>
       </section>
@@ -248,7 +315,7 @@ const BlogPostPage = () => {
             )}
 
             <div className="blog-content">
-              {renderContent(post.content)}
+              {renderBody(post.body)}
             </div>
 
             <div className="mt-16 pt-10 border-t border-white/10">
@@ -273,7 +340,7 @@ const BlogPostPage = () => {
             className="mt-4 font-black leading-[0.98] tracking-tight text-[clamp(1.75rem,5vw,3.5rem)]"
           >
             {t('blog.needHelp')}{' '}
-            <span style={{ color: ACCENT }}>{post.category}</span>?
+            <span style={{ color: ACCENT }}>{post.category?.name || post.category?.key}</span>?
           </motion.h2>
           <p className="text-white/60 mt-6 max-w-xl mx-auto">{t('blog.needHelpSubtitle')}</p>
           <div className="mt-10">
@@ -315,7 +382,7 @@ const BlogPostPage = () => {
                   >
                     <div className="overflow-hidden aspect-[16/10]">
                       <img
-                        src={p.image}
+                        src={p.coverMediaPath ? mediaUrl(p.coverMediaPath) : ''}
                         alt={p.title}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         loading="lazy"
@@ -323,15 +390,15 @@ const BlogPostPage = () => {
                     </div>
                     <div className="p-6">
                       <span className="font-mono text-[10px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
-                        {p.category}
+                        {p.category?.name || p.category?.key}
                       </span>
                       <h3 className="text-lg font-bold mt-3 leading-tight group-hover:text-[#ff4000] transition-colors">
                         {p.title}
                       </h3>
                       <div className="flex items-center gap-3 mt-5 text-[10px] font-mono uppercase tracking-[0.18em] text-white/40">
-                        <span>{new Date(p.created_at).toLocaleDateString(dateLocale)}</span>
+                        <span>{new Date(p.createdAt).toLocaleDateString(dateLocale)}</span>
                         <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />{p.read_time}
+                          <Clock className="h-3 w-3" />{t('blog.readTime', { minutes: estimateReadingMinutes(p.body) })}
                         </span>
                       </div>
                     </div>

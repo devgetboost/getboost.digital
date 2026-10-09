@@ -2,19 +2,64 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, FileText } from 'lucide-react';
+import { ArrowRight, FileText, Loader2 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
-import { resources } from '@/data/resources';
 import ResourceCard from '@/components/ResourceCard';
+import { useContentEntries, useContentCategories } from '@/hooks/useContent';
+import { contentBodyToText } from '@/lib/contentBody';
+import type { ContentEntryView } from '@/lib/contentApi';
+import type { Resource } from '@/data/resources';
 
 const ACCENT = '#ff4000';
 
+/**
+ * R1C6: resources are Clean V1 `content_entries` of type `guide`.
+ *
+ * The static `src/data/resources.ts` array is no longer read. The legacy
+ * `category` union (guides/templates/tools) became the entry's category
+ * localization, and the legacy `description`/`headline`/`subheadline`/`benefits`
+ * columns live in the localization's `excerpt` and jsonb `body`.
+ */
 const Resources = () => {
   const { t } = useTranslation();
-  const [filter, setFilter] = useState<'all' | 'guides' | 'templates' | 'tools'>('all');
-  const filters = ['all', 'guides', 'templates', 'tools'] as const;
+  const [filter, setFilter] = useState<string>('all');
+  const { data: entries, loading } = useContentEntries({ contentType: 'guide' });
+  const { data: categories } = useContentCategories();
+
+  const categoriesWithEntries = (categories ?? []).filter(
+    (category) => (entries ?? []).some((entry) => entry.category?.id === category.id),
+  );
+  const filters = ['all', ...categoriesWithEntries.map((category) => category.slug ?? category.key)];
+
+  const toCard = (entry: ContentEntryView) => ({
+    id: entry.slug,
+    title: entry.title,
+    description: entry.excerpt ?? contentBodyToText(entry.body).slice(0, 200),
+    category: (entry.category?.slug ??
+      entry.category?.key ??
+      'guides') as Resource['category'],
+    icon: 'FileText',
+    link: `/resources/${entry.slug}`,
+    headline: entry.title,
+    subheadline: entry.excerpt ?? '',
+    benefits: [],
+    ctaText: '',
+    imageAlt: entry.title,
+  });
+
+  const resources = (entries ?? []).map(toCard);
   const filtered = filter === 'all' ? resources : resources.filter((r) => r.category === filter);
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

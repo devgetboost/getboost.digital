@@ -8,6 +8,7 @@ import {
   Check,
   CheckSquare,
   FileText,
+  Loader2,
   Calculator,
   Book,
   Calendar,
@@ -16,7 +17,7 @@ import {
 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
-import { resources } from '@/data/resources';
+import type { Resource } from '@/data/resources';
 import ResourceCard from '@/components/ResourceCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,7 +32,9 @@ import {
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { captureLead } from '@/lib/commercialApi';
+import { useContentEntries, useContentEntry } from '@/hooks/useContent';
 import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
+import { contentBodyToText } from '@/lib/contentBody';
 import { analytics } from '@/lib/analytics';
 import avatar1 from '@/assets/avatar-1.jpg';
 import avatar2 from '@/assets/avatar-2.jpg';
@@ -57,7 +60,25 @@ const ResourceDetail = () => {
   const locale = localeForLanguage(i18n.language);
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const resource = resources.find((r) => r.id === id);
+  // R1C6: resources are Clean V1 `content_entries` of type `guide`, resolved by
+  // slug (or a legacy uuid id).
+  const { data: entry, loading } = useContentEntry(id);
+  const entryBodyText = entry ? contentBodyToText(entry.body) : '';
+  const resource = entry
+    ? {
+        id: entry.slug,
+        title: entry.title,
+        description: entry.excerpt ?? entryBodyText.slice(0, 200),
+        category: (entry.category?.slug ?? entry.category?.key ?? 'guides') as Resource['category'],
+        icon: 'FileText',
+        link: `/resources/${entry.slug}`,
+        headline: entry.title,
+        subheadline: entry.excerpt ?? '',
+        benefits: [],
+        ctaText: '',
+        imageAlt: entry.title,
+      }
+    : null;
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -68,6 +89,15 @@ const ResourceDetail = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      </Layout>
+    );
+  }
   if (!resource) return <Navigate to="/resources" replace />;
 
   const Icon = iconMap[resource.icon] || FileText;
@@ -187,6 +217,22 @@ const ResourceDetail = () => {
     toast.success(t('resourceDetail.successSend'));
   };
 
+  const { data: siblings } = useContentEntries({ contentType: 'guide' });
+  const resources = (siblings ?? [])
+    .filter((sibling) => sibling.slug !== resource.id)
+    .map((sibling) => ({
+      id: sibling.slug,
+      title: sibling.title,
+      description: sibling.excerpt ?? contentBodyToText(sibling.body).slice(0, 200),
+      category: (sibling.category?.slug ?? sibling.category?.key ?? 'guides') as Resource['category'],
+      icon: 'FileText',
+      link: `/resources/${sibling.slug}`,
+      headline: sibling.title,
+      subheadline: sibling.excerpt ?? '',
+      benefits: [],
+      ctaText: '',
+      imageAlt: sibling.title,
+    }));
   const related = resources
     .filter((r) => r.id !== resource.id)
     .sort((a, b) => {

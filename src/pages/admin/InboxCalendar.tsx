@@ -30,12 +30,17 @@ interface Block {
   reason: string | null;
   active: boolean;
 }
+/**
+ * R1C8: bookings are Clean V1 rows. The retired `meeting_date`/`meeting_time`/
+ * `meeting_type` columns are gone; the calendar works off the absolute
+ * `start_at` instant. The retired `assigned_to` filter is also gone (no such
+ * column), so the calendar shows every booking — `admin_calendar_blocks` and
+ * `booking_settings` below stay legacy and are documented Wave 7 debt.
+ */
 interface Booking {
   id: string;
   name: string;
-  meeting_date: string;
-  meeting_time: string | null;
-  meeting_type: string | null;
+  start_at: string;
   status: string;
 }
 
@@ -54,9 +59,8 @@ export default function InboxCalendar() {
     const [{ data: b }, { data: k }] = await Promise.all([
       legacySupabase
         .from('bookings')
-        .select('id, name, meeting_date, meeting_time, meeting_type, status')
-        .eq('assigned_to' as never, uid as never)
-        .order('meeting_date', { ascending: true }),
+        .select('id, name, start_at, status')
+        .order('start_at', { ascending: true }),
       legacySupabase
         .from('admin_calendar_blocks' as never)
         .select('*')
@@ -78,7 +82,7 @@ export default function InboxCalendar() {
   }, []);
 
   const bookingDays = useMemo(
-    () => bookings.filter((b) => b.status !== 'cancelled').map((b) => parseISO(b.meeting_date)),
+    () => bookings.filter((b) => b.status !== 'cancelled').map((b) => parseISO(b.start_at)),
     [bookings],
   );
 
@@ -96,7 +100,7 @@ export default function InboxCalendar() {
     return days;
   }, [blocks]);
 
-  const dayBookings = bookings.filter((b) => isSameDay(parseISO(b.meeting_date), selected));
+  const dayBookings = bookings.filter((b) => isSameDay(parseISO(b.start_at), selected));
   const dayBlocks = blocks.filter((b) => {
     if (!b.active) return false;
     if (b.kind === 'day') return b.start_date && isSameDay(parseISO(b.start_date), selected);
@@ -196,7 +200,7 @@ export default function InboxCalendar() {
                   <div>
                     <p className="text-sm font-medium">{b.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {b.meeting_time || '—'} · {b.meeting_type || 'reunião'}
+                      {new Date(b.start_at).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })} · reunião
                     </p>
                   </div>
                   <Badge variant="outline">{b.status}</Badge>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { legacySupabase } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client';
 import {
   CalendarIcon, Users, CheckCircle, Clock, FileText, FolderKanban,
   TrendingUp, ArrowUpRight, AlertTriangle, Mail, BookOpen,
@@ -12,10 +12,15 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pi
 import { format, subDays, isAfter } from 'date-fns';
 import { pt } from 'date-fns/locale';
 
+/**
+ * R1C8: the dashboard reads Clean V1 tables. Content counts come from
+ * `content_entries` (insight/guide) and `case_studies`; the retired
+ * `blog_posts`, `projects` and `resources` tables are no longer queried.
+ * Bookings carry absolute `start_at` instants instead of `meeting_date`/`time`.
+ */
 interface Lead { id: string; created_at: string; status: string; name: string; email: string; source: string }
-interface Booking { id: string; meeting_date: string; meeting_time: string; status: string; name: string; created_at: string }
-interface BlogPost { id: string; title: string; status: string; updated_at: string; slug: string }
-interface Project { id: string; title: string; status: string; updated_at: string; slug: string }
+interface Booking { id: string; start_at: string; status: string; name: string; created_at: string }
+interface ContentItem { id: string; market: string; status: string; updated_at: string; slug: string | null; title: string | null }
 
 const COLORS = ['hsl(var(--primary))', '#10b981', '#f59e0b', '#6366f1', '#ec4899', '#8b5cf6'];
 
@@ -23,24 +28,38 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [posts, setPosts] = useState<ContentItem[]>([]);
+  const [projects, setProjects] = useState<ContentItem[]>([]);
   const [resourceCount, setResourceCount] = useState(0);
 
   useEffect(() => {
     const fetchAll = async () => {
-      const [leadsRes, bookingsRes, postsRes, projectsRes, resourcesRes] = await Promise.all([
-        legacySupabase.from('leads').select('id, created_at, status, name, email, source').order('created_at', { ascending: false }).limit(100),
-        legacySupabase.from('bookings').select('id, meeting_date, meeting_time, status, name, created_at').order('created_at', { ascending: false }).limit(100),
-        legacySupabase.from('blog_posts').select('id, title, status, updated_at, slug').order('updated_at', { ascending: false }).limit(20),
-        legacySupabase.from('projects').select('id, title, status, updated_at, slug').order('updated_at', { ascending: false }).limit(20),
-        legacySupabase.from('resources').select('id', { count: 'exact', head: true }),
+      const [leadsRes, bookingsRes, insightsRes, guidesRes, casesRes] = await Promise.all([
+        supabase.from('leads').select('id, created_at, status, name, email, source').order('created_at', { ascending: false }).limit(100),
+        supabase.from('bookings').select('id, start_at, status, name, created_at').order('created_at', { ascending: false }).limit(100),
+        supabase.from('content_entries').select('id, status, updated_at, content_localizations!inner(market, status, slug, title)').eq('content_type', 'insight').order('updated_at', { ascending: false }).limit(20),
+        supabase.from('content_entries').select('id', { count: 'exact', head: true }).eq('content_type', 'guide'),
+        supabase.from('case_studies').select('id, status, updated_at, case_study_localizations!inner(market, status, slug, title)').order('updated_at', { ascending: false }).limit(20),
       ]);
-      setLeads(leadsRes.data || []);
-      setBookings(bookingsRes.data || []);
-      setPosts(postsRes.data || []);
-      setProjects(projectsRes.data || []);
-      setResourceCount(resourcesRes.count || 0);
+      setLeads((leadsRes.data || []) as Lead[]);
+      setBookings((bookingsRes.data || []) as Booking[]);
+      setPosts(((insightsRes.data || []) as any[]).map((row) => ({
+        id: row.id,
+        market: row.content_localizations?.[0]?.market ?? '?',
+        status: row.content_localizations?.[0]?.status ?? row.status,
+        updated_at: row.updated_at,
+        slug: row.content_localizations?.[0]?.slug ?? null,
+        title: row.content_localizations?.[0]?.title ?? null,
+      })));
+      setProjects(((casesRes.data || []) as any[]).map((row) => ({
+        id: row.id,
+        market: row.case_study_localizations?.[0]?.market ?? '?',
+        status: row.case_study_localizations?.[0]?.status ?? row.status,
+        updated_at: row.updated_at,
+        slug: row.case_study_localizations?.[0]?.slug ?? null,
+        title: row.case_study_localizations?.[0]?.title ?? null,
+      })));
+      setResourceCount(guidesRes.count || 0);
     };
     fetchAll();
   }, []);
@@ -58,14 +77,14 @@ const AdminDashboard = () => {
   }).length;
   const leadsTrend = leadsNew7d - leadsPrev7d;
 
-  const bookingsPending = bookings.filter(b => b.status === 'pending').length;
+  const bookingsPending = bookings.filter(b => b.status === 'requested').length;
   const bookingsConfirmed = bookings.filter(b => b.status === 'confirmed').length;
   const bookingsCompleted = bookings.filter(b => b.status === 'completed').length;
   const activeProjects = projects.filter(p => p.status === 'published').length;
 
   const leadsNewStatus = leads.filter(l => l.status === 'new').length;
   const conversion = leadsTotal > 0
-    ? ((leads.filter(l => l.status === 'converted' || l.status === 'won').length / leadsTotal) * 100).toFixed(1)
+    ? ((leads.filter(l => l.status === 'converted').length / leadsTotal) * 100).toFixed(1)
     : '0';
 
   const kpis = [
@@ -283,10 +302,10 @@ const AdminDashboard = () => {
               >
                 <div className="min-w-0">
                   <p className="text-xs font-medium text-foreground truncate">{b.name}</p>
-                  <p className="text-[10px] text-muted-foreground">{b.meeting_date} · {b.meeting_time}</p>
+                  <p className="text-[10px] text-muted-foreground">{new Date(b.start_at).toLocaleString('pt-PT')}</p>
                 </div>
                 <Badge variant="outline" className="text-[9px] h-4 shrink-0">
-                  {b.status === 'pending' ? 'Pendente' : b.status === 'confirmed' ? 'Confirmada' : b.status}
+                  {b.status === 'requested' ? 'Pendente' : b.status === 'confirmed' ? 'Confirmada' : b.status}
                 </Badge>
               </div>
             ))}

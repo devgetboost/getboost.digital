@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { format } from 'date-fns';
 import { pt } from 'date-fns/locale';
-import { Plus, Search, Edit, Trash2, Star, Calendar, Clock, Tag, Loader2, Settings, X, GripVertical } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Star, Calendar, Loader2, Settings, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,123 +9,171 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
-import { supabase } from '@/integrations/supabase/client';
-import BlogEditor from '@/components/admin/blog-editor/BlogEditor';
 import { useBlogCategories, type BlogCategory } from '@/hooks/useBlogCategories';
+import MarketTabs from '@/components/admin/MarketTabs';
+import {
+  deleteCategory,
+  deleteEntry,
+  listEntries,
+  logAdminAction,
+  saveCategoryWithLocalization,
+  createCategoryWithLocalization,
+  slugify,
+  STATUS_LABELS,
+  type AdminContentError,
+  type CategoryLocalizationRow,
+  type EntryLocalizationRow,
+  type EntryRow,
+  type MarketCode,
+} from '@/lib/adminContent';
+import { MARKET_LOCALE } from '@/lib/markets';
+import { mediaUrl } from '@/lib/contentApi';
+import type { MarketCode as EnvMarketCode } from '@/config/env';
+import BlogEditor from '@/components/admin/blog-editor/BlogEditor';
 
-type BlogPost = {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  category: string;
-  image: string;
-  read_time: string;
-  featured: boolean;
-  status: string;
-  meta_title: string;
-  meta_description: string;
-  keyword: string;
-  tags: string[];
-  created_at: string;
-  updated_at: string;
+type EntryListRow = {
+  entry: EntryRow;
+  localization: EntryLocalizationRow | null;
 };
 
+/**
+ * R1C8 — blog administration over the Clean V1 `content_entries` (type
+ * `insight`) + `content_localizations` tables.
+ *
+ * One row per (entry, localization): a market tab scopes the list, and the
+ * editor always saves exactly one market at a time. The retired `blog_posts`
+ * table (slug/category/image/read_time/meta_* columns) is no longer read or
+ * written anywhere on this page.
+ */
 const AdminBlog = () => {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [rows, setRows] = useState<EntryListRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
-  const [editing, setEditing] = useState<{ post: BlogPost | null; isNew: boolean } | null>(null);
+  const [marketFilter, setMarketFilter] = useState<MarketCode | 'all'>('all');
+  const [editing, setEditing] = useState<{ entryId: string | null; market: MarketCode } | null>(null);
   const { categories, refetch: refetchCategories } = useBlogCategories();
   const [catDialogOpen, setCatDialogOpen] = useState(false);
+  const [newCatKey, setNewCatKey] = useState('');
   const [newCatName, setNewCatName] = useState('');
+  const [catMarket, setCatMarket] = useState<MarketCode>('PT');
   const [editingCat, setEditingCat] = useState<BlogCategory | null>(null);
+  const [editCatKey, setEditCatKey] = useState('');
   const [editCatName, setEditCatName] = useState('');
 
   const fetchPosts = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) {
-      toast.error('Erro ao carregar artigos.');
-    } else {
-      setPosts((data || []) as unknown as BlogPost[]);
+    try {
+      const entries = await listEntries('insight');
+      const flattened: EntryListRow[] = [];
+      for (const { entry, localizations } of entries) {
+        if (localizations.length === 0) flattened.push({ entry, localization: null });
+        else for (const localization of localizations) flattened.push({ entry, localization });
+      }
+      setRows(flattened);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erro ao carregar artigos.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => { fetchPosts(); }, []);
 
   const startNew = () => {
-    setEditing({ post: null, isNew: true });
+    setEditing({ entryId: null, market: marketFilter === 'all' ? 'PT' : marketFilter });
   };
 
-  const startEdit = (post: BlogPost) => {
-    setEditing({ post, isNew: false });
+  const startEdit = (row: EntryListRow) => {
+    setEditing({ entryId: row.entry.id, market: (row.localization?.market as MarketCode) ?? 'PT' });
   };
 
-  const deletePost = async (id: string) => {
-    const { error } = await supabase.from('blog_posts').delete().eq('id', id);
-    if (error) {
-      toast.error('Erro ao eliminar.');
-      return;
+  const deletePost = async (entryId: string, title: string) => {
+    try {
+      await deleteEntry(entryId);
+      toast.success('Artigo eliminado.');
+      void logAdminAction('content.delete', 'content_entry', entryId, { title });
+      fetchPosts();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erro ao eliminar.');
     }
-    toast.success('Artigo eliminado.');
-    fetchPosts();
   };
-
-  const slugify = (text: string) =>
-    text.toLowerCase().replace(/[^\w\sà-ú]/gi, '').replace(/\s+/g, '-');
 
   const addCategory = async () => {
+    const key = newCatKey.trim();
     const name = newCatName.trim();
-    if (!name) return;
-    const { error } = await supabase.from('blog_categories').insert({
-      name,
-      slug: slugify(name),
-      sort_order: categories.length + 1,
-    } as any);
-    if (error) { toast.error('Erro ao criar categoria.'); return; }
-    toast.success('Categoria criada!');
-    setNewCatName('');
-    refetchCategories();
+    if (!key || !name) return;
+    try {
+      await createCategoryWithLocalization(
+        { key, sort_order: categories.length + 1 },
+        { market: catMarket, locale: MARKET_LOCALE[catMarket], name, slug: slugify(name), description: null },
+      );
+      toast.success('Categoria criada!');
+      setNewCatKey('');
+      setNewCatName('');
+      refetchCategories();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erro ao criar categoria.');
+    }
   };
 
   const updateCategory = async () => {
-    if (!editingCat || !editCatName.trim()) return;
-    const { error } = await supabase.from('blog_categories').update({
-      name: editCatName.trim(),
-      slug: slugify(editCatName.trim()),
-    } as any).eq('id', editingCat.id);
-    if (error) { toast.error('Erro ao atualizar.'); return; }
-    toast.success('Categoria atualizada!');
-    setEditingCat(null);
-    refetchCategories();
+    if (!editingCat || !editCatKey.trim() || !editCatName.trim()) return;
+    try {
+      await saveCategoryWithLocalization(
+        editingCat.id,
+        { key: editCatKey.trim(), sort_order: editingCat.sort_order },
+        {
+          market: catMarket,
+          locale: MARKET_LOCALE[catMarket],
+          name: editCatName.trim(),
+          slug: slugify(editCatName.trim()),
+          description: null,
+        },
+      );
+      toast.success('Categoria atualizada!');
+      setEditingCat(null);
+      refetchCategories();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erro ao atualizar.');
+    }
   };
 
-  const deleteCategory = async (id: string) => {
-    const { error } = await supabase.from('blog_categories').delete().eq('id', id);
-    if (error) { toast.error('Erro ao eliminar.'); return; }
-    toast.success('Categoria eliminada!');
-    refetchCategories();
+  const removeCategory = async (id: string) => {
+    try {
+      await deleteCategory(id);
+      toast.success('Categoria eliminada!');
+      refetchCategories();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erro ao eliminar.');
+    }
   };
 
-  const filtered = posts.filter(p => {
-    const matchSearch = p.title.toLowerCase().includes(search.toLowerCase());
-    const matchCategory = categoryFilter === 'all' || p.category === categoryFilter;
-    return matchSearch && matchCategory;
-  });
+  const filtered = useMemo(
+    () =>
+      rows.filter((row) => {
+        const title = row.localization?.title ?? '(sem localização)';
+        const matchSearch = title.toLowerCase().includes(search.toLowerCase());
+        const matchCategory =
+          categoryFilter === 'all' ||
+          row.entry.category_id === categoryFilter;
+        const matchMarket =
+          marketFilter === 'all' || row.localization?.market === marketFilter;
+        return matchSearch && matchCategory && matchMarket;
+      }),
+    [rows, search, categoryFilter, marketFilter],
+  );
+
+  const published = rows.filter((r) => r.localization?.status === 'published').length;
+  const drafts = rows.filter((r) => !r.localization || r.localization.status !== 'published').length;
 
   // Editor view
   if (editing) {
     return (
       <BlogEditor
-        post={editing.post}
-        isNew={editing.isNew}
+        entryId={editing.entryId}
+        market={editing.market}
+        contentType="insight"
         onBack={() => setEditing(null)}
         onSaved={() => { setEditing(null); fetchPosts(); }}
       />
@@ -146,6 +194,7 @@ const AdminBlog = () => {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-foreground">Blog</h2>
         <div className="flex items-center gap-2">
+          <MarketTabs value={marketFilter} onChange={setMarketFilter} />
           <Dialog open={catDialogOpen} onOpenChange={setCatDialogOpen}>
             <DialogTrigger asChild>
               <Button size="sm" variant="outline" className="gap-1.5">
@@ -157,15 +206,22 @@ const AdminBlog = () => {
                 <DialogTitle>Gerir Categorias</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
+                <MarketTabs value={catMarket} onChange={(m) => m !== 'all' && setCatMarket(m)} allowAll={false} />
                 <div className="flex gap-2">
+                  <Input
+                    value={newCatKey}
+                    onChange={e => setNewCatKey(e.target.value)}
+                    placeholder="Chave (ex: marketing)..."
+                    className="h-9 text-sm"
+                  />
                   <Input
                     value={newCatName}
                     onChange={e => setNewCatName(e.target.value)}
-                    placeholder="Nova categoria..."
+                    placeholder="Nome..."
                     className="h-9 text-sm"
                     onKeyDown={e => e.key === 'Enter' && addCategory()}
                   />
-                  <Button size="sm" onClick={addCategory} disabled={!newCatName.trim()}>
+                  <Button size="sm" onClick={addCategory} disabled={!newCatKey.trim() || !newCatName.trim()}>
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
@@ -190,11 +246,14 @@ const AdminBlog = () => {
                         </>
                       ) : (
                         <>
-                          <span className="flex-1 text-sm text-foreground">{cat.name}</span>
-                          <Button size="sm" variant="ghost" className="h-8 px-2" onClick={() => { setEditingCat(cat); setEditCatName(cat.name); }}>
+                          <div className="flex-1 min-w-0">
+                            <span className="text-sm text-foreground block truncate">{cat.name}</span>
+                            <span className="text-[10px] font-mono text-muted-foreground">{cat.key}</span>
+                          </div>
+                          <Button size="sm" variant="ghost" className="h-8 px-2" onClick={() => { setEditingCat(cat); setEditCatName(cat.name); setEditCatKey(cat.key); }}>
                             <Edit className="h-3.5 w-3.5" />
                           </Button>
-                          <Button size="sm" variant="ghost" className="h-8 px-2 text-muted-foreground hover:text-destructive" onClick={() => deleteCategory(cat.id)}>
+                          <Button size="sm" variant="ghost" className="h-8 px-2 text-muted-foreground hover:text-destructive" onClick={() => removeCategory(cat.id)}>
                             <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </>
@@ -216,9 +275,9 @@ const AdminBlog = () => {
 
       <div className="grid grid-cols-3 gap-4 mb-6">
         {[
-          { label: 'Total', value: posts.length },
-          { label: 'Publicados', value: posts.filter(p => p.status === 'published').length },
-          { label: 'Rascunhos', value: posts.filter(p => p.status === 'draft').length },
+          { label: 'Total', value: rows.length },
+          { label: 'Publicados', value: published },
+          { label: 'Rascunhos', value: drafts },
         ].map(s => (
           <Card key={s.label} className="border-border">
             <CardContent className="p-4">
@@ -236,12 +295,11 @@ const AdminBlog = () => {
         </div>
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
           <SelectTrigger className="w-full md:w-48">
-            <Tag className="h-4 w-4 mr-2" />
             <SelectValue placeholder="Categoria" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas</SelectItem>
-            {categories.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
+            {categories.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>
@@ -250,49 +308,60 @@ const AdminBlog = () => {
         <div className="text-center py-20 text-muted-foreground">Nenhum artigo encontrado.</div>
       ) : (
         <div className="space-y-3">
-          {filtered.map(post => (
-            <Card key={post.id} className="border-border hover:shadow-md transition-shadow">
-              <CardContent className="p-4 flex items-center gap-4">
-                {post.image && <img src={post.image} alt={post.title} className="w-20 h-14 object-cover rounded-lg shrink-0 hidden sm:block" />}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap mb-1">
-                    <h3 className="font-semibold text-foreground text-sm truncate">{post.title}</h3>
-                    {post.featured && <Star className="h-3.5 w-3.5 text-yellow-500 shrink-0" />}
+          {filtered.map(({ entry, localization }) => {
+            const title = localization?.title ?? '(sem localização neste mercado)';
+            const cover = mediaUrl(localization?.og_image_path ?? entry.cover_media_path);
+            const status = (localization?.status ?? 'draft') as keyof typeof STATUS_LABELS;
+            return (
+              <Card key={`${entry.id}:${localization?.id ?? 'none'}`} className="border-border hover:shadow-md transition-shadow">
+                <CardContent className="p-4 flex items-center gap-4">
+                  {cover && <img src={cover} alt={title} className="w-20 h-14 object-cover rounded-lg shrink-0 hidden sm:block" />}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <h3 className="font-semibold text-foreground text-sm truncate">{title}</h3>
+                      {entry.featured && <Star className="h-3.5 w-3.5 text-yellow-500 shrink-0" />}
+                    </div>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      {localization && (
+                        <Badge variant="outline" className="text-xs">{localization.market}</Badge>
+                      )}
+                      <Badge variant={status === 'published' ? 'default' : 'secondary'} className="text-xs">
+                        {STATUS_LABELS[status] ?? status}
+                      </Badge>
+                      <span className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {format(new Date(localization?.updated_at ?? entry.updated_at), "d MMM yyyy", { locale: pt })}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                    <Badge variant="outline" className="text-xs">{post.category}</Badge>
-                    <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{format(new Date(post.created_at), "d MMM yyyy", { locale: pt })}</span>
-                    <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{post.read_time}</span>
-                    <Badge variant={post.status === 'published' ? 'default' : post.status === 'scheduled' ? 'outline' : 'secondary'} className="text-xs">
-                      {post.status === 'published' ? 'Publicado' : post.status === 'scheduled' ? '📅 Agendado' : 'Rascunho'}
-                    </Badge>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <Button size="sm" variant="ghost" onClick={() => startEdit({ entry, localization })}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-destructive">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Eliminar artigo?</DialogTitle>
+                        </DialogHeader>
+                        <p className="text-sm text-muted-foreground">Tens a certeza que queres eliminar "{title}"? Todas as localizações serão eliminadas. Esta ação não pode ser revertida.</p>
+                        <div className="flex justify-end gap-2 mt-4">
+                          <DialogClose asChild>
+                            <Button variant="outline" size="sm">Cancelar</Button>
+                          </DialogClose>
+                          <Button variant="destructive" size="sm" onClick={() => deletePost(entry.id, title)}>Eliminar</Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </div>
-                </div>
-                <div className="flex items-center gap-1 shrink-0">
-                  <Button size="sm" variant="ghost" onClick={() => startEdit(post)}>
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-destructive">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Eliminar artigo?</DialogTitle>
-                      </DialogHeader>
-                      <p className="text-sm text-muted-foreground">Tens a certeza que queres eliminar "{post.title}"? Esta ação não pode ser revertida.</p>
-                      <div className="flex justify-end gap-2 mt-4">
-                        <Button variant="outline" size="sm">Cancelar</Button>
-                        <Button variant="destructive" size="sm" onClick={() => deletePost(post.id)}>Eliminar</Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>

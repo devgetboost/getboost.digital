@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { legacySupabase } from '@/integrations/supabase/client';
+import { legacySupabase, supabase } from '@/integrations/supabase/client';
+import { saveLeadAdminNotes } from '@/lib/adminContent';
 import {
   Bell, Filter, MoreHorizontal, Paperclip, Phone, Search, Send, Settings,
   Smile, Wallet, Pencil, Mail, PhoneCall, UserPlus, Plus, MessageCircle, CheckCheck, Archive, Check, CalendarClock,
@@ -361,20 +362,33 @@ export default function AdminInbox() {
     if (!phone) return;
     const last9 = phone.slice(-9);
     (async () => {
-      const { data } = await legacySupabase
+      // R1C8: Clean V1 `leads` columns only. Retired display fields resolve from
+      // `metadata.legacy`; internal notes live in `metadata.admin_notes`.
+      const { data } = await supabase
         .from('leads')
-        .select('id, name, email, phone, company, service, cargo, notes')
+        .select('id, name, email, phone, company, service_interest, message, metadata')
         .ilike('phone', `%${last9}`)
         .order('created_at', { ascending: false })
         .limit(1);
-      const row = (data as any[])?.[0];
-      setLeadId(row?.id || null);
-      setLeadInfo(row ? { name: row.name, email: row.email, phone: row.phone, company: row.company, service: row.service, cargo: row.cargo } : null);
-      setLeadNotes(row?.notes || '');
-      setNotesDraft(row?.notes || '');
-      if (row?.id) {
+      const row = (data as Array<Record<string, unknown>> | null)?.[0];
+      setLeadId(typeof row?.id === 'string' ? row.id : null);
+      const metadata = (row?.metadata ?? {}) as Record<string, unknown>;
+      const legacy = (metadata.legacy ?? {}) as Record<string, unknown>;
+      const str = (value: unknown): string | null => (typeof value === 'string' ? value : null);
+      setLeadInfo(row ? {
+        name: str(row.name),
+        email: str(row.email),
+        phone: str(row.phone),
+        company: str(row.company),
+        service: str(row.service_interest) ?? str(legacy.service),
+        cargo: str(legacy.cargo),
+      } : null);
+      const adminNotes = str(metadata.admin_notes) ?? '';
+      setLeadNotes(adminNotes);
+      setNotesDraft(adminNotes);
+      if (typeof row?.id === 'string') {
         const { data: ta } = await legacySupabase.from('lead_tag_assignments').select('tag_id').eq('lead_id', row.id);
-        setLeadTagIds(new Set(((ta as any[]) || []).map((r) => r.tag_id)));
+        setLeadTagIds(new Set(((ta ?? []) as Array<{ tag_id: string }>).map((r) => r.tag_id)));
       } else {
         setLeadTagIds(new Set());
       }
@@ -443,8 +457,9 @@ export default function AdminInbox() {
     try {
       const next = [{ text, at: new Date().toISOString() }, ...notesList];
       const serialized = JSON.stringify(next);
-      const { error } = await legacySupabase.from('leads').update({ notes: serialized }).eq('id', leadId);
-      if (error) throw error;
+      // R1C8: internal notes persist in `metadata.admin_notes` so the visitor's
+      // `message` column is never overwritten.
+      await saveLeadAdminNotes(leadId, serialized);
       setLeadNotes(serialized);
       setNotesDraft('');
       toast.success('Nota adicionada');
@@ -459,8 +474,11 @@ export default function AdminInbox() {
     if (!leadId) return;
     const next = notesList.filter((_, i) => i !== idx);
     const serialized = JSON.stringify(next);
-    const { error } = await legacySupabase.from('leads').update({ notes: serialized }).eq('id', leadId);
-    if (error) { toast.error('Erro ao remover'); return; }
+    try {
+      await saveLeadAdminNotes(leadId, serialized);
+    } catch {
+      toast.error('Erro ao remover'); return;
+    }
     setLeadNotes(serialized);
     toast.success('Nota removida');
   }

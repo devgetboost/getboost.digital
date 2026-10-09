@@ -98,11 +98,21 @@ export function MailReader({ onBack, onCompose, onReply, onLinkLead, onToggleSta
     if (!message) return;
     try {
       if (message.lead?.id) {
-        // Updating an existing lead stays an admin-surface write (Wave 4).
-        await legacySupabase.from("leads").update({
-          last_email_subject: message.subject,
-          last_email_at: new Date().toISOString(),
-        } as any).eq("id", message.lead.id);
+        // R1C8: the retired `last_email_*` columns are gone. The email context
+        // merges into `metadata` so the visitor's columns stay untouched.
+        const { data: current } = await legacySupabase
+          .from("leads")
+          .select("metadata")
+          .eq("id", message.lead.id)
+          .maybeSingle();
+        const metadata = { ...(((current as any)?.metadata ?? {}) as Record<string, unknown>) };
+        metadata.last_email_subject = message.subject;
+        metadata.last_email_at = new Date().toISOString();
+        const { error: updateError } = await legacySupabase
+          .from("leads")
+          .update({ metadata } as never)
+          .eq("id", message.lead.id);
+        if (updateError) throw updateError;
         toast.success("Actualizado no CRM.");
         return;
       }

@@ -17,6 +17,8 @@ import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
 import { ClientAutomationPanel } from '@/components/admin/ClientAutomationPanel';
 import { fetchUserIdsWithRole } from '@/auth/userRoles';
+import { avatarPathToUrl } from '@/auth/profiles';
+import { logAdminAction, uploadPublicMedia } from '@/lib/adminContent';
 
 const AdminClients = () => {
   const [clients, setClients] = useState<any[]>([]);
@@ -62,10 +64,6 @@ const AdminClients = () => {
   // Edit client state
   const [editOpen, setEditOpen] = useState(false);
   const [editName, setEditName] = useState('');
-  const [editEmail, setEditEmail] = useState('');
-  const [editPhone, setEditPhone] = useState('');
-  const [editCompany, setEditCompany] = useState('');
-  const [editNotes, setEditNotes] = useState('');
   const [editAvatarUrl, setEditAvatarUrl] = useState<string>('');
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [savingEdit, setSavingEdit] = useState(false);
@@ -78,18 +76,22 @@ const AdminClients = () => {
     // would silently match nobody.
     const userIds = await fetchUserIdsWithRole('client').catch(() => []);
     if (userIds.length === 0) { setClients([]); setLoading(false); return; }
+    // R1C8: Clean V1 `profiles` is keyed on `auth.users.id` and holds only
+    // website-owned identity. The CRM contact block (email/phone/company/notes)
+    // and `avatar_url` have no Clean V1 column; the client_* tables below stay
+    // legacy and are documented Wave 7 debt.
     const [{ data: profiles }, { data: svcAll }, { data: subAll }, { data: tktAll }, { data: invAll }] = await Promise.all([
-      legacySupabase.from('profiles').select('*').in('user_id', userIds),
+      legacySupabase.from('profiles').select('id, display_name, avatar_path, preferred_market, preferred_locale').in('id', userIds),
       legacySupabase.from('client_services').select('user_id, status').in('user_id', userIds),
       legacySupabase.from('client_subscriptions').select('user_id, status, amount, billing_cycle').in('user_id', userIds),
       legacySupabase.from('support_tickets').select('user_id, status').in('user_id', userIds),
       legacySupabase.from('client_invoices').select('user_id, status, amount').in('user_id', userIds),
     ]);
     const enriched = (profiles || []).map((p: any) => {
-      const svc = (svcAll || []).filter((s: any) => s.user_id === p.user_id);
-      const sub = (subAll || []).filter((s: any) => s.user_id === p.user_id);
-      const tkt = (tktAll || []).filter((t: any) => t.user_id === p.user_id);
-      const inv = (invAll || []).filter((i: any) => i.user_id === p.user_id);
+      const svc = (svcAll || []).filter((s: any) => s.user_id === p.id);
+      const sub = (subAll || []).filter((s: any) => s.user_id === p.id);
+      const tkt = (tktAll || []).filter((t: any) => t.user_id === p.id);
+      const inv = (invAll || []).filter((i: any) => i.user_id === p.id);
       const mrr = sub.filter((s: any) => s.status === 'active').reduce((acc: number, s: any) => {
         const a = Number(s.amount) || 0;
         if (s.billing_cycle === 'yearly') return acc + a / 12;
@@ -98,6 +100,9 @@ const AdminClients = () => {
       }, 0);
       return {
         ...p,
+        // Alias: `profiles.id` is the auth user id the legacy client_* tables
+        // join on. Kept local to this page until those tables migrate (Wave 7).
+        user_id: p.id,
         _stats: {
           services: svc.length,
           activeServices: svc.filter((s: any) => s.status === 'in_progress').length,
@@ -207,11 +212,7 @@ const AdminClients = () => {
   const openEditClient = () => {
     if (!selectedClient) return;
     setEditName(selectedClient.display_name || '');
-    setEditEmail(selectedClient.email || '');
-    setEditPhone(selectedClient.phone || '');
-    setEditCompany(selectedClient.company || '');
-    setEditNotes(selectedClient.notes || '');
-    setEditAvatarUrl(selectedClient.avatar_url || '');
+    setEditAvatarUrl(selectedClient.avatar_path || '');
     setEditOpen(true);
   };
 
@@ -219,12 +220,10 @@ const AdminClients = () => {
     if (!selectedClient || !file) return;
     setUploadingAvatar(true);
     try {
-      const ext = file.name.split('.').pop() || 'png';
-      const path = `${selectedClient.user_id}/avatar-${Date.now()}.${ext}`;
-      const { error: upErr } = await legacySupabase.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type });
-      if (upErr) throw upErr;
-      const { data } = legacySupabase.storage.from('avatars').getPublicUrl(path);
-      setEditAvatarUrl(data.publicUrl);
+      // Clean V1 stores the object path in `avatar_path`, served from the
+      // public `public-media` bucket. The retired `avatars` bucket is gone.
+      const path = await uploadPublicMedia(`avatars/${selectedClient.id}`, file);
+      setEditAvatarUrl(path);
       toast.success('Foto carregada!');
     } catch (err: any) {
       toast.error('Erro ao carregar foto: ' + (err?.message || 'desconhecido'));
@@ -239,16 +238,15 @@ const AdminClients = () => {
     try {
       const { error } = await legacySupabase.from('profiles').update({
         display_name: editName.trim() || null,
-        email: editEmail.trim() || null,
-        phone: editPhone.trim() || null,
-        company: editCompany.trim() || null,
-        notes: editNotes.trim() || null,
-        avatar_url: editAvatarUrl || null,
-      }).eq('user_id', selectedClient.user_id);
+        avatar_path: editAvatarUrl || null,
+      }).eq('id', selectedClient.id);
       if (error) throw error;
       toast.success('Cliente atualizado!');
+      void logAdminAction('client.profile', 'profile', selectedClient.id, {
+        display_name: editName.trim() || null,
+      });
       setEditOpen(false);
-      const updated = { ...selectedClient, display_name: editName, email: editEmail, phone: editPhone, company: editCompany, notes: editNotes, avatar_url: editAvatarUrl };
+      const updated = { ...selectedClient, display_name: editName, avatar_path: editAvatarUrl };
       setSelectedClient(updated);
       loadClients();
     } catch (err: any) {
@@ -298,7 +296,7 @@ const AdminClients = () => {
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" onClick={() => setSelectedClient(null)}>← Voltar</Button>
             <Avatar className="h-12 w-12 ring-2 ring-primary/10">
-              <AvatarImage src={selectedClient.avatar_url || undefined} alt={selectedClient.display_name || 'Cliente'} />
+              <AvatarImage src={avatarPathToUrl(selectedClient.avatar_path) || undefined} alt={selectedClient.display_name || 'Cliente'} />
               <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                 {(selectedClient.display_name || '?').split(' ').map((n: string) => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase()}
               </AvatarFallback>
@@ -350,26 +348,12 @@ const AdminClients = () => {
                   </div>
                 </div>
               </div>
+              {/* R1C8: only the website-owned identity persists (display_name,
+                  avatar_path). The CRM contact block has no Clean V1 column. */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5 sm:col-span-2">
                   <Label className="text-xs">Nome</Label>
                   <Input value={editName} onChange={e => setEditName(e.target.value)} placeholder="Nome completo" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Email</Label>
-                  <Input type="email" value={editEmail} onChange={e => setEditEmail(e.target.value)} placeholder="email@dominio.pt" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Telefone</Label>
-                  <Input value={editPhone} onChange={e => setEditPhone(e.target.value)} placeholder="+351..." />
-                </div>
-                <div className="space-y-1.5 sm:col-span-2">
-                  <Label className="text-xs">Empresa</Label>
-                  <Input value={editCompany} onChange={e => setEditCompany(e.target.value)} placeholder="Nome da empresa" />
-                </div>
-                <div className="space-y-1.5 sm:col-span-2">
-                  <Label className="text-xs">Notas internas</Label>
-                  <Textarea value={editNotes} onChange={e => setEditNotes(e.target.value)} placeholder="Notas visíveis apenas para admins" rows={3} />
                 </div>
               </div>
               <div className="flex justify-end gap-2 pt-2">

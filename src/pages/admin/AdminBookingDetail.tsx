@@ -1,50 +1,43 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { legacySupabase } from '@/integrations/supabase/client';
+import {
+  BOOKING_STATUS_LABELS,
+  deleteBooking,
+  getBooking,
+  listAuditForEntity,
+  logAdminAction,
+  updateBookingStatus,
+  type AuditLogRow,
+  type BookingAdminRow,
+  type BookingStatus,
+} from '@/lib/adminContent';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ExternalLink, RefreshCw, Copy } from "lucide-react";
+import { ArrowLeft, RefreshCw } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
-type Booking = {
-  id: string;
-  name: string | null;
-  email: string | null;
-  phone: string | null;
-  company: string | null;
-  website: string | null;
-  challenges: string | null;
-  meeting_type: string | null;
-  meeting_date: string | null;
-  meeting_time: string | null;
-  timezone: string | null;
-  status: string | null;
-  lead_status: string | null;
-  language: string | null;
-  meeting_link: string | null;
-  jitsi_room: string | null;
-  created_at: string;
-};
+/**
+ * R1C8: booking detail over the Clean V1 `bookings` table. The retired columns
+ * (`meeting_date`, `meeting_time`, `lead_status`, `language`, `meeting_link`,
+ * `jitsi_room`, `phone`, `website`, `challenges`) have no Clean V1 carrier:
+ * the meeting is described by its absolute `start_at`/`end_at` instants, and
+ * the meeting link lives only in the confirmation email sent at booking time.
+ *
+ * The audit trail now reads `admin_audit_log` (entity `booking`), which is
+ * where this wave records admin actions. History predating the migration is
+ * not backfilled — the trail starts here.
+ */
+type Booking = BookingAdminRow;
+type AuditRow = AuditLogRow;
 
-type AuditRow = {
-  id: string;
-  from_status: string | null;
-  to_status: string;
-  action: string;
-  actor_email: string | null;
-  source: string;
-  notes: string | null;
-  metadata: Record<string, unknown> | null;
-  created_at: string;
-};
-
-const STATUS_COLOR: Record<string, string> = {
-  new: "bg-slate-100 text-slate-800",
-  contacted: "bg-blue-100 text-blue-900",
-  booked: "bg-amber-100 text-amber-900",
+const STATUS_COLOR: Record<BookingStatus, string> = {
+  requested: "bg-slate-100 text-slate-800",
+  confirmed: "bg-blue-100 text-blue-900",
   completed: "bg-green-100 text-green-900",
   cancelled: "bg-red-100 text-red-900",
+  no_show: "bg-amber-100 text-amber-900",
 };
 
 export default function AdminBookingDetail() {
@@ -56,25 +49,48 @@ export default function AdminBookingDetail() {
   const load = async () => {
     if (!id) return;
     setLoading(true);
-    const [{ data: b, error: bErr }, { data: a, error: aErr }] = await Promise.all([
-      legacySupabase.from("bookings").select("*").eq("id", id).maybeSingle(),
-      legacySupabase
-        .from("bookings_lead_status_audit")
-        .select("*")
-        .eq("booking_id", id)
-        .order("created_at", { ascending: false }),
-    ]);
-    if (bErr) toast.error(bErr.message);
-    if (aErr) toast.error(aErr.message);
-    setBooking((b as Booking) ?? null);
-    setAudit((a as AuditRow[]) ?? []);
-    setLoading(false);
+    try {
+      const [b, a] = await Promise.all([
+        getBooking(id),
+        listAuditForEntity("booking", id),
+      ]);
+      setBooking(b);
+      setAudit(a);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao carregar.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [id]);
 
-  const meetingUrl = booking?.meeting_link
-    || (booking?.jitsi_room ? `https://meet.jit.si/${booking.jitsi_room}` : null);
+  const changeStatus = async (status: BookingStatus) => {
+    if (!booking) return;
+    const from = booking.status;
+    try {
+      await updateBookingStatus(booking.id, status);
+      toast.success(`Estado atualizado para "${BOOKING_STATUS_LABELS[status]}".`);
+      void logAdminAction("booking.status", "booking", booking.id, {
+        from_status: from,
+        to_status: status,
+      });
+      load();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao atualizar.");
+    }
+  };
+
+  const removeBooking = async () => {
+    if (!booking || !confirm("Eliminar esta reserva?")) return;
+    try {
+      await deleteBooking(booking.id);
+      toast.success("Reserva eliminada.");
+      void logAdminAction("booking.delete", "booking", booking.id);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao eliminar.");
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -99,87 +115,72 @@ export default function AdminBookingDetail() {
             <CardHeader>
               <div className="flex items-center gap-2 flex-wrap">
                 <CardTitle className="text-xl">{booking.name ?? "—"}</CardTitle>
-                <Badge className={STATUS_COLOR[booking.lead_status ?? ""] ?? ""} variant="secondary">
-                  {booking.lead_status ?? "—"}
+                <Badge className={STATUS_COLOR[booking.status]} variant="secondary">
+                  {BOOKING_STATUS_LABELS[booking.status]}
                 </Badge>
-                {booking.status && <Badge variant="outline">booking: {booking.status}</Badge>}
-                {booking.language && <Badge variant="outline">{booking.language.toUpperCase()}</Badge>}
+                <Badge variant="outline">{booking.market} · {booking.locale}</Badge>
               </div>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
               <div><span className="text-muted-foreground">Email:</span> {booking.email ?? "—"}</div>
-              <div><span className="text-muted-foreground">Telefone:</span> {booking.phone ?? "—"}</div>
               <div><span className="text-muted-foreground">Empresa:</span> {booking.company ?? "—"}</div>
-              <div><span className="text-muted-foreground">Website:</span> {booking.website ?? "—"}</div>
-              <div><span className="text-muted-foreground">Tipo:</span> {booking.meeting_type ?? "—"}</div>
               <div><span className="text-muted-foreground">Fuso:</span> {booking.timezone ?? "—"}</div>
               <div>
-                <span className="text-muted-foreground">Reunião:</span>{" "}
-                {booking.meeting_date ?? "—"}{booking.meeting_time ? ` · ${booking.meeting_time}` : ""}
+                <span className="text-muted-foreground">Início:</span>{" "}
+                {new Date(booking.start_at).toLocaleString("pt-PT")}
               </div>
-              <div className="md:col-span-2">
-                <div className="text-muted-foreground mb-1">Meeting link:</div>
-                {meetingUrl ? (
-                  <div className="flex flex-wrap items-center gap-2">
-                    <code className="text-xs bg-muted px-2 py-1 rounded break-all">{meetingUrl}</code>
-                    <Button size="sm" variant="outline" asChild>
-                      <a href={meetingUrl} target="_blank" rel="noreferrer">
-                        <ExternalLink className="h-3.5 w-3.5 mr-1" /> Abrir em nova aba
-                      </a>
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={async () => {
-                        try {
-                          await navigator.clipboard.writeText(meetingUrl);
-                          toast.success("Meeting link copiado");
-                        } catch {
-                          toast.error("Não foi possível copiar");
-                        }
-                      }}
-                    >
-                      <Copy className="h-3.5 w-3.5 mr-1" /> Copiar
-                    </Button>
-                  </div>
-                ) : "—"}
+              <div>
+                <span className="text-muted-foreground">Fim:</span>{" "}
+                {new Date(booking.end_at).toLocaleString("pt-PT")}
               </div>
-              {booking.challenges && (
+              <div>
+                <span className="text-muted-foreground">Estado:</span>{" "}
+                <Select value={booking.status} onValueChange={(v) => changeStatus(v as BookingStatus)}>
+                  <SelectTrigger className="h-8 w-40 mt-1"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {(Object.keys(BOOKING_STATUS_LABELS) as BookingStatus[]).map((st) => (
+                      <SelectItem key={st} value={st}>{BOOKING_STATUS_LABELS[st]}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {booking.notes && (
                 <div className="md:col-span-2">
-                  <div className="text-muted-foreground">Desafios:</div>
-                  <p className="whitespace-pre-wrap">{booking.challenges}</p>
+                  <div className="text-muted-foreground">Notas:</div>
+                  <p className="whitespace-pre-wrap">{booking.notes}</p>
                 </div>
               )}
+              <div className="md:col-span-2 flex gap-2">
+                <Button size="sm" variant="destructive" onClick={removeBooking}>
+                  Eliminar reserva
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader><CardTitle className="text-base">Audit trail · lead_status</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-base">Audit trail</CardTitle></CardHeader>
             <CardContent>
               {audit.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Sem eventos registados.</p>
+                <p className="text-sm text-muted-foreground">Sem eventos registados. O histórico começa com esta migração.</p>
               ) : (
                 <ol className="space-y-3">
                   {audit.map((e) => (
                     <li key={e.id} className="border-l-2 border-muted pl-4 py-1">
                       <div className="flex flex-wrap items-center gap-2 text-xs">
                         <span className="text-muted-foreground whitespace-nowrap">
-                          {new Date(e.created_at).toLocaleString("pt-PT")}
+                          {new Date(e.occurred_at).toLocaleString("pt-PT")}
                         </span>
-                        {e.from_status && (
-                          <Badge variant="outline" className="text-[10px]">{e.from_status}</Badge>
-                        )}
-                        <span>→</span>
-                        <Badge className={STATUS_COLOR[e.to_status] ?? ""} variant="secondary">
-                          {e.to_status}
-                        </Badge>
-                        <Badge variant="outline" className="text-[10px]">{e.source}</Badge>
-                        {e.actor_email && (
-                          <span className="text-muted-foreground text-[11px]">por {e.actor_email}</span>
+                        <Badge variant="outline" className="text-[10px]">{e.action}</Badge>
+                        {typeof e.metadata.from_status === "string" && typeof e.metadata.to_status === "string" && (
+                          <>
+                            <Badge variant="outline" className="text-[10px]">{String(e.metadata.from_status)}</Badge>
+                            <span>→</span>
+                            <Badge variant="secondary" className="text-[10px]">{String(e.metadata.to_status)}</Badge>
+                          </>
                         )}
                       </div>
-                      {e.notes && <p className="text-xs text-muted-foreground mt-1">{e.notes}</p>}
-                      {e.metadata && Object.keys(e.metadata).length > 0 && (
+                      {Object.keys(e.metadata).length > 0 && (
                         <details className="mt-1">
                           <summary className="text-[10px] text-muted-foreground cursor-pointer">metadata</summary>
                           <pre className="bg-muted p-2 rounded text-[10px] mt-1 overflow-x-auto whitespace-pre-wrap">

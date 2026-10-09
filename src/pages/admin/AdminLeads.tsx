@@ -12,49 +12,41 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { legacySupabase } from '@/integrations/supabase/client';
+import MarketTabs from '@/components/admin/MarketTabs';
+import {
+  deleteLead as deleteLeadRow,
+  LEAD_STATUS_LABELS,
+  listLeads,
+  logAdminAction,
+  saveLeadAdminNotes,
+  updateLeadStatus,
+  type LeadAdminRow,
+  type LeadStatus,
+  type MarketCode,
+} from '@/lib/adminContent';
 import LeadTagsManager from '@/components/admin/LeadTagsManager';
 import LeadTagPicker from '@/components/admin/LeadTagPicker';
 import LeadAutomationTimeline from '@/components/admin/LeadAutomationTimeline';
 
-type Lead = {
-  id: string;
-  source: string;
-  name: string;
-  email: string;
-  phone: string | null;
-  company: string | null;
-  website: string | null;
-  service: string | null;
-  budget: string | null;
-  timeline: string | null;
-  message: string | null;
-  resource_id: string | null;
-  resource_name: string | null;
-  status: string;
-  notes: string | null;
-  created_at: string;
-  utm_source?: string | null;
-  utm_medium?: string | null;
-  utm_campaign?: string | null;
-  referrer?: string | null;
-  landing_page?: string | null;
-};
+/**
+ * R1C8: leads are Clean V1 rows. Retired display fields (`service`, `budget`,
+ * `timeline`, `website`, `resource_name`, `notes`) resolve from
+ * `metadata.legacy`; internal notes live in `metadata.admin_notes` so the
+ * visitor's message is never overwritten. `referrer` has no Clean V1 carrier
+ * and was dropped.
+ */
+type Lead = LeadAdminRow;
 
 const statusColors: Record<string, string> = {
   new: 'bg-blue-100 text-blue-800 border-blue-200',
   contacted: 'bg-yellow-100 text-yellow-800 border-yellow-200',
   qualified: 'bg-green-100 text-green-800 border-green-200',
   converted: 'bg-primary/10 text-primary border-primary/30',
-  lost: 'bg-muted text-muted-foreground border-border',
+  closed: 'bg-muted text-muted-foreground border-border',
+  spam: 'bg-red-100 text-red-800 border-red-200',
 };
 
-const statusLabels: Record<string, string> = {
-  new: 'Novo',
-  contacted: 'Contactado',
-  qualified: 'Qualificado',
-  converted: 'Convertido',
-  lost: 'Perdido',
-};
+const statusLabels: Record<LeadStatus, string> = LEAD_STATUS_LABELS;
 
 const sourceLabels: Record<string, string> = {
   contact: 'Contacto',
@@ -67,10 +59,11 @@ const AdminLeads = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sourceFilter, setSourceFilter] = useState('all');
+  const [marketFilter, setMarketFilter] = useState<MarketCode | 'all'>('all');
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [notes, setNotes] = useState('');
   const [showMetrics, setShowMetrics] = useState(false);
-  const [metricsType, setMetricsType] = useState<'source' | 'medium' | 'campaign' | 'combined' | 'referrer' | 'landing_page'>('source');
+  const [metricsType, setMetricsType] = useState<'source' | 'medium' | 'campaign' | 'combined' | 'landing_page'>('source');
   const [tagsManagerOpen, setTagsManagerOpen] = useState(false);
   const [allTags, setAllTags] = useState<{ id: string; label: string; color: string }[]>([]);
   const [leadTagMap, setLeadTagMap] = useState<Record<string, { id: string; label: string; color: string }[]>>({});
@@ -93,7 +86,6 @@ const AdminLeads = () => {
       if (metricsType === 'source') key = l.utm_source || 'direct';
       else if (metricsType === 'medium') key = l.utm_medium || 'direct';
       else if (metricsType === 'campaign') key = l.utm_campaign || 'direct';
-      else if (metricsType === 'referrer') key = l.referrer || 'direct';
       else if (metricsType === 'landing_page') key = l.landing_page || 'unknown';
       else if (metricsType === 'combined') {
         key = `${l.utm_source || 'direct'} / ${l.utm_medium || 'direct'} / ${l.utm_campaign || 'direct'}`;
@@ -116,56 +108,71 @@ const AdminLeads = () => {
 
   const fetchLeads = async () => {
     setLoading(true);
-    const [leadsRes, tagsRes, assignRes] = await Promise.all([
-      legacySupabase.from('leads').select('*').order('created_at', { ascending: false }),
-      legacySupabase.from('lead_tags').select('id, label, color').order('label'),
-      legacySupabase.from('lead_tag_assignments').select('lead_id, lead_tags(id, label, color)'),
-    ]);
-    if (leadsRes.error) toast.error('Erro ao carregar leads.');
-    else setLeads(leadsRes.data || []);
-    setAllTags((tagsRes.data || []) as any);
-    const map: Record<string, { id: string; label: string; color: string }[]> = {};
-    ((assignRes.data || []) as any[]).forEach((row) => {
-      if (!row.lead_tags) return;
-      (map[row.lead_id] ||= []).push(row.lead_tags);
-    });
-    setLeadTagMap(map);
+    try {
+      const [rows, tagsRes, assignRes] = await Promise.all([
+        listLeads(),
+        legacySupabase.from('lead_tags').select('id, label, color').order('label'),
+        legacySupabase.from('lead_tag_assignments').select('lead_id, lead_tags(id, label, color)'),
+      ]);
+      setLeads(rows);
+      setAllTags((tagsRes.data || []) as any);
+      const map: Record<string, { id: string; label: string; color: string }[]> = {};
+      ((assignRes.data || []) as any[]).forEach((row) => {
+        if (!row.lead_tags) return;
+        (map[row.lead_id] ||= []).push(row.lead_tags);
+      });
+      setLeadTagMap(map);
+    } catch {
+      toast.error('Erro ao carregar leads.');
+    }
     setLoading(false);
   };
 
   useEffect(() => { fetchLeads(); }, []);
 
 
-  const updateStatus = async (id: string, status: string) => {
-    const { error } = await legacySupabase.from('leads').update({ status }).eq('id', id);
-    if (error) { toast.error('Erro ao atualizar.'); return; }
-    toast.success(`Estado atualizado para "${statusLabels[status]}".`);
-    fetchLeads();
+  const updateStatus = async (id: string, status: LeadStatus) => {
+    try {
+      await updateLeadStatus(id, status);
+      toast.success(`Estado atualizado para "${statusLabels[status]}".`);
+      void logAdminAction('lead.status', 'lead', id, { status });
+      fetchLeads();
+    } catch {
+      toast.error('Erro ao atualizar.');
+    }
   };
 
   const saveNotes = async () => {
     if (!selectedLead) return;
-    const { error } = await legacySupabase.from('leads').update({ notes }).eq('id', selectedLead.id);
-    if (error) { toast.error('Erro ao guardar notas.'); return; }
-    toast.success('Notas guardadas.');
-    fetchLeads();
+    try {
+      await saveLeadAdminNotes(selectedLead.id, notes);
+      toast.success('Notas guardadas.');
+      void logAdminAction('lead.notes', 'lead', selectedLead.id);
+      fetchLeads();
+    } catch {
+      toast.error('Erro ao guardar notas.');
+    }
   };
 
   const deleteLead = async (id: string) => {
-    const { error } = await legacySupabase.from('leads').delete().eq('id', id);
-    if (error) { toast.error('Erro ao eliminar.'); return; }
-    toast.success('Lead eliminado.');
-    fetchLeads();
+    try {
+      await deleteLeadRow(id);
+      toast.success('Lead eliminado.');
+      void logAdminAction('lead.delete', 'lead', id);
+      fetchLeads();
+    } catch {
+      toast.error('Erro ao eliminar.');
+    }
   };
 
   const exportCSV = () => {
-    const headers = ['Nome', 'Email', 'Telefone', 'Empresa', 'Origem', 'Estado', 'Serviço', 'Data', 'UTM Source', 'UTM Medium', 'UTM Campaign', 'Referrer', 'Landing Page'];
+    const headers = ['Nome', 'Email', 'Telefone', 'Empresa', 'Mercado', 'Origem', 'Estado', 'Interesse', 'Orçamento', 'Prazo', 'Data', 'UTM Source', 'UTM Medium', 'UTM Campaign', 'Landing Page'];
     const rows = filtered.map(l => [
-      l.name, l.email, l.phone || '', l.company || '',
+      l.name, l.email, l.phone || '', l.company || '', l.market,
       sourceLabels[l.source] || l.source, statusLabels[l.status] || l.status,
-      l.service || '', format(new Date(l.created_at), 'dd/MM/yyyy'),
-      l.utm_source || '', l.utm_medium || '', l.utm_campaign || '',
-      l.referrer || '', l.landing_page || ''
+      l.service_interest || l.legacyService || '', l.legacyBudget || '', l.legacyTimeline || '',
+      format(new Date(l.created_at), 'dd/MM/yyyy'),
+      l.utm_source || '', l.utm_medium || '', l.utm_campaign || '', l.landing_page || ''
     ]);
     const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -181,8 +188,9 @@ const AdminLeads = () => {
     const matchSearch = l.name.toLowerCase().includes(search.toLowerCase()) || l.email.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === 'all' || l.status === statusFilter;
     const matchSource = sourceFilter === 'all' || l.source === sourceFilter;
+    const matchMarket = marketFilter === 'all' || l.market === marketFilter;
     const matchTag = tagFilter === 'all' || (leadTagMap[l.id] || []).some(t => t.id === tagFilter);
-    return matchSearch && matchStatus && matchSource && matchTag;
+    return matchSearch && matchStatus && matchSource && matchMarket && matchTag;
   });
 
 
@@ -256,7 +264,7 @@ const AdminLeads = () => {
                 </Dialog>
               </div>
               <div className="flex flex-wrap gap-2 bg-background p-1 rounded-lg border border-border">
-                {(['source', 'medium', 'campaign', 'referrer', 'landing_page', 'combined'] as const).map((type) => (
+                {(['source', 'medium', 'campaign', 'landing_page', 'combined'] as const).map((type) => (
                   <Button
                     key={type}
                     size="sm"
@@ -264,8 +272,7 @@ const AdminLeads = () => {
                     onClick={() => setMetricsType(type)}
                     className="text-xs h-8 px-3"
                   >
-                    {type === 'landing_page' ? 'Página' : 
-                     type === 'referrer' ? 'Referrer' :
+                    {type === 'landing_page' ? 'Página' :
                      type.charAt(0).toUpperCase() + type.slice(1)}
                   </Button>
                 ))}
@@ -338,6 +345,9 @@ const AdminLeads = () => {
             {Object.entries(sourceLabels).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
           </SelectContent>
         </Select>
+        <div className="w-full md:w-auto">
+          <MarketTabs value={marketFilter} onChange={setMarketFilter} />
+        </div>
         <Select value={tagFilter} onValueChange={setTagFilter}>
           <SelectTrigger className="w-full md:w-44"><SelectValue placeholder="Tag" /></SelectTrigger>
           <SelectContent>
@@ -372,7 +382,7 @@ const AdminLeads = () => {
                   if (!id) return;
                   const lead = leads.find(l => l.id === id);
                   if (!lead || lead.status === statusKey) return;
-                  updateStatus(id, statusKey);
+                  updateStatus(id, statusKey as LeadStatus);
                 }}
                 className={`rounded-lg border ${isOver ? 'border-primary bg-primary/5' : 'border-border bg-muted/30'} transition-colors flex flex-col min-h-[200px]`}
               >
@@ -440,7 +450,8 @@ const AdminLeads = () => {
                       <h3 className="font-semibold text-foreground text-sm">{lead.name}</h3>
                       <Badge className={`text-xs ${statusColors[lead.status]}`}>{statusLabels[lead.status]}</Badge>
                       <Badge variant="outline" className="text-xs">{sourceLabels[lead.source] || lead.source}</Badge>
-                      {lead.resource_name && <Badge variant="secondary" className="text-xs">{lead.resource_name}</Badge>}
+                      <Badge variant="outline" className="text-xs">{lead.market}</Badge>
+                      {lead.legacyResourceName && <Badge variant="secondary" className="text-xs">{lead.legacyResourceName}</Badge>}
                       {(leadTagMap[lead.id] || []).map(t => (
                         <Badge key={t.id} className="text-[10px] border-0" style={{ backgroundColor: t.color + "22", color: t.color }}>
                           {t.label}
@@ -452,7 +463,7 @@ const AdminLeads = () => {
                       <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{lead.email}</span>
                       {lead.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{lead.phone}</span>}
                       {lead.company && <span className="flex items-center gap-1"><Building2 className="h-3 w-3" />{lead.company}</span>}
-                      {lead.website && <span className="flex items-center gap-1"><Globe className="h-3 w-3" />{lead.website}</span>}
+                      {lead.legacyWebsite && <span className="flex items-center gap-1"><Globe className="h-3 w-3" />{lead.legacyWebsite}</span>}
                       <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{format(new Date(lead.created_at), "d MMM yyyy HH:mm", { locale: pt })}</span>
                     </div>
                     {lead.message && (
@@ -463,7 +474,7 @@ const AdminLeads = () => {
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
                     {/* Status change */}
-                    <Select value={lead.status} onValueChange={v => updateStatus(lead.id, v)}>
+                    <Select value={lead.status} onValueChange={v => updateStatus(lead.id, v as LeadStatus)}>
                       <SelectTrigger className="h-8 w-28 text-xs"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {Object.entries(statusLabels).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
@@ -473,7 +484,7 @@ const AdminLeads = () => {
                     {/* View details */}
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button size="sm" variant="ghost" onClick={() => { setSelectedLead(lead); setNotes(lead.notes || ''); }}>
+                        <Button size="sm" variant="ghost" onClick={() => { setSelectedLead(lead); setNotes(lead.adminNotes || ''); }}>
                           <Eye className="h-4 w-4" />
                         </Button>
                       </DialogTrigger>
@@ -490,10 +501,11 @@ const AdminLeads = () => {
                             <div><span className="text-muted-foreground block text-[10px] uppercase font-bold">Email:</span> <a href={`mailto:${lead.email}`} className="text-primary font-medium">{lead.email}</a></div>
                             {lead.phone && <div><span className="text-muted-foreground block text-[10px] uppercase font-bold">Telefone:</span> <span className="font-medium">{lead.phone}</span></div>}
                             {lead.company && <div><span className="text-muted-foreground block text-[10px] uppercase font-bold">Empresa:</span> <span className="font-medium">{lead.company}</span></div>}
-                            {lead.website && <div><span className="text-muted-foreground block text-[10px] uppercase font-bold">Website:</span> <span className="font-medium">{lead.website}</span></div>}
-                            {lead.service && <div><span className="text-muted-foreground block text-[10px] uppercase font-bold">Serviço:</span> <span className="font-medium">{lead.service}</span></div>}
-                            {lead.budget && <div><span className="text-muted-foreground block text-[10px] uppercase font-bold">Orçamento:</span> <span className="font-medium">{lead.budget}€</span></div>}
-                            {lead.timeline && <div><span className="text-muted-foreground block text-[10px] uppercase font-bold">Timeline:</span> <span className="font-medium">{lead.timeline}</span></div>}
+                            {lead.legacyWebsite && <div><span className="text-muted-foreground block text-[10px] uppercase font-bold">Website:</span> <span className="font-medium">{lead.legacyWebsite}</span></div>}
+                            {(lead.service_interest || lead.legacyService) && <div><span className="text-muted-foreground block text-[10px] uppercase font-bold">Interesse:</span> <span className="font-medium">{lead.service_interest || lead.legacyService}</span></div>}
+                            {lead.legacyBudget && <div><span className="text-muted-foreground block text-[10px] uppercase font-bold">Orçamento:</span> <span className="font-medium">{lead.legacyBudget}€</span></div>}
+                            {lead.legacyTimeline && <div><span className="text-muted-foreground block text-[10px] uppercase font-bold">Prazo:</span> <span className="font-medium">{lead.legacyTimeline}</span></div>}
+                            <div><span className="text-muted-foreground block text-[10px] uppercase font-bold">Mercado:</span> <span className="font-medium">{lead.market} · {lead.locale}</span></div>
                             <div><span className="text-muted-foreground block text-[10px] uppercase font-bold">Origem:</span> <span className="font-medium">{sourceLabels[lead.source] || lead.source}</span></div>
                           </div>
 
@@ -514,10 +526,6 @@ const AdminLeads = () => {
                                 <p className="text-[9px] text-muted-foreground uppercase">Campaign</p>
                                 <p className="font-mono text-[11px] truncate" title={lead.utm_campaign || 'direct'}>{lead.utm_campaign || 'direct'}</p>
                               </div>
-                            </div>
-                            <div className="mt-2 pt-2 border-t border-border/50">
-                              <p className="text-[9px] text-muted-foreground uppercase">Referrer</p>
-                              <p className="text-[10px] truncate" title={lead.referrer || 'Direct'}>{lead.referrer || 'Direct'}</p>
                             </div>
                           </div>
                           {lead.message && (

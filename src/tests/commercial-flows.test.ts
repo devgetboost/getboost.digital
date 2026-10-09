@@ -111,12 +111,11 @@ describe('server-side paths enforce the Clean V1 contract', () => {
 
   it('booking-request requires proof of possession to reschedule', () => {
     const src = read('supabase/functions/booking-request/index.ts');
-    expect(src).toContain('reschedule_secret');
-    expect(src).toContain('secretsMatch');
-    const emailOk = /emailOk/.test(src);
-    const secretOk = /secretOk/.test(src);
-    expect(emailOk && secretOk).toBe(true);
-    expect(src).toContain('if (!secretOk && !emailOk)');
+    // R1C8: `public.bookings` has no `metadata` column, so the minted-secret
+    // mechanism was removed. Proof of possession is the booking email.
+    expect(src).not.toContain('reschedule_secret');
+    expect(src).toContain('providedEmail !== booking.email.toLowerCase()');
+    expect(src).toContain('Não foi possível validar esta reserva.');
   });
 
   it('booking-request validates the meeting window server-side', () => {

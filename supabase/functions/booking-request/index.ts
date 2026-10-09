@@ -11,18 +11,16 @@
  *  - `lookup`     Reschedule pre-fill. Returns only non-sensitive fields plus a
  *                 masked email, so the visitor can confirm which address to
  *                 use without the endpoint leaking PII.
- *  - `create`     Public booking submission. Returns a `reschedule_secret` that
- *                 is stored in `bookings.metadata` and can be used to prove
- *                 possession later.
- *  - `reschedule` Requires the booking id **plus** either the matching email or
- *                 the `reschedule_secret`. Without one of those the request is
- *                 refused.
+ *  - `create`     Public booking submission.
+ *  - `reschedule` Requires the booking id **plus** the matching email. Without
+ *                 it the request is refused.
  *
- * `metadata` (an existing Clean V1 jsonb column) carries the retired
- * meeting/CRM fields so nothing previously captured is lost.
- *
- * Public endpoint (verify_jwt = false): anonymous visitors create bookings and
- * visitors arriving from an email link reschedule them.
+ * R1C8 correction: `public.bookings` has no `metadata` column (only `leads`
+ * does), so this function stores nothing beyond the native columns. The retired
+ * meeting fields (jitsi room, meeting link, meeting type, phone, website,
+ * challenges) are carried in the confirmation email sent at booking time
+ * instead of being persisted — there is no Clean V1 column for them. Proof of
+ * possession for a reschedule is the booking email itself.
  *
  * Public endpoint (verify_jwt = false): anonymous visitors create bookings and
  * visitors arriving from an email link reschedule them. Input is validated
@@ -32,7 +30,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import {
   FIELD_LIMITS,
-  buildLegacyMetadata,
   cleanEmail,
   cleanText,
   clientKey,
@@ -42,8 +39,6 @@ import {
   isPayloadTooLarge,
   json,
   nowIso,
-  randomToken,
-  secretsMatch,
   corsHeaders,
 } from "../_shared/commercial-write.ts";
 
@@ -56,7 +51,6 @@ type BookingRequest = {
   action: "lookup" | "create" | "reschedule";
   booking_id?: string;
   email?: string;
-  reschedule_secret?: string;
 
   name?: string;
   phone?: string;
@@ -69,15 +63,11 @@ type BookingRequest = {
   market?: string;
   locale?: string;
 
-  /** Retired pre-2027 meeting/CRM fields, preserved into metadata. */
-  meeting_type?: string;
-  meeting_date?: string;
-  meeting_time?: string;
-  jitsi_room?: string;
-  meeting_link?: string;
-  language?: string;
-  lead_status?: string;
-  challenges?: string;
+  /**
+   * The visitor's free-text notes. Stored in the native `notes` column.
+   * (The legacy `challenges` field maps here.)
+   */
+  notes?: string;
 };
 
 type BookingRow = {
@@ -92,7 +82,6 @@ type BookingRow = {
   end_at: string;
   notes: string | null;
   lead_id: string | null;
-  metadata: Record<string, unknown> | null;
 };
 
 /** `j•••@example.com` — enough to recognise, not enough to leak. */
@@ -137,7 +126,7 @@ Deno.serve(async (req) => {
 
       const { data, error } = await supabase
         .from("bookings")
-        .select("id, name, email, status, timezone, start_at, end_at, metadata")
+        .select("id, name, email, status, timezone, start_at, end_at")
         .eq("id", bookingId)
         .maybeSingle<BookingRow>();
 
@@ -146,7 +135,6 @@ Deno.serve(async (req) => {
         return json({ error: "Reserva não encontrada." }, 404);
       }
 
-      const metadata = (data.metadata ?? {}) as Record<string, unknown>;
       return json({
         booking_id: data.id,
         name: data.name,
@@ -154,11 +142,6 @@ Deno.serve(async (req) => {
         timezone: data.timezone,
         start_at: data.start_at,
         end_at: data.end_at,
-        meeting_type: typeof metadata.meeting_type === "string" ? metadata.meeting_type : null,
-        company: typeof metadata.company === "string" ? metadata.company : null,
-        phone: typeof metadata.phone === "string" ? metadata.phone : null,
-        website: typeof metadata.website === "string" ? metadata.website : null,
-        challenges: typeof metadata.challenges === "string" ? metadata.challenges : null,
         reschedulable: RESCHEDULABLE_STATUSES.includes(data.status),
       });
     }
@@ -181,24 +164,6 @@ Deno.serve(async (req) => {
       const market = deriveMarket(body.market, req.headers.get("accept-language"));
       const locale = deriveLocale(market, body.locale);
 
-      const legacy = buildLegacyMetadata({
-        meeting_type: cleanText(body.meeting_type, FIELD_LIMITS.short),
-        meeting_date: cleanText(body.meeting_date, FIELD_LIMITS.short),
-        meeting_time: cleanText(body.meeting_time, FIELD_LIMITS.short),
-        jitsi_room: cleanText(body.jitsi_room, FIELD_LIMITS.short),
-        meeting_link: cleanText(body.meeting_link, 500),
-        language: cleanText(body.language, 35),
-        lead_status: cleanText(body.lead_status, FIELD_LIMITS.short),
-        challenges: cleanText(body.challenges, FIELD_LIMITS.text),
-        phone: cleanText(body.phone, 40),
-        company: cleanText(body.company, FIELD_LIMITS.short),
-        website: cleanText(body.website, FIELD_LIMITS.short),
-      });
-
-      // Proof-of-possession token for later reschedules. Stored server-side in
-      // `bookings.metadata` and returned to the visitor once.
-      const rescheduleSecret = randomToken();
-
       const { data, error } = await supabase
         .from("bookings")
         .insert({
@@ -212,7 +177,6 @@ Deno.serve(async (req) => {
           notes: cleanText(body.notes, FIELD_LIMITS.text),
           status: "requested",
           lead_id: null,
-          metadata: { ...legacy, reschedule_secret: rescheduleSecret },
         })
         .select("id, market, locale")
         .single();
@@ -224,7 +188,6 @@ Deno.serve(async (req) => {
 
       return json({
         booking_id: data.id,
-        reschedule_secret: rescheduleSecret,
         market: data.market,
         locale: data.locale,
       });
@@ -239,7 +202,7 @@ Deno.serve(async (req) => {
 
     const { data: booking, error: loadError } = await supabase
       .from("bookings")
-      .select("id, name, email, status, timezone, start_at, end_at, metadata")
+      .select("id, name, email, status, timezone, start_at, end_at")
       .eq("id", bookingId)
       .maybeSingle<BookingRow>();
 
@@ -250,35 +213,21 @@ Deno.serve(async (req) => {
       return json({ error: "Esta reserva já não pode ser reagendada." }, 409);
     }
 
-    // Proof of possession: the secret minted at creation, or the booking email.
-    const storedSecret = typeof booking.metadata?.reschedule_secret === "string"
-      ? (booking.metadata.reschedule_secret as string)
-      : null;
-    const providedSecret = cleanText(body.reschedule_secret, 64);
+    // Proof of possession: the booking email. Only the address the booking was
+    // made with can move it.
     const providedEmail = cleanEmail(body.email);
-
-    const secretOk = !!storedSecret && !!providedSecret && secretsMatch(storedSecret, providedSecret);
-    const emailOk = !!providedEmail && providedEmail === booking.email.toLowerCase();
-    if (!secretOk && !emailOk) {
+    if (!providedEmail || providedEmail !== booking.email.toLowerCase()) {
       return json({ error: "Não foi possível validar esta reserva." }, 403);
     }
-
-    const metadata = { ...(booking.metadata ?? {}) } as Record<string, unknown>;
-    metadata.meeting_date = new Date(body.start_at).toISOString().slice(0, 10);
-    metadata.meeting_time = new Date(body.start_at).toISOString().slice(11, 16);
-    metadata.timezone = cleanText(body.timezone, 64) ?? booking.timezone;
-    if (body.jitsi_room) metadata.jitsi_room = cleanText(body.jitsi_room, FIELD_LIMITS.short);
-    if (body.meeting_link) metadata.meeting_link = cleanText(body.meeting_link, 500);
 
     const { error: updateError } = await supabase
       .from("bookings")
       .update({
         start_at: body.start_at,
         end_at: body.end_at,
-        timezone: metadata.timezone as string,
+        timezone: cleanText(body.timezone, 64) ?? booking.timezone,
         // A moved meeting returns to "requested" until an admin confirms it.
         status: "requested",
-        metadata,
       })
       .eq("id", bookingId);
 

@@ -108,10 +108,8 @@ const Booking = () => {
   const [previewMeetingLink, setPreviewMeetingLink] = useState<string>('');
   const [confirmedPhone, setConfirmedPhone] = useState<string | null>(null);
   const [existingBookingId, setExistingBookingId] = useState<string | null>(null);
-  // R1C5: proof-of-possession for reschedules. The secret is minted server-side
-  // at creation and returned once; a visitor arriving from an email link has no
-  // secret and must confirm the booking email instead.
-  const [rescheduleSecret, setRescheduleSecret] = useState<string>('');
+  // R1C8: proof of possession for a reschedule is the booking email. A visitor
+  // arriving from an email link confirms the address before the booking moves.
   const [rescheduleEmail, setRescheduleEmail] = useState<string>('');
   const [rescheduleLookup, setRescheduleLookup] = useState<BookingLookupResult | null>(null);
   const [rescheduleVerified, setRescheduleVerified] = useState(false);
@@ -168,19 +166,12 @@ const Booking = () => {
       if (!data) return;
       setExistingBookingId(data.booking_id);
       setIsRescheduling(true);
-      setMeetingType(data.meeting_type || '');
       setRescheduleLookup(data);
       setForm((prev) => ({
         ...prev,
         name: data.name ?? prev.name,
         timezone: data.timezone ?? prev.timezone,
       }));
-
-      // A secret in the link proves possession outright; otherwise the visitor
-      // confirms the address on the booking.
-      const secret = params.get('k');
-      if (secret) setRescheduleSecret(secret);
-      if (data.phone) setConfirmedPhone(data.phone);
     })();
   }, []);
 
@@ -261,7 +252,6 @@ const Booking = () => {
           action: 'reschedule',
           booking_id: existingBookingId as string,
           email: rescheduleEmail || undefined,
-          reschedule_secret: rescheduleSecret || undefined,
           start_at: slot.startAt,
           end_at: slot.endAt,
           timezone: form.timezone,
@@ -301,11 +291,6 @@ const Booking = () => {
         });
 
     const createdBookingId = booking && 'booking_id' in booking ? booking.booking_id : null;
-    // Remember the secret so a reschedule in this same session can prove
-    // possession without asking the visitor for their email again.
-    if (booking && 'reschedule_secret' in booking && booking.reschedule_secret) {
-      setRescheduleSecret(booking.reschedule_secret);
-    }
 
     if (!error && isReschedule) {
       await legacySupabase.from('booking_reschedule_history').insert({
@@ -929,7 +914,7 @@ const Booking = () => {
                   hasDateTime &&
                   !!confirmedPhone &&
                   !submitting &&
-                  (!isRescheduling || !!rescheduleSecret || rescheduleVerified);
+                  (!isRescheduling || rescheduleVerified);
                 const Row = ({ label, value, optional }: { label: string; value: React.ReactNode; optional?: boolean }) => (
                   <div className="flex items-baseline justify-between gap-4 py-1.5 border-b border-white/5 last:border-0">
                     <span className="text-white/50 text-xs uppercase tracking-wider font-mono">
@@ -1009,7 +994,7 @@ const Booking = () => {
                       )}
 
                       {/* R1C5: proof of possession for a reschedule. */}
-                      {isRescheduling && !rescheduleSecret && !rescheduleVerified && (
+                      {isRescheduling && !rescheduleVerified && (
                         <div className="border border-white/15 rounded-lg p-4 bg-white/[0.03] space-y-3">
                           <div className="text-[10px] uppercase tracking-[0.24em] text-white/40 font-mono">
                             {t('booking.reschedule.verifyTitle', 'Confirmar identidade')}

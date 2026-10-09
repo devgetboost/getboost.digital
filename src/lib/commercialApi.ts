@@ -58,7 +58,6 @@ export type BookingInput = {
   action: BookingAction;
   booking_id?: string;
   email?: string;
-  reschedule_secret?: string;
   name?: string;
   phone?: string | null;
   company?: string | null;
@@ -79,9 +78,8 @@ export type BookingInput = {
 export type RescheduleBookingInput = Omit<BookingInput, 'action'> & {
   action: 'reschedule';
   booking_id: string;
-  /** Either the booking email or the secret minted at creation. */
+  /** The booking email — the only proof of possession a reschedule accepts. */
   email?: string;
-  reschedule_secret?: string;
 };
 
 export type LookupBookingInput = Omit<BookingInput, 'action'> & {
@@ -125,7 +123,6 @@ export type NewsletterSubscribeInput = {
 export type LeadCaptureResult = { lead_id: string; market: MarketCode; locale: string };
 export type BookingCreateResult = {
   booking_id: string;
-  reschedule_secret: string;
   market: MarketCode;
   locale: string;
 };
@@ -136,11 +133,6 @@ export type BookingLookupResult = {
   timezone: string;
   start_at: string;
   end_at: string;
-  meeting_type: string | null;
-  company: string | null;
-  phone: string | null;
-  website: string | null;
-  challenges: string | null;
   reschedulable: boolean;
 };
 export type BookingRescheduleResult = {
@@ -218,9 +210,8 @@ export async function captureLead(
 /**
  * Runs a booking action.
  *
- * `create` returns a `reschedule_secret`; keep it for the current session and
- * pass it back for `reschedule`. A visitor arriving from an email link has no
- * secret and must confirm the booking email instead.
+ * A visitor arriving from an email link must confirm the booking email before
+ * a reschedule is accepted.
  */
 export async function submitBooking(
   input: BookingInput,
@@ -228,7 +219,7 @@ export async function submitBooking(
   return attempt(() => invoke<BookingCreateResult>('booking-request', { ...toBookingPayload(input) }));
 }
 
-/** Reschedules an existing booking. Requires the email or the secret. */
+/** Reschedules an existing booking. Requires the booking email. */
 export async function rescheduleBooking(
   input: RescheduleBookingInput,
 ): Promise<InvokeOutcome<BookingRescheduleResult>> {

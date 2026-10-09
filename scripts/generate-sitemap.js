@@ -126,7 +126,7 @@ function writeSitemapFile(filename, urls) {
 }
 
 // Demo product landing pages (/demo?produto=<slug>). Kept in sync with PRODUCTS
-// in src/pages/DemoRequest.tsx. Multilingual slugs also emit ?lang=en|es variants.
+// in src/pages/DemoRequest.tsx. Multilingual slugs also emit a ?lang=en variant.
 const demoProductSlugs = ['pikto', 'prosafe360', 'motivae', 'qook', 'hostify', 'trackfy'];
 const demoMultilingualSlugs = new Set(['qook']);
 
@@ -151,7 +151,7 @@ function generateDemoUrlXml(slug) {
   if (!isMulti) return xml;
 
   // Emit dedicated entries for each language variant so crawlers index them all.
-  for (const [lang, href] of [['en', en], ['es', es]]) {
+  for (const href of [en]) {
     xml += '  <url>\n';
     xml += `    <loc>${href}</loc>\n`;
     xml += `    <lastmod>${TODAY}</lastmod>\n`;

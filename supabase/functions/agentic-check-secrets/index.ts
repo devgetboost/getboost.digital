@@ -3,7 +3,9 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 
 // R2B: DEEPSEEK_API_KEY is the active inference key. LOVABLE_API_KEY stays
 // listed while email/connector flows still read it (R2C track).
-const ALLOWED = new Set(['DEEPSEEK_API_KEY', 'OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'GOOGLE_API_KEY', 'LOVABLE_API_KEY']);
+// R2C: RESEND_API_KEY + EMAIL_WEBHOOK_SECRET join the reportable set so the
+// admin UI shows email-sending health alongside inference health.
+const ALLOWED = new Set(['DEEPSEEK_API_KEY', 'RESEND_API_KEY', 'EMAIL_WEBHOOK_SECRET', 'OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'GOOGLE_API_KEY', 'LOVABLE_API_KEY']);
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });

@@ -1,7 +1,6 @@
 import * as React from 'npm:react@18.3.1'
 import { renderAsync } from 'npm:@react-email/components@0.0.22'
-import { parseEmailWebhookPayload } from 'npm:@lovable.dev/email-js'
-import { WebhookError, verifyWebhookRequest } from 'npm:@lovable.dev/webhooks-js'
+import { WebhookError, verifyWebhookRequest } from '../_shared/email-webhook.ts'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { SignupEmail } from '../_shared/email-templates/signup.tsx'
 import { InviteEmail } from '../_shared/email-templates/invite.tsx'
@@ -23,6 +22,23 @@ const EMAIL_SUBJECTS: Record<string, string> = {
   recovery: 'Redefine a tua palavra-passe',
   email_change: 'Confirma o teu novo email',
   reauthentication: 'O teu código de verificação',
+}
+
+/**
+ * R2C: local replacement for the envelope parser formerly imported from
+ * `npm:@lovable.dev/email-js`. Accepts the same envelope the sender posts
+ * (`{ version, run_id, data: { action_type, email, ... } }`) and validates
+ * only its shape — field semantics below are unchanged.
+ */
+function parseEmailWebhookPayload(raw: string): any {
+  const parsed = JSON.parse(raw)
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new Error('Envelope must be an object')
+  }
+  if (!parsed.data || typeof parsed.data !== 'object') {
+    throw new Error('Envelope missing data object')
+  }
+  return parsed
 }
 
 // Template mapping
@@ -91,10 +107,16 @@ async function handlePreview(req: Request): Promise<Response> {
     return new Response(null, { headers: previewCorsHeaders })
   }
 
-  const apiKey = Deno.env.get('LOVABLE_API_KEY')
+  // R2C: preview is gated by a dedicated secret. LOVABLE_API_KEY stays as a
+  // rotation fallback until the sender is re-keyed — see R2C report — then the
+  // fallback line is deleted.
+  const apiKey = Deno.env.get('EMAIL_WEBHOOK_SECRET')
+  const legacyKey = Deno.env.get('LOVABLE_API_KEY')
   const authHeader = req.headers.get('Authorization')
 
-  if (!apiKey || authHeader !== `Bearer ${apiKey}`) {
+  const presented = authHeader?.replace(/^Bearer\s+/i, '')
+  const allowed = [apiKey, legacyKey].filter((k): k is string => !!k)
+  if (allowed.length === 0 || !presented || !allowed.includes(presented)) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
       headers: { ...previewCorsHeaders, 'Content-Type': 'application/json' },
@@ -132,10 +154,14 @@ async function handlePreview(req: Request): Promise<Response> {
 
 // Webhook handler - verifies signature and sends email
 async function handleWebhook(req: Request): Promise<Response> {
-  const apiKey = Deno.env.get('LOVABLE_API_KEY')
+  // R2C: HMAC secret is EMAIL_WEBHOOK_SECRET, with LOVABLE_API_KEY as rotation
+  // fallback until the sender is re-keyed. Wire protocol (headers, HMAC
+  // construction, payload envelope) is unchanged — only the secret value moves.
+  const apiKey = Deno.env.get('EMAIL_WEBHOOK_SECRET')
+  const legacyKey = Deno.env.get('LOVABLE_API_KEY')
 
-  if (!apiKey) {
-    console.error('LOVABLE_API_KEY not configured')
+  if (!apiKey && !legacyKey) {
+    console.error('EMAIL_WEBHOOK_SECRET not configured')
     return new Response(
       JSON.stringify({ error: 'Server configuration error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -149,6 +175,7 @@ async function handleWebhook(req: Request): Promise<Response> {
     const verified = await verifyWebhookRequest({
       req,
       secret: apiKey,
+      secrets: legacyKey ? [legacyKey] : [],
       parser: parseEmailWebhookPayload,
     })
     payload = verified.payload

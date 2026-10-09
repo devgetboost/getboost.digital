@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
-import { WebhookError, verifyWebhookRequest } from 'npm:@lovable.dev/webhooks-js'
+import { WebhookError, verifyWebhookRequest } from '../_shared/email-webhook.ts'
 
 // Suppression event payload sent by the Go API when Mailgun reports
 // a bounce, complaint, or unsubscribe.
@@ -36,21 +36,25 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: 'Method not allowed' }, 405)
   }
 
-  const apiKey = Deno.env.get('LOVABLE_API_KEY')
+  // R2C: HMAC secret is EMAIL_WEBHOOK_SECRET, with LOVABLE_API_KEY as rotation
+  // fallback until the sender is re-keyed. Wire protocol unchanged.
+  const apiKey = Deno.env.get('EMAIL_WEBHOOK_SECRET')
+  const legacyKey = Deno.env.get('LOVABLE_API_KEY')
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
-  if (!apiKey || !supabaseUrl || !supabaseServiceKey) {
+  if ((!apiKey && !legacyKey) || !supabaseUrl || !supabaseServiceKey) {
     console.error('Missing required environment variables')
     return jsonResponse({ error: 'Server configuration error' }, 500)
   }
 
-  // Verify HMAC signature using the Lovable API Key (same as auth-email-hook)
+  // Verify HMAC signature (same scheme as auth-email-hook)
   let payload: SuppressionPayload
   try {
     const verified = await verifyWebhookRequest({
       req,
       secret: apiKey,
+      secrets: legacyKey ? [legacyKey] : [],
       parser: parseSuppressionPayload,
     })
     payload = verified.payload

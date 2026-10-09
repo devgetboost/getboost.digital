@@ -1,6 +1,7 @@
 // Recebe o pedido de auditoria, guarda a lead, envia email com magic link.
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { deriveLocale, deriveMarket } from "../_shared/commercial-write.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -48,12 +49,19 @@ serve(async (req) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const sb = createClient(supabaseUrl, serviceKey);
 
-    // Save lead (best-effort)
+    // Save lead (best-effort).
+    // R1C5: `market`, `locale` and `consent_privacy_at` are NOT NULL in Clean V1
+    // and are server-derived facts, so they are stamped here.
     await sb.from("leads").insert({
       name: name || company,
-      email: String(email).trim(),
+      email: String(email).trim().toLowerCase(),
       message: `Auditoria Digital 360º — ${normalizedUrl}${sector ? ` · ${sector}` : ""}${goal ? ` · ${goal}` : ""}`,
       source: "digital-audit",
+      status: "new",
+      market: deriveMarket(null, req.headers.get("accept-language")),
+      locale: deriveLocale(deriveMarket(null, req.headers.get("accept-language")), req.headers.get("accept-language")),
+      consent_privacy_at: new Date().toISOString(),
+      consent_marketing: false,
     } as never).then(() => {}, (e) => console.warn("lead insert", e));
 
     const expires = Date.now() + TOKEN_TTL_MS;

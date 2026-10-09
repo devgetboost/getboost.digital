@@ -6,6 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { legacySupabase } from '@/integrations/supabase/client';
+import {
+  subscribeNewsletter,
+  CommercialWriteError,
+} from '@/lib/commercialApi';
+import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import logoNunoCruz from '@/assets/logo-getboost-soft-branca.svg';
@@ -35,15 +40,18 @@ const Footer = () => {
       return;
     }
     setLoading(true);
-    const { error } = await legacySupabase.from('newsletter_subscribers').insert({
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      consent: true,
-      consented_at: new Date().toISOString(),
-    });
+    // R1C5: the browser no longer writes `newsletter_subscribers` directly.
+    // Clean V1 records consent through `consent_at` and has no display-name
+    // column, so `name` stops here and is not persisted.
+    const { error } = await subscribeNewsletter({
+      email: email.trim(),
+      source: 'footer',
+      market: marketForLanguage(i18n.language),
+      locale: localeForLanguage(i18n.language),
+    }).then(() => ({ error: null })).catch((err: CommercialWriteError) => ({ error: err }));
     setLoading(false);
     if (error) {
-      if (error.code === '23505') {
+      if (error.status === 409) {
         toast.info(t('footer.alreadySubscribed'));
       } else {
         toast.error(t('footer.errorSubscribe'));

@@ -10,7 +10,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
-import { legacySupabase } from '@/integrations/supabase/client';
+import { legacySupabase, supabase } from '@/integrations/supabase/client';
+import { captureLead, CommercialWriteError } from '@/lib/commercialApi';
+import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { toast } from 'sonner';
 
 const ACCENT = '#ff4000';
@@ -20,6 +22,7 @@ const Contact = () => {
   const { t, i18n } = useTranslation();
   const location = useLocation();
   const [submitting, setSubmitting] = useState(false);
+  const [sent, setSent] = useState(false);
   const [services, setServices] = useState<{ key: string; headline: string }[]>([]);
   const [form, setForm] = useState({
     name: '', email: '', phone: '', company: '', website: '',
@@ -46,21 +49,35 @@ const Contact = () => {
       return;
     }
     setSubmitting(true);
-    const { error } = await legacySupabase.from('leads').insert({
+    // R1C5: the browser no longer writes `leads` directly. Retired fields
+    // (`service`, `budget`, `timeline`, `website`) are forwarded and preserved
+    // under `metadata.legacy` server-side.
+    const { error: captureError } = await captureLead({
       source: 'contact',
       name: form.name.trim(),
       email: form.email.trim(),
       phone: form.phone.trim() || null,
       company: form.company.trim(),
-      website: form.website.trim() || null,
-      service: form.service || null,
-      budget: form.budget || null,
-      timeline: form.timeline || null,
       message: form.message.trim(),
+      service_interest: form.service || null,
+      market: marketForLanguage(i18n.language),
+      locale: localeForLanguage(i18n.language),
+      legacy: {
+        website: form.website.trim() || null,
+        service: form.service || null,
+        budget: form.budget || null,
+        timeline: form.timeline || null,
+      },
     });
 
-    if (!error) {
-      await legacySupabase.functions.invoke('send-transactional-email', {
+    if (captureError) {
+      setSubmitting(false);
+      toast.error(t('contact.errorSubmit', 'Não foi possível enviar. Tenta novamente.'));
+      return;
+    }
+
+    try {
+      await supabase.functions.invoke('send-transactional-email', {
         body: {
           templateName: 'lead-notification',
           recipientEmail: 'nunocruz@getboost.digital',
@@ -77,19 +94,16 @@ const Contact = () => {
           }
         }
       });
-    }
 
-    setSubmitting(false);
-
-    if (error) {
+      analytics.trackForm('contact', 'contact_form_success', { path: location.pathname });
+      setForm({ name: '', email: '', phone: '', company: '', website: '', service: '', budget: '', timeline: '', message: '' });
+      setSent(true);
+    } catch (submitError) {
       toast.error(t('contact.errorSend'));
-      analytics.trackForm('contact', 'contact_form_error', { error: error.message, path: location.pathname });
-      return;
+      analytics.trackForm('contact', 'contact_form_error', { path: location.pathname });
+    } finally {
+      setSubmitting(false);
     }
-
-    toast.success(t('contact.successSend'));
-    analytics.trackForm('contact', 'contact_form_success', { service: form.service, budget: form.budget, path: location.pathname });
-    setForm({ name: '', email: '', phone: '', company: '', website: '', service: '', budget: '', timeline: '', message: '' });
   };
 
   const inputClass = "w-full bg-transparent border-0 border-b border-white/20 rounded-none h-12 px-0 text-white placeholder:text-white/30 focus-visible:ring-0 focus-visible:border-[#ff4000] transition-colors";

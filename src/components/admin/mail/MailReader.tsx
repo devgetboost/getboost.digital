@@ -13,7 +13,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { supabase } from "@/integrations/supabase/client";
+import { legacySupabase } from "@/integrations/supabase/client";
+import { captureLead } from "@/lib/commercialApi";
+import { marketForLanguage, localeForLanguage } from "@/lib/commercialMarket";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
 
@@ -61,6 +64,9 @@ function formatDatePT(input: string): string {
 }
 
 export function MailReader({ onBack, onCompose, onReply, onLinkLead, onToggleStar, message }: Props) {
+  const { i18n } = useTranslation();
+  const market = marketForLanguage(i18n.language);
+  const locale = localeForLanguage(i18n.language);
   const [draft, setDraft] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [status, setStatus] = useState<"pending" | "done">("pending");
@@ -92,19 +98,23 @@ export function MailReader({ onBack, onCompose, onReply, onLinkLead, onToggleSta
     if (!message) return;
     try {
       if (message.lead?.id) {
-        await supabase.from("leads").update({ 
-          last_email_subject: message.subject, 
-          last_email_at: new Date().toISOString() 
+        // Updating an existing lead stays an admin-surface write (Wave 4).
+        await legacySupabase.from("leads").update({
+          last_email_subject: message.subject,
+          last_email_at: new Date().toISOString(),
         } as any).eq("id", message.lead.id);
         toast.success("Actualizado no CRM.");
         return;
       }
-      const { error } = await supabase.from("leads").insert({
+      // R1C5: creating a lead goes through the trusted capture path.
+      const { error } = await captureLead({
         name: message.from,
         email: message.fromEmail,
         source: "inbox",
-        notes: message.subject,
-      } as any);
+        message: message.subject,
+        market,
+        locale,
+      });
       if (error) throw error;
       toast.success("Enviado para o CRM como novo lead.");
     } catch (e: any) {

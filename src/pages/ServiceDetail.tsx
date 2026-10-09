@@ -7,6 +7,8 @@ import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
 import { servicesData, type ServiceData } from '@/data/services';
 import { supabase } from '@/integrations/supabase/client';
+import { captureLead } from '@/lib/commercialApi';
+import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { analytics } from '@/lib/analytics';
 import { StandardCTA } from '@/components/StandardCTA';
 import DronePriceCalculator from '@/components/DronePriceCalculator';
@@ -341,6 +343,9 @@ const leadSchema = z.object({
 });
 
 const SoftwareDevHero = ({ headline, subheadline, serviceKey }: { headline: string; subheadline: string; serviceKey: string }) => {
+  const { i18n } = useTranslation();
+  const market = marketForLanguage(i18n.language);
+  const locale = localeForLanguage(i18n.language);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -356,13 +361,17 @@ const SoftwareDevHero = ({ headline, subheadline, serviceKey }: { headline: stri
       return;
     }
     setSubmitting(true);
-    const { error } = await supabase.from('leads').insert({
+    // R1C5: trusted server-side capture; retired `notes` is preserved in
+    // `metadata.legacy` server-side.
+    const { error } = await captureLead({
       source: `service_${serviceKey}`,
       name: parsed.data.name,
       email: parsed.data.email,
       phone: parsed.data.phone,
-      notes: parsed.data.message || null,
-    } as any);
+      message: parsed.data.message || null,
+      market,
+      locale,
+    });
     setSubmitting(false);
     if (error) {
       toast.error('Erro ao enviar. Tenta novamente.');

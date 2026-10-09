@@ -3,8 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { z } from 'zod';
 import { ArrowRight, Check, Loader2 } from 'lucide-react';
 import { legacySupabase } from '@/integrations/supabase/client';
+import { captureLead } from '@/lib/commercialApi';
+import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { analytics } from '@/lib/analytics';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 const ACCENT = '#ff4000';
 
@@ -43,7 +46,10 @@ type Props = {
 };
 
 const ConsultantContactForm = ({ open, service }: Props) => {
+  const { i18n } = useTranslation();
   const accent = service.accent || ACCENT;
+  const market = marketForLanguage(i18n.language);
+  const locale = localeForLanguage(i18n.language);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [form, setForm] = useState({
@@ -75,17 +81,21 @@ const ConsultantContactForm = ({ open, service }: Props) => {
         form.message && `\nMensagem:\n${form.message}`,
       ].filter(Boolean).join('\n');
 
-      const { error } = await legacySupabase.from('leads').insert({
+      const { error } = await captureLead({
         source: `consultor:${service.slug}`,
         name: form.name.trim(),
         email: form.email.trim(),
         phone: form.phone.trim() || null,
         company: form.company.trim() || null,
-        service: service.name,
-        cargo: form.role.trim() || null,
-        resource_id: service.slug,
-        resource_name: service.name,
         message: composed,
+        market,
+        locale,
+        legacy: {
+          service: service.name,
+          cargo: form.role.trim() || null,
+          resource_id: service.slug,
+          resource_name: service.name,
+        },
       });
       if (error) throw error;
 

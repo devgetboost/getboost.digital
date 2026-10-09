@@ -28,6 +28,8 @@ import {
 } from '@/components/ui/accordion';
 import { toast } from '@/hooks/use-toast';
 import { legacySupabase } from '@/integrations/supabase/client';
+import { captureLead } from '@/lib/commercialApi';
+import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { analytics } from '@/lib/analytics';
 
 const ACCENT = '#ff4000';
@@ -116,6 +118,8 @@ const FAQS = [
 
 const AcademyInCompany = () => {
   const { i18n } = useTranslation();
+  const market = marketForLanguage(i18n.language);
+  const locale = localeForLanguage(i18n.language);
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -134,15 +138,17 @@ const AcademyInCompany = () => {
     }
     setSubmitting(true);
     try {
-      const { error } = await legacySupabase.from('leads').insert({
+      const { error } = await captureLead({
         name: form.name.trim(),
         email: form.email.trim(),
         phone: form.phone.trim() || null,
         company: form.company.trim() || null,
-        cargo: form.cargo.trim() || null,
         message: form.message.trim() || null,
         source: 'academy:in-company',
         landing_page: '/academy/formacao-empresas',
+        market,
+        locale,
+        legacy: { cargo: form.cargo.trim() || null },
       });
       if (error) throw error;
       analytics.trackForm('academy', 'academy_in_company_form_success', {

@@ -12,8 +12,16 @@ import {
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
 import { legacySupabase } from '@/integrations/supabase/client';
+import {
+  lookupBooking,
+  rescheduleBooking,
+  submitBooking,
+  type BookingLookupResult,
+} from '@/lib/commercialApi';
+import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -56,6 +64,37 @@ type FormData = {
 
 const Booking = () => {
   const { t, i18n } = useTranslation();
+  const market = marketForLanguage(i18n.language);
+  const locale = localeForLanguage(i18n.language);
+
+  /**
+   * R1C5: resolves the selected slot to absolute UTC instants.
+   *
+   * The page stores Lisbon wall-clock time while the visitor's form timezone is
+   * only a display preference, so the wall clock is interpreted in
+   * Europe/Lisbon and the resulting instants are timezone-independent. Clean V1
+   * `bookings` stores `start_at`/`end_at`, not separate date/time columns.
+   */
+  const slotToInstant = (d: Date | undefined, slot: string) => {
+    if (!d) return { startAt: '', endAt: '' };
+    const [hh, mm] = slot.split(':').map(Number);
+    const guess = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), hh, mm));
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Europe/Lisbon', hour12: false,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit',
+    }).formatToParts(guess).reduce<Record<string, string>>((a, p) => (a[p.type] = p.value, a), {});
+    const asLisbon = Date.UTC(
+      Number(parts.year), Number(parts.month) - 1, Number(parts.day),
+      Number(parts.hour) % 24, Number(parts.minute),
+    );
+    const startMs = guess.getTime() - (asLisbon - guess.getTime());
+    const durationMin = meetingType === 'strategy' ? 60 : 30;
+    return {
+      startAt: new Date(startMs).toISOString(),
+      endAt: new Date(startMs + durationMin * 60_000).toISOString(),
+    };
+  };
   const [step, setStep] = useState(1);
   const [meetingType, setMeetingType] = useState('');
   const [date, setDate] = useState<Date>();
@@ -69,6 +108,14 @@ const Booking = () => {
   const [previewMeetingLink, setPreviewMeetingLink] = useState<string>('');
   const [confirmedPhone, setConfirmedPhone] = useState<string | null>(null);
   const [existingBookingId, setExistingBookingId] = useState<string | null>(null);
+  // R1C5: proof-of-possession for reschedules. The secret is minted server-side
+  // at creation and returned once; a visitor arriving from an email link has no
+  // secret and must confirm the booking email instead.
+  const [rescheduleSecret, setRescheduleSecret] = useState<string>('');
+  const [rescheduleEmail, setRescheduleEmail] = useState<string>('');
+  const [rescheduleLookup, setRescheduleLookup] = useState<BookingLookupResult | null>(null);
+  const [rescheduleVerified, setRescheduleVerified] = useState(false);
+  const [formError, setFormError] = useState('');
   const [isRescheduling, setIsRescheduling] = useState(false);
 
   const errorMessages: Record<string, string> = {
@@ -107,33 +154,45 @@ const Booking = () => {
     fetchSettings();
   }, []);
 
-  // Reagendamento direto via WhatsApp/email: ?reschedule=<booking_id>
+  // Reagendamento direto via WhatsApp/email: ?reschedule=<booking_id>[&k=<secret>]
+  //
+  // R1C5: the pre-fill no longer reads `bookings` from the browser. The trusted
+  // lookup returns only non-sensitive fields plus a masked email, so the
+  // visitor must confirm the address before the booking can be moved.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const rid = params.get('reschedule') || params.get('booking_id');
     if (!rid) return;
     (async () => {
-      const { data } = await legacySupabase
-        .from('bookings')
-        .select('id, name, email, phone, company, website, meeting_type, challenges, timezone')
-        .eq('id', rid)
-        .maybeSingle();
+      const { data } = await lookupBooking({ action: 'lookup', booking_id: rid });
       if (!data) return;
-      setExistingBookingId(data.id);
+      setExistingBookingId(data.booking_id);
       setIsRescheduling(true);
       setMeetingType(data.meeting_type || '');
+      setRescheduleLookup(data);
       setForm((prev) => ({
         ...prev,
         name: data.name ?? prev.name,
-        email: data.email ?? prev.email,
-        phone: data.phone ?? prev.phone,
-        company: data.company ?? prev.company,
-        website: data.website ?? prev.website,
-        challenges: data.challenges ?? prev.challenges,
         timezone: data.timezone ?? prev.timezone,
       }));
+
+      // A secret in the link proves possession outright; otherwise the visitor
+      // confirms the address on the booking.
+      const secret = params.get('k');
+      if (secret) setRescheduleSecret(secret);
+      if (data.phone) setConfirmedPhone(data.phone);
     })();
   }, []);
+
+  /** Confirms a reschedule by matching the booking email. */
+  const confirmReschedule = () => {
+    if (!rescheduleEmail.trim()) {
+      setFormError(t('booking.errors.invalidEmail', 'Email inválido'));
+      return;
+    }
+    setFormError('');
+    setRescheduleVerified(true);
+  };
 
   const totalSteps = 4;
   const selectedMeeting = meetingTypes.find(m => m.id === meetingType);
@@ -170,56 +229,87 @@ const Booking = () => {
     setSubmitting(true);
     const normalizedPhone = confirmedPhone;
     const isReschedule = !!existingBookingId;
-    const bookingId = existingBookingId ?? crypto.randomUUID();
     const meetingDateStr = date ? format(date, 'yyyy-MM-dd') : '';
     // On reschedule, always mint a fresh Jitsi room so the new confirmation
     // ships an updated link (and the old one becomes stale).
     const jitsiRoom = (!isReschedule && previewMeetingLink)
       ? previewMeetingLink.replace('https://meet.jit.si/', '')
-      : `getboost-${bookingId.slice(0, 8)}-${Date.now().toString(36)}`;
+      : `getboost-${(existingBookingId ?? 'booking').slice(0, 8)}-${Date.now().toString(36)}`;
     const meetingLink = `https://meet.jit.si/${jitsiRoom}`;
 
     // Snapshot previous slot before the update, then log the reschedule.
     let previous: { meeting_date: string | null; meeting_time: string | null; timezone: string | null; meeting_link: string | null } | null = null;
-    if (isReschedule) {
-      const { data: prev } = await legacySupabase
-        .from('bookings')
-        .select('meeting_date, meeting_time, timezone, meeting_link')
-        .eq('id', bookingId)
-        .maybeSingle();
-      previous = prev ?? null;
+    if (isReschedule && existingBookingId) {
+      const { data: prev } = await lookupBooking({ action: 'lookup', booking_id: existingBookingId });
+      previous = prev ? {
+        meeting_date: String(prev.start_at).slice(0, 10),
+        meeting_time: String(prev.start_at).slice(11, 16),
+        timezone: prev.timezone,
+        meeting_link: null,
+      } : null;
     }
 
-    const { error } = isReschedule
-      ? await legacySupabase.from('bookings').update({
-          meeting_date: meetingDateStr,
-          meeting_time: time,
+    // The new slot is expressed as absolute instants: the Clean V1 contract
+    // stores `start_at`/`end_at` rather than separate date/time columns.
+    const slot = slotToInstant(date, time);
+
+    // R1C5: the browser never writes `bookings` directly. Both the create and
+    // the reschedule go through the trusted booking path, which re-validates
+    // the window and — for a reschedule — requires proof of possession.
+    const { data: booking, error } = isReschedule
+      ? await rescheduleBooking({
+          action: 'reschedule',
+          booking_id: existingBookingId as string,
+          email: rescheduleEmail || undefined,
+          reschedule_secret: rescheduleSecret || undefined,
+          start_at: slot.startAt,
+          end_at: slot.endAt,
           timezone: form.timezone,
-          jitsi_room: jitsiRoom,
-          meeting_link: meetingLink,
-          status: 'pending',
-        }).eq('id', bookingId)
-      : await legacySupabase.from('bookings').insert({
-          id: bookingId,
-          meeting_type: meetingType,
-          meeting_date: meetingDateStr,
-          meeting_time: time,
+          legacy: {
+            meeting_date: meetingDateStr,
+            meeting_time: time,
+            jitsi_room: jitsiRoom,
+            meeting_link: meetingLink,
+            language: i18n.language,
+          },
+        })
+      : await submitBooking({
+          action: 'create',
           name: form.name,
           email: form.email,
-          phone: normalizedPhone,
+          phone: normalizedPhone || null,
           company: form.company || null,
           website: form.website || null,
-          challenges: form.challenges,
           timezone: form.timezone,
-          jitsi_room: jitsiRoom,
-          meeting_link: meetingLink,
-          language: i18n.language,
-          lead_status: 'new',
+          start_at: slot.startAt,
+          end_at: slot.endAt,
+          notes: form.challenges || null,
+          market,
+          locale,
+          legacy: {
+            meeting_type: meetingType,
+            meeting_date: meetingDateStr,
+            meeting_time: time,
+            jitsi_room: jitsiRoom,
+            meeting_link: meetingLink,
+            language: i18n.language,
+            challenges: form.challenges || null,
+            phone: normalizedPhone || null,
+            company: form.company || null,
+            website: form.website || null,
+          },
         });
+
+    const createdBookingId = booking && 'booking_id' in booking ? booking.booking_id : null;
+    // Remember the secret so a reschedule in this same session can prove
+    // possession without asking the visitor for their email again.
+    if (booking && 'reschedule_secret' in booking && booking.reschedule_secret) {
+      setRescheduleSecret(booking.reschedule_secret);
+    }
 
     if (!error && isReschedule) {
       await legacySupabase.from('booking_reschedule_history').insert({
-        booking_id: bookingId,
+        booking_id: createdBookingId,
         previous_meeting_date: previous?.meeting_date ?? null,
         previous_meeting_time: previous?.meeting_time ?? null,
         previous_timezone: previous?.timezone ?? null,
@@ -254,31 +344,15 @@ const Booking = () => {
       };
       const displayTime = date ? convertSlotToTz(date, time, form.timezone) : time;
       const timezoneLabel = t(`booking.timezones.${form.timezone}`);
-      let startAtUtc: string | undefined;
-      let endAtUtc: string | undefined;
-      if (date) {
-        const [hh, mm] = time.split(':').map(Number);
-        const guess = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), hh, mm));
-        const parts = new Intl.DateTimeFormat('en-US', {
-          timeZone: 'Europe/Lisbon', hour12: false,
-          year: 'numeric', month: '2-digit', day: '2-digit',
-          hour: '2-digit', minute: '2-digit',
-        }).formatToParts(guess).reduce<Record<string, string>>((a, p) => (a[p.type] = p.value, a), {});
-        const asLisbon = Date.UTC(
-          Number(parts.year), Number(parts.month) - 1, Number(parts.day),
-          Number(parts.hour) % 24, Number(parts.minute),
-        );
-        const startMs = guess.getTime() - (asLisbon - guess.getTime());
-        const durationMin = meetingType === 'strategy' ? 60 : 30;
-        startAtUtc = new Date(startMs).toISOString();
-        endAtUtc = new Date(startMs + durationMin * 60_000).toISOString();
-      }
+      const startAtUtc = slot.startAt;
+      const endAtUtc = slot.endAt;
+      const durationMin = meetingType === 'strategy' ? 60 : 30;
       try {
         await legacySupabase.functions.invoke('send-transactional-email', {
           body: {
             templateName: 'booking-confirmation',
             recipientEmail: form.email,
-            idempotencyKey: isReschedule ? `booking-reschedule-${bookingId}-${meetingDateStr}-${time}` : `booking-confirm-${bookingId}`,
+            idempotencyKey: isReschedule ? `booking-reschedule-${createdBookingId}-${meetingDateStr}-${time}` : `booking-confirm-${createdBookingId}`,
             templateData: {
               name: form.name,
               meetingType: meetingLabels[meetingType] || meetingType,
@@ -289,7 +363,7 @@ const Booking = () => {
               timezoneLabel,
               company: form.company,
               meetingLink,
-              bookingId,
+              createdBookingId,
               startAtUtc,
               endAtUtc,
               language: i18n.language,
@@ -304,7 +378,7 @@ const Booking = () => {
         body: {
           templateName: 'booking-confirmation',
           recipientEmail: form.email,
-          idempotencyKey: isReschedule ? `booking-reschedule-${bookingId}-${meetingDateStr}-${time}` : `booking-confirm-${bookingId}`,
+          idempotencyKey: isReschedule ? `booking-reschedule-${createdBookingId}-${meetingDateStr}-${time}` : `booking-confirm-${createdBookingId}`,
           templateData: {
             name: form.name,
             meetingType: meetingLabels[meetingType] || meetingType,
@@ -333,7 +407,7 @@ const Booking = () => {
           challenges: form.challenges,
         },
       }).catch(console.error);
-      setExistingBookingId(bookingId);
+      if (createdBookingId) setExistingBookingId(createdBookingId);
       setIsRescheduling(false);
       setStep(5);
       if (isReschedule) toast.success(t('booking.rescheduleSuccess', 'Reunião reagendada com sucesso'));
@@ -849,7 +923,13 @@ const Booking = () => {
                       message: errorMessages[i.message] || i.message,
                     }));
                 const hasDateTime = !!date && !!time;
-                const canConfirm = parsed.success && hasDateTime && !!confirmedPhone && !submitting;
+                // R1C5: a reschedule additionally requires proof of possession.
+                const canConfirm =
+                  parsed.success &&
+                  hasDateTime &&
+                  !!confirmedPhone &&
+                  !submitting &&
+                  (!isRescheduling || !!rescheduleSecret || rescheduleVerified);
                 const Row = ({ label, value, optional }: { label: string; value: React.ReactNode; optional?: boolean }) => (
                   <div className="flex items-baseline justify-between gap-4 py-1.5 border-b border-white/5 last:border-0">
                     <span className="text-white/50 text-xs uppercase tracking-wider font-mono">
@@ -925,6 +1005,30 @@ const Booking = () => {
                               <li key={idx}><span className="uppercase text-white/60 mr-1">{i.field}:</span>{i.message}</li>
                             ))}
                           </ul>
+                        </div>
+                      )}
+
+                      {/* R1C5: proof of possession for a reschedule. */}
+                      {isRescheduling && !rescheduleSecret && !rescheduleVerified && (
+                        <div className="border border-white/15 rounded-lg p-4 bg-white/[0.03] space-y-3">
+                          <div className="text-[10px] uppercase tracking-[0.24em] text-white/40 font-mono">
+                            {t('booking.reschedule.verifyTitle', 'Confirmar identidade')}
+                          </div>
+                          <p className="text-xs text-white/60">
+                            {t('booking.reschedule.verifyBody', 'Para reagendar, confirma o email usado na reserva')}
+                            {rescheduleLookup?.email_hint ? ` (${rescheduleLookup.email_hint})` : ''}.
+                          </p>
+                          <Input
+                            type="email"
+                            value={rescheduleEmail}
+                            onChange={(e) => setRescheduleEmail(e.target.value)}
+                            placeholder={t('booking.email', 'Email')}
+                            className={inputClass}
+                          />
+                          {formError && <p className="text-xs text-red-300">{formError}</p>}
+                          <Button type="button" size="sm" onClick={confirmReschedule} className="w-full">
+                            {t('booking.reschedule.verifyAction', 'Confirmar')}
+                          </Button>
                         </div>
                       )}
 

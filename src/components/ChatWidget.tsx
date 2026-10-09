@@ -2,7 +2,10 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { MessageCircle, X, Send, RefreshCw, Maximize2, Minimize2, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { legacySupabase } from '@/integrations/supabase/client';
+import { captureLead } from '@/lib/commercialApi';
+import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { analytics, buildWhatsAppUrl } from '@/lib/analytics';
 import { WHATSAPP_MESSAGES, WHATSAPP_PHONE } from '@/lib/whatsappMessages';
 
@@ -65,6 +68,9 @@ const SERVICE_CTA_MAP: Record<string, string> = {
 };
 
 const ChatWidget = () => {
+  const { i18n } = useTranslation();
+  const market = marketForLanguage(i18n.language);
+  const locale = localeForLanguage(i18n.language);
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
 
@@ -178,15 +184,18 @@ const ChatWidget = () => {
     const info = { name: contactName.trim(), email: contactEmail.trim(), phone: contactPhone.trim(), countryCode };
     sessionStorage.setItem(CONTACT_KEY, JSON.stringify(info));
 
-    // Save as lead
-    legacySupabase.from('leads').insert({
+    // Save as lead — R1C5: through the trusted capture path, never a direct
+    // browser insert. Fire-and-forget, exactly as before.
+    void captureLead({
       name: contactName.trim(),
       email: contactEmail.trim(),
       phone: fullPhone,
       source: channel === 'whatsapp' ? 'chat-whatsapp' : 'chat-widget',
       message: `Contacto via ${channel === 'whatsapp' ? 'WhatsApp' : 'Chat Online'}`,
+      market,
+      locale,
     }).then(({ error }) => {
-      if (error) console.error('Lead save error:', error);
+      if (error) console.error('Lead save error:', error.message);
       else analytics.trackForm('chat_widget', `contact_submit_${channel}`, { name: contactName });
     });
 

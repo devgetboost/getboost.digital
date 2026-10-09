@@ -2,6 +2,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { callAgent } from "../_shared/agentic-runtime.ts";
+import { deriveLocale, deriveMarket } from "../_shared/commercial-write.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -40,17 +41,30 @@ serve(async (req) => {
       `Automação: ${answers.automationLevel}`,
     ].join(" | ");
 
+    // R1C5: mapped onto the Clean V1 `leads` contract. `service`,
+    // `business_area` and `resource_name` are no longer columns: the service
+    // becomes `service_interest` and the rest is preserved in `metadata`.
+    // `market`, `locale` and `consent_privacy_at` are NOT NULL server facts.
+    const market = deriveMarket(req.headers.get("accept-language"));
     const { data: lead, error: leadErr } = await supabase.from("leads").insert({
       source: "auditoria-comercial-crm",
       name: contact.name.trim(),
       email: contact.email.trim().toLowerCase(),
       phone: contact.phone?.trim() || null,
       company: contact.company?.trim() || null,
-      service: "CRM & Sales Intelligence",
-      business_area: answers.industry,
+      service_interest: "CRM & Sales Intelligence",
       message: messageSummary,
-      resource_name: "Auditoria Comercial 7 min",
       status: "new",
+      market,
+      locale: deriveLocale(market, req.headers.get("accept-language")),
+      consent_privacy_at: new Date().toISOString(),
+      consent_marketing: false,
+      metadata: {
+        legacy: {
+          business_area: answers.industry,
+          resource_name: "Auditoria Comercial 7 min",
+        },
+      },
     }).select().single();
     if (leadErr) console.error("Lead insert error:", leadErr);
 

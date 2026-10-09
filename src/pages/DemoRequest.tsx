@@ -9,7 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useTranslation } from 'react-i18next';
 import { legacySupabase } from '@/integrations/supabase/client';
+import { captureLead } from '@/lib/commercialApi';
+import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { toast } from 'sonner';
 import { analytics } from '@/lib/analytics';
 
@@ -312,6 +315,9 @@ const UI_I18N: Record<Lang, UIStrings> = {
 const LANG_LABEL: Record<Lang, string> = { pt: 'PT', en: 'EN', es: 'ES' };
 
 export default function DemoRequest() {
+  const { i18n } = useTranslation();
+  const market = marketForLanguage(i18n.language);
+  const locale = localeForLanguage(i18n.language);
   const [params] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -385,16 +391,16 @@ export default function DemoRequest() {
     setSubmitting(true);
     const message = `Pedido de demonstração — ${product.name}\nPaís: ${data.country}\nTamanho da empresa: ${data.companySize || 'n/d'}\nNewsletter: ${data.newsletter ? 'sim' : 'não'}`;
 
-    const { error } = await legacySupabase.from('leads').insert({
+    const { error } = await captureLead({
       source: `demo:${product.slug}`,
       name: data.name,
       email: data.email,
       phone: data.phone?.trim() || null,
-      company: null,
-      service: product.name,
-      resource_id: product.slug,
-      resource_name: product.name,
       message,
+      service_interest: product.name,
+      market,
+      locale,
+      legacy: { resource_id: product.slug, resource_name: product.name },
     });
 
     if (error) {

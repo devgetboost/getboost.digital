@@ -15,6 +15,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { legacySupabase } from '@/integrations/supabase/client';
+import { captureLead } from '@/lib/commercialApi';
+import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { analytics } from '@/lib/analytics';
 import { toast } from 'sonner';
 import { Link as RouterLink } from 'react-router-dom';
@@ -130,6 +132,8 @@ const MetricBar = ({ label, value, icon: Icon }: { label: string; value: number;
 
 const SEOAnalyzer = () => {
   const { i18n } = useTranslation();
+  const market = marketForLanguage(i18n.language);
+  const locale = localeForLanguage(i18n.language);
   const [openIndex, setOpenIndex] = useState<number>(0);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -158,13 +162,14 @@ const SEOAnalyzer = () => {
       normalizedUrl = `https://${normalizedUrl}`;
     }
 
-    await legacySupabase.from('leads').insert({
+    await captureLead({
       source: 'seo-analyzer',
       name: name.trim(),
       email: email.trim(),
-      website: normalizedUrl,
-      resource_id: '7',
-      resource_name: 'Análise SEO Gratuita',
+      message: `Website analisado: ${normalizedUrl}`,
+      market,
+      locale,
+      legacy: { website: normalizedUrl, resource_id: '7', resource_name: 'Análise SEO Gratuita' },
     });
     analytics.trackForm('seo_analyzer', 'seo_analyzer_form_success', { website: normalizedUrl, email: email.trim() });
 

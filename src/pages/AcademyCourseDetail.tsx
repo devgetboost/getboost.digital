@@ -28,6 +28,8 @@ import {
 } from '@/components/ui/accordion';
 import { toast } from '@/hooks/use-toast';
 import { legacySupabase } from '@/integrations/supabase/client';
+import { captureLead } from '@/lib/commercialApi';
+import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { analytics } from '@/lib/analytics';
 
 const ACCENT = '#ff4000';
@@ -134,6 +136,8 @@ const FAQS = [
 const AcademyCourseDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const { i18n } = useTranslation();
+  const market = marketForLanguage(i18n.language);
+  const locale = localeForLanguage(i18n.language);
   const navigate = useNavigate();
   const [course, setCourse] = useState<Course | null>(null);
   const [related, setRelated] = useState<Course[]>([]);
@@ -183,13 +187,15 @@ const AcademyCourseDetail = () => {
     }
     setSubmitting(true);
     try {
-      const { error } = await legacySupabase.from('leads').insert({
+      const { error } = await captureLead({
         name: form.name.trim(),
         email: form.email.trim(),
         phone: form.phone.trim() || null,
         message: form.message.trim() || null,
         source: `academy:${course.slug}`,
         landing_page: `/academy/${course.slug}`,
+        market,
+        locale,
       });
       if (error) throw error;
       analytics.trackForm('academy', `academy_course_${course.slug}_success`, {

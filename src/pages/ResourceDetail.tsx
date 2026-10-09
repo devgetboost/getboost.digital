@@ -30,6 +30,8 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { captureLead } from '@/lib/commercialApi';
+import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { analytics } from '@/lib/analytics';
 import avatar1 from '@/assets/avatar-1.jpg';
 import avatar2 from '@/assets/avatar-2.jpg';
@@ -51,6 +53,8 @@ const iconMap: Record<string, React.ElementType> = {
 
 const ResourceDetail = () => {
   const { t, i18n } = useTranslation();
+  const market = marketForLanguage(i18n.language);
+  const locale = localeForLanguage(i18n.language);
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const resource = resources.find((r) => r.id === id);
@@ -106,17 +110,24 @@ const ResourceDetail = () => {
     }
 
     setSubmitting(true);
-    const { error } = await supabase.from('leads').insert({
+    // R1C5: trusted server-side capture; retired fields are preserved in
+    // `metadata.legacy` server-side.
+    const { error } = await captureLead({
       source: 'resource',
       name: name.trim(),
       email: email.trim(),
       phone: phone.trim() !== '+351' ? phone.trim() : null,
-      resource_id: resource.id,
-      resource_name: resource.title,
       company: cargo,
-      website: website.trim() || null,
-      budget: businessArea,
-    } as any);
+      service_interest: businessArea,
+      market,
+      locale,
+      legacy: {
+        resource_id: resource.id,
+        resource_name: resource.title,
+        website: website.trim() || null,
+        budget: businessArea,
+      },
+    });
 
     if (!error) {
       await supabase.functions.invoke('send-transactional-email', {

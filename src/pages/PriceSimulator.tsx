@@ -6,6 +6,8 @@ import { ArrowRight, ArrowLeft, CheckCircle2, Zap, Target, BarChart3, Users, Spa
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { legacySupabase } from '@/integrations/supabase/client';
+import { captureLead } from '@/lib/commercialApi';
+import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
@@ -63,6 +65,8 @@ const faqs = [
 
 const PriceSimulator = () => {
   const { i18n } = useTranslation();
+  const market = marketForLanguage(i18n.language);
+  const locale = localeForLanguage(i18n.language);
   const [step, setStep] = useState(0);
   const [solutionType, setSolutionType] = useState('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -111,17 +115,21 @@ const PriceSimulator = () => {
     setSubmitting(true);
     const price = calculatePrice();
     try {
-      const { error } = await legacySupabase.from('leads').insert({
+      const { error } = await captureLead({
         name: leadForm.name.trim().slice(0, 100),
         email: leadForm.email.trim().slice(0, 255),
         phone: leadForm.phone.trim().slice(0, 20) || null,
         company: leadForm.company.trim().slice(0, 100) || null,
-        website: leadForm.website.trim().slice(0, 255) || null,
-        service: selectedServices.join(', '),
-        budget: `€${price.min} - €${price.max}`,
-        timeline: leadForm.timeline || null,
         message: leadForm.message.trim().slice(0, 1000) || null,
         source: 'price-simulator',
+        service_interest: selectedServices.join(', '),
+        market,
+        locale,
+        legacy: {
+          website: leadForm.website.trim().slice(0, 255) || null,
+          budget: `€${price.min} - €${price.max}`,
+          timeline: leadForm.timeline || null,
+        },
       });
       if (error) throw error;
 

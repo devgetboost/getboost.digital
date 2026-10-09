@@ -11,7 +11,10 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from 'react-i18next';
 import { legacySupabase } from '@/integrations/supabase/client';
+import { captureLead } from '@/lib/commercialApi';
+import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { analytics } from '@/lib/analytics';
 import { toast } from 'sonner';
 import { Link as RouterLink } from 'react-router-dom';
@@ -51,6 +54,9 @@ const analyzeItems = [
 ];
 
 const ContentIdeasPage = () => {
+  const { i18n } = useTranslation();
+  const market = marketForLanguage(i18n.language);
+  const locale = localeForLanguage(i18n.language);
   const [niche, setNiche] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -70,13 +76,14 @@ const ContentIdeasPage = () => {
     setIdeas(null);
 
     // Save lead
-    await legacySupabase.from('leads').insert({
+    await captureLead({
       source: 'content-ideas',
       name: name.trim(),
       email: email.trim(),
-      resource_id: '8',
-      resource_name: 'Gerador de Ideias de Conteúdo com IA',
       message: `Nicho: ${niche.trim()}`,
+      market,
+      locale,
+      legacy: { resource_id: '8', resource_name: 'Gerador de Ideias de Conteúdo com IA' },
     });
     analytics.trackForm('content_ideas', 'content_ideas_form_success', { niche: niche.trim(), email: email.trim() });
 

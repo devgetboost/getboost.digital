@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   APP_ENVIRONMENTS,
@@ -137,7 +137,13 @@ describe('wave 1 type contract static surface', () => {
 
 describe('wave 1 repository integrity', () => {
   it('leaves the supabase link pointing at STAGING', () => {
-    const ref = read('supabase/.temp/project-ref').trim();
-    expect(ref).toBe('jruylzhfobhjisnneyrj');
+    // supabase/.temp/ is gitignored CLI-local state: the link file only
+    // exists where a developer ran `supabase link`. CI/Hostinger checkouts
+    // never link a project, so absence is safe — CI does not drive
+    // `supabase db push` through a local link. When a link exists, it
+    // must point at STAGING so migrations never target production.
+    const linkPath = join(repo, 'supabase/.temp/project-ref');
+    if (!existsSync(linkPath)) return;
+    expect(readFileSync(linkPath, 'utf8').trim()).toBe('jruylzhfobhjisnneyrj');
   });
 });

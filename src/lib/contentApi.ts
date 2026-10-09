@@ -30,6 +30,27 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 import type { MarketCode } from '@/config/env';
 import { contentBodyToText } from './contentBody';
+import type { MarketScope } from './markets';
+
+/**
+ * R1C7: a content read is scoped by market, and the canonical locale follows
+ * from the market. `MarketScope` is the authoritative definition in `./markets`.
+ */
+export type ContentScope = MarketScope;
+export {
+  MARKET_CODES,
+  MARKET_HREFLANG,
+  MARKET_LOCALE,
+  MARKET_OG_LOCALE,
+  MARKET_PATH_PREFIX,
+  MARKET_UI_LANGUAGE,
+  marketAlternates,
+  marketForUiLanguage,
+  parseMarketPath,
+  toMarketPath,
+  type MarketCode,
+  type MarketScope,
+} from './markets';
 
 type Tables = Database['public']['Tables'];
 
@@ -54,43 +75,15 @@ export const PUBLISHED_STATUS = 'published' as const;
 // ---------------------------------------------------------------------------
 
 /**
- * The site ships three i18n languages (`pt`, `en`, `es`) while the content
- * schema models three markets (`PT`, `BR`, `INTL`). They are not 1:1: both
- * `en` and `es` are international.
+ * R1C7: market and locale resolution is delegated to `./markets`, the single
+ * authoritative model. PT → pt-PT, BR → pt-BR, INTL → en. A locale is never
+ * derived by assuming it equals the market.
  */
-const MARKET_BY_LANGUAGE: Record<string, MarketCode> = {
-  pt: 'PT',
-  en: 'INTL',
-  es: 'INTL',
-};
-
-/** Resolves the content market for the active language. Defaults to PT. */
-export function marketForLanguage(language: string | undefined): MarketCode {
-  if (!language) return 'PT';
-  return MARKET_BY_LANGUAGE[language] ?? MARKET_BY_LANGUAGE[language.split('-')[0]] ?? 'PT';
-}
-
-/** Resolves the `locale` string stored alongside localized content. */
-export function localeForLanguage(language: string | undefined): string {
-  if (!language) return 'pt-PT';
-  const base = language.split('-')[0];
-  const explicit: Record<string, string> = {
-    pt: 'pt-PT',
-    en: 'en',
-    es: 'es',
-  };
-  return explicit[base] ?? explicit[language] ?? 'pt-PT';
-}
-
-/** Every content query is market-scoped; this is the shape of that scope. */
-export interface ContentScope {
-  market: MarketCode;
-  locale: string;
-}
-
-export function scopeFromLanguage(language: string | undefined): ContentScope {
-  return { market: marketForLanguage(language), locale: localeForLanguage(language) };
-}
+export {
+  marketForLanguage,
+  localeForLanguage,
+  scopeForLanguage,
+} from './markets';
 
 // ---------------------------------------------------------------------------
 // Page-facing view models

@@ -99,10 +99,16 @@ function generateUrlXml(path, priority = '0.5', changefreq = 'weekly') {
   // We avoid trailing slashes for consistency unless it's the root
   const baseHref = cleanPath === '/' ? '' : cleanPath;
   
-  ['pt', 'en', 'es'].forEach(lang => {
-    const langPath = lang === 'pt' ? cleanPath : `/${lang}${baseHref}`;
-    const href = `${SITE_URL}${langPath}`;
-    xml += `    <xhtml:link rel="alternate" hreflang="${lang}" href="${href}"/>\n`;
+  // R1C7: alternates are per MARKET, not per interface language. PT owns the
+  // bare path, BR is /br, INTL is /en. `x-default` points at PT.
+  const MARKET_ALTERNATES = [
+    ['pt-PT', ''],
+    ['pt-BR', '/br'],
+    ['en', '/en'],
+  ];
+  MARKET_ALTERNATES.forEach(([hreflang, prefix]) => {
+    const href = `${SITE_URL}${prefix}${baseHref}`;
+    xml += `    <xhtml:link rel="alternate" hreflang="${hreflang}" href="${href}"/>\n`;
   });
   xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}${cleanPath}"/>\n`;
   
@@ -127,8 +133,8 @@ const demoMultilingualSlugs = new Set(['qook']);
 function generateDemoUrlXml(slug) {
   const isMulti = demoMultilingualSlugs.has(slug);
   const pt = `${SITE_URL}/demo?produto=${slug}`;
+  // R1C7: markets, not interface languages. BR is the pt-BR market, INTL is en.
   const en = `${pt}&lang=en`;
-  const es = `${pt}&lang=es`;
 
   let xml = '  <url>\n';
   xml += `    <loc>${pt}</loc>\n`;
@@ -138,7 +144,6 @@ function generateDemoUrlXml(slug) {
   if (isMulti) {
     xml += `    <xhtml:link rel="alternate" hreflang="pt" href="${pt}"/>\n`;
     xml += `    <xhtml:link rel="alternate" hreflang="en" href="${en}"/>\n`;
-    xml += `    <xhtml:link rel="alternate" hreflang="es" href="${es}"/>\n`;
     xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${pt}"/>\n`;
   }
   xml += '  </url>\n';
@@ -154,7 +159,6 @@ function generateDemoUrlXml(slug) {
     xml += `    <priority>0.6</priority>\n`;
     xml += `    <xhtml:link rel="alternate" hreflang="pt" href="${pt}"/>\n`;
     xml += `    <xhtml:link rel="alternate" hreflang="en" href="${en}"/>\n`;
-    xml += `    <xhtml:link rel="alternate" hreflang="es" href="${es}"/>\n`;
     xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${pt}"/>\n`;
     xml += '  </url>\n';
   }

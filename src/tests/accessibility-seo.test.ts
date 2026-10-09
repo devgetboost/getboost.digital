@@ -7,9 +7,13 @@ import { investorProjects } from "../data/investorProjects";
 
 describe("Shared SEO and Routing Normalization", () => {
   test("normalizePath correctly cleans various URL formats", () => {
-    expect(normalizePath("/EN/SERVICES/")).toBe("/services");
+    // R1C7: /en is the INTL *market*, not a spelling of the bare PT path, so the
+    // prefix survives normalization.
+    expect(normalizePath("/EN/SERVICES/")).toBe("/en/services");
     expect(normalizePath("/investidores/Hostify/")).toBe("/investidores/hostify");
+    // `/pt` is redundant: PT owns the bare path, so it collapses.
     expect(normalizePath("/pt/about")).toBe("/about");
+    expect(normalizePath("/br/about")).toBe("/br/about");
     expect(normalizePath("/")).toBe("/");
     expect(normalizePath("")).toBe("/");
   });

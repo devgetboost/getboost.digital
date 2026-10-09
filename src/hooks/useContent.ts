@@ -12,6 +12,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { withFallback, withFallbackList, type FallbackResult } from '@/lib/contentFallback';
 import {
   ContentUnavailableError,
   fetchAuthors,
@@ -23,7 +24,7 @@ import {
   fetchProducts,
   fetchPublishedEntries,
   fetchRelatedEntries,
-  scopeFromLanguage,
+  scopeForLanguage,
   type CaseStudyView,
   type ContentAuthorView,
   type ContentCategoryView,
@@ -52,7 +53,7 @@ function useContentQuery<T>(run: (scope: ContentScope) => Promise<T>, deps: unkn
 
     void (async () => {
       try {
-        const result = await run(scopeFromLanguage(i18n.language));
+        const result = await run(scopeForLanguage(i18n.language));
         if (active) setData(result);
       } catch (err) {
         if (!active) return;
@@ -82,6 +83,26 @@ export function useContentEntries(options: { contentType?: ContentType; limit?: 
     options.contentType,
     options.limit,
   ]);
+}
+
+/**
+ * Published entries with the explicit R1C7 fallback chain.
+ *
+ * Returns the same list plus `fallback` and `resolvedMarket`, so a page can
+ * show "not yet translated" instead of pretending cross-market content is
+ * local. Pass `allowMarketFallback: false` to refuse other markets' content.
+ */
+export function useContentEntriesWithFallback(
+  options: { contentType?: ContentType; limit?: number; allowMarketFallback?: boolean } = {},
+) {
+  const { data, loading, error } = useContentQuery<FallbackResult<ContentEntryView[]> | null>(
+    (scope) =>
+      withFallbackList(scope, (s) => fetchPublishedEntries(s, options), {
+        allowMarketFallback: options.allowMarketFallback,
+      }),
+    [options.contentType, options.limit, options.allowMarketFallback],
+  );
+  return { entries: data?.data ?? [], fallback: data?.fallback ?? 'exact', resolvedMarket: data?.resolvedMarket, loading, error };
 }
 
 /** One published entry by slug or id. */
@@ -115,6 +136,17 @@ export function useCaseStudies(options: { limit?: number } = {}) {
   return useContentQuery<CaseStudyView[]>((scope) => fetchCaseStudies(scope, options), [options.limit]);
 }
 
+/** Case studies with the explicit R1C7 fallback chain. */
+export function useCaseStudiesWithFallback(options: { limit?: number; allowMarketFallback?: boolean } = {}) {
+  const { data, loading, error } = useContentQuery<FallbackResult<CaseStudyView[]> | null>((scope) =>
+    withFallbackList(scope, (s) => fetchCaseStudies(s, options), {
+      allowMarketFallback: options.allowMarketFallback,
+    }),
+    [options.limit, options.allowMarketFallback],
+  );
+  return { caseStudies: data?.data ?? [], fallback: data?.fallback ?? 'exact', resolvedMarket: data?.resolvedMarket, loading, error };
+}
+
 /** One published case study by slug or id. */
 export function useCaseStudy(slugOrId: string | undefined) {
   return useContentQuery<CaseStudyView | null>(
@@ -126,6 +158,17 @@ export function useCaseStudy(slugOrId: string | undefined) {
 /** Published products for the active market. */
 export function useProducts(options: { limit?: number } = {}) {
   return useContentQuery<ProductView[]>((scope) => fetchProducts(scope, options), [options.limit]);
+}
+
+/** Products with the explicit R1C7 fallback chain. */
+export function useProductsWithFallback(options: { limit?: number; allowMarketFallback?: boolean } = {}) {
+  const { data, loading, error } = useContentQuery<FallbackResult<ProductView[]> | null>((scope) =>
+    withFallbackList(scope, (s) => fetchProducts(s, options), {
+      allowMarketFallback: options.allowMarketFallback,
+    }),
+    [options.limit, options.allowMarketFallback],
+  );
+  return { products: data?.data ?? [], fallback: data?.fallback ?? 'exact', resolvedMarket: data?.resolvedMarket, loading, error };
 }
 
 /** One published product by slug or id. */

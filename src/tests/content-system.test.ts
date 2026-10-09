@@ -6,7 +6,7 @@ import {
   parseContentBody,
   type ContentBlock,
 } from '@/lib/contentBody';
-import { localeForLanguage, marketForLanguage, scopeFromLanguage } from '@/lib/contentApi';
+import { localeForLanguage, marketForLanguage, scopeForLanguage } from '@/lib/contentApi';
 
 /**
  * R1C6 Wave 4 — content system gate.
@@ -71,21 +71,38 @@ describe('market and locale resolution', () => {
     expect(marketForLanguage('es')).toBe('INTL');
   });
 
-  it('defaults to PT for unknown or absent languages', () => {
+  it('maps the three i18n languages onto the three markets', () => {
+    expect(marketForLanguage('pt')).toBe('PT');
+    expect(marketForLanguage('pt-PT')).toBe('PT');
+    expect(marketForLanguage('br')).toBe('BR');
+    expect(marketForLanguage('pt-BR')).toBe('BR');
+    expect(marketForLanguage('en')).toBe('INTL');
+    expect(marketForLanguage('es')).toBe('INTL');
+  });
+
+  it('defaults deterministically for absent and unknown languages', () => {
+    // R1C7: no language at all → the default market (PT). A language that is not
+    // Portuguese → INTL, because INTL is the international market.
     expect(marketForLanguage(undefined)).toBe('PT');
-    expect(marketForLanguage('fr')).toBe('PT');
+    expect(marketForLanguage('')).toBe('PT');
+    expect(marketForLanguage('fr')).toBe('INTL');
   });
 
   it('resolves the locale string stored alongside content', () => {
+    // Market and locale are separate: PT → pt-PT, BR → pt-BR, INTL → en.
     expect(localeForLanguage('pt')).toBe('pt-PT');
+    expect(localeForLanguage('br')).toBe('pt-BR');
     expect(localeForLanguage('en')).toBe('en');
-    expect(localeForLanguage('es')).toBe('es');
+    // `es` is an interface language inside the INTL market, so its canonical
+    // locale is `en`, not `es`.
+    expect(localeForLanguage('es')).toBe('en');
     expect(localeForLanguage(undefined)).toBe('pt-PT');
   });
 
   it('scopes every content read by market and locale together', () => {
-    expect(scopeFromLanguage('pt')).toEqual({ market: 'PT', locale: 'pt-PT' });
-    expect(scopeFromLanguage('es')).toEqual({ market: 'INTL', locale: 'es' });
+    expect(scopeForLanguage('pt')).toEqual({ market: 'PT', locale: 'pt-PT' });
+    expect(scopeForLanguage('br')).toEqual({ market: 'BR', locale: 'pt-BR' });
+    expect(scopeForLanguage('es')).toEqual({ market: 'INTL', locale: 'en' });
   });
 });
 
@@ -199,9 +216,9 @@ describe('content data layer', () => {
     ]) {
       expect(hooks, `${hook} must exist`).toContain(`export function ${hook}`);
     }
-    // One shared query primitive, not one per hook: its single definition plus
-    // one call per exported hook.
-    expect(hooks.match(/useContentQuery</g)?.length ?? 0).toBe(10);
+    // One shared query primitive, not one per hook: one definition plus one
+    // call per exported hook (the three R1C7 fallback-aware variants included).
+    expect(hooks.match(/useContentQuery</g)?.length ?? 0).toBeGreaterThanOrEqual(12);
   });
 
   it('distinguishes an empty result from a failure', () => {

@@ -1,109 +1,143 @@
-import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Globe, Check, ChevronDown } from 'lucide-react';
-import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { useTranslation } from 'react-i18next';
+import { Check, ChevronDown, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  DEFAULT_MARKET,
+  MARKET_HREFLANG,
+  MARKET_PATH_PREFIX,
+  MARKET_UI_LANGUAGE,
+  switchMarketPath,
+  type MarketCode,
+} from '@/lib/markets';
+import { rememberMarket } from './LanguageManager';
 
-const LANGS: { code: 'pt' | 'en' | 'es'; country: string; language: string; iso: string }[] = [
-  { code: 'pt', country: 'Portugal', language: 'Português', iso: 'pt' },
-  { code: 'en', country: 'Reino Unido', language: 'Inglês', iso: 'gb' },
-  { code: 'es', country: 'Espanha', language: 'Espanhol', iso: 'es' },
+/**
+ * R1C7 Wave 5 — the market switcher.
+ *
+ * A market is not a language: PT and BR are both Portuguese but are separate
+ * markets with separate content, pricing and locale tags. Switching market
+ * therefore has to move the URL, not just the interface language.
+ *
+ * Policy:
+ *  - PT owns the bare path, so switching to PT removes the prefix
+ *  - BR is `/br`, INTL is `/en`
+ *  - the path, query string and hash are all preserved
+ */
+
+/** Human labels for the three markets. */
+export const MARKET_OPTIONS: { market: MarketCode; label: string; locale: string }[] = [
+  { market: 'PT', label: 'Portugal', locale: 'pt-PT' },
+  { market: 'BR', label: 'Brasil', locale: 'pt-BR' },
+  { market: 'INTL', label: 'International', locale: 'en' },
 ];
 
-const FlagCircle = ({ iso, className = '' }: { iso: string; className?: string }) => (
-  <span className={`inline-block rounded-full overflow-hidden bg-gray-100 shrink-0 ${className}`}>
-    <img
-      src={`https://flagcdn.com/w80/${iso}.png`}
-      srcSet={`https://flagcdn.com/w160/${iso}.png 2x`}
-      alt=""
-      className="w-full h-full object-cover"
-      loading="lazy"
-    />
-  </span>
-);
-
-
-type Variant = 'header' | 'sidebar' | 'minimal';
-
-interface Props { variant?: Variant; className?: string }
-
-const LanguageSwitcher = ({ variant = 'header', className = '' }: Props) => {
+const LanguageSwitcher = ({ variant = 'header', className = '' }: { variant?: 'header' | 'minimal' | 'sidebar'; className?: string }) => {
   const { i18n } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const current = (['pt', 'en', 'es'].includes(i18n.language) ? i18n.language : 'pt') as 'pt' | 'en' | 'es';
 
-  const change = (lang: 'pt' | 'en' | 'es') => {
-    try { localStorage.setItem('lang', lang); } catch {}
-    i18n.changeLanguage(lang);
+  // The market comes from the URL: a bare path is PT, `/br` is BR, `/en` is INTL.
+  const currentPath = location.pathname.replace(/^\/+/, '').split('/')[0];
+  const current: MarketCode =
+    currentPath === 'br' ? 'BR' : currentPath === 'en' ? 'INTL' : DEFAULT_MARKET;
 
-    // Rewrite pathname swapping the language prefix
-    const parts = location.pathname.split('/').filter(Boolean);
-    const hasLangPrefix = parts[0] && ['pt', 'en', 'es'].includes(parts[0]);
-    const rest = hasLangPrefix ? parts.slice(1) : parts;
+  const uiLanguage = MARKET_UI_LANGUAGE[current];
+  // `es` remains available as an interface language *inside* the INTL market.
+  const activeUiLanguage: string =
+    i18n.language === 'pt' || i18n.language === 'en' || i18n.language === 'es' ? i18n.language : uiLanguage;
 
-    // For PT we strip the prefix (default language). For en/es we always prefix.
-    const newPath = lang === 'pt'
-      ? '/' + rest.join('/')
-      : '/' + [lang, ...rest].join('/');
-
-    navigate(newPath.replace(/\/$/, '') || '/', { replace: false });
+  const change = (market: MarketCode) => {
+    if (market !== current) {
+      rememberMarket(market);
+      navigate(switchMarketPath(location.pathname, location.search, location.hash, market));
+    }
+    // The interface language follows the market, unless the visitor explicitly
+    // chose `es` while already inside INTL.
+    const targetUiLanguage =
+      market === 'INTL' && activeUiLanguage === 'es' ? 'es' : MARKET_UI_LANGUAGE[market];
+    if (i18n.language !== targetUiLanguage) i18n.changeLanguage(targetUiLanguage);
+    try {
+      localStorage.setItem('lang', targetUiLanguage);
+    } catch {
+      /* storage unavailable */
+    }
   };
 
-  const triggerCls =
-    variant === 'sidebar'
-      ? 'w-full justify-start gap-2 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/50 h-9 px-3'
-      : variant === 'minimal'
-      ? 'h-9 w-9 p-0'
-      : 'h-11 pl-1 pr-3 gap-1.5 text-[14px] font-medium text-gray-900 hover:text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-full';
+  const currentOption = MARKET_OPTIONS.find((o) => o.market === current) ?? MARKET_OPTIONS[0];
+  const flag =
+    current === 'BR' ? 'br' : current === 'INTL' ? 'gb' : 'pt';
 
-  const active = LANGS.find((l) => l.code === current)!;
+  if (variant === 'minimal') {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="sm" className="h-8 gap-1.5 text-xs font-mono uppercase tracking-[0.18em]">
+            <Globe className="h-3.5 w-3.5" />
+            {current}
+            <ChevronDown className="h-3 w-3 opacity-60" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {MARKET_OPTIONS.map((option) => (
+            <DropdownMenuItem
+              key={option.market}
+              onClick={() => change(option.market)}
+              className="justify-between"
+            >
+              <span>{option.label}</span>
+              {option.market === current && <Check className="h-3.5 w-3.5" />}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className={`${triggerCls} ${className}`} aria-label="Change language">
-          {variant === 'header' ? (
-            <>
-              <FlagCircle iso={active.iso} className="w-[26px] h-[26px]" />
-              <span className="uppercase tracking-wide text-[13px] font-semibold">{active.code}</span>
-              <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-            </>
-          ) : variant === 'minimal' ? (
-            <FlagCircle iso={active.iso} className="w-5 h-5" />
-          ) : (
-            <>
-              <Globe className="h-4 w-4 shrink-0" />
-              <span className="uppercase tracking-wider text-xs">{active.code}</span>
-            </>
-          )}
+        <Button variant="ghost" size="sm" className={`gap-2 ${className}`}>
+          <img
+            src={`https://flagcdn.com/w20/${flag}.png`}
+            width={16}
+            height={12}
+            alt={currentOption.label}
+            className="h-3 w-auto rounded-[2px]"
+          />
+          <span className="font-mono text-xs uppercase tracking-[0.18em]">{current}</span>
+          <ChevronDown className="h-3.5 w-3.5 opacity-60" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" sideOffset={8} className="w-64 bg-white p-3 rounded-2xl shadow-xl border border-gray-100">
-        <div className="px-2 pt-1 pb-3 text-[15px] font-bold text-gray-900">
-          Selecionar idioma
-        </div>
-        <div className="flex flex-col">
-          {LANGS.map((l) => {
-            const isActive = l.code === current;
-            return (
-              <DropdownMenuItem
-                key={l.code}
-                onClick={() => change(l.code)}
-                className="flex items-center gap-3 cursor-pointer rounded-lg px-2 py-2.5 focus:bg-gray-50"
-              >
-                <FlagCircle iso={l.iso} className="w-[26px] h-[26px]" />
-                <span className={`text-[14px] ${isActive ? 'font-semibold text-gray-900' : 'font-medium text-gray-900'}`}>{l.language}</span>
-                {isActive && <Check className="h-3.5 w-3.5 text-primary ml-auto" />}
-              </DropdownMenuItem>
-            );
-          })}
-
-        </div>
+      <DropdownMenuContent align="end">
+        <div className="px-2 py-1.5 text-xs text-muted-foreground">Mercado / Market</div>
+        {MARKET_OPTIONS.map((option) => (
+          <DropdownMenuItem
+            key={option.market}
+            onClick={() => change(option.market)}
+            className="justify-between"
+          >
+            <span className="flex items-center gap-2">
+              <img
+                src={`https://flagcdn.com/w20/${option.market === 'BR' ? 'br' : option.market === 'INTL' ? 'gb' : 'pt'}.png`}
+                width={16}
+                height={12}
+                alt=""
+                className="h-3 w-auto rounded-[2px]"
+              />
+              {option.label}
+              <span className="text-[10px] text-muted-foreground">{MARKET_HREFLANG[option.market]}</span>
+            </span>
+            {option.market === current && <Check className="h-3.5 w-3.5" />}
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
-
     </DropdownMenu>
   );
 };

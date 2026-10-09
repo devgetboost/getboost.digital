@@ -3,6 +3,18 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { normalizePath } from '@/lib/utils';
 
+import {
+  DEFAULT_MARKET,
+  MARKET_HREFLANG,
+  MARKET_LOCALE,
+  MARKET_OG_LOCALE,
+  MARKET_PATH_PREFIX,
+  MARKET_UI_LANGUAGE,
+  marketAlternates,
+  marketForLanguage,
+  type MarketCode,
+} from '@/lib/markets';
+
 const SITE_URL = 'https://getboostsoft.lovable.app';
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
 const SITE_NAME = 'Getboost Digital — Marketing Digital & IA';
@@ -22,7 +34,8 @@ interface SEOProps {
   type?: string;
   noIndex?: boolean;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
-  lang?: 'pt' | 'en' | 'es';
+  /** Either a market code (PT/BR/INTL) or a UI language (pt/en/es). */
+  lang?: string;
   alternates?: { lang: string; href: string }[];
 }
 
@@ -67,28 +80,32 @@ const normalizeUrl = (url?: string) => {
  */
 const generateHreflangs = (path?: string) => {
   if (!path) return [];
-  
-  const baseCleanPath = normalizePath(path);
-  
-  // Get path without language prefix if it exists
-  let cleanPathWithoutLang = baseCleanPath;
-  const langPrefixes = ['/en', '/es', '/pt'];
-  for (const prefix of langPrefixes) {
-    if (baseCleanPath.startsWith(prefix)) {
-      cleanPathWithoutLang = baseCleanPath.substring(prefix.length) || '/';
-      break;
-    }
-  }
 
-  // Ensure we don't have double slashes when prefixing
-  const pathPart = cleanPathWithoutLang === '/' ? '' : cleanPathWithoutLang;
-  
+  // R1C7: alternates are per *market*, not per interface language. PT owns the
+  // bare path; BR and INTL are prefixed. `x-default` points at PT, the default
+  // market, so a search engine with no better signal lands on the PT page.
+  const alternates = marketAlternates(path);
+
   return [
-    { lang: 'pt', href: `${SITE_URL}${pathPart || '/'}` },
-    { lang: 'en', href: `${SITE_URL}/en${pathPart}` },
-    { lang: 'es', href: `${SITE_URL}/es${pathPart}` },
-    { lang: 'x-default', href: `${SITE_URL}${pathPart || '/'}` }
+    { lang: MARKET_HREFLANG.PT, href: `${SITE_URL}${alternates.PT}` },
+    { lang: MARKET_HREFLANG.BR, href: `${SITE_URL}${alternates.BR}` },
+    { lang: MARKET_HREFLANG.INTL, href: `${SITE_URL}${alternates.INTL}` },
+    { lang: 'x-default', href: `${SITE_URL}${alternates.PT}` },
   ];
+};
+
+/**
+ * Resolves the market a `<SEO>` describes.
+ *
+ * Accepts either a market code (PT/BR/INTL) or an interface language
+ * (pt/en/es) for backwards compatibility with the ~50 pages that pass
+ * `lang={i18n.language}`. A bare path with no hint is PT, the default market.
+ */
+const resolveMarketFromLang = (lang: string | undefined, path: string): MarketCode => {
+  if (lang && (['PT', 'BR', 'INTL'] as string[]).includes(lang)) return lang as MarketCode;
+  if (lang) return marketForLanguage(lang);
+  const prefix = path.replace(/^\/+/, '').split('/')[0];
+  return prefix === 'br' ? 'BR' : prefix === 'en' ? 'INTL' : DEFAULT_MARKET;
 };
 
 const SEO = ({
@@ -114,17 +131,34 @@ const SEO = ({
     ? image
     : `${SITE_URL}${image.startsWith('/') ? image : `/${image}`}`;
 
-  const localeMap = {
-    pt: 'pt_PT',
-    en: 'en_US',
-    es: 'es_ES',
+  // R1C7: locale and market are separate concepts. The `<html lang>` and
+  // `og:locale` tags carry the market's canonical *locale* (pt-PT / pt-BR / en),
+  // so a BR visitor is not mislabelled as European Portuguese.
+  const activeMarket = resolveMarketFromLang(lang, effectivePath);
+  const activeLocale = MARKET_LOCALE[activeMarket];
+
+  const localeMap: Record<string, string> = {
+    pt: MARKET_OG_LOCALE.PT,
+    en: MARKET_OG_LOCALE.INTL,
+    es: MARKET_OG_LOCALE.INTL,
+    PT: MARKET_OG_LOCALE.PT,
+    BR: MARKET_OG_LOCALE.BR,
+    INTL: MARKET_OG_LOCALE.INTL,
   };
 
-  const htmlLangMap = {
-    pt: 'pt',
-    en: 'en',
-    es: 'es',
+  const htmlLangMap: Record<string, string> = {
+    pt: MARKET_LOCALE.PT,
+    en: MARKET_LOCALE.INTL,
+    // `es` is an interface language inside the INTL market; the document
+    // language still reports the INTL market's canonical locale.
+    es: MARKET_LOCALE.INTL,
+    PT: MARKET_LOCALE.PT,
+    BR: MARKET_LOCALE.BR,
+    INTL: MARKET_LOCALE.INTL,
   };
+
+  void MARKET_PATH_PREFIX;
+  void MARKET_UI_LANGUAGE;
 
   // Runtime validation in Development mode
   useEffect(() => {

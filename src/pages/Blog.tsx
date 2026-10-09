@@ -6,7 +6,7 @@ import { Search, Clock, ArrowRight, Loader2 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
 import { supabase } from '@/integrations/supabase/client';
-import { useContentEntries } from '@/hooks/useContent';
+import { useContentEntriesWithFallback } from '@/hooks/useContent';
 import { estimateReadingMinutes, mediaUrl } from '@/lib/contentApi';
 
 const ACCENT = '#ff4000';
@@ -20,11 +20,17 @@ const Blog = () => {
   const location = useLocation();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
-  const { data: entries, loading, error } = useContentEntries({ contentType: 'insight' });
-  const posts = useMemo(() => {
-    const visible = (entries ?? []).slice();
-    return visible.sort((a, b) => (b.publishedAt ?? b.createdAt).localeCompare(a.publishedAt ?? a.createdAt));
-  }, [entries]);
+  const { entries, loading, fallback, resolvedMarket } = useContentEntriesWithFallback({
+    contentType: 'insight',
+  });
+  const posts = useMemo(
+    () =>
+      entries
+        .slice()
+        .sort((a, b) => (b.publishedAt ?? b.createdAt).localeCompare(a.publishedAt ?? a.createdAt)),
+    [entries],
+  );
+  const crossMarket = fallback === 'default';
 
   const currentPath = useMemo(() => location.pathname, [location.pathname]);
   const dateLocale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'en' ? 'en-GB' : 'pt-PT';
@@ -296,6 +302,12 @@ const Blog = () => {
                   );
                 })}
               </div>
+
+              {crossMarket && (
+                <div className="mb-8 border border-amber-500/30 bg-amber-500/10 rounded-lg p-4 text-sm text-amber-100">
+                  {t('blog.notLocalized', 'Este conteúdo ainda não está traduzido para o teu mercado. Mostramos a versão original.')}
+                </div>
+              )}
 
               {!loading && filtered.length === 0 && (
                 <div className="text-center py-24 text-white/50 font-mono text-sm uppercase tracking-[0.22em]">

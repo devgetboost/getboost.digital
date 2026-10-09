@@ -9,7 +9,8 @@ export function cn(...inputs: ClassValue[]) {
  * Normalizes a URL path to ensure consistency
  * - Lowercase path
  * - Consistent encoding
- * - Strips language prefixes (/en, /es, /pt)
+ * - Collapses the redundant `/pt` prefix (PT is the default and owns the bare path)
+ * - Preserves market prefixes (`/br`, `/en`) because they are different content
  * - Removes trailing slash (except for root)
  */
 export function normalizePath(path: string): string {
@@ -22,8 +23,12 @@ export function normalizePath(path: string): string {
     // Remove query params and hashes for comparison if needed
     cleaned = cleaned.split('?')[0].split('#')[0];
     
-    // Remove language prefixes
-    cleaned = cleaned.replace(/^\/(pt|en|es)(\/|$)/, '/');
+    // R1C7: market prefixes are meaningful and must survive normalization.
+    // `/br/solucoes` and `/solucoes` are different markets, not spellings of the
+    // same URL. Stripping them here made every prefixed route redirect back to
+    // the bare path and destroyed market targeting. Only the retired `/pt`
+    // prefix (PT is the default and owns the bare path) is collapsed.
+    cleaned = cleaned.replace(/^\/(pt)(\/|$)/, '/');
     
     // Ensure starts with slash
     if (!cleaned.startsWith('/')) cleaned = `/${cleaned}`;

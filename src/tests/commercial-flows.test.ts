@@ -191,9 +191,12 @@ describe('market and locale derivation', () => {
   });
 
   it('maps the PT and BR languages to their markets', () => {
-    const src = read('src/lib/commercialMarket.ts');
-    expect(src).toContain("pt: 'PT'");
-    expect(src).toContain("BR");
-    expect(src).toContain("en: 'INTL'");
+    // R1C7: both commercial and content reads resolve through `./markets`, so
+    // the mapping table lives there and `commercialMarket` is a thin delegate.
+    const shared = read('src/lib/markets.ts');
+    expect(shared).toContain("pt: 'PT'");
+    expect(shared).toContain("'pt-br': 'BR'");
+    const commercial = read('src/lib/commercialMarket.ts');
+    expect(commercial).toContain("from './markets'");
   });
 });

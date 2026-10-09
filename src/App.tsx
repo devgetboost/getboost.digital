@@ -336,12 +336,12 @@ const App = () => (
             <Route path="/hostify" element={<HostifyLanding />} />
             <Route path="/:lang/hostify" element={<HostifyLanding />} />
             <Route path="/solucoes/hostify" element={<Navigate to="/hostify" replace />} />
-            <Route path="/:lang/solucoes/hostify" element={<Navigate to="/hostify" replace />} />
+            <Route path="/:lang/solucoes/hostify" element={<Navigate to="/:lang/hostify" replace />} />
 
             <Route path="/qook" element={<QookLanding />} />
             <Route path="/:lang/qook" element={<QookLanding />} />
             <Route path="/solucoes/qook" element={<Navigate to="/qook" replace />} />
-            <Route path="/:lang/solucoes/qook" element={<Navigate to="/qook" replace />} />
+            <Route path="/:lang/solucoes/qook" element={<Navigate to="/:lang/qook" replace />} />
 
             <Route path="/solucoes/bots-whatsapp-ia" element={<BotsWhatsApp />} />
             <Route path="/:lang/solucoes/bots-whatsapp-ia" element={<BotsWhatsApp />} />
@@ -357,25 +357,25 @@ const App = () => (
             <Route path="/:lang/solucoes/seo-geo-webmcp" element={<SeoGeoWebmcp />} />
             {/* Legacy Marketing & Growth slugs → redirect (client-side 301 equivalent) */}
             <Route path="/solucoes/seo-blog" element={<Navigate to="/solucoes/seo-geo-webmcp" replace />} />
-            <Route path="/:lang/solucoes/seo-blog" element={<Navigate to="/solucoes/seo-geo-webmcp" replace />} />
+            <Route path="/:lang/solucoes/seo-blog" element={<Navigate to="/:lang/solucoes/seo-geo-webmcp" replace />} />
             <Route path="/solucoes/seo" element={<Navigate to="/solucoes/seo-geo-webmcp" replace />} />
-            <Route path="/:lang/solucoes/seo" element={<Navigate to="/solucoes/seo-geo-webmcp" replace />} />
+            <Route path="/:lang/solucoes/seo" element={<Navigate to="/:lang/solucoes/seo-geo-webmcp" replace />} />
             <Route path="/solucoes/google-meta-ads" element={<Navigate to="/solucoes/paid-media" replace />} />
-            <Route path="/:lang/solucoes/google-meta-ads" element={<Navigate to="/solucoes/paid-media" replace />} />
+            <Route path="/:lang/solucoes/google-meta-ads" element={<Navigate to="/:lang/solucoes/paid-media" replace />} />
             <Route path="/solucoes/publicidade-meta-google" element={<Navigate to="/solucoes/paid-media" replace />} />
-            <Route path="/:lang/solucoes/publicidade-meta-google" element={<Navigate to="/solucoes/paid-media" replace />} />
+            <Route path="/:lang/solucoes/publicidade-meta-google" element={<Navigate to="/:lang/solucoes/paid-media" replace />} />
             <Route path="/solucoes/publicidade" element={<Navigate to="/solucoes/paid-media" replace />} />
-            <Route path="/:lang/solucoes/publicidade" element={<Navigate to="/solucoes/paid-media" replace />} />
+            <Route path="/:lang/solucoes/publicidade" element={<Navigate to="/:lang/solucoes/paid-media" replace />} />
             <Route path="/solucoes/branding-identidade-visual" element={<Navigate to="/solucoes/branding-identidade" replace />} />
-            <Route path="/:lang/solucoes/branding-identidade-visual" element={<Navigate to="/solucoes/branding-identidade" replace />} />
+            <Route path="/:lang/solucoes/branding-identidade-visual" element={<Navigate to="/:lang/solucoes/branding-identidade" replace />} />
             <Route path="/solucoes/branding" element={<Navigate to="/solucoes/branding-identidade" replace />} />
-            <Route path="/:lang/solucoes/branding" element={<Navigate to="/solucoes/branding-identidade" replace />} />
+            <Route path="/:lang/solucoes/branding" element={<Navigate to="/:lang/solucoes/branding-identidade" replace />} />
             <Route path="/solucoes/auditoria-marketing" element={<Navigate to="/solucoes" replace />} />
-            <Route path="/:lang/solucoes/auditoria-marketing" element={<Navigate to="/solucoes" replace />} />
+            <Route path="/:lang/solucoes/auditoria-marketing" element={<Navigate to="/:lang/solucoes" replace />} />
             <Route path="/solucoes/copywriting" element={<Navigate to="/solucoes/copywriting-conteudo" replace />} />
-            <Route path="/:lang/solucoes/copywriting" element={<Navigate to="/solucoes/copywriting-conteudo" replace />} />
+            <Route path="/:lang/solucoes/copywriting" element={<Navigate to="/:lang/solucoes/copywriting-conteudo" replace />} />
             <Route path="/solucoes/redes-sociais" element={<Navigate to="/solucoes/gestao-redes-sociais" replace />} />
-            <Route path="/:lang/solucoes/redes-sociais" element={<Navigate to="/solucoes/gestao-redes-sociais" replace />} />
+            <Route path="/:lang/solucoes/redes-sociais" element={<Navigate to="/:lang/solucoes/gestao-redes-sociais" replace />} />
             <Route path="/solucoes/copywriting-conteudo" element={<CopywritingConteudo />} />
             <Route path="/:lang/solucoes/copywriting-conteudo" element={<CopywritingConteudo />} />
             <Route path="/solucoes/video-fotografia" element={<VideoFotografia />} />
@@ -405,14 +405,14 @@ const App = () => (
             <Route path="/solucoes/marketing-digital" element={<MarketingDigital />} />
             <Route path="/:lang/solucoes/marketing-digital" element={<MarketingDigital />} />
             <Route path="/solucoes/fotografia-drone" element={<Navigate to="/solucoes/video-fotografia" replace />} />
-            <Route path="/:lang/solucoes/fotografia-drone" element={<Navigate to="/solucoes/video-fotografia" replace />} />
+            <Route path="/:lang/solucoes/fotografia-drone" element={<Navigate to="/:lang/solucoes/video-fotografia" replace />} />
 
             <Route path="/solucoes/:slug" element={<SolucoesSlugRouter />} />
             <Route path="/:lang/solucoes/:slug" element={<SolucoesSlugRouter />} />
 
             {/* Produtos: sem página índice, redireciona para o primeiro produto */}
             <Route path="/produtos" element={<Navigate to="/qook" replace />} />
-            <Route path="/:lang/produtos" element={<Navigate to="/qook" replace />} />
+            <Route path="/:lang/produtos" element={<Navigate to="/:lang/qook" replace />} />
 
             {/* Legacy /services URLs → redirect to /solucoes */}
             <Route path="/services/*" element={<ServicesRedirect />} />
@@ -424,7 +424,7 @@ const App = () => (
             <Route path="/prosafe360" element={<Prosafe360Landing />} />
             <Route path="/:lang/prosafe360" element={<Prosafe360Landing />} />
             <Route path="/seguranca-trabalho" element={<Navigate to="/prosafe360" replace />} />
-            <Route path="/:lang/seguranca-trabalho" element={<Navigate to="/prosafe360" replace />} />
+            <Route path="/:lang/seguranca-trabalho" element={<Navigate to="/:lang/prosafe360" replace />} />
 
             <Route path="/pikto" element={<PiktoLanding />} />
             <Route path="/:lang/pikto" element={<PiktoLanding />} />

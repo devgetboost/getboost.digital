@@ -11,6 +11,11 @@ import {
   CommercialWriteError,
 } from '@/lib/commercialApi';
 import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
+import { MARKET_OPTIONS } from '@/components/LanguageSwitcher';
+import { switchMarketPath } from '@/lib/markets';
+import { DEFAULT_MARKET, type MarketCode } from '@/lib/markets';
+import { rememberMarket } from '@/components/LanguageManager';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import logoNunoCruz from '@/assets/logo-getboost-soft-branca.svg';
@@ -23,6 +28,21 @@ const languages = [
 
 const Footer = () => {
   const { t, i18n } = useTranslation();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const currentPath = location.pathname.replace(/^\/+/, '').split('/')[0];
+  const currentMarket: MarketCode = currentPath === 'br' ? 'BR' : currentPath === 'en' ? 'INTL' : DEFAULT_MARKET;
+
+  // Mirrors the header switcher: move the URL, then the interface language.
+  const change = (market: MarketCode) => {
+    if (market !== currentMarket) {
+      rememberMarket(market);
+      navigate(switchMarketPath(location.pathname, location.search, location.hash, market));
+    }
+    const targetUiLanguage = market === 'INTL' && i18n.language === 'es' ? 'es' : market === 'INTL' ? 'en' : 'pt';
+    if (i18n.language !== targetUiLanguage) i18n.changeLanguage(targetUiLanguage);
+    try { localStorage.setItem('lang', targetUiLanguage); } catch {}
+  };
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -225,17 +245,22 @@ const Footer = () => {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1.5">
               <Globe className="h-3.5 w-3.5 text-muted-foreground" />
-              {languages.map((lang) => (
+              {/* R1C7: the footer switcher now moves the market like the header
+                  one. It previously only called `changeLanguage`, so the URL
+                  (and therefore the `/:lang` route) disagreed with the UI and
+                  `LanguageManager` reverted it on the next navigation. */}
+              {MARKET_OPTIONS.map((option) => (
                 <button
-                  key={lang.code}
-                  onClick={() => i18n.changeLanguage(lang.code)}
+                  key={option.market}
+                  onClick={() => change(option.market)}
                   className={`text-xs font-medium px-2 py-1 rounded-full transition-colors ${
-                    i18n.language === lang.code
+                    currentMarket === option.market
                       ? 'bg-primary text-primary-foreground'
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
+                  title={option.label}
                 >
-                  {lang.code.toUpperCase()}
+                  {option.market}
                 </button>
               ))}
             </div>

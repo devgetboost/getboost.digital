@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { assertAdmin } from './agenticGuard';
 
 export type AgentProvider =
+  | 'deepseek'
   | 'lovable'
   | 'openai'
   | 'google'
@@ -22,8 +23,8 @@ export type SettingsErrors = Partial<Record<keyof AgentSettings, string>>;
 const KEY = 'agentic_ai_settings_v1';
 
 const DEFAULTS: AgentSettings = {
-  provider: 'lovable',
-  defaultModel: 'google/gemini-3-flash-preview',
+  provider: 'deepseek',
+  defaultModel: 'deepseek-chat',
   temperature: 0.7,
   maxTokens: 2048,
   fastMode: false,
@@ -35,7 +36,7 @@ export const FAST_MODE_SUPPORTED = ['openai/gpt-5', 'openai/gpt-5-mini', 'openai
 export const settingsSchema = z
   .object({
     provider: z.enum(
-      ['lovable', 'openai', 'google', 'openai_direct', 'anthropic_direct', 'google_direct'],
+      ['deepseek', 'lovable', 'openai', 'google', 'openai_direct', 'anthropic_direct', 'google_direct'],
       { errorMap: () => ({ message: 'Fornecedor inválido' }) },
     ),
     defaultModel: z.string().trim().min(1, 'Seleciona um modelo padrão'),
@@ -96,7 +97,8 @@ export async function saveSettings(s: AgentSettings): Promise<void> {
 }
 
 export const PROVIDERS = [
-  { id: 'lovable', label: 'Lovable AI Gateway', description: 'Padrão. Sem chave necessária.', requiresKey: null },
+  { id: 'deepseek', label: 'DeepSeek', description: 'Padrão. Requer DEEPSEEK_API_KEY no servidor.', requiresKey: 'DEEPSEEK_API_KEY' },
+  { id: 'lovable', label: 'Lovable AI Gateway (legado)', description: 'Requer LOVABLE_API_KEY no servidor.', requiresKey: 'LOVABLE_API_KEY' },
   { id: 'openai', label: 'OpenAI (via Lovable)', description: 'Modelos GPT via gateway.', requiresKey: null },
   { id: 'google', label: 'Google (via Lovable)', description: 'Modelos Gemini via gateway.', requiresKey: null },
   { id: 'openai_direct', label: 'OpenAI (direto)', description: 'Chamadas diretas à API OpenAI. Requer OPENAI_API_KEY.', requiresKey: 'OPENAI_API_KEY' },
@@ -105,7 +107,9 @@ export const PROVIDERS = [
 ] as const;
 
 export const MODELS: { id: string; label: string; providers: AgentProvider[] }[] = [
-  // Via Lovable gateway
+  // DeepSeek (active provider)
+  { id: 'deepseek-chat', label: 'DeepSeek Chat — padrão', providers: ['deepseek'] },
+  // Via Lovable gateway (legado — o servidor mapeia para DeepSeek)
   { id: 'google/gemini-3-flash-preview', label: 'Gemini 3 Flash (Preview) — padrão', providers: ['lovable', 'google'] },
   { id: 'google/gemini-3.5-flash', label: 'Gemini 3.5 Flash', providers: ['lovable', 'google'] },
   { id: 'google/gemini-2.5-flash', label: 'Gemini 2.5 Flash', providers: ['lovable', 'google'] },

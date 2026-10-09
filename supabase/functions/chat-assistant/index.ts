@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.100.1";
 import { buildProductKnowledgeSectionOrFallback, normalizeProductSlug } from "../_shared/product-knowledge.ts";
+import { chatCompletions } from "../_shared/ai-provider.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -91,42 +92,34 @@ Links importantes do site:
 Quando o utilizador pedir para agendar uma reunião ou consulta, fornece SEMPRE o link exato: https://getboost.digital/booking — nunca inventes links como Calendly ou outros.`;
     systemPrompt += `\n\nSe o utilizador pedir para falar com um humano ou se não conseguires ajudar adequadamente, responde EXATAMENTE com a frase: "[ESCALATE]" no início da mensagem, seguida de uma mensagem educada a informar que vais transferir para um humano.`;
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      return new Response(JSON.stringify({ error: "AI not configured" }), {
-        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...messages,
-        ],
-      }),
+    // R2B: inference goes through the provider-neutral layer (DeepSeek by
+    // default). Missing-key and transport failures stay fail-closed, exactly
+    // as before — only the endpoint changes.
+    const aiResult = await chatCompletions({
+      messages: [
+        { role: "system", content: systemPrompt },
+        ...messages,
+      ],
     });
 
-    if (!aiResponse.ok) {
-      if (aiResponse.status === 429) {
+    if (!aiResult.ok) {
+      if (aiResult.status === 429) {
         return new Response(JSON.stringify({ reply: "Estou com muitas conversas neste momento. Tenta novamente em breve!" }), {
           status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      console.error("AI error:", aiResponse.status, await aiResponse.text());
+      if (aiResult.errorType === "CONFIG") {
+        return new Response(JSON.stringify({ error: "AI not configured" }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      console.error("AI error:", aiResult.status, aiResult.errorMessage);
       return new Response(JSON.stringify({ error: "AI gateway error" }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const aiData = await aiResponse.json();
-    let reply = aiData.choices?.[0]?.message?.content || "Desculpa, não consegui processar a tua mensagem.";
+    let reply = aiResult.text || "Desculpa, não consegui processar a tua mensagem.";
 
     // Check for escalation
     let escalated = false;

@@ -1,7 +1,11 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import { chatCompletions } from '../_shared/ai-provider.ts';
 
+// R2B: DeepSeek is the active provider. Legacy namespaces stay accepted so
+// older admin UI selections keep working — the provider layer maps them.
 const ALLOWED_MODELS = new Set([
+  'deepseek-chat',
   'google/gemini-2.5-flash',
   'google/gemini-2.5-pro',
   'openai/gpt-5-mini',
@@ -21,8 +25,6 @@ Deno.serve(async (req) => {
 
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
     const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const LOVABLE_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_KEY) return json({ error: 'LOVABLE_API_KEY em falta' }, 500);
 
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
     const { data: userRes, error: userErr } = await admin.auth.getUser(jwt);
@@ -43,31 +45,27 @@ Deno.serve(async (req) => {
     if (userMessage.length > 4000) return json({ error: 'Mensagem demasiado longa' }, 400);
     if (!ALLOWED_MODELS.has(model)) return json({ error: 'Modelo inválido' }, 400);
 
-    const aiRes = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${LOVABLE_KEY}`,
-      },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userMessage },
-        ],
-      }),
+    // R2B: inference via the provider-neutral layer. Status mapping and the
+    // reply/usage response shape are unchanged.
+    const aiRes = await chatCompletions({
+      model,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMessage },
+      ],
     });
 
-    if (aiRes.status === 429) return json({ error: 'Limite de pedidos atingido. Tenta mais tarde.' }, 429);
-    if (aiRes.status === 402) return json({ error: 'Créditos AI esgotados.' }, 402);
+    if (!aiRes.ok && aiRes.status === 429) return json({ error: 'Limite de pedidos atingido. Tenta mais tarde.' }, 429);
+    if (!aiRes.ok && aiRes.status === 402) return json({ error: 'Créditos AI esgotados.' }, 402);
     if (!aiRes.ok) {
-      const t = await aiRes.text();
-      return json({ error: `Erro do gateway (${aiRes.status})`, detail: t.slice(0, 300) }, 502);
+      return json({ error: `Erro do gateway (${aiRes.status})`, detail: aiRes.errorMessage.slice(0, 300) }, 502);
     }
 
-    const data = await aiRes.json();
-    const reply = data?.choices?.[0]?.message?.content ?? '';
-    const usage = data?.usage ?? null;
+    const reply = aiRes.text ?? '';
+    const usage = aiRes.usage ? {
+      prompt_tokens: aiRes.usage.inputTokens ?? 0,
+      completion_tokens: aiRes.usage.outputTokens ?? 0,
+    } : null;
     return json({ reply, usage, model });
   } catch (e) {
     return json({ error: (e as Error).message ?? 'Erro inesperado' }, 500);

@@ -1,10 +1,11 @@
 // Shared runtime for agentic edge functions.
 // - resolveVersion: reads active/canary version from DB (uses pick_agent_version_for_run)
 // - logRun: writes to agentic_run_logs (fire-and-forget, never throws)
-// - callAgent: end-to-end helper that calls Lovable AI Gateway with the resolved
+// - callAgent: end-to-end helper that calls the active AI provider with the resolved
 //   prompt/model, logs the run (with computed cost_credits) and returns the parsed result.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { chatCompletions, resolveModelName } from "./ai-provider.ts";
 
 type SupabaseClient = ReturnType<typeof createClient>;
 
@@ -41,12 +42,13 @@ export type LogArgs = {
   metadata?: Record<string, unknown>;
 };
 
-const FALLBACK_MODEL = "google/gemini-3-flash-preview";
+const FALLBACK_MODEL = "deepseek-chat";
 
-// Pricing table in Lovable credits per 1K tokens (input, output).
+// Pricing table per 1K tokens (input, output).
 // Approximate — used only to attribute cost per run for dashboards/rollups.
 // Add new models here as they get adopted.
 export const MODEL_PRICING_PER_1K: Record<string, { input: number; output: number }> = {
+  "deepseek-chat": { input: 0.14, output: 0.28 },
   "google/gemini-3-flash-preview": { input: 0.15, output: 0.30 },
   "google/gemini-2.5-flash": { input: 0.15, output: 0.30 },
   "google/gemini-2.5-pro": { input: 1.25, output: 5.0 },
@@ -202,12 +204,6 @@ export type CallAgentResult =
     };
 
 export async function callAgent(args: CallAgentArgs): Promise<CallAgentResult> {
-  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-  if (!LOVABLE_API_KEY) {
-    return { ok: false, status: 500, errorType: "CONFIG",
-      errorMessage: "LOVABLE_API_KEY not configured", agent: null };
-  }
-
   const resolution = await resolveAgent(args.functionSlug, args.bucketKey ?? null);
 
   // Paused agents MUST NOT run, even if a fallback prompt is provided.
@@ -228,20 +224,13 @@ export async function callAgent(args: CallAgentArgs): Promise<CallAgentResult> {
   }
 
   const systemPrompt = agent?.systemPrompt || args.fallback?.systemPrompt || "";
-  const model = args.overrides?.model ?? agent?.model ?? args.fallback?.model ?? FALLBACK_MODEL;
+  // Stored model ids may carry a legacy provider namespace; resolve to the id
+  // the active provider actually serves. The resolved id is what gets logged,
+  // so cost attribution always matches the model that ran.
+  const model = resolveModelName(args.overrides?.model ?? agent?.model ?? args.fallback?.model ?? FALLBACK_MODEL);
   const temperature = args.overrides?.temperature ?? agent?.temperature;
   const maxTokens = args.overrides?.maxTokens ?? agent?.maxTokens;
   const runId = crypto.randomUUID();
-
-  const body: Record<string, unknown> = {
-    model,
-    messages: [
-      ...(systemPrompt ? [{ role: "system", content: systemPrompt }] : []),
-      { role: "user", content: args.userPrompt },
-    ],
-  };
-  if (temperature != null) body.temperature = temperature;
-  if (maxTokens != null) body.max_tokens = maxTokens;
 
   // Budget gate — block new runs when daily/monthly cost limit reached.
   if (agent) {
@@ -258,46 +247,32 @@ export async function callAgent(args: CallAgentArgs): Promise<CallAgentResult> {
   }
 
   const startedAt = Date.now();
-  let response: Response;
-  try {
-    response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
-  } catch (e) {
-    const msg = (e as Error).message;
-    if (agent) {
-      void logRun({ agentId: agent.agentId, versionId: agent.versionId, model, startedAt,
-        status: "error", errorType: "NETWORK", errorMessage: msg, runId, metadata: args.metadata });
-    }
-    return { ok: false, status: 502, errorType: "NETWORK", errorMessage: msg, agent };
-  }
+  const result = await chatCompletions({
+    model,
+    messages: [
+      ...(systemPrompt ? [{ role: "system" as const, content: systemPrompt }] : []),
+      { role: "user" as const, content: args.userPrompt },
+    ],
+    temperature: temperature ?? undefined,
+    maxTokens: maxTokens ?? undefined,
+  });
 
-  if (!response.ok) {
-    const errText = await response.text().catch(() => "");
+  if (!result.ok) {
     if (agent) {
       void logRun({ agentId: agent.agentId, versionId: agent.versionId, model, startedAt,
-        status: "error", errorType: `HTTP_${response.status}`, errorMessage: errText,
+        status: "error", errorType: result.errorType, errorMessage: result.errorMessage,
         runId, metadata: args.metadata });
     }
-    return { ok: false, status: response.status, errorType: `HTTP_${response.status}`,
-      errorMessage: errText || response.statusText, agent };
+    return { ok: false, status: result.status, errorType: result.errorType,
+      errorMessage: result.errorMessage, agent };
   }
 
-  const json = await response.json().catch(() => ({} as any));
-  const text: string = json?.choices?.[0]?.message?.content ?? "";
-  const u = json?.usage;
-  const usage = u ? { inputTokens: u.prompt_tokens, outputTokens: u.completion_tokens } : undefined;
-  const costCredits = computeCostCredits(model, usage);
+  const costCredits = computeCostCredits(model, result.usage);
 
   if (agent) {
     void logRun({ agentId: agent.agentId, versionId: agent.versionId, model, startedAt,
-      status: "success", text, usage, runId, metadata: args.metadata });
+      status: "success", text: result.text, usage: result.usage, runId, metadata: args.metadata });
   }
 
-  return { ok: true, text, usage, costCredits, model, agent };
+  return { ok: true, text: result.text, usage: result.usage, costCredits, model, agent };
 }

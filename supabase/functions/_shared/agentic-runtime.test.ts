@@ -21,6 +21,13 @@ Deno.test("computeCostCredits: falls back to default pricing for unknown model",
   assert(c > 0);
 });
 
+Deno.test("computeCostCredits: prices the active deepseek-chat model", () => {
+  const p = MODEL_PRICING_PER_1K["deepseek-chat"];
+  assert(p, "deepseek-chat must have a pricing row");
+  const cost = computeCostCredits("deepseek-chat", { inputTokens: 1000, outputTokens: 1000 })!;
+  assertEquals(cost, Math.round((p.input + p.output) * 1e6) / 1e6);
+});
+
 Deno.test({
   name: "logRun: never throws when SUPABASE_* env is missing",
   sanitizeOps: false,

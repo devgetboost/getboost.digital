@@ -1,6 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.100.1";
 import { PDFDocument, StandardFonts, rgb } from "https://esm.sh/pdf-lib@1.17.1";
 import { SITE_KNOWLEDGE } from "../_shared/site-knowledge.ts";
+import { chatCompletions } from "../_shared/ai-provider.ts";
 import { logAgentRun } from "../_shared/recordRun.ts";
 import { logConciergeCheck, enforceDiscoveryGate, enforceMeetingOfferOnQuoteRequest, detectConciergeLang } from "../_shared/conciergeChecks.ts";
 import { samplePhrasing, buildPhrasingPromptSection, detectPhrasingIntent } from "../_shared/conciergePhrasing.ts";
@@ -16,7 +17,6 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
 
-const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -1093,29 +1093,32 @@ async function callLovableAI(
 
   try {
     for (let step = 0; step < 5; step++) {
-      const aiPayload = JSON.stringify({
-        model,
-        messages,
-        temperature,
-        max_tokens: maxTokens,
-        ...(useTools ? { tools: TOOLS, tool_choice: "auto" } : {}),
-      });
-      let res: Response | null = null;
+      // R2B: inference goes through the provider-neutral layer (DeepSeek by
+      // default). Retry loop, timeout, tool loop and token accounting behave
+      // exactly as before — only the endpoint changes. The synthesized message
+      // keeps `role: "assistant"` because it re-enters `messages` on the next
+      // tool step, and the API requires a role on every message.
+      let msg: { role: "assistant"; content: string; tool_calls?: Array<{ id: string; type: "function"; function: { name: string; arguments: string } }> } | null = null;
       let lastAiError: unknown = null;
       for (let attempt = 1; attempt <= 3; attempt++) {
         try {
-          res = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Lovable-API-Key": LOVABLE_API_KEY,
-              "X-Lovable-AIG-SDK": "vercel-ai-sdk",
-            },
-            body: aiPayload,
-          }, 25_000);
-          if (res.ok || !isTransientStatus(res.status) || attempt === 3) break;
-          console.warn(JSON.stringify({ tag: "ai_retry", model, attempt, status: res.status }));
-          await res.text().catch(() => "");
+          const result = await chatCompletions({
+            model,
+            messages,
+            temperature,
+            maxTokens,
+            ...(useTools ? { tools: TOOLS, toolChoice: "auto" } : {}),
+            timeoutMs: 25_000,
+          });
+          if (result.ok) {
+            inputTokens += result.usage?.inputTokens ?? 0;
+            outputTokens += result.usage?.outputTokens ?? 0;
+            msg = { role: "assistant", content: result.text, tool_calls: result.toolCalls };
+            break;
+          }
+          lastAiError = new Error(`AI ${result.status}: ${result.errorMessage}`);
+          if (attempt === 3 || !isTransientStatus(result.status)) break;
+          console.warn(JSON.stringify({ tag: "ai_retry", model, attempt, status: result.status }));
         } catch (e) {
           lastAiError = e;
           if (attempt === 3) throw e;
@@ -1123,14 +1126,7 @@ async function callLovableAI(
         }
         await wait(400 * attempt);
       }
-      if (!res) throw lastAiError ?? new Error("AI request failed");
-      if (!res.ok) throw new Error(`AI ${res.status}: ${await res.text().catch(() => "")}`);
-      const data = await res.json();
-      if (data?.usage) {
-        inputTokens += data.usage.prompt_tokens ?? 0;
-        outputTokens += data.usage.completion_tokens ?? 0;
-      }
-      const msg = data?.choices?.[0]?.message;
+      if (!msg) throw lastAiError ?? new Error("AI request failed");
       if (!msg) {
         console.log(JSON.stringify({ tag: "assistant_reply_done", instance_id: instanceId, agent_name: agentName, model, status: "empty" }));
         logAgentRun({ agentName, model, startedAt, status: "success", text: "", usage: { inputTokens, outputTokens } });
@@ -1352,36 +1348,30 @@ async function summarizeConversation(model: string, transcript: string): Promise
   const maxChars = SUMMARY_INPUT_TOKEN_BUDGET * CHARS_PER_TOKEN;
   const trimmed = transcript.length > maxChars ? transcript.slice(-maxChars) : transcript;
   try {
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Lovable-API-Key": LOVABLE_API_KEY,
-      },
-      body: JSON.stringify({
-        model,
-        temperature: 0.2,
-        max_tokens: SUMMARY_OUTPUT_TOKENS,
-        messages: [
-          {
-            role: "system",
-            content:
-              "És um assistente CRM. Resume a conversa de WhatsApp em português europeu. " +
-              "Devolve EXACTAMENTE 4 a 6 bullets começados por '- ' (nunca mais, nunca menos). " +
-              "Cobre por esta ordem, quando existir: (1) intenção do cliente, (2) dados fornecidos " +
-              "(empresa, serviço, orçamento, prazo), (3) objeções ou dúvidas, (4) decisões tomadas, " +
-              "(5) próximos passos combinados, (6) risco/urgência. Cada bullet ≤ 180 chars, sem preâmbulo, sem títulos.",
-          },
-          { role: "user", content: trimmed },
-        ],
-      }),
+    // R2B: summarize goes through the provider-neutral layer. Empty-string
+    // fallback on any failure is preserved.
+    const result = await chatCompletions({
+      model,
+      temperature: 0.2,
+      maxTokens: SUMMARY_OUTPUT_TOKENS,
+      messages: [
+        {
+          role: "system",
+          content:
+            "És um assistente CRM. Resume a conversa de WhatsApp em português europeu. " +
+            "Devolve EXACTAMENTE 4 a 6 bullets começados por '- ' (nunca mais, nunca menos). " +
+            "Cobre por esta ordem, quando existir: (1) intenção do cliente, (2) dados fornecidos " +
+            "(empresa, serviço, orçamento, prazo), (3) objeções ou dúvidas, (4) decisões tomadas, " +
+            "(5) próximos passos combinados, (6) risco/urgência. Cada bullet ≤ 180 chars, sem preâmbulo, sem títulos.",
+        },
+        { role: "user", content: trimmed },
+      ],
     });
-    if (!res.ok) {
-      console.error(JSON.stringify({ level: "error", msg: "summary_http_error", status: res.status }));
+    if (!result.ok) {
+      console.error(JSON.stringify({ level: "error", msg: "summary_http_error", status: result.status }));
       return "";
     }
-    const data = await res.json();
-    return clampBullets((data?.choices?.[0]?.message?.content || "").trim());
+    return clampBullets(result.text.trim());
   } catch (e) {
     console.error("summarize failed:", e);
     return "";

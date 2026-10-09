@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { chatCompletions } from "../_shared/ai-provider.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -82,14 +83,15 @@ Deno.serve(async (req) => {
     };
 
     // Ask Lovable AI for prioritized automation flows
-    const lovableKey = Deno.env.get("LOVABLE_API_KEY");
+    // R2B: inference via the provider-neutral layer. Graceful degradation is
+    // preserved: without a configured provider the dossier still renders,
+    // only the AI section stays empty.
     let aiFlows: any[] = [];
     let aiSummary = "";
 
-    if (lovableKey) {
-      const systemPrompt = `És um especialista em customer success e automação. Analisas a ficha de um cliente (serviços, assinaturas, faturas, tickets) e devolves fluxos de automação acionáveis, em português de Portugal. Responde APENAS em JSON válido.`;
+    const systemPrompt = `És um especialista em customer success e automação. Analisas a ficha de um cliente (serviços, assinaturas, faturas, tickets) e devolves fluxos de automação acionáveis, em português de Portugal. Responde APENAS em JSON válido.`;
 
-      const userPrompt = `Cliente: ${dossier.profile?.display_name || "Sem nome"}
+    const userPrompt = `Cliente: ${dossier.profile?.display_name || "Sem nome"}
 Dossier resumido: ${JSON.stringify({ signals, services: dossier.services.length, subs: dossier.subscriptions.length, invoices: dossier.invoices.length, tickets: dossier.tickets.length })}
 
 Detalhes:
@@ -102,45 +104,37 @@ Detalhes:
 
 Devolve JSON com:
 {
-  "summary": "1-2 frases de diagnóstico",
-  "health_score": 0-100,
-  "flows": [
-    {
-      "id": "slug",
-      "title": "Título curto",
-      "priority": "high|medium|low",
-      "channel": "email|whatsapp|task|call",
-      "trigger": "razão",
-      "suggested_message": "mensagem pronta a enviar (máx 4 linhas)",
-      "action_label": "rótulo do botão"
-    }
-  ]
+"summary": "1-2 frases de diagnóstico",
+"health_score": 0-100,
+"flows": [
+  {
+    "id": "slug",
+    "title": "Título curto",
+    "priority": "high|medium|low",
+    "channel": "email|whatsapp|task|call",
+    "trigger": "razão",
+    "suggested_message": "mensagem pronta a enviar (máx 4 linhas)",
+    "action_label": "rótulo do botão"
+  }
+]
 }
 Máx 6 fluxos. Foca em ações que aumentem satisfação, retenção, cobrança e upsell.`;
 
-      try {
-        const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-          method: "POST",
-          headers: { Authorization: `Bearer ${lovableKey}`, "Content-Type": "application/json" },
-          body: JSON.stringify({
-            model: "google/gemini-2.5-flash",
-            messages: [
-              { role: "system", content: systemPrompt },
-              { role: "user", content: userPrompt },
-            ],
-            response_format: { type: "json_object" },
-          }),
-        });
-        if (aiRes.ok) {
-          const aiJson = await aiRes.json();
-          const content = aiJson.choices?.[0]?.message?.content || "{}";
-          const parsed = JSON.parse(content);
-          aiFlows = Array.isArray(parsed.flows) ? parsed.flows : [];
-          aiSummary = parsed.summary || "";
-        }
-      } catch (e) {
-        console.error("AI call failed", e);
+    try {
+      const aiRes = await chatCompletions({
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        jsonMode: true,
+      });
+      if (aiRes.ok) {
+        const parsed = JSON.parse(aiRes.text || "{}");
+        aiFlows = Array.isArray(parsed.flows) ? parsed.flows : [];
+        aiSummary = parsed.summary || "";
       }
+    } catch (e) {
+      console.error("AI call failed", e);
     }
 
     return new Response(JSON.stringify({ signals, summary: aiSummary, flows: aiFlows, dossier_counts: { services: dossier.services.length, subscriptions: dossier.subscriptions.length, invoices: dossier.invoices.length, tickets: dossier.tickets.length } }), {

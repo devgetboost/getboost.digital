@@ -16,6 +16,7 @@
 //  { status: "pending_approval", action, generated_at, brand, payload, output, model }
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { chatCompletions } from "../_shared/ai-provider.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -308,26 +309,21 @@ Regras absolutas:
 
 
 async function callAI(system: string, user: string): Promise<string> {
-  const key = Deno.env.get("LOVABLE_API_KEY");
-  if (!key) throw new Error("LOVABLE_API_KEY not configured");
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 2048,
-      response_format: { type: "json_object" },
-      messages: [
-        { role: "system", content: system },
-        { role: "user", content: user },
-      ],
-    }),
+  // R2B: inference via the provider-neutral layer. MODEL keeps its legacy
+  // namespace — the provider maps it. Throw-on-error contract preserved.
+  const res = await chatCompletions({
+    model: MODEL,
+    maxTokens: 2048,
+    jsonMode: true,
+    messages: [
+      { role: "system", content: system },
+      { role: "user", content: user },
+    ],
   });
   if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`AI gateway ${res.status}: ${body}`);
+    throw new Error(`AI gateway ${res.status}: ${res.errorMessage}`);
   }
-  const data = await res.json();
+  const data = { choices: [{ message: { content: res.text } }] };
   return data.choices?.[0]?.message?.content ?? "";
 }
 

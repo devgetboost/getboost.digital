@@ -10,11 +10,14 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { renderPrompt, type PromptTemplate } from '@/lib/agenticPrompts';
 
+// R2B: DeepSeek Chat is the active inference model. Legacy namespaces stay
+// selectable — the server maps them — so saved test setups keep working.
 const MODELS = [
-  { id: 'google/gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
-  { id: 'google/gemini-2.5-pro', label: 'Gemini 2.5 Pro' },
-  { id: 'openai/gpt-5-mini', label: 'GPT-5 Mini' },
-  { id: 'openai/gpt-5', label: 'GPT-5' },
+  { id: 'deepseek-chat', label: 'DeepSeek Chat — padrão' },
+  { id: 'google/gemini-2.5-flash', label: 'Gemini 2.5 Flash (legado)' },
+  { id: 'google/gemini-2.5-pro', label: 'Gemini 2.5 Pro (legado)' },
+  { id: 'openai/gpt-5-mini', label: 'GPT-5 Mini (legado)' },
+  { id: 'openai/gpt-5', label: 'GPT-5 (legado)' },
 ];
 
 type Props = {

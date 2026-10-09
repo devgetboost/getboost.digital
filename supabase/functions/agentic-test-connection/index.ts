@@ -1,7 +1,11 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import { chatCompletions } from '../_shared/ai-provider.ts';
 
+// R2B: DeepSeek is the active provider. Legacy namespaces stay accepted so
+// older admin UI selections keep working — the provider layer maps them.
 const ALLOWED_MODELS = new Set([
+  'deepseek-chat',
   'google/gemini-3-flash-preview',
   'google/gemini-3.1-flash-lite',
   'google/gemini-3.5-flash',
@@ -13,7 +17,6 @@ const ALLOWED_MODELS = new Set([
   'openai/gpt-5-nano',
 ]);
 
-const FAST_MODE_SUPPORTED = new Set(['openai/gpt-5', 'openai/gpt-5-mini']);
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -25,8 +28,6 @@ Deno.serve(async (req) => {
 
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
     const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const LOVABLE_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_KEY) return json({ ok: false, error: 'LOVABLE_API_KEY em falta no servidor' }, 500);
 
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
     const { data: userRes, error: userErr } = await admin.auth.getUser(jwt);
@@ -40,39 +41,32 @@ Deno.serve(async (req) => {
 
     const body = await req.json().catch(() => ({}));
     const model = typeof body.model === 'string' ? body.model : '';
-    const fastMode = !!body.fastMode;
+    // R2B: `fastMode`/`service_tier` was a gateway-specific priority tier with
+    // no DeepSeek equivalent. The flag is still accepted (older admin UI sends
+    // it) but no longer changes the request.
     if (!ALLOWED_MODELS.has(model)) return json({ ok: false, error: 'Modelo não suportado' }, 400);
 
     const started = Date.now();
-    const payload: Record<string, unknown> = {
+    // R2B: inference via the provider-neutral layer. Latency accounting and
+    // the response shape are unchanged.
+    const aiRes = await chatCompletions({
       model,
       messages: [
         { role: 'system', content: 'Ping de teste. Responde apenas "ok".' },
         { role: 'user', content: 'ping' },
       ],
-      max_tokens: 8,
-    };
-    if (fastMode && FAST_MODE_SUPPORTED.has(model)) payload.service_tier = 'priority';
-
-    const aiRes = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${LOVABLE_KEY}`,
-      },
-      body: JSON.stringify(payload),
+      maxTokens: 8,
     });
 
     const latency = Date.now() - started;
 
-    if (aiRes.status === 429) return json({ ok: false, error: 'Limite de pedidos atingido. Tenta mais tarde.', status: 429, latency }, 200);
-    if (aiRes.status === 402) return json({ ok: false, error: 'Créditos AI esgotados.', status: 402, latency }, 200);
+    if (!aiRes.ok && aiRes.status === 429) return json({ ok: false, error: 'Limite de pedidos atingido. Tenta mais tarde.', status: 429, latency }, 200);
+    if (!aiRes.ok && aiRes.status === 402) return json({ ok: false, error: 'Créditos AI esgotados.', status: 402, latency }, 200);
     if (!aiRes.ok) {
-      const t = await aiRes.text();
-      return json({ ok: false, error: `Erro do gateway (${aiRes.status})`, detail: t.slice(0, 300), status: aiRes.status, latency }, 200);
+      return json({ ok: false, error: `Erro do gateway (${aiRes.status})`, detail: aiRes.errorMessage.slice(0, 300), status: aiRes.status, latency }, 200);
     }
 
-    const data = await aiRes.json();
+    const data = { choices: [{ message: { content: aiRes.text } }], usage: aiRes.usage };
     const reply = data?.choices?.[0]?.message?.content ?? '';
     return json({ ok: true, model, latency, reply: String(reply).slice(0, 120) });
   } catch (e) {

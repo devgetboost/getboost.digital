@@ -7,6 +7,7 @@ import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
 import ConsultantContactForm from '@/components/ConsultantContactForm';
 import { supabase } from '@/integrations/supabase/client';
+import { publicMediaUrl } from '@/lib/storage';
 
 const ACCENT = '#ff4000';
 
@@ -56,14 +57,14 @@ const PodcastBoostTalks = () => {
     })();
   }, []);
 
+  // R1C9: episode audio is public. The path resolves straight against
+  // `public-media` — no signed-URL round-trip, no expiry juggling. Absolute
+  // URLs (rows written before the migration) pass through untouched.
   const getSignedUrl = async (path: string): Promise<string | null> => {
     if (signedCache.current.has(path)) return signedCache.current.get(path)!;
-    const { data } = await supabase.storage.from('podcast-audio').createSignedUrl(path, 3600);
-    if (data?.signedUrl) {
-      signedCache.current.set(path, data.signedUrl);
-      return data.signedUrl;
-    }
-    return null;
+    const url = publicMediaUrl(path);
+    if (url) signedCache.current.set(path, url);
+    return url;
   };
 
   const playIdx = async (idx: number) => {

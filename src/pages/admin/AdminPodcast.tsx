@@ -70,7 +70,8 @@ const AdminPodcast = () => {
     setUploading(true);
     const ext = file.name.split('.').pop() || 'mp3';
     const path = `episodes/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-    const { error } = await supabase.storage.from('podcast-audio').upload(path, file, {
+    // R1C9: episode audio lives in `public-media` (public reads).
+    const { error } = await supabase.storage.from('public-media').upload(`podcast/${path}`, file, {
       contentType: file.type || 'audio/mpeg',
       upsert: false,
     });
@@ -89,7 +90,7 @@ const AdminPodcast = () => {
       });
     } catch { /* ignore */ }
 
-    setEditing({ ...editing, audio_url: path, duration_seconds: duration ?? editing.duration_seconds });
+    setEditing({ ...editing, audio_url: `podcast/${path}`, duration_seconds: duration ?? editing.duration_seconds });
     toast.success('Áudio carregado');
   };
 

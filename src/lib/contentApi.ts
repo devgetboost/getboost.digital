@@ -30,6 +30,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 import type { MarketCode } from '@/config/env';
 import { contentBodyToText } from './contentBody';
+import { publicMediaUrl } from './storage';
 import type { MarketScope } from './markets';
 
 /**
@@ -295,19 +296,12 @@ function toProduct(row: ProductRow, localization: ProductLocalizationRow): Produ
 // ---------------------------------------------------------------------------
 
 /**
- * Resolves a stored media path to a public URL.
+ * R1C9: resolves a stored media path to a public URL.
  *
- * Clean V1 stores paths (`cover_media_path`, `og_image_path`, `hero_media_path`,
- * `logo_path`) and serves them from the public `public-media` bucket, so a path
- * is not a URL. Absolute URLs are passed through untouched so already-migrated
- * rows keep working.
+ * Delegates to `./storage`, the single storage boundary. Absolute URLs pass
+ * through so rows written before the migration keep rendering.
  */
-export function mediaUrl(path: string | null | undefined): string | null {
-  if (!path) return null;
-  if (/^(https?:)?\/\//i.test(path)) return path;
-  const { data } = supabase.storage.from('public-media').getPublicUrl(path);
-  return data.publicUrl || null;
-}
+export { publicMediaUrl as mediaUrl } from './storage';
 
 /**
  * Estimated reading time for a body, in minutes.

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { legacySupabase, supabase } from '@/integrations/supabase/client';
 import { avatarPathToUrl } from '@/auth/profiles';
+import { uploadPublicMedia } from '@/lib/adminContent';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -56,14 +57,9 @@ const AdminSettings = () => {
 
     setUploading(true);
     try {
-      const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-      const filePath = `${userId}/avatar.${ext}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(filePath, file, { upsert: true });
-
-      if (uploadError) throw uploadError;
+      // R1C9: avatars live in `public-media`; the stored value is the object
+      // path, resolved at render time. The retired `avatars` bucket is gone.
+      const filePath = await uploadPublicMedia(`avatars/${userId}`, file);
 
       // Upsert profile — R1C4: Clean V1 keys `profiles` on `auth.users.id` and
       // stores the avatar object path. The previous `{ user_id, avatar_url }`

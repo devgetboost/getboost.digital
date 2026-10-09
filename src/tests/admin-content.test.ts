@@ -30,11 +30,13 @@ const stripComments = (source: string): string =>
 
 const RETIRED_TABLES = ['blog_posts', 'projects', 'services', 'blog_categories', 'resources'];
 
-/** Admin files allowed to keep retired-table references, with the reason. */
-const RETIRED_TABLE_ALLOWLIST: Record<string, string> = {
-  // Dead, unrouted legacy page. Left untouched on purpose (see ADMIN_TECH_DEBT).
-  'src/pages/Admin.tsx': 'dead page, unrouted',
-};
+/**
+ * Admin files allowed to keep retired-table references.
+ *
+ * R1C9: empty. The last exception (`src/pages/Admin.tsx`, a dead unrouted page)
+ * was deleted, so every remaining reference is a failure.
+ */
+const RETIRED_TABLE_ALLOWLIST: Record<string, string> = {};
 
 const adminSources = (() => {
   const { readdirSync, statSync } = require('node:fs') as typeof import('node:fs');
@@ -67,11 +69,8 @@ describe('no admin dependence on retired tables', () => {
     });
   }
 
-  it('documents every allowlisted exception', () => {
-    for (const [file, reason] of Object.entries(RETIRED_TABLE_ALLOWLIST)) {
-      expect(reason.length).toBeGreaterThan(0);
-      expect(read(file)).toBeTruthy();
-    }
+  it('needs no exceptions', () => {
+    expect(Object.keys(RETIRED_TABLE_ALLOWLIST)).toEqual([]);
   });
 });
 

@@ -621,9 +621,10 @@ export default function AdminInbox() {
       const ext = (file.name.split('.').pop() || 'bin').toLowerCase();
       const path = `outbound/${selected.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
-      // Signed upload URL enables XHR progress events
+      // Signed upload URL enables XHR progress events.
+      // R1C9: outbound media lives in `private-assets` (admin-only reads).
       const { data: signed, error: signErr } = await legacySupabase.storage
-        .from('whatsapp-media').createSignedUploadUrl(path);
+        .from('private-assets').createSignedUploadUrl(`whatsapp/${path}`);
       if (signErr || !signed) throw signErr || new Error('Falha ao preparar upload');
 
       await new Promise<void>((resolve, reject) => {
@@ -644,7 +645,7 @@ export default function AdminInbox() {
       setUploadPct(100);
       setUploadPhase('sending');
 
-      const mediaUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/sign/whatsapp-media/${path}`;
+      const mediaUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/sign/private-assets/whatsapp/${path}`;
       const caption = reply.trim();
       const { data: { session } } = await legacySupabase.auth.getSession();
       const res = await fetch(

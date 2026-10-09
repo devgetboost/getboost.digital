@@ -67,7 +67,9 @@ export default function AdminHeroSlides() {
     setUploading(true);
     const ext = file.name.split('.').pop() || 'jpg';
     const path = `${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from('hero-banners').upload(path, file, {
+    // R1C9: hero banners live in `public-media`. The stored value stays the
+    // public URL (as before) so existing rows render unchanged.
+    const { error } = await supabase.storage.from('public-media').upload(`hero-banners/${path}`, file, {
       cacheControl: '3600', upsert: false,
     });
     if (error) {
@@ -75,7 +77,7 @@ export default function AdminHeroSlides() {
       setUploading(false);
       return;
     }
-    const { data } = supabase.storage.from('hero-banners').getPublicUrl(path);
+    const { data } = supabase.storage.from('public-media').getPublicUrl(`hero-banners/${path}`);
     setEditing(prev => ({ ...prev, image_url: data.publicUrl }));
     setUploading(false);
     toast.success('Imagem carregada');

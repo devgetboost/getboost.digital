@@ -209,13 +209,16 @@ export default function WhatsAppSend() {
     }
     const { data: { user } } = await legacySupabase.auth.getUser();
     const ext = file.name.split('.').pop() || 'bin';
-    const path = `${user?.id || 'anon'}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-    const up = await legacySupabase.storage.from('whatsapp-media').upload(path, file, {
+    // R1C9: WhatsApp media lives in `private-assets` (admin-only reads). The
+    // row keeps the signed URL itself — external clients fetch it directly —
+    // so the flow is unchanged apart from the bucket.
+    const path = `whatsapp/${user?.id || 'anon'}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const up = await legacySupabase.storage.from('private-assets').upload(path, file, {
       cacheControl: '3600', upsert: false, contentType: file.type,
     });
     if (up.error) { toast.error(up.error.message); return; }
     const { data: signed, error: signErr } = await legacySupabase.storage
-      .from('whatsapp-media').createSignedUrl(path, 60 * 60 * 24 * 365);
+      .from('private-assets').createSignedUrl(path, 60 * 60 * 24 * 365);
     if (signErr || !signed) { toast.error(signErr?.message || 'Falha ao assinar URL'); return; }
     const { error } = await legacySupabase.from('whatsapp_media').insert({
       name: file.name, url: signed.signedUrl, storage_path: path,
@@ -228,7 +231,7 @@ export default function WhatsAppSend() {
 
   const deleteMedia = async (m: MediaItem) => {
     if (!confirm(`Eliminar "${m.name}"?`)) return;
-    await legacySupabase.storage.from('whatsapp-media').remove([m.storage_path]);
+    await legacySupabase.storage.from('private-assets').remove([m.storage_path]);
     await legacySupabase.from('whatsapp_media').delete().eq('id', m.id);
     if (selectedMedia?.id === m.id) setSelectedMedia(null);
     refetchMedia();

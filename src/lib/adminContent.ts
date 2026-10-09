@@ -961,30 +961,12 @@ export async function logAdminAction(
 // Storage
 // ---------------------------------------------------------------------------
 
-/** The Clean V1 public bucket. Uploads keep the previous folder conventions. */
-export const PUBLIC_MEDIA_BUCKET = 'public-media';
-
 /**
- * Uploads an image to the public bucket and returns its object path.
- *
- * Clean V1 stores paths, not URLs — callers resolve display URLs with
- * `mediaUrl()` from `./contentApi`. The previous `blog-images` and `avatars`
- * buckets do not exist in Clean V1; only `public-media` accepts public reads.
+ * R1C9: storage lives behind `./storage`, the single storage boundary. These
+ * re-exports keep existing admin imports working.
  */
-export async function uploadPublicMedia(folder: string, file: File): Promise<string> {
-  if (!file.type.startsWith('image/')) {
-    throw new AdminContentError('Selecione um ficheiro de imagem.');
-  }
-  if (file.size > 5 * 1024 * 1024) {
-    throw new AdminContentError('A imagem não pode exceder 5MB.');
-  }
-  const ext = file.name.split('.').pop() || 'jpg';
-  const path = `${folder}/${Date.now()}.${ext}`;
-
-  const { error } = await supabase.storage.from(PUBLIC_MEDIA_BUCKET).upload(path, file, {
-    cacheControl: '3600',
-    upsert: false,
-  });
-  if (error) throw new AdminContentError('Erro ao carregar: ' + error.message);
-  return path;
-}
+export {
+  PUBLIC_MEDIA_BUCKET,
+  uploadPublicImage as uploadPublicMedia,
+  StorageUploadError as AdminStorageError,
+} from './storage';

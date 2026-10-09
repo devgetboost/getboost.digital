@@ -225,8 +225,11 @@ describe('content data layer', () => {
     expect(api).toContain('class ContentUnavailableError');
   });
 
-  it('resolves stored media paths through the public bucket', () => {
-    expect(api).toContain("from('public-media')");
+  it('resolves stored media paths through the shared storage boundary', () => {
+    // R1C9: contentApi delegates to `./storage`, which owns the bucket.
+    expect(api).toContain("from './storage'");
+    const storage = read('src/lib/storage.ts');
+    expect(storage).toContain("from(PUBLIC_MEDIA_BUCKET).getPublicUrl");
   });
 });
 

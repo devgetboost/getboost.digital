@@ -50,14 +50,9 @@ export async function fetchProfilesByIds(userIds: readonly string[]): Promise<Pr
 }
 
 /**
- * Public URL for a stored avatar path.
+ * R1C9: public URL for a stored avatar path.
  *
- * Storage migration is out of scope for Wave 2, so the bucket name stays
- * whatever the platform already uses; only the column semantics changed.
+ * Delegates to `./storage`: avatars live in `public-media`, and the retired
+ * `avatars` bucket is gone. Absolute URLs pass through so older rows render.
  */
-export function avatarPathToUrl(path: string | null | undefined): string | null {
-  if (!path) return null;
-  if (/^https?:\/\//i.test(path)) return path;
-  const { data } = supabase.storage.from('avatars').getPublicUrl(path);
-  return data.publicUrl;
-}
+export { publicMediaUrl as avatarPathToUrl } from '@/lib/storage';

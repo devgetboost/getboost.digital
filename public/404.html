@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Wave 2A.1: this document only ever renders for a short redirect hop.
+         It must never be indexed or shared as a 404 page. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Getboost Digital</title>
+    <script>
+      // Static hosts serve this document for unknown paths. Preserve the exact
+      // route the visitor asked for (path + query + hash), then boot the SPA at
+      // the root, where the real index.html and its hashed assets live.
+      // src/main.tsx restores the captured route before React mounts, so the
+      // first render is the requested page — including /br/* and /en/*.
+      (function () {
+        try {
+          var target =
+            window.location.pathname + window.location.search + window.location.hash;
+          if (target && target !== "/") {
+            sessionStorage.setItem("spa:redirect", target);
+          }
+        } catch (e) {
+          // sessionStorage can be unavailable (private mode) — boot anyway.
+        }
+        window.location.replace("/");
+      })();
+    </script>
+    <!-- No-JS fallback: still land on the SPA root rather than a host 404. -->
+    <meta http-equiv="refresh" content="0; url=/" />
+  </head>
+  <body></body>
+</html>

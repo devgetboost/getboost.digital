@@ -19,6 +19,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import logoNunoCruz from '@/assets/logo-getboost-soft-branca.svg';
+import { CONTACT } from '@/data/brandRegistry';
+import { PRODUCTS } from '@/data/products';
 
 const languages = [
   { code: 'pt', label: 'Português' },
@@ -112,7 +114,7 @@ const Footer = () => {
       />
       <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-16">
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12">
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link to={i18n.language === 'pt' ? '/' : `/${i18n.language}`} className="flex items-center gap-2">
@@ -136,30 +138,33 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Links */}
+          {/* Wave 3B — footer IA mirrors the primary navigation. COMPANY is
+              footer-only (removed from the primary nav in Wave 3B). */}
           <div>
-            <h4 className="font-semibold text-sm mb-4 text-foreground">{t('footer.links')}</h4>
-            <nav className="flex flex-col gap-3" aria-label="Footer navigation">
-              <Link to={i18n.language === 'pt' ? '/portfolio' : `/${i18n.language}/portfolio`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">{t('nav.portfolio')}</Link>
-              <Link to={i18n.language === 'pt' ? '/blog' : `/${i18n.language}/blog`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">{t('nav.blog')}</Link>
+            <h4 className="font-semibold text-sm mb-4 text-foreground">Empresa</h4>
+            <nav className="flex flex-col gap-3" aria-label="Footer company">
               <Link to={i18n.language === 'pt' ? '/sobre-nos' : `/${i18n.language}/sobre-nos`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">Sobre Nós</Link>
               <Link to={i18n.language === 'pt' ? '/equipa' : `/${i18n.language}/equipa`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">Equipa</Link>
               <Link to={i18n.language === 'pt' ? '/carreira' : `/${i18n.language}/carreira`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">Carreira</Link>
             </nav>
           </div>
 
-          {/* Serviços */}
           <div>
-            <h4 className="font-semibold text-sm mb-4 text-foreground">{t('footer.servicesTitle')}</h4>
-            <nav className="flex flex-col gap-3" aria-label="Footer services">
-              <Link to={i18n.language === 'pt' ? '/services/gestao-redes-sociais' : `/${i18n.language}/services/gestao-redes-sociais`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">{t('servicesPage.items.socialMedia.title')}</Link>
-              <Link to={i18n.language === 'pt' ? '/services/desenvolvimento-web' : `/${i18n.language}/services/desenvolvimento-web`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">{t('servicesPage.items.webDev.title')}</Link>
-              <Link to={i18n.language === 'pt' ? '/services/desenvolvimento-software' : `/${i18n.language}/services/desenvolvimento-software`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">{t('servicesPage.items.softwareDev.title')}</Link>
-              <Link to={i18n.language === 'pt' ? '/services/google-business-profile' : `/${i18n.language}/services/google-business-profile`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">{t('servicesPage.items.googleBusiness.title')}</Link>
-              <Link to={i18n.language === 'pt' ? '/services/google-meta-ads' : `/${i18n.language}/services/google-meta-ads`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">{t('servicesPage.items.ads.title')}</Link>
-              <Link to={i18n.language === 'pt' ? '/services/consultoria-estrategica' : `/${i18n.language}/services/consultoria-estrategica`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">{t('servicesPage.items.consultoria.title')}</Link>
-              <Link to={i18n.language === 'pt' ? '/services/fotografia-drone' : `/${i18n.language}/services/fotografia-drone`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">{t('servicesPage.items.drone.title')}</Link>
-              <Link to={i18n.language === 'pt' ? '/services/solucao-personalizada' : `/${i18n.language}/services/solucao-personalizada`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">{t('servicesPage.items.custom.title')}</Link>
+            <h4 className="font-semibold text-sm mb-4 text-foreground">Trabalho</h4>
+            <nav className="flex flex-col gap-3" aria-label="Footer work">
+              <Link to={i18n.language === 'pt' ? '/portfolio' : `/${i18n.language}/portfolio`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">{t('nav.portfolio')}</Link>
+              <Link to={i18n.language === 'pt' ? '/casos-de-sucesso' : `/${i18n.language}/casos-de-sucesso`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">Casos de Sucesso</Link>
+            </nav>
+          </div>
+
+          <div>
+            <h4 className="font-semibold text-sm mb-4 text-foreground">Insights</h4>
+            <nav className="flex flex-col gap-3" aria-label="Footer insights">
+              <Link to={i18n.language === 'pt' ? '/blog' : `/${i18n.language}/blog`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">{t('nav.blog')}</Link>
+              <Link to={i18n.language === 'pt' ? '/resources' : `/${i18n.language}/resources`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">Recursos</Link>
+              <Link to={i18n.language === 'pt' ? '/podcast' : `/${i18n.language}/podcast`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">Podcast</Link>
+              <Link to={i18n.language === 'pt' ? '/academy' : `/${i18n.language}/academy`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">Academy</Link>
+              <Link to={i18n.language === 'pt' ? '/webinars' : `/${i18n.language}/webinars`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">Webinars</Link>
             </nav>
           </div>
 
@@ -214,26 +219,42 @@ const Footer = () => {
           </div>
         </div>
 
+        {/* Products strip — the footer is the complete IA map */}
+        <div className="border-t border-white/10 mt-12 pt-8">
+          <h4 className="font-semibold text-sm mb-4 text-foreground">Produtos</h4>
+          <nav className="flex flex-wrap gap-x-6 gap-y-2" aria-label="Footer products">
+            {PRODUCTS.map((product) => (
+              <Link
+                key={product.slug}
+                to={i18n.language === 'pt' ? product.to : `/${i18n.language}${product.to}`}
+                className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all"
+              >
+                {product.name}
+              </Link>
+            ))}
+          </nav>
+        </div>
+
         {/* Contact & Address Block */}
         <div className="border-t border-white/10 mt-12 pt-10 grid grid-cols-1 md:grid-cols-2 gap-10">
           <div>
             <h4 className="font-semibold text-sm tracking-widest text-foreground uppercase mb-4">{t('footer.contactTitle')}</h4>
             <p className="text-sm text-foreground font-semibold mb-0.5">
               <Phone className="inline h-3.5 w-3.5 mr-1.5 -mt-0.5" />
-              T : <a href="tel:+351963574400" className="hover:text-primary transition-colors">+(351) 963 574 400</a>
+              T : <a href={`tel:${CONTACT.phone.e164}`} className="hover:text-primary transition-colors">{CONTACT.phone.display}</a>
             </p>
             <p className="text-xs text-muted-foreground mb-3 ml-5">{t('footer.mobileNote')}</p>
             <p className="text-sm text-foreground font-semibold">
               <Mail className="inline h-3.5 w-3.5 mr-1.5 -mt-0.5" />
-              E : <a href="mailto:contacto@getboost.digital" className="hover:text-primary transition-colors">contacto@getboost.digital</a>
+              E : <a href={`mailto:${CONTACT.email}`} className="hover:text-primary transition-colors">{CONTACT.email}</a>
             </p>
           </div>
           <div>
             <h4 className="font-semibold text-sm tracking-widest text-foreground uppercase mb-4">{t('footer.addressTitle')}</h4>
             <p className="text-sm text-foreground leading-relaxed">
               <MapPin className="inline h-3.5 w-3.5 mr-1.5 -mt-0.5" />
-              Rua Passeio Infante Dom Henrique, 22 Sala 33, 1º Piso<br />
-              <span className="ml-5">3080-042 Figueira da Foz</span>
+              {CONTACT.address.street}<br />
+              <span className="ml-5">{CONTACT.address.postalCode} {CONTACT.address.locality}</span>
             </p>
           </div>
         </div>

@@ -1,6 +1,6 @@
 # Getboost Digital — Marketing Digital & IA
 
-> Especialista em Marketing Digital, Transformação Digital e Inteligência Artificial na Figueira da Foz, Portugal. +20 anos de experiência e +1500 projetos entregues.
+> Especialista em Marketing Digital, Transformação Digital e Inteligência Artificial na Figueira da Foz, Portugal. +20 anos de experiência e 30+ projetos entregues.
 
 ## Pages
 
@@ -43,5 +43,5 @@
 
 - **Morada**: Rua Passeio Infante Dom Henrique, 22, Sala 33, 1º Piso, 3080-042 Figueira da Foz, Portugal
 - **Telefone**: +351 963 574 400
-- **Email**: geral@getboost.digital
+- **Email**: contacto@getboost.digital
 - **Horário**: Segunda a sexta, 09:00 às 18:30

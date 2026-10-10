@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { PUBLIC_MEDIA_BUCKET } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -71,7 +72,7 @@ const AdminPodcast = () => {
     const ext = file.name.split('.').pop() || 'mp3';
     const path = `episodes/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
     // R1C9: episode audio lives in `public-media` (public reads).
-    const { error } = await supabase.storage.from('public-media').upload(`podcast/${path}`, file, {
+    const { error } = await supabase.storage.from(PUBLIC_MEDIA_BUCKET).upload(`podcast/${path}`, file, {
       contentType: file.type || 'audio/mpeg',
       upsert: false,
     });

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { analytics, buildWhatsAppUrl } from '@/lib/analytics';
 import { WHATSAPP_MESSAGES, WHATSAPP_PHONE } from '@/lib/whatsappMessages';
+import { CONTACT, FOUNDER } from '@/data/brandRegistry';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { ArrowRight, Zap, Mail, Phone, MessageCircle, MapPin, Clock, ShieldCheck } from 'lucide-react';
@@ -80,7 +81,7 @@ const Contact = () => {
       await supabase.functions.invoke('send-transactional-email', {
         body: {
           templateName: 'lead-notification',
-          recipientEmail: 'nunocruz@getboost.digital',
+          recipientEmail: FOUNDER.email,
           templateData: {
             name: form.name.trim(),
             email: form.email.trim(),
@@ -260,10 +261,10 @@ const Contact = () => {
 
               <div className="space-y-4">
                 {[
-                  { Icon: MessageCircle, label: 'WhatsApp', value: '+351 963 574 400', href: buildWhatsAppUrl(WHATSAPP_PHONE, WHATSAPP_MESSAGES.generic()), note: 'Respostas em minutos, dias úteis' },
-                  { Icon: Mail, label: 'Email', value: 'geral@getboost.digital', href: 'mailto:geral@getboost.digital', note: 'Para briefings detalhados e propostas' },
-                  { Icon: Phone, label: 'Telefone', value: '+351 963 574 400', href: 'tel:+351963574400', note: 'Seg–Sex · 09h30–18h30 (WEST)' },
-                  { Icon: MapPin, label: 'Escritório', value: 'Figueira da Foz, Portugal', href: 'https://maps.google.com/?q=R.+Passeio+Infante+Dom+Henrique+22+Figueira+da+Foz', note: 'R. Passeio Infante D. Henrique, 22 · Sala 33' },
+                  { Icon: MessageCircle, label: 'WhatsApp', value: CONTACT.phone.display, href: buildWhatsAppUrl(WHATSAPP_PHONE, WHATSAPP_MESSAGES.generic()), note: 'Respostas em minutos, dias úteis' },
+                  { Icon: Mail, label: 'Email', value: CONTACT.email, href: `mailto:${CONTACT.email}`, note: 'Para briefings detalhados e propostas' },
+                  { Icon: Phone, label: 'Telefone', value: CONTACT.phone.display, href: `tel:${CONTACT.phone.e164}`, note: 'Seg–Sex · 09h30–18h30 (WEST)' },
+                  { Icon: MapPin, label: 'Escritório', value: `${CONTACT.address.locality}, ${CONTACT.address.country}`, href: 'https://maps.google.com/?q=R.+Passeio+Infante+Dom+Henrique+22+Figueira+da+Foz', note: CONTACT.address.street },
                 ].map(({ Icon, label, value, href, note }) => (
                   <a
                     key={label}

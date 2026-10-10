@@ -1,4 +1,5 @@
 // Biblioteca extensa de modelos de mensagem WhatsApp prontos a importar
+import { ROLE_EMAILS } from "@/data/brandRegistry";
 export type TriggerEvent =
   | "meeting_scheduled"
   | "lead_created"
@@ -250,7 +251,7 @@ Há algo que possa esclarecer? Ou preferes que volte a contactar dentro de 30 di
 Vou assumir que este não é o melhor momento para avançarmos. Sem problema!
 
 Se as prioridades mudarem, sabes onde estou:
-📧 hello@getboost.digital
+📧 ${ROLE_EMAILS.hello}
 🔗 https://getboost.digital
 
 Boa sorte com o projecto da {{empresa}}!`,
@@ -345,7 +346,7 @@ Vamos alinhar objectivos, prazos e responsabilidades.`,
 🔑 Acesso ao Meta Business
 🔑 Acesso ao Google Ads (se aplicável)
 
-Envia tudo para hello@getboost.digital. Obrigado!`,
+Envia tudo para ${ROLE_EMAILS.hello}. Obrigado!`,
   },
 
   // ─── SUPORTE ──────────────────────────────────────────────────

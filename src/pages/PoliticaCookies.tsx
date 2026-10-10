@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Cookie, Grid2x2, Minus, Circle } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ROLE_EMAILS } from '@/data/brandRegistry';
 
 const ACCENT = '#ff4000';
 
@@ -52,7 +53,7 @@ const sections: Section[] = [
     eyebrow: 'Controlo do Utilizador',
     title: 'Como gerir ou revogar o consentimento',
     tags: ['Banner de consentimento', 'Definições do browser', 'Revogação a qualquer momento', 'Direito de acesso'],
-    body: 'Podes alterar a tua escolha a qualquer momento a partir do banner de cookies (reabrível ao pé do rodapé) ou apagar os cookies diretamente nas definições do teu browser. Para exercer direitos ao abrigo do RGPD — acesso, retificação, apagamento, oposição — escreve para privacidade@getboost.digital.',
+    body: 'Podes alterar a tua escolha a qualquer momento a partir do banner de cookies (reabrível ao pé do rodapé) ou apagar os cookies diretamente nas definições do teu browser. Para exercer direitos ao abrigo do RGPD — acesso, retificação, apagamento, oposição — escreve para ' + ROLE_EMAILS.privacy + '.',
   },
 ];
 
@@ -287,8 +288,8 @@ const PoliticaCookies = () => {
               <p className="mt-4 text-white/70 leading-relaxed">
                 Getboost Digital · Encarregado de Proteção de Dados<br />
                 Email:{' '}
-                <a href="mailto:privacidade@getboost.digital" className="underline hover:text-white">
-                  privacidade@getboost.digital
+                <a href={`mailto:${ROLE_EMAILS.privacy}`} className="underline hover:text-white">
+                  {ROLE_EMAILS.privacy}
                 </a>
                 <br />
                 Podes também apresentar reclamação junto da CNPD em{' '}

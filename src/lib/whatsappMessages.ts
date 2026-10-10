@@ -10,7 +10,10 @@
  * para que as UTMs de origem sejam automaticamente anexadas.
  */
 
-export const WHATSAPP_PHONE = '351963574400';
+import { CONTACT } from '@/data/brandRegistry';
+
+/** Wave 2A.4: the WhatsApp number is the registry phone, not a local literal. */
+export const WHATSAPP_PHONE = CONTACT.phone.whatsapp;
 
 export const WHATSAPP_MESSAGES = {
   /** CTA genérico "WhatsApp directo" (hero/canais da página Contacto) */

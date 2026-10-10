@@ -37,6 +37,9 @@ import Index from "./pages/Index.tsx";
 
 // Lazy load all other routes
 const Services = lazy(() => import("./pages/Services.tsx"));
+const Products = lazy(() => import("./pages/Products.tsx"));
+const Work = lazy(() => import("./pages/Work.tsx"));
+const Insights = lazy(() => import("./pages/Insights.tsx"));
 const ServiceDetail = lazy(() => import("./pages/ServiceDetail.tsx"));
 const SolucoesSlugRouter = lazy(() => import("./pages/SolucoesSlugRouter.tsx"));
 const Portfolio = lazy(() => import("./pages/Portfolio.tsx"));
@@ -410,9 +413,15 @@ const App = () => (
             <Route path="/solucoes/:slug" element={<SolucoesSlugRouter />} />
             <Route path="/:lang/solucoes/:slug" element={<SolucoesSlugRouter />} />
 
-            {/* Produtos: sem página índice, redireciona para o primeiro produto */}
-            <Route path="/produtos" element={<Navigate to="/qook" replace />} />
-            <Route path="/:lang/produtos" element={<Navigate to="/:lang/qook" replace />} />
+            {/* Produtos: Wave 2A.5 — real hub index (was a redirect to /qook) */}
+            <Route path="/produtos" element={<Products />} />
+            <Route path="/:lang/produtos" element={<Products />} />
+
+            {/* Wave 3E — WORK and INSIGHTS hubs */}
+            <Route path="/work" element={<Work />} />
+            <Route path="/:lang/work" element={<Work />} />
+            <Route path="/insights" element={<Insights />} />
+            <Route path="/:lang/insights" element={<Insights />} />
 
             {/* Legacy /services URLs → redirect to /solucoes */}
             <Route path="/services/*" element={<ServicesRedirect />} />

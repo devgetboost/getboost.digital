@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { FOUNDER, ROLE_EMAILS } from '@/data/brandRegistry';
 
 type Row = {
   id: string;
@@ -26,7 +27,7 @@ const empty = (): Row => ({
   id: '',
   slug: '',
   title: '',
-  notify_email: 'nunocruz@getboost.digital',
+  notify_email: FOUNDER.email,
   cc_emails: [],
   brevo_list_id: null,
   crm_pipeline: null,
@@ -140,14 +141,14 @@ export default function AdminSolucaoRouting() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
                     <Label>Notificar (email principal)</Label>
-                    <Input value={row.notify_email} onChange={(e) => update(idx, { notify_email: e.target.value })} placeholder="responsavel@getboost.digital" />
+                    <Input value={row.notify_email} onChange={(e) => update(idx, { notify_email: e.target.value })} placeholder={ROLE_EMAILS.routing} />
                   </div>
                   <div>
                     <Label>Em cópia (CC, separados por vírgula)</Label>
                     <Input
                       value={row.cc_emails.join(', ')}
                       onChange={(e) => update(idx, { cc_emails: e.target.value.split(',').map((v) => v.trim()).filter(Boolean) })}
-                      placeholder="comercial@getboost.digital, ops@getboost.digital"
+                      placeholder={`${ROLE_EMAILS.commercial}, ${ROLE_EMAILS.ops}`}
                     />
                   </div>
                 </div>

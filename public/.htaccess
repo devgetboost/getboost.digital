@@ -1,0 +1,35 @@
+# Getboost 2027 — Wave 2A.1 SPA deep-link fallback (Hostinger / Apache / LiteSpeed)
+#
+# Problem: direct navigation to any client route (/solucoes, /agentes-ia, /blog,
+# /br/*, /en/* …) returned a host-level 404 because the static host looks for a
+# matching file before the SPA ever loads.
+#
+# Strategy (layered, in order of preference):
+#   1. This rewrite: unknown paths are served the SPA shell (index.html) while
+#      real files (assets, sitemaps, robots.txt) are served untouched.
+#   2. public/404.html: portable bootstrap for hosts/contexts where the rewrite
+#      does not run (served via the ErrorDocument below).
+#
+# Existing static files must win — do not rewrite real requests to the shell.
+
+Options -MultiViews
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # 1) Real files and directories are served as-is (JS/CSS/assets, sitemaps,
+  #    robots.txt, favicons…). Without this the rewrite would shadow hashed
+  #    build assets.
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # 2) Everything else is an SPA route: serve the shell and let React Router
+  #    resolve it (including market-prefixed /br and /en paths).
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# If mod_rewrite is unavailable, hand the request to the bootstrap document,
+# which preserves the intended route and boots the SPA at the root.
+ErrorDocument 404 /404.html

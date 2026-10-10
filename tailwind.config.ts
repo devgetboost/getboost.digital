@@ -48,6 +48,74 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         "section-alt": "hsl(var(--section-alt))",
+        // Getboost 2027 design system (Wave 3A) — frozen tokens from
+        // GETBOOST_2027_DESIGN_FREEZE_V1, mirrored from
+        // src/styles/design-system.css. Additive: built-in ramps untouched.
+        brand: {
+          50: "var(--gb-brand-50)",
+          100: "var(--gb-brand-100)",
+          200: "var(--gb-brand-200)",
+          300: "var(--gb-brand-300)",
+          400: "var(--gb-brand-400)",
+          500: "var(--gb-brand-500)",
+          600: "var(--gb-brand-600)",
+          700: "var(--gb-brand-700)",
+        },
+        sand: {
+          0: "var(--gb-sand-0)",
+          50: "var(--gb-sand-50)",
+          100: "var(--gb-sand-100)",
+          200: "var(--gb-sand-200)",
+          300: "var(--gb-sand-300)",
+          400: "var(--gb-sand-400)",
+          500: "var(--gb-sand-500)",
+          600: "var(--gb-sand-600)",
+          700: "var(--gb-sand-700)",
+          800: "var(--gb-sand-800)",
+          900: "var(--gb-sand-900)",
+          950: "var(--gb-sand-950)",
+        },
+        canvas: {
+          base: "var(--gb-canvas-base)",
+          subtle: "var(--gb-canvas-subtle)",
+          section: "var(--gb-canvas-section)",
+          tint: "var(--gb-canvas-tint)",
+          inverse: "var(--gb-canvas-inverse)",
+        },
+        ink: {
+          primary: "var(--gb-ink-primary)",
+          secondary: "var(--gb-ink-secondary)",
+          tertiary: "var(--gb-ink-tertiary)",
+          inverse: "var(--gb-ink-inverse)",
+          "on-brand": "var(--gb-ink-on-brand)",
+        },
+        success: "var(--gb-success)",
+        warning: "var(--gb-warning)",
+        error: "var(--gb-error)",
+        ai: {
+          base: "var(--gb-ai-base)",
+          strong: "var(--gb-ai-strong)",
+          tint: "var(--gb-ai-tint)",
+          border: "var(--gb-ai-border)",
+        },
+        automation: {
+          base: "var(--gb-automation-base)",
+          strong: "var(--gb-automation-strong)",
+          tint: "var(--gb-automation-tint)",
+          border: "var(--gb-automation-border)",
+        },
+        software: {
+          base: "var(--gb-software-base)",
+          strong: "var(--gb-software-strong)",
+          tint: "var(--gb-software-tint)",
+          border: "var(--gb-software-border)",
+        },
+        growth: {
+          base: "var(--gb-growth-base)",
+          strong: "var(--gb-growth-strong)",
+          tint: "var(--gb-growth-tint)",
+          border: "var(--gb-growth-border)",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -69,10 +137,24 @@ export default {
           "active-bar": "hsl(var(--admin-active-bar))",
         },
       },
+      fontSize: {
+        // Frozen type scale (Wave 3A) — GETBOOST_2027_DESIGN_FREEZE_V1.
+        display: ["3.5rem", { lineHeight: "4rem", letterSpacing: "-0.025em", fontWeight: "900" }],
+        h1: ["2.75rem", { lineHeight: "3.25rem", letterSpacing: "-0.02em", fontWeight: "800" }],
+        h2: ["2rem", { lineHeight: "2.5rem", letterSpacing: "-0.02em", fontWeight: "700" }],
+        h3: ["1.5rem", { lineHeight: "2rem", letterSpacing: "-0.01em", fontWeight: "700" }],
+        body: ["1rem", { lineHeight: "1.625rem" }],
+        small: ["0.875rem", { lineHeight: "1.375rem" }],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        // Frozen surface elevation (Wave 3A).
+        "card-rest": "var(--gb-shadow-rest)",
+        "card-hover": "var(--gb-shadow-hover)",
       },
       keyframes: {
         "accordion-down": {

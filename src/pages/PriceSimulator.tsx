@@ -11,6 +11,7 @@ import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { FOUNDER } from '@/data/brandRegistry';
 
 const ACCENT = '#ff4000';
 const manifestoLines = ['Sem tabelas.', 'Sem surpresas.'];
@@ -136,7 +137,7 @@ const PriceSimulator = () => {
       await legacySupabase.functions.invoke('send-transactional-email', {
         body: {
           templateName: 'lead-notification',
-          recipientEmail: 'nunocruz@getboost.digital',
+          recipientEmail: FOUNDER.email,
           templateData: {
             name: leadForm.name.trim(),
             email: leadForm.email.trim(),

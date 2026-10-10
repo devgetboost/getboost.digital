@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Clock, ShieldCheck, Sparkles } from 'lucide-react';
 import { z } from 'zod';
 import Layout from '@/components/Layout';
-import SEO from '@/components/SEO';
+import { FOUNDER } from '@/data/brandRegistry';
+import SEO, { SITE_URL } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -420,7 +421,7 @@ export default function DemoRequest() {
     const { error: emailError } = await legacySupabase.functions.invoke('send-transactional-email', {
       body: {
         templateName: 'lead-notification',
-        recipientEmail: 'nunocruz@getboost.digital',
+        recipientEmail: FOUNDER.email,
         templateData: {
           name: data.name,
           email: data.email,
@@ -470,17 +471,17 @@ export default function DemoRequest() {
   const seoCanonical = isValid
     ? `/demo?produto=${product.slug}${isMultilingual && lang !== 'pt' ? `&lang=${lang}` : ''}`
     : '/demo';
-  const seoUrl = `https://getboostsoft.lovable.app${seoCanonical}`;
+  const seoUrl = `${SITE_URL}${seoCanonical}`;
 
   const jsonLd: Record<string, unknown>[] = [
     {
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Início', item: 'https://getboostsoft.lovable.app/' },
+        { '@type': 'ListItem', position: 1, name: 'Início', item: `${SITE_URL}/` },
         ...(isValid
           ? [
-              { '@type': 'ListItem', position: 2, name: 'Soluções', item: 'https://getboostsoft.lovable.app/solucoes' },
-              { '@type': 'ListItem', position: 3, name: product.name, item: `https://getboostsoft.lovable.app${product.backHref}` },
+              { '@type': 'ListItem', position: 2, name: 'Soluções', item: `${SITE_URL}/solucoes` },
+              { '@type': 'ListItem', position: 3, name: product.name, item: `${SITE_URL}${product.backHref}` },
               { '@type': 'ListItem', position: 4, name: `Demo ${product.name}`, item: seoUrl },
             ]
           : [{ '@type': 'ListItem', position: 2, name: 'Pedir demonstração', item: seoUrl }]),
@@ -493,7 +494,7 @@ export default function DemoRequest() {
           description: product.tagline,
           brand: { '@type': 'Brand', name: 'Getboost Digital' },
           category: product.eyebrow,
-          url: `https://getboostsoft.lovable.app${product.backHref}`,
+          url: `${SITE_URL}${product.backHref}`,
           offers: {
             '@type': 'Offer',
             availability: 'https://schema.org/InStock',
@@ -507,8 +508,8 @@ export default function DemoRequest() {
           '@type': 'Service',
           name: 'Demonstração Getboost Digital',
           description: seoDescription,
-          provider: { '@type': 'Organization', name: 'Getboost Digital', url: 'https://getboostsoft.lovable.app' },
-          areaServed: ['Portugal', 'Brasil', 'Spain'],
+          provider: { '@type': 'Organization', name: 'Getboost Digital', url: SITE_URL },
+          areaServed: ['Portugal', 'Brasil', 'International'],
           url: seoUrl,
         },
     {
@@ -517,7 +518,7 @@ export default function DemoRequest() {
       description: seoDescription,
       url: seoUrl,
       inLanguage: lang === 'en' ? 'en' : lang === 'es' ? 'es' : 'pt-PT',
-      isPartOf: { '@type': 'WebSite', name: 'Getboost Digital', url: 'https://getboostsoft.lovable.app' },
+      isPartOf: { '@type': 'WebSite', name: 'Getboost Digital', url: SITE_URL },
       potentialAction: {
         '@type': 'ScheduleAction',
         target: seoUrl,
@@ -579,18 +580,18 @@ export default function DemoRequest() {
     );
   }
 
-  const SITE_URL_DEMO = 'https://getboostsoft.lovable.app';
   const buildDemoUrl = (l: Lang) => {
-
-    if (!isValid) return `${SITE_URL_DEMO}/demo`;
-    const base = `${SITE_URL_DEMO}/demo?produto=${product.slug}`;
+    if (!isValid) return `${SITE_URL}/demo`;
+    const base = `${SITE_URL}/demo?produto=${product.slug}`;
     return l === 'pt' ? base : `${base}&lang=${l}`;
   };
   const demoAlternates = isValid
     ? [
-        { lang: 'pt', href: buildDemoUrl('pt') },
+        // Wave 2A.6: market-model alternates only (pt-PT, en, x-default).
+        // This page's UI is query-param driven; it has no pt-BR variant, and
+        // `es` is presentation-only — neither may be advertised.
+        { lang: 'pt-PT', href: buildDemoUrl('pt') },
         { lang: 'en', href: buildDemoUrl('en') },
-        { lang: 'es', href: buildDemoUrl('es') },
         { lang: 'x-default', href: buildDemoUrl('pt') },
       ]
     : undefined;

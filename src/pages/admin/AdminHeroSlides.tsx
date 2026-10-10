@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { PUBLIC_MEDIA_BUCKET } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -69,7 +70,7 @@ export default function AdminHeroSlides() {
     const path = `${crypto.randomUUID()}.${ext}`;
     // R1C9: hero banners live in `public-media`. The stored value stays the
     // public URL (as before) so existing rows render unchanged.
-    const { error } = await supabase.storage.from('public-media').upload(`hero-banners/${path}`, file, {
+    const { error } = await supabase.storage.from(PUBLIC_MEDIA_BUCKET).upload(`hero-banners/${path}`, file, {
       cacheControl: '3600', upsert: false,
     });
     if (error) {
@@ -77,7 +78,7 @@ export default function AdminHeroSlides() {
       setUploading(false);
       return;
     }
-    const { data } = supabase.storage.from('public-media').getPublicUrl(`hero-banners/${path}`);
+    const { data } = supabase.storage.from(PUBLIC_MEDIA_BUCKET).getPublicUrl(`hero-banners/${path}`);
     setEditing(prev => ({ ...prev, image_url: data.publicUrl }));
     setUploading(false);
     toast.success('Imagem carregada');

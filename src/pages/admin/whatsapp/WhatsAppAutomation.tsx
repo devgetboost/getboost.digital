@@ -15,6 +15,7 @@ import { toast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Power, Calendar, UserPlus, Bell, CheckCircle2, Zap, MessageSquare, Send, Tag as TagIcon, BookOpen } from "lucide-react";
 import WhatsAppTemplateLibrary from "./WhatsAppTemplateLibrary";
 import type { TemplatePreset } from "./templateLibrary";
+import { CONTACT } from "@/data/brandRegistry";
 
 type TriggerEvent = "meeting_scheduled" | "lead_created" | "lead_tagged" | "meeting_reminder" | "meeting_completed" | "custom";
 
@@ -246,7 +247,7 @@ export default function WhatsAppAutomation() {
       .replace(/\{\{\s*meeting_time\s*\}\}/gi, "14:00")
       .replace(/\{\{\s*meeting_link\s*\}\}/gi, "https://getboost.digital/booking")
       .replace(/\{\{\s*empresa\s*\}\}/gi, "Acme Lda")
-      .replace(/\{\{\s*telefone\s*\}\}/gi, testPhone || "+351 963 574 400");
+      .replace(/\{\{\s*telefone\s*\}\}/gi, testPhone || CONTACT.phone.display);
   }, [form.content, testName, testPhone]);
 
   const stats = {
@@ -566,7 +567,7 @@ export default function WhatsAppAutomation() {
               <div className="space-y-2 border-t pt-4">
                 <Label className="text-sm font-semibold">Enviar teste real</Label>
                 <Input placeholder="Nome (opcional)" value={testName} onChange={e => setTestName(e.target.value)} />
-                <Input placeholder="+351 963 574 400" value={testPhone} onChange={e => setTestPhone(e.target.value)} />
+                <Input placeholder={CONTACT.phone.display} value={testPhone} onChange={e => setTestPhone(e.target.value)} />
                 <Button variant="outline" className="w-full" onClick={testDispatch} disabled={testing}>
                   <Send className="h-4 w-4" />
                   {testing ? "A enviar…" : "Disparar agora"}

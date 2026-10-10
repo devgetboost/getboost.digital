@@ -4,6 +4,7 @@ import { ArrowRight, ArrowLeft, TrendingUp, BarChart3, Layers, Calendar, Users, 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Layout from '@/components/Layout';
+import { METRICS } from '@/data/brandRegistry';
 import SEO from '@/components/SEO';
 import { investorProjects } from '@/data/investorProjects';
 import NotFound from './NotFound';
@@ -309,7 +310,7 @@ const ProjetoInvestidor = () => {
             </motion.div>
             <motion.div variants={fadeUp} custom={1}>
               <h2 className="text-3xl font-bold text-foreground mb-4">Sobre o Fundador</h2>
-              <p className="text-muted-foreground leading-relaxed mb-4">Getboost Digital tem mais de 20 anos de experiência em marketing digital, desenvolvimento web e transformação digital. Com mais de 1500 projetos entregues, combina visão estratégica com execução técnica.</p>
+              <p className="text-muted-foreground leading-relaxed mb-4">Getboost Digital tem mais de {METRICS.yearsExperience.value} anos de experiência em marketing digital, desenvolvimento web e transformação digital. Com {METRICS.projectsDelivered.value} projetos entregues, combina visão estratégica com execução técnica.</p>
               <p className="text-muted-foreground leading-relaxed mb-6">Lidera o desenvolvimento de um ecossistema de startups SaaS com IA integrada, focadas em mercados de alto crescimento.</p>
               <Button onClick={() => window.open('/booking', '_self')} className="gap-2">Agendar Reunião <ArrowRight className="h-4 w-4" /></Button>
             </motion.div>

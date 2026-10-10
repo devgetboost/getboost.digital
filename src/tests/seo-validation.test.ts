@@ -20,7 +20,8 @@ describe("SEO Critical Validation", () => {
     const sitemapContent = readFileSync(sitemapPath, "utf-8");
     const robotsContent = readFileSync(robotsPath, "utf-8");
 
-    expect(sitemapContent).toContain("https://getboostsoft.lovable.app");
+    expect(sitemapContent).toContain("https://getboost.digital");
+    expect(sitemapContent).not.toContain("getboostsoft.lovable.app");
     expect(sitemapContent).toContain("<sitemapindex");
     expect(robotsContent).toContain("Sitemap:");
     expect(robotsContent).toContain("User-agent: *");

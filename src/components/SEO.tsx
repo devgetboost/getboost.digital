@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { normalizePath } from '@/lib/utils';
 
+import { CONTACT } from '@/data/brandRegistry';
 import {
   DEFAULT_MARKET,
   MARKET_HREFLANG,
@@ -15,15 +16,16 @@ import {
   type MarketCode,
 } from '@/lib/markets';
 
-const SITE_URL = 'https://getboostsoft.lovable.app';
+/** Canonical public site host. Single definition — every consumer imports it. */
+export const SITE_URL = 'https://getboost.digital';
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
-const SITE_NAME = 'Getboost Digital — Marketing Digital & IA';
+const SITE_NAME = 'Getboost Digital';
 
 const SOCIAL_LINKS = [
   'https://www.linkedin.com/in/nunocruz',
   'https://www.instagram.com/getboost.digital',
   'https://www.facebook.com/getboost.digital',
-  'https://wa.me/351963574400'
+  `https://wa.me/${CONTACT.phone.whatsapp}`
 ];
 
 interface SEOProps {
@@ -110,7 +112,7 @@ const resolveMarketFromLang = (lang: string | undefined, path: string): MarketCo
 
 const SEO = ({
   title,
-  description = 'Especialista em Marketing Digital, Transformação Digital e IA na Figueira da Foz. +20 anos de experiência, +1500 projetos entregues.',
+  description = 'Parceiro de growth e engenharia de PMEs: agentes de IA, automação, software e growth orientado a receita.',
   canonical,
   image = DEFAULT_IMAGE,
   type = 'website',
@@ -239,29 +241,29 @@ export const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   '@id': `${SITE_URL}/#organization`,
-  name: 'Getboost Digital — Marketing Digital & IA',
+  name: 'Getboost Digital',
   alternateName: 'GetBoost Digital',
   url: SITE_URL,
   logo: {
     '@type': 'ImageObject',
-    url: `${SITE_URL}/logo.png`,
+    url: `${SITE_URL}/apple-touch-icon.png`,
     width: '180',
-    height: '60'
+    height: '180'
   },
   image: DEFAULT_IMAGE,
-  description: 'Especialista em Marketing Digital com mais de 20 anos de experiência.',
+  description: 'Parceiro de growth e engenharia de PMEs: agentes de IA, automação, software e growth orientado a receita.',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'R. Passeio Infante Dom Henrique, 22, Sala 33',
-    addressLocality: 'Figueira da Foz',
-    postalCode: '3080-042',
+    streetAddress: CONTACT.address.street,
+    addressLocality: CONTACT.address.locality,
+    postalCode: CONTACT.address.postalCode,
     addressCountry: 'PT'
   },
   contactPoint: {
     '@type': 'ContactPoint',
-    telephone: '+351963574400',
+    telephone: CONTACT.phone.e164,
     contactType: 'customer service',
-    email: 'geral@getboost.digital',
+    email: CONTACT.email,
     availableLanguage: ['Portuguese', 'English', 'Spanish']
   },
   sameAs: SOCIAL_LINKS
@@ -285,17 +287,16 @@ export const localBusinessSchema = {
       closes: '18:30'
     }
   ],
-  areaServed: ['Portugal', 'Brasil', 'Spain']
+  areaServed: ['Portugal', 'Brasil', 'International']
 };
 
 export const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   '@id': `${SITE_URL}/about/#person`,
-  name: 'Getboost Digital',
+  name: 'Nuno Cruz',
   jobTitle: 'Especialista em Marketing Digital & Inteligência Artificial',
   url: `${SITE_URL}/about`,
-  image: `${SITE_URL}/assets/nuno-cruz.webp`,
   sameAs: SOCIAL_LINKS,
   worksFor: { '@id': `${SITE_URL}/#organization` }
 };

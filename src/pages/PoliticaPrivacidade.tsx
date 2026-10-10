@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, ShieldCheck, Grid2x2, Minus, Circle } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ROLE_EMAILS } from '@/data/brandRegistry';
 
 const ACCENT = '#ff4000';
 
@@ -58,7 +59,7 @@ const sections: Section[] = [
     eyebrow: 'Os teus direitos',
     title: 'O que podes exigir a qualquer momento',
     tags: ['Acesso', 'Retificação', 'Apagamento', 'Portabilidade', 'Oposição'],
-    body: 'Ao abrigo do RGPD, tens direito a aceder aos dados que temos sobre ti, corrigi-los, apagá-los, limitar o tratamento, opor-te a decisões automatizadas e receber os dados em formato portável. Basta escreveres para privacidade@getboost.digital. Respondemos em, no máximo, 30 dias. Podes também reclamar directamente à Comissão Nacional de Proteção de Dados (CNPD).',
+    body: 'Ao abrigo do RGPD, tens direito a aceder aos dados que temos sobre ti, corrigi-los, apagá-los, limitar o tratamento, opor-te a decisões automatizadas e receber os dados em formato portável. Basta escreveres para ' + ROLE_EMAILS.privacy + '. Respondemos em, no máximo, 30 dias. Podes também reclamar directamente à Comissão Nacional de Proteção de Dados (CNPD).',
   },
 ];
 
@@ -292,8 +293,8 @@ const PoliticaPrivacidade = () => {
               <p className="mt-4 text-white/70 leading-relaxed">
                 Getboost Digital · Encarregado de Proteção de Dados<br />
                 Email:{' '}
-                <a href="mailto:privacidade@getboost.digital" className="underline hover:text-white">
-                  privacidade@getboost.digital
+                <a href={`mailto:${ROLE_EMAILS.privacy}`} className="underline hover:text-white">
+                  {ROLE_EMAILS.privacy}
                 </a>
                 <br />
                 Autoridade de controlo:{' '}

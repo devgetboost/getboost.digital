@@ -1,0 +1,266 @@
+/**
+ * Getboost 2027 — Wave 3A · Design System Foundation
+ * ==================================================
+ * The frozen token layer from GETBOOST_2027_DESIGN_FREEZE_V1.
+ *
+ * Additive by design: nothing here repaints existing pages. Pages adopt
+ * these tokens/utilities progressively from Wave 3B onward; the guards in
+ * src/tests/design-system.test.ts fail CI on drift.
+ *
+ * Naming: `gb-` (Getboost design system) prefixes every utility and surface
+ * class; tokens are `--gb-*` custom properties mirrored into Tailwind via
+ * tailwind.config.ts (brand/sand/canvas/ink/ai/automation/software/growth).
+ */
+
+:root {
+  /* ---------------------------------------------------------------- brand */
+  --gb-brand-50: #fff2ed;
+  --gb-brand-100: #ffe0d4;
+  --gb-brand-200: #ffc2a9;
+  --gb-brand-300: #ff9c78;
+  --gb-brand-400: #ff7647;
+  --gb-brand-500: #ff4000; /* the brand constant — chrome, CTA, focus */
+  --gb-brand-600: #db3800; /* orange TEXT on light (AA) */
+  --gb-brand-700: #b72f00; /* pressed / active */
+
+  /* ------------------------------------------------- warm neutral (sand) */
+  --gb-sand-0: #ffffff;
+  --gb-sand-50: #fafaf9;
+  --gb-sand-100: #f5f5f4;
+  --gb-sand-200: #e7e5e4;
+  --gb-sand-300: #d6d3d1;
+  --gb-sand-400: #a8a29e;
+  --gb-sand-500: #78716c;
+  --gb-sand-600: #57534e;
+  --gb-sand-700: #44403c;
+  --gb-sand-800: #292524;
+  --gb-sand-900: #1c1917;
+  --gb-sand-950: #0c0a09;
+
+  /* ------------------------------------------------------ background scale */
+  --gb-canvas-base: #ffffff;
+  --gb-canvas-subtle: #fafaf9;
+  --gb-canvas-section: #f5f5f4;
+  --gb-canvas-tint: #fff2ed; /* orange wash — max one per page */
+  --gb-canvas-inverse: #0c0a09; /* CTA bands + footer only */
+
+  /* ----------------------------------------------------------- text scale */
+  --gb-ink-primary: #1c1917;
+  --gb-ink-secondary: #57534e;
+  --gb-ink-tertiary: #a8a29e; /* captions/meta only */
+  --gb-ink-inverse: #fafaf9;
+  --gb-ink-on-brand: #ffffff;
+
+  /* --------------------------------------------------------- status colors */
+  --gb-success: #15803d;
+  --gb-success-bg: #f0fdf4;
+  --gb-success-border: #bbf7d0;
+  --gb-warning: #b45309;
+  --gb-warning-bg: #fffbeb;
+  --gb-warning-border: #fde68a;
+  --gb-error: #b91c1c;
+  --gb-error-bg: #fef2f2;
+  --gb-error-border: #fecaca;
+
+  /* -------------------------------------------------------------- pillars */
+  /* One hue per pillar, matched depth. Orange is NEVER a pillar colour. */
+  --gb-ai-base: #7c3aed;
+  --gb-ai-strong: #6d28d9;
+  --gb-ai-tint: #f5f3ff;
+  --gb-ai-border: #ddd6fe;
+  --gb-automation-base: #0d9488;
+  --gb-automation-strong: #0f766e;
+  --gb-automation-tint: #f0fdfa;
+  --gb-automation-border: #ccfbf1;
+  --gb-software-base: #2563eb;
+  --gb-software-strong: #1d4ed8;
+  --gb-software-tint: #eff6ff;
+  --gb-software-border: #dbeafe;
+  --gb-growth-base: #16a34a;
+  --gb-growth-strong: #15803d;
+  --gb-growth-tint: #f0fdf4;
+  --gb-growth-border: #dcfce7;
+
+  /* -------------------------------------------------------------- spacing */
+  /* 8pt base grid (4pt half-steps where needed) */
+  --gb-space-1: 0.25rem; /* 4 */
+  --gb-space-2: 0.5rem; /* 8 */
+  --gb-space-3: 0.75rem; /* 12 */
+  --gb-space-4: 1rem; /* 16 */
+  --gb-space-6: 1.5rem; /* 24 */
+  --gb-space-8: 2rem; /* 32 */
+  --gb-space-10: 2.5rem; /* 40 */
+  --gb-space-12: 3rem; /* 48 */
+  --gb-space-16: 4rem; /* 64 */
+  --gb-space-20: 5rem; /* 80 */
+  --gb-space-24: 6rem; /* 96 */
+  --gb-space-32: 8rem; /* 128 */
+
+  /* -------------------------------------------------------- radii/shadow */
+  --gb-radius-card: 0.875rem; /* 14px */
+  --gb-shadow-rest: 0 1px 2px rgb(28 25 23 / 0.05);
+  --gb-shadow-hover: 0 8px 24px rgb(28 25 23 / 0.08);
+}
+
+/* ============================================================ typography */
+/* Frozen scale: Display 56/64 · H1 44/52 · H2 32/40 · H3 24/32 ·
+   Body 16/26 · Small 14/22 · Eyebrow 11/16 mono uppercase. Fluid clamps
+   keep the frozen values at desktop. */
+
+.gb-text-display {
+  font-size: clamp(2.5rem, 1.6rem + 3.6vw, 3.5rem);
+  line-height: 1.06;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+.gb-text-h1 {
+  font-size: clamp(2rem, 1.4rem + 2.4vw, 2.75rem);
+  line-height: 1.18;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.gb-text-h2 {
+  font-size: clamp(1.625rem, 1.2rem + 1.6vw, 2rem);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.gb-text-h3 {
+  font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.5rem);
+  line-height: 1.33;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.gb-text-body {
+  font-size: 1rem;
+  line-height: 1.625;
+}
+.gb-text-small {
+  font-size: 0.875rem;
+  line-height: 1.57;
+}
+.gb-eyebrow {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem; /* 11 */
+  line-height: 1.45;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-weight: 500;
+}
+
+/* ============================================================== surfaces */
+/* Light editorial base. Pages opt in per section; existing dark marketing
+   sections keep their hardcoded treatment until Wave 3B adopts these. */
+
+.gb-surface-page {
+  background: var(--gb-canvas-base);
+  color: var(--gb-ink-primary);
+}
+.gb-surface-section {
+  background: var(--gb-canvas-section);
+}
+.gb-surface-subtle {
+  background: var(--gb-canvas-subtle);
+}
+.gb-container {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: var(--gb-space-6);
+}
+@media (min-width: 768px) {
+  .gb-container {
+    padding-inline: var(--gb-space-12);
+  }
+}
+.gb-section {
+  padding-block: var(--gb-space-16);
+}
+@media (min-width: 768px) {
+  .gb-section {
+    padding-block: var(--gb-space-24);
+  }
+}
+
+/* Card — surface + hairline + soft shadow, 14px radius. */
+.gb-surface-card {
+  background: var(--gb-canvas-base);
+  border: 1px solid var(--gb-sand-200);
+  border-radius: var(--gb-radius-card);
+  box-shadow: var(--gb-shadow-rest);
+  padding: var(--gb-space-8);
+}
+.gb-surface-card-elevated {
+  background: var(--gb-canvas-base);
+  border: 1px solid var(--gb-sand-200);
+  border-radius: var(--gb-radius-card);
+  box-shadow: var(--gb-shadow-rest);
+  padding: var(--gb-space-8);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.gb-surface-card-elevated:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--gb-shadow-hover);
+}
+
+/* Pillar card — identity via a 4px top accent; never a full fill.
+   Set the accent per pillar: style={{ "--gb-pillar": "var(--gb-ai-base)" }} */
+.gb-surface-pillar-card {
+  background: var(--gb-canvas-base);
+  border: 1px solid var(--gb-sand-200);
+  border-radius: var(--gb-radius-card);
+  box-shadow: var(--gb-shadow-rest);
+  padding: var(--gb-space-8);
+  position: relative;
+  overflow: hidden;
+}
+.gb-surface-pillar-card::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 4px;
+  background: var(--gb-pillar, var(--gb-brand-500));
+}
+
+/* CTA band — near-black inverse, orange is the only accent. */
+.gb-cta-band {
+  background: var(--gb-canvas-inverse);
+  color: var(--gb-ink-inverse);
+  border-radius: var(--gb-radius-card);
+  padding: var(--gb-space-16) var(--gb-space-8);
+}
+@media (min-width: 768px) {
+  .gb-cta-band {
+    padding: var(--gb-space-24) var(--gb-space-16);
+  }
+}
+
+/* Hairline rules — the structural motif. */
+.gb-hairline {
+  height: 1px;
+  background: var(--gb-sand-200);
+  border: 0;
+}
+.gb-hairline-accent {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--gb-brand-500),
+    transparent
+  );
+  border: 0;
+  opacity: 0.4;
+}
+
+/* Grid overlays — 4–6% opacity, never decorative noise. */
+.gb-grid-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: linear-gradient(var(--gb-sand-800) 1px, transparent 1px),
+    linear-gradient(90deg, var(--gb-sand-800) 1px, transparent 1px);
+  background-size: 64px 64px;
+}

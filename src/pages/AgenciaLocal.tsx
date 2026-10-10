@@ -4,11 +4,12 @@ import { ArrowRight, MapPin, Phone, Mail, CheckCircle2, Building2, Users, Trendi
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
 import { CITIES, CITY_LIST } from '@/data/localCities';
+import { CONTACT } from '@/data/brandRegistry';
 
 const ACCENT = '#ff4000';
-const PHONE = '+351 963 574 400';
-const EMAIL = 'geral@getboost.digital';
-const HQ_ADDRESS = 'Rua Passeio Infante Dom Henrique, 22, Sala 33, 1º Piso, 3080-042 Figueira da Foz';
+const PHONE = CONTACT.phone.display;
+const EMAIL = CONTACT.email;
+const HQ_ADDRESS = CONTACT.address.formatted;
 
 const SERVICES = [
   { title: 'Marketing Digital', href: '/solucoes/marketing-digital', body: 'Estratégia, funis, campanhas Google/Meta Ads e SEO.' },
@@ -26,7 +27,7 @@ export default function AgenciaLocal() {
   if (!city) return <Navigate to="/solucoes" replace />;
 
   const title = `Agência de Marketing Digital em ${city.name}`;
-  const description = `Agência de marketing digital, software à medida e IA para PMEs em ${city.name}${city.district !== city.name ? ` (distrito de ${city.district})` : ''}. +20 anos, +1500 projetos. Sessão gratuita de diagnóstico.`;
+  const description = `Agência de marketing digital, software à medida e IA para PMEs em ${city.name}${city.district !== city.name ? ` (distrito de ${city.district})` : ''}. +20 anos, ${METRICS.projectsDelivered.value} projetos. Sessão gratuita de diagnóstico.`;
 
   const localBusinessLd = {
     '@context': 'https://schema.org',
@@ -41,9 +42,9 @@ export default function AgenciaLocal() {
     image: 'https://getboost.digital/og-image.jpg',
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'Rua Passeio Infante Dom Henrique, 22, Sala 33',
-      addressLocality: 'Figueira da Foz',
-      postalCode: '3080-042',
+      streetAddress: CONTACT.address.street,
+      addressLocality: CONTACT.address.locality,
+      postalCode: CONTACT.address.postalCode,
       addressRegion: 'Coimbra',
       addressCountry: 'PT',
     },

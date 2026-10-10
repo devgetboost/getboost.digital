@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { analytics } from '@/lib/analytics';
 import { Facebook, Mail, Linkedin, MessageCircle, Instagram } from 'lucide-react';
 import authorPhoto from '@/assets/nuno-cruz.webp';
+import { CONTACT } from '@/data/brandRegistry';
 
 const XIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -62,10 +63,10 @@ const BlogShareContact = ({ postTitle, postSlug }: BlogShareContactProps) => {
           ))}
         </div>
         <div className="flex items-center justify-center gap-2 text-base">
-          <a href="mailto:contacto@getboost.digital" className="text-primary hover:underline font-medium">
-            contacto@getboost.digital
+          <a href={`mailto:${CONTACT.email}`} className="text-primary hover:underline font-medium">
+            {CONTACT.email}
           </a>
-          <a href="mailto:contacto@getboost.digital" className="font-semibold text-foreground hover:text-primary transition-colors">
+          <a href={`mailto:${CONTACT.email}`} className="font-semibold text-foreground hover:text-primary transition-colors">
             {t('blog.contactUs')}
           </a>
         </div>
@@ -83,8 +84,8 @@ const BlogShareContact = ({ postTitle, postSlug }: BlogShareContactProps) => {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span className="font-bold text-foreground">Getboost Digital</span>
-              <a href="mailto:contacto@getboost.digital" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                contacto@getboost.digital
+              <a href={`mailto:${CONTACT.email}`} className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                {CONTACT.email}
               </a>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed mb-3">

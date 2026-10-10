@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Bot, Save, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import { CONTACT } from '@/data/brandRegistry';
 
 interface Config {
   enabled: boolean;
@@ -133,7 +134,7 @@ export default function WhatsAppAssistantSettings() {
                 </SelectContent>
               </Select>
               <p className="text-xs text-muted-foreground mt-1">
-                Ligue uma instância ao número <strong>+351 963 574 400</strong> em "Configurações".
+                Ligue uma instância ao número <strong>{CONTACT.phone.display}</strong> em "Configurações".
               </p>
             </div>
 

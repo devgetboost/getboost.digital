@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { MessageCircle, User, Clock, Send, ShieldCheck, Reply, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { CONTACT } from '@/data/brandRegistry';
 
 type Comment = {
   id: string;
@@ -122,7 +123,7 @@ const BlogComments = ({ postId }: BlogCommentsProps) => {
         await supabase.functions.invoke('send-transactional-email', {
           body: {
             templateName: 'new-comment-notification',
-            recipientEmail: 'geral@getboost.digital',
+            recipientEmail: CONTACT.email,
             idempotencyKey: `comment-notify-${commentId}`,
             templateData: {
               authorName: name.trim(),

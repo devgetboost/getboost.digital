@@ -40,6 +40,7 @@ import avatar1 from '@/assets/avatar-1.jpg';
 import avatar2 from '@/assets/avatar-2.jpg';
 import avatar3 from '@/assets/avatar-3.jpg';
 import avatar4 from '@/assets/avatar-4.jpg';
+import { FOUNDER } from '@/data/brandRegistry';
 
 const ACCENT = '#ff4000';
 const socialProofAvatars = [avatar1, avatar2, avatar3, avatar4];
@@ -163,7 +164,7 @@ const ResourceDetail = () => {
       await supabase.functions.invoke('send-transactional-email', {
         body: {
           templateName: 'lead-notification',
-          recipientEmail: 'nunocruz@getboost.digital',
+          recipientEmail: FOUNDER.email,
           templateData: {
             name: name.trim(),
             email: email.trim(),

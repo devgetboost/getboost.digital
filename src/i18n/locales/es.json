@@ -36,7 +36,7 @@
     "scroll": "Explorar",
     "badgeNew": "Nuevo",
     "badgeLabel": "Transformación Digital e IA",
-    "checkProjects": "+1500 Proyectos",
+    "checkProjects": "30+ Proyectos",
     "checkYears": "+20 Años de Experiencia",
     "checkAI": "IA Integrada"
   },
@@ -70,7 +70,7 @@
   "specialist": {
     "title": "Sobre Getboost",
     "sectionLabel": "Sobre",
-    "text": "Getboost está liderado por Nuno — Product Owner e Ingeniero de Software enfocado en IA aplicada a pymes. Más de 500 proyectos realizados en Portugal y Brasil. Estrategia, tecnología y ejecución en un solo lugar.",
+    "text": "Getboost está liderado por Nuno — Product Owner e Ingeniero de Software enfocado en IA aplicada a pymes. 30+ proyectos realizados en Portugal y Brasil. Estrategia, tecnología y ejecución en un solo lugar.",
     "cta": "Agendar reunión"
   },
   "process": {
@@ -157,7 +157,7 @@
     "newCta": "Reservar Sesión Gratuita",
     "yearsExperience": "proyectos realizados",
     "specialistText1": "Nuno — Product Owner e Ingeniero de Software enfocado en IA aplicada a pymes.",
-    "specialistText2": "Más de 500 proyectos realizados en Portugal y Brasil. Estrategia, tecnología y ejecución en un solo lugar.",
+    "specialistText2": "30+ proyectos realizados en Portugal y Brasil. Estrategia, tecnología y ejecución en un solo lugar.",
     "tabs": {
       "socialMedia": "Redes y Contenido",
       "webDev": "Webs",
@@ -308,7 +308,7 @@
     "heroCta": "Hablemos",
     "heroSecondaryCta": "Ver Portfolio",
     "checkExperience": "<strong>20+</strong> años de experiencia",
-    "checkProjects": "<strong>1500+</strong> proyectos completados",
+    "checkProjects": "<strong>30+</strong> proyectos completados",
     "checkClients": "<strong>15</strong> clientes activos",
     "stats": {
       "years": "Años de Experiencia",
@@ -428,7 +428,7 @@
     "share": "Compartir",
     "contactUs": "¡Contáctanos!",
     "aboutAuthor": "Sobre el autor",
-    "authorBio": "Nuno es especialista en marketing digital e inteligencia artificial, con más de 20 años de experiencia y más de 1500 proyectos entregados. Apasionado por ayudar a empresas a crecer a través de estrategias digitales innovadoras.",
+    "authorBio": "Nuno es especialista en marketing digital e inteligencia artificial, con más de 20 años de experiencia y más de30+ proyectos entregados. Apasionado por ayudar a empresas a crecer a través de estrategias digitales innovadoras.",
     "comments": "Comentarios",
     "leaveComment": "Deja tu comentario",
     "replyTo": "Responder a {{name}}",
@@ -665,7 +665,7 @@
     "heroSecondaryCta": "Ver Portfolio",
     "checkSatisfaction": "<strong>98%</strong> satisfacción de clientes",
     "checkROI": "<strong>3.2x</strong> ROI promedio",
-    "checkProjects": "<strong>50+</strong> proyectos entregados",
+    "checkProjects": "<strong>30+</strong> proyectos entregados",
     "stats": {
       "projects": "Proyectos Entregados",
       "satisfaction": "Satisfacción"
@@ -1768,7 +1768,7 @@
       "Oportunidad de entrada en fase inicial"
     ],
     "founderTitle": "Sobre el Fundador",
-    "founderDesc1": "Getboost Digital tiene más de 20 años de experiencia en marketing digital, desarrollo web y transformación digital. Con más de 1500 proyectos entregados, combina visión estratégica con ejecución técnica para construir productos digitales escalables.",
+    "founderDesc1": "Getboost Digital tiene más de 20 años de experiencia en marketing digital, desarrollo web y transformación digital. Con más de30+ proyectos entregados, combina visión estratégica con ejecución técnica para construir productos digitales escalables.",
     "founderDesc2": "Lidera actualmente el desarrollo de un ecosistema de startups SaaS enfocadas en mercados de alto crecimiento, con integración de inteligencia artificial y un enfoque product-led growth.",
     "ctaFinalTitle": "¿Listo para invertir en el futuro?",
     "ctaFinalSubtitle": "Únete a nosotros en la construcción de soluciones digitales con impacto real.",
@@ -2029,6 +2029,6 @@
   },
   "seoHome": {
     "title": "Getboost — Máquina de crecimiento con Marketing, Software e IA",
-    "description": "Ayudamos a pymes a crecer con marketing digital, software a medida e IA aplicada. +500 proyectos en Portugal y Brasil. Agenda tu sesión gratuita."
+    "description": "Ayudamos a pymes a crecer con marketing digital, software a medida e IA aplicada. 30+ proyectos en Portugal y Brasil. Agenda tu sesión gratuita."
   }
 }

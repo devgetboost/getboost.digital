@@ -11,6 +11,7 @@ import heroAnalytics from '@/assets/hero-analytics.jpg';
 import { useProducts } from '@/hooks/useContent';
 import { mediaUrl } from '@/lib/contentApi';
 import { servicesData } from '@/data/services';
+import { PRODUCTS } from '@/data/products';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import logoHostify from '@/assets/logos/logo-hostify.svg';
 import logoProsafe360 from '@/assets/logos/logo-prosafe360.svg';
@@ -321,7 +322,7 @@ const Services = () => {
                 {saasProducts.map((product, i) => (
                   <motion.div key={product.key} variants={fadeUp} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }}>
                     <div className="group bg-white dark:bg-card rounded-2xl overflow-hidden h-full border border-border/40 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                      <Link to={product.key === 'hostify' ? '/solucoes/hostify' : product.key === 'qook' ? '/qook' : '#'} className="block h-full">
+                      <Link to={PRODUCTS.find((p) => p.slug === product.key)?.to ?? '/produtos'} className="block h-full">
                         <div className="aspect-[16/10] overflow-hidden bg-gradient-to-br from-primary/5 to-primary/15 flex items-center justify-center p-10">
                           <img src={product.image} alt={product.name} className="h-16 w-auto object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" loading="lazy" />
                         </div>

@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Save, Send } from "lucide-react";
+import { ROLE_EMAILS } from "@/data/brandRegistry";
 
 type Settings = {
   recipients: string[];
@@ -80,7 +81,7 @@ export default function AdminAgenticAlertSettings() {
         </CardHeader>
         <CardContent>
           <Textarea rows={4} value={recipientsText} onChange={(e) => setRecipientsText(e.target.value)}
-            placeholder="admin@getboost.digital, ops@getboost.digital" />
+            placeholder={`${ROLE_EMAILS.alerts}, ${ROLE_EMAILS.ops}`} />
         </CardContent>
       </Card>
 

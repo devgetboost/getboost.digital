@@ -10,5 +10,5 @@ Disallow: /unsubscribe
 Disallow: /api/
 
 # Sitemaps
-Sitemap: https://getboostsoft.lovable.app/sitemap.xml
-Sitemap: https://getboostsoft.lovable.app/sitemap-demo.xml
+Sitemap: https://getboost.digital/sitemap.xml
+Sitemap: https://getboost.digital/sitemap-demo.xml

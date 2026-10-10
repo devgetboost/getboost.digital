@@ -34,12 +34,34 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  /**
+   * Wave 3A: shows a spinner, blocks interaction and announces the busy
+   * state. The label stays rendered (screen readers) — the spinner is
+   * decorative.
+   */
+  loading?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, loading = false, children, disabled, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
-    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />;
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        disabled={disabled || loading}
+        aria-busy={loading || undefined}
+        {...props}
+      >
+        {loading && (
+          <span
+            aria-hidden
+            className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent"
+          />
+        )}
+        {children}
+      </Comp>
+    );
   },
 );
 Button.displayName = "Button";

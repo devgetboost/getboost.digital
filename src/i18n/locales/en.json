@@ -36,7 +36,7 @@
     "scroll": "Explore",
     "badgeNew": "New",
     "badgeLabel": "Digital Transformation & AI",
-    "checkProjects": "+1500 Projects",
+    "checkProjects": "30+ Projects",
     "checkYears": "+20 Years Experience",
     "checkAI": "Integrated AI"
   },
@@ -70,7 +70,7 @@
   "specialist": {
     "title": "About Getboost",
     "sectionLabel": "About",
-    "text": "Getboost is led by Nuno — Product Owner and Software Engineer focused on AI applied to SMEs. Over 500 projects delivered in Portugal and Brazil. Strategy, technology and execution in one place.",
+    "text": "Getboost is led by Nuno — Product Owner and Software Engineer focused on AI applied to SMEs. 30+ projects delivered in Portugal and Brazil. Strategy, technology and execution in one place.",
     "cta": "Book a meeting"
   },
   "process": {
@@ -157,7 +157,7 @@
     "newCta": "Book Free Session",
     "yearsExperience": "projects delivered",
     "specialistText1": "Nuno — Product Owner and Software Engineer focused on AI applied to SMEs.",
-    "specialistText2": "Over 500 projects delivered in Portugal and Brazil. Strategy, technology and execution in one place.",
+    "specialistText2": "30+ projects delivered in Portugal and Brazil. Strategy, technology and execution in one place.",
     "tabs": {
       "socialMedia": "Social & Content",
       "webDev": "Websites",
@@ -308,7 +308,7 @@
     "heroCta": "Let's Talk",
     "heroSecondaryCta": "View Portfolio",
     "checkExperience": "<strong>20+</strong> years of experience",
-    "checkProjects": "<strong>1500+</strong> projects completed",
+    "checkProjects": "<strong>30+</strong> projects completed",
     "checkClients": "<strong>15</strong> active clients",
     "stats": {
       "years": "Years of Experience",
@@ -428,7 +428,7 @@
     "share": "Share",
     "contactUs": "Contact us!",
     "aboutAuthor": "About the author",
-    "authorBio": "Nuno is a specialist in digital marketing and artificial intelligence, with over 20 years of experience and more than 1500 projects delivered. Passionate about helping businesses grow through innovative digital strategies.",
+    "authorBio": "Nuno is a specialist in digital marketing and artificial intelligence, with over 20 years of experience and 30+ projects delivered. Passionate about helping businesses grow through innovative digital strategies.",
     "comments": "Comments",
     "leaveComment": "Leave a comment",
     "replyTo": "Reply to {{name}}",
@@ -665,7 +665,7 @@
     "heroSecondaryCta": "View Portfolio",
     "checkSatisfaction": "<strong>98%</strong> client satisfaction",
     "checkROI": "<strong>3.2x</strong> average ROI",
-    "checkProjects": "<strong>50+</strong> projects delivered",
+    "checkProjects": "<strong>30+</strong> projects delivered",
     "stats": {
       "projects": "Projects Delivered",
       "satisfaction": "Satisfaction"
@@ -1768,7 +1768,7 @@
       "Early-stage entry opportunity"
     ],
     "founderTitle": "About the Founder",
-    "founderDesc1": "Getboost Digital has over 20 years of experience in digital marketing, web development, and digital transformation. With over 1,500 projects delivered, he combines strategic vision with technical execution to build scalable digital products.",
+    "founderDesc1": "Getboost Digital has over 20 years of experience in digital marketing, web development, and digital transformation. With 30+ projects delivered, he combines strategic vision with technical execution to build scalable digital products.",
     "founderDesc2": "He currently leads the development of a SaaS startup ecosystem focused on high-growth markets, with AI integration and a product-led growth approach.",
     "ctaFinalTitle": "Ready to invest in the future?",
     "ctaFinalSubtitle": "Join us in building digital solutions with real impact.",
@@ -2029,6 +2029,6 @@
   },
   "seoHome": {
     "title": "Getboost — Growth machine with Marketing, Software and AI",
-    "description": "We help SMEs grow with digital marketing, custom software and applied AI. 500+ projects across Portugal and Brazil. Book your free session today."
+    "description": "We help SMEs grow with digital marketing, custom software and applied AI. 30+ projects across Portugal and Brazil. Book your free session today."
   }
 }

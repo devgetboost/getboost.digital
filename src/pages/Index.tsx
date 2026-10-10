@@ -1,23 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import {
-  ArrowRight,
-  Zap,
-  Grid2x2,
-  Minus,
-  Circle,
-  Bot,
-  Megaphone,
-  Code2,
-  Workflow,
-  LineChart,
-} from 'lucide-react';
+import { ArrowRight, Zap, Bot, Workflow, Code2, LineChart, Target, Palette, Globe, MessageSquare, TrendingUp, BarChart3, Megaphone } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO, { organizationSchema } from '@/components/SEO';
+import { SectionHeader } from '@/components/ui/section-header';
+import { Button } from '@/components/ui/button';
 import CommercialAuditModal from '@/components/CommercialAuditModal';
 import ConsultantContactForm from '@/components/ConsultantContactForm';
+import { useContentEntries } from '@/hooks/useContent';
+import { mediaUrl } from '@/lib/contentApi';
+import { PRODUCTS } from '@/data/products';
+import { METRICS } from '@/data/brandRegistry';
 import type { StoredAudit } from '@/lib/auditHistory';
 import logoPikto from '@/assets/logos/logo-pikto.svg';
 import logoHostify from '@/assets/logos/logo-hostify.svg';
@@ -26,96 +21,10 @@ import logoMotivae from '@/assets/logos/logo-motivae.svg';
 import logoQook from '@/assets/logos/logo-qook.svg';
 import logoAgrifly from '@/assets/logos/logo-agrifly.svg';
 import logoKasccab from '@/assets/logos/logo-kasccab.svg';
-
 import qookMockup from '@/assets/qook/saas-qook-mockup.png.asset.json';
 import hostifyMockup from '@/assets/hostify/mockup.png.asset.json';
-import motivaeMockup from '@/assets/motivae/mockup.png.asset.json';
 
 const ACCENT = '#ff4000';
-
-const manifestoLines = ['O teu negócio', 'não precisa de mais horas.', 'Precisa de mais inteligência.'];
-
-type Pillar = {
-  eyebrow: string;
-  title: string;
-  tags: string[];
-  body: string;
-  icon: React.ComponentType<{ className?: string }>;
-  href: string;
-};
-
-const pillars: Pillar[] = [
-  {
-    eyebrow: 'Agentes de IA · 24/7',
-    title: 'IA que atende, qualifica e agenda por ti',
-    tags: ['Atendimento autónomo', 'Qualificação de leads', 'Agenda comercial', 'WhatsApp · Web · Instagram'],
-    body: 'Instalamos operadores digitais no teu site, WhatsApp e redes. Conversam de forma natural, percebem intenção real, filtram curiosos e marcam reuniões directamente na tua agenda — enquanto tu dormes ou estás em obra com um cliente.',
-    icon: Bot,
-    href: '/agentes-ia',
-  },
-  {
-    eyebrow: 'Growth & Aquisição',
-    title: 'Tráfego pago e SEO que geram pipeline, não vaidade',
-    tags: ['Google & Meta Ads', 'SEO técnico', 'Landing pages', 'CRO'],
-    body: 'Combinamos aquisição paga, SEO e páginas de conversão desenhadas para uma única acção: preencher a agenda comercial. Cada euro investido tem um destino, cada lead tem origem rastreada e cada semana tem decisão baseada em dados.',
-    icon: Megaphone,
-    href: '/marketing-digital',
-  },
-  {
-    eyebrow: 'Software · SaaS · Web',
-    title: 'Produto digital construído para escalar sem re-escrever',
-    tags: ['Web apps', 'SaaS', 'Mobile', 'MVP em 30 dias'],
-    body: 'Desenvolvemos software à medida quando o mercado não tem uma resposta suficientemente boa. Do MVP ao produto multi-tenant, com arquitectura pronta para crescer, integrar e automatizar — sem dívida técnica desde o dia zero.',
-    icon: Code2,
-    href: '/servicos/desenvolvimento-saas',
-  },
-  {
-    eyebrow: 'Automação & Operações',
-    title: 'Processos internos automatizados de ponta a ponta',
-    tags: ['CRM & ERP', 'Integrações', 'Back-office IA', 'Fluxos personalizados'],
-    body: 'Ligamos as ferramentas que já usas, eliminamos copy-paste manual e criamos agentes internos que tratam de relatórios, propostas, follow-ups e validação documental. A tua equipa foca em decisões — o resto executa-se sozinho.',
-    icon: Workflow,
-    href: '/servicos/integracoes-erp-crm',
-  },
-  {
-    eyebrow: 'Estratégia & Consultoria',
-    title: 'Um plano digital com prazos, responsáveis e KPIs',
-    tags: ['Auditoria digital', 'Roadmap 90 dias', 'Métricas de negócio', 'Acompanhamento contínuo'],
-    body: 'Não entregamos apresentações bonitas — entregamos um plano executável, com prioridades claras, orçamento realista e métricas ligadas ao P&L. E ficamos ao lado da tua equipa até os números mudarem.',
-    icon: LineChart,
-    href: '/servicos',
-  },
-];
-
-const stats = [
-  { k: '30+', v: 'Projetos entregues' },
-  { k: '24/7', v: 'Agentes IA a operar' },
-  { k: '<30d', v: 'Do briefing ao MVP' },
-  { k: '3x', v: 'Leads qualificadas médias' },
-];
-
-const process = [
-  {
-    step: '01',
-    title: 'Auditoria comercial',
-    body: 'Em 7 minutos analisamos o teu site, presença digital e funil actual. Sais com um relatório concreto do que está a travar vendas.',
-  },
-  {
-    step: '02',
-    title: 'Plano de ataque',
-    body: 'Traduzimos a auditoria num roadmap de 90 dias com prioridades, entregáveis semanais e KPIs ligados a receita — não a cliques.',
-  },
-  {
-    step: '03',
-    title: 'Execução obsessiva',
-    body: 'Equipa dedicada em design, código, IA e media. Reuniões semanais, dashboards partilhados e decisões documentadas.',
-  },
-  {
-    step: '04',
-    title: 'Escala e optimização',
-    body: 'Quando o motor gira, subimos a velocidade: mais canais, mais automações, mais mercados. Sem re-fazer o que já está a funcionar.',
-  },
-];
 
 const clientLogos = [
   { name: 'Pikto', src: logoPikto },
@@ -127,266 +36,118 @@ const clientLogos = [
   { name: 'Kasccab', src: logoKasccab },
 ];
 
+/**
+ * Wave 3C — homepage per GETBOOST_2027_DESIGN_FREEZE_V1.
+ * Frozen order: Hero · Proof Bar · Business Systems · Four Pillars ·
+ * Case Studies · Products · Method · Insights · Final CTA.
+ * Light theme, no autoplay, products as proof, four-pillar positioning.
+ */
 
-type Showcase = {
-  kind: 'Produto' | 'Serviço';
-  name: string;
-  tagline: string;
+type Pillar = {
+  id: 'ai' | 'automation' | 'software' | 'growth';
+  eyebrow: string;
+  title: string;
   body: string;
+  tags: string[];
+  icon: React.ComponentType<{ className?: string }>;
   href: string;
-  logo?: string;
-  image?: string;
-  color: string;
 };
 
-const showcaseSlides: Showcase[] = [
+const pillars: Pillar[] = [
   {
-    kind: 'Produto',
-    name: 'Qook',
-    tagline: 'O sistema all-in-one para restauração moderna',
-    body: 'POS, self-order, KDS, pagamentos e menu digital — tudo numa plataforma pensada para restaurantes que querem servir mais em menos tempo.',
-    href: '/solucoes/qook',
-    logo: logoQook,
-    image: qookMockup.url,
-    color: '#FF1C00',
-  },
-  {
-    kind: 'Produto',
-    name: 'Hostify',
-    tagline: 'Gestão inteligente para alojamento local',
-    body: 'Automatiza reservas, check-ins, comunicação com hóspedes e limpeza. Uma plataforma que devolve horas ao teu dia.',
-    href: '/solucoes/hostify',
-    logo: logoHostify,
-    image: hostifyMockup.url,
-    color: '#03A63C',
-  },
-  {
-    kind: 'Produto',
-    name: 'Motivae',
-    tagline: 'Plataforma de benefícios e engagement de equipas',
-    body: 'Motiva, reconhece e retém talento com uma plataforma pensada para RH modernos.',
-    href: '/investidores/motivae',
-    logo: logoMotivae,
-    color: '#F6137E',
-    image: motivaeMockup.url,
-  },
-  {
-    kind: 'Produto',
-    name: 'Pikto',
-    tagline: 'Criatividade visual assistida por IA',
-    body: 'Gera imagens, mockups e conteúdos visuais consistentes com a tua marca em minutos, não em dias.',
-    href: '/solucoes/pikto',
-    logo: logoPikto,
-    color: '#056CF2',
-  },
-  {
-    kind: 'Produto',
-    name: 'Trackfy',
-    tagline: 'Rastreamento e operações em tempo real',
-    body: 'Acompanha frota, equipas e activos com dashboards claros e alertas accionáveis.',
-    href: '/solucoes/trackfy',
-    color: '#003264',
-  },
-  {
-    kind: 'Produto',
-    name: 'ProSafe360',
-    tagline: 'Segurança e compliance em obra, em tempo real',
-    body: 'Gestão integrada de segurança, formação e auditorias para empresas de construção que não podem falhar.',
-    href: '/investidores/prosafe360',
-    logo: logoProSafe,
-    color: '#4A99F9',
-  },
-  {
-    kind: 'Serviço',
-    name: 'Agentes de IA',
-    tagline: 'IA que atende, qualifica e agenda 24/7',
-    body: 'Instalamos agentes autónomos no teu site, WhatsApp e redes que conversam, filtram curiosos e marcam reuniões directamente na tua agenda.',
+    id: 'ai',
+    eyebrow: 'IA',
+    title: 'IA que atende, qualifica e agenda por ti',
+    body: 'Instalamos agentes autónomos no teu site, WhatsApp e redes. Conversam de forma natural, percebem intenção real, filtram curiosos e marcam reuniões na tua agenda — 24/7.',
+    tags: ['Atendimento autónomo', 'Qualificação de leads', 'Agenda comercial', 'WhatsApp · Web · Instagram'],
+    icon: Bot,
     href: '/agentes-ia',
-    color: ACCENT,
+  },
+  {
+    id: 'automation',
+    eyebrow: 'Automação',
+    title: 'Processos internos automatizados de ponta a ponta',
+    body: 'Ligamos as ferramentas que já usas, eliminamos copy-paste manual e criamos agentes internos para relatórios, propostas, follow-ups e validação documental. A tua equipa decide — o resto executa-se sozinho.',
+    tags: ['CRM & ERP', 'Integrações', 'Back-office IA', 'Fluxos personalizados'],
+    icon: Workflow,
+    href: '/solucoes/integracoes-erp-crm',
+  },
+  {
+    id: 'software',
+    eyebrow: 'Software',
+    title: 'Produto digital construído para escalar sem re-escrever',
+    body: 'Desenvolvemos software à medida quando o mercado não tem uma resposta suficientemente boa. Do MVP ao produto multi-tenant, sem dívida técnica desde o dia zero.',
+    tags: ['Web apps', 'SaaS', 'Mobile', 'MVP em 30 dias'],
+    icon: Code2,
+    href: '/solucoes/desenvolvimento-software',
+  },
+  {
+    id: 'growth',
+    eyebrow: 'Growth',
+    title: 'Tráfego pago e SEO que geram pipeline, não vaidade',
+    body: 'Combinamos aquisição paga, SEO e páginas de conversão desenhadas para uma única acção: preencher a agenda comercial. Cada euro tem destino, cada lead tem origem.',
+    tags: ['Google & Meta Ads', 'SEO técnico', 'Landing pages', 'CRO'],
+    icon: LineChart,
+    href: '/solucoes/marketing-digital',
   },
 ];
 
-function TypewriterPhrases({ phrases }: { phrases: string[] }) {
-  const [phraseIdx, setPhraseIdx] = useState(0);
-  const [text, setText] = useState('');
-  const [deleting, setDeleting] = useState(false);
+const systems = [
+  {
+    icon: Megaphone,
+    title: 'Aquisição',
+    body: 'Tráfego qualificado de canais pagos e orgânicos, com origem rastreada em cada lead.',
+    pillar: 'Growth',
+  },
+  {
+    icon: Target,
+    title: 'Conversão',
+    body: 'Páginas, funis e agentes de IA que transformam visitas em reuniões comerciais.',
+    pillar: 'IA',
+  },
+  {
+    icon: BarChart3,
+    title: 'Operação',
+    body: 'Processos internos automatizados e software que escala sem heroísmos.',
+    pillar: 'Automação · Software',
+  },
+];
 
-  useEffect(() => {
-    const current = phrases[phraseIdx];
-    if (!deleting && text === current) {
-      const t = setTimeout(() => setDeleting(true), 1600);
-      return () => clearTimeout(t);
-    }
-    if (deleting && text === '') {
-      setDeleting(false);
-      setPhraseIdx((p) => (p + 1) % phrases.length);
-      return;
-    }
-    const t = setTimeout(
-      () => {
-        setText((prev) =>
-          deleting ? current.slice(0, prev.length - 1) : current.slice(0, prev.length + 1),
-        );
-      },
-      deleting ? 30 : 55,
-    );
-    return () => clearTimeout(t);
-  }, [text, deleting, phraseIdx, phrases]);
+const caseStudies = [
+  { k: '+300%', v: 'crescimento orgânico médio em 6 meses', pillar: 'Growth' },
+  { k: '−70%', v: 'tempo em tarefas administrativas', pillar: 'Automação' },
+  { k: '5x', v: 'reuniões comerciais qualificadas', pillar: 'IA' },
+];
 
-  const longest = phrases.reduce((a, b) => (b.length > a.length ? b : a), '');
-  return (
-    <span className="relative inline-grid align-top text-white/95">
-      {/* Invisible longest phrase reserves the height/width so layout never shifts */}
-      <span aria-hidden className="invisible col-start-1 row-start-1 whitespace-pre-wrap">
-        {longest}
-      </span>
-      <span className="col-start-1 row-start-1 whitespace-pre-wrap">
-        {text}
-        <span
-          aria-hidden
-          className="inline-block w-[0.08em] h-[0.9em] align-[-0.1em] ml-1 bg-white animate-pulse"
-        />
-      </span>
-    </span>
-  );
-}
+const method = [
+  { step: '01', title: 'Auditoria comercial', body: 'Em 7 minutos analisamos o teu site, presença digital e funil actual. Sais com um relatório concreto do que está a travar vendas.' },
+  { step: '02', title: 'Plano de ataque', body: 'Traduzimos a auditoria num roadmap de 90 dias com prioridades, entregáveis semanais e KPIs ligados a receita.' },
+  { step: '03', title: 'Execução obsessiva', body: 'Equipa dedicada em design, código, IA e media. Reuniões semanais, dashboards partilhados e decisões documentadas.' },
+  { step: '04', title: 'Escala e optimização', body: 'Quando o motor gira, subimos a velocidade: mais canais, mais automações, mais mercados.' },
+];
 
-function ProductsShowcase() {
-  const [i, setI] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => setI((v) => (v + 1) % showcaseSlides.length), 6000);
-    return () => clearInterval(id);
-  }, []);
-  const slide = showcaseSlides[i];
-  return (
-    <section
-      className="relative overflow-hidden text-white transition-colors duration-500"
-      style={{ backgroundColor: slide.color }}
-    >
-      {/* subtle grid overlay */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.18]"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.35) 1px, transparent 1px)',
-          backgroundSize: '80px 80px',
-        }}
-      />
-      <div className="relative max-w-7xl mx-auto px-6 md:px-12 pt-16 md:pt-20">
-        <div className="flex items-end justify-between gap-6 mb-8 md:mb-10">
-          <div>
-            <h2 className="text-3xl md:text-5xl font-black leading-[1.05] tracking-tight max-w-3xl">
-              Soluções digitais que estamos a{' '}
-              <TypewriterPhrases
-                phrases={[
-                  'Construir contigo.',
-                  'Impulsionar com tecnologia e IA.',
-                  'Transformar em soluções inteligentes.',
-                  'Escalar com automação avançada.',
-                  'Criar para o futuro do teu negócio.',
-                ]}
-              />
-            </h2>
-          </div>
-          <div className="hidden md:flex items-center gap-2">
-            {showcaseSlides.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setI(idx)}
-                aria-label={`Ver slide ${idx + 1}`}
-                className={`h-1.5 rounded-full transition-all ${
-                  idx === i ? 'w-8 bg-white' : 'w-4 bg-white/40 hover:bg-white/70'
-                }`}
-              />
-            ))}
-          </div>
-        </div>
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (i: number) => ({
+    opacity: 1, y: 0,
+    transition: { delay: i * 0.08, duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
+  }),
+};
 
-        <div className="relative">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
-              className="grid md:grid-cols-[1.05fr_1fr] gap-8 md:gap-12 items-end"
-            >
-              <div className="pb-14 md:pb-20">
-                <span className="inline-block font-mono text-[10px] md:text-[11px] uppercase tracking-[0.24em] px-3 py-1 rounded-full border border-white/40 text-white/90">
-                  {slide.kind}
-                </span>
-                <h3 className="mt-5 text-4xl md:text-6xl font-black tracking-tight leading-[1.02]">
-                  {slide.name}
-                </h3>
-                <p className="mt-4 text-lg md:text-2xl font-medium text-white/95 leading-snug">
-                  {slide.tagline}
-                </p>
-                <p className="mt-4 text-white/85 text-base md:text-lg leading-relaxed max-w-xl">
-                  {slide.body}
-                </p>
-                <Link
-                  to={slide.href}
-                  className="mt-7 inline-flex items-center gap-2 bg-white font-semibold px-6 py-3 rounded-full hover:bg-white/90 transition-colors"
-                  style={{ color: slide.color }}
-                >
-                  Descobrir <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-
-              <div className="relative flex items-end justify-center min-h-[260px] md:min-h-[380px]">
-                {slide.image ? (
-                  <img
-                    src={slide.image}
-                    alt={slide.name}
-                    className="w-full h-auto max-h-[440px] object-contain object-bottom drop-shadow-2xl block"
-                  />
-                ) : (
-                  <div className="mb-14 md:mb-20 w-full aspect-[4/3] max-h-[360px] rounded-2xl border border-white/25 bg-white/10 backdrop-blur-sm flex items-center justify-center p-10">
-                    {slide.logo ? (
-                      <img
-                        src={slide.logo}
-                        alt={slide.name}
-                        className="max-h-24 md:max-h-32 object-contain"
-                        style={{ filter: 'brightness(0) invert(1)' }}
-                      />
-                    ) : (
-                      <Bot className="h-24 w-24 md:h-32 md:w-32 text-white" strokeWidth={1.2} />
-                    )}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* mobile dots */}
-        <div className="pb-8 pt-6 flex md:hidden items-center gap-2 justify-center">
-          {showcaseSlides.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setI(idx)}
-              aria-label={`Ver slide ${idx + 1}`}
-              className={`h-1.5 rounded-full transition-all ${
-                idx === i ? 'w-8 bg-white' : 'w-4 bg-white/40'
-              }`}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-
+const Reveal = ({ children, i = 0, className }: { children: React.ReactNode; i?: number; className?: string }) => (
+  <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={i} className={className}>
+    {children}
+  </motion.div>
+);
 
 const Index = () => {
   const { i18n } = useTranslation();
-  const [openIndex, setOpenIndex] = useState<number>(0);
   const [auditOpen, setAuditOpen] = useState(false);
   const [preloadedAudit, setPreloadedAudit] = useState<StoredAudit | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
+
+  // Insights band — latest published entries through the content layer.
+  const { data: latestEntries } = useContentEntries({ contentType: 'insight', limit: 3 });
 
   return (
     <Layout>
@@ -398,297 +159,367 @@ const Index = () => {
         jsonLd={organizationSchema}
       />
 
-      {/* HERO — products & services slide */}
-      <ProductsShowcase />
-
-      {/* CLIENT LOGOS */}
-      <section className="relative bg-[#0a0603] py-14 before:content-[''] before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-[#ff4000]/60 before:to-transparent">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-white/40 text-center">
-            Marcas que já correm com a nossa tecnologia
-          </p>
-          <div
-            className="mt-8 group relative overflow-hidden"
-            style={{
-              maskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
-              WebkitMaskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
-            }}
-          >
-            <div className="flex w-max animate-marquee-x group-hover:[animation-play-state:paused]">
-              {[...clientLogos, ...clientLogos].map((logo, i) => (
-                <div
-                  key={`${logo.name}-${i}`}
-                  className="shrink-0 w-40 md:w-52 flex items-center justify-center px-6"
+      {/* ==================================================== 01 HERO */}
+      <section className="gb-surface-page relative overflow-hidden">
+        <div aria-hidden className="gb-grid-overlay" />
+        <div className="gb-container relative gb-section !pt-36 md:!pt-44">
+          <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr]">
+            <Reveal i={0}>
+              <span className="gb-eyebrow text-brand-600">Marketing, Software &amp; IA para PMEs</span>
+              <h1 className="gb-text-display mt-5 text-ink-primary">
+                Agentes IA, Growth e Software que{' '}
+                <span className="text-brand-600">geram clientes</span>.
+              </h1>
+              <p className="gb-text-body mt-6 max-w-xl text-ink-secondary">
+                O teu negócio não precisa de mais horas. Precisa de mais
+                inteligência. Instalamos sistemas digitais que atraem, convertem
+                e operam — enquanto tu cuidas dos clientes.
+              </p>
+              <div className="mt-10 flex flex-wrap items-center gap-4">
+                <Button size="lg" onClick={() => setContactOpen((v) => !v)}>
+                  {contactOpen ? 'Fechar formulário' : 'Falar com um consultor'}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => { setPreloadedAudit(null); setAuditOpen(true); }}
                 >
-                  <img
-                    src={logo.src}
-                    alt={logo.name}
-                    className="h-10 md:h-12 object-contain opacity-50 hover:opacity-100 transition-opacity"
-                    style={{ filter: 'brightness(0) invert(1)' }}
-                    loading="lazy"
-                  />
-                </div>
-              ))}
-              {Array.from({ length: 2 }).map((_, i) => (
-                <div
-                  key={`soon-${i}`}
-                  className="shrink-0 w-40 md:w-52 flex items-center justify-center px-6"
-                  aria-label="A tua marca pode estar aqui"
-                  title="A tua marca pode estar aqui"
-                >
-                  <span className="h-10 md:h-12 flex items-center justify-center px-4 rounded-full border border-dashed border-white/25 text-white/50 hover:text-white/90 hover:border-white/50 transition-all font-mono text-[10px] md:text-[11px] uppercase tracking-[0.2em] whitespace-nowrap">
-                    A tua marca aqui
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-
-
-
-      {/* FEATURE LIST — accordion */}
-      <section className="relative overflow-hidden bg-[#120906] text-white py-24 md:py-32 before:content-[''] before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-[#ff4000]/40 before:to-transparent">
-        <div aria-hidden className="pointer-events-none absolute -left-40 top-1/3 h-[520px] w-[520px] rounded-full blur-3xl opacity-30" style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.45) 0%, rgba(10,6,3,0) 65%)' }} />
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="max-w-3xl mb-16">
-            <span className="font-mono text-[11px] uppercase tracking-[0.24em]" style={{ color: ACCENT }}>
-              O que fazemos
-            </span>
-            <h2 className="mt-4 text-4xl md:text-6xl font-black leading-[1.02] tracking-tight">
-              5 alavancas para <span style={{ color: ACCENT }}>crescer com previsibilidade</span>.
-            </h2>
-            <p className="mt-6 text-white/70 text-lg leading-relaxed">
-              Cada peça funciona sozinha. Juntas, transformam o teu digital num sistema que atrai,
-              converte e opera sem depender de heroísmos individuais.
-            </p>
-          </div>
-
-          <div className="border-t border-white/10">
-            {pillars.map((f, i) => {
-              const isOpen = openIndex === i;
-              const Icon = f.icon;
-              return (
-                <div key={f.title} className="border-b border-white/10">
-                  <button
-                    type="button"
-                    onClick={() => setOpenIndex(isOpen ? -1 : i)}
-                    className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 py-10 md:py-14 text-left transition-colors hover:bg-white/[0.02]"
-                  >
-                    <div>
-                      <div className="flex items-start gap-5">
-                        <span className="mt-3 shrink-0" style={{ color: isOpen ? ACCENT : 'rgba(255,255,255,0.5)' }}>
-                          {isOpen ? <Circle className="h-4 w-4 fill-current" /> : <Icon className="h-6 w-6" />}
-                        </span>
-                        <h3 className="text-3xl md:text-5xl font-bold leading-[1.05] tracking-tight">
-                          {f.title}
-                        </h3>
-                      </div>
-                      <div className="mt-8 ml-0 md:ml-11 flex flex-wrap gap-3">
-                        {f.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="rounded-full border border-white/25 px-4 py-1.5 text-xs md:text-sm text-white/80"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col">
-                      <div className="flex items-start justify-between gap-6">
-                        <span
-                          className="font-mono text-[11px] md:text-xs uppercase tracking-[0.22em]"
-                          style={{ color: isOpen ? ACCENT : 'rgba(255,255,255,0.6)' }}
-                        >
-                          {f.eyebrow}
-                        </span>
-                        <Minus
-                          className="h-6 w-6 shrink-0 transition-transform"
-                          style={{
-                            color: isOpen ? ACCENT : 'rgba(255,255,255,0.5)',
-                            transform: isOpen ? 'rotate(0deg)' : 'rotate(90deg)',
-                          }}
-                        />
-                      </div>
-                      <AnimatePresence initial={false}>
-                        {isOpen && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                            animate={{ opacity: 1, height: 'auto', marginTop: 24 }}
-                            exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                            transition={{ duration: 0.35 }}
-                            className="overflow-hidden"
-                          >
-                            <p className="text-sm md:text-base leading-relaxed text-white/70">
-                              {f.body}
-                            </p>
-                            <Link
-                              to={f.href}
-                              className="mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em]"
-                              style={{ color: ACCENT }}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              Ver detalhe <ArrowRight className="h-3.5 w-3.5" />
-                            </Link>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* PROCESSO */}
-      <section className="relative bg-black text-white py-24 md:py-32 before:content-[''] before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-[#ff4000]/40 before:to-transparent">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="max-w-3xl mb-16">
-            <span className="font-mono text-[11px] uppercase tracking-[0.24em]" style={{ color: ACCENT }}>
-              Como trabalhamos
-            </span>
-            <h2 className="mt-4 text-4xl md:text-6xl font-black leading-[1.02] tracking-tight">
-              De briefing a resultado, <span style={{ color: ACCENT }}>sem drama</span>.
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10">
-            {process.map((p) => (
-              <div key={p.step} className="bg-black p-8 md:p-10 min-h-[260px] flex flex-col">
-                <div className="font-mono text-sm tracking-[0.22em]" style={{ color: ACCENT }}>
-                  {p.step}
-                </div>
-                <h3 className="mt-6 text-2xl font-bold tracking-tight">{p.title}</h3>
-                <p className="mt-4 text-sm text-white/60 leading-relaxed">{p.body}</p>
+                  <Zap className="h-4 w-4" />
+                  Auditoria grátis 7 min
+                </Button>
               </div>
+              <p className="gb-text-small mt-6 text-ink-tertiary">
+                Resposta em menos de 48 horas · 30 min, online, 0€
+              </p>
+            </Reveal>
+
+            {/* Static proof visual — real product surfaces, no carousel */}
+            <Reveal i={1} className="relative">
+              <div className="gb-surface-card !p-0 overflow-hidden">
+                <img
+                  src={qookMockup.url}
+                  alt="Qook — sistema de gestão para restauração"
+                  className="block w-full object-cover object-top"
+                  loading="eager"
+                />
+              </div>
+              <div className="gb-surface-card-elevated absolute -bottom-8 -left-4 hidden w-64 !p-0 overflow-hidden md:block">
+                <img
+                  src={hostifyMockup.url}
+                  alt="Hostify — gestão para alojamento local"
+                  className="block w-full object-cover object-top"
+                  loading="lazy"
+                />
+              </div>
+            </Reveal>
+          </div>
+        </div>
+        <div className="gb-container pb-16">
+          <div className="gb-hairline-accent" />
+        </div>
+      </section>
+
+      {/* ================================================= 02 PROOF BAR */}
+      <section className="gb-surface-subtle gb-section !py-14">
+        <div className="gb-container">
+          <p className="gb-eyebrow text-center text-ink-tertiary">Marcas que já correm com a nossa tecnologia</p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
+            {clientLogos.map((logo) => (
+              <img
+                key={logo.name}
+                src={logo.src}
+                alt={logo.name}
+                className="h-9 w-auto object-contain opacity-50 transition-opacity hover:opacity-100 md:h-11"
+                style={{ filter: 'brightness(0) saturate(100%) invert(36%) sepia(8%) saturate(1063%) hue-rotate(314deg) brightness(94%) contrast(87%)' }}
+                loading="lazy"
+              />
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* PROVA / RESULTADOS */}
-      <section className="relative overflow-hidden bg-[#120906] text-white py-24 md:py-32 before:content-[''] before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-[#ff4000]/40 before:to-transparent">
-        <div aria-hidden className="pointer-events-none absolute -right-40 top-10 h-[560px] w-[560px] rounded-full blur-3xl opacity-25" style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.5) 0%, rgba(10,6,3,0) 65%)' }} />
-        <div className="max-w-7xl mx-auto px-6 md:px-12 grid md:grid-cols-2 gap-16 items-start">
-          <div>
-            <span className="font-mono text-[11px] uppercase tracking-[0.24em]" style={{ color: ACCENT }}>
-              Prova real
-            </span>
-            <h2 className="mt-4 text-4xl md:text-5xl font-black leading-[1.05] tracking-tight">
-              Não vendemos <span style={{ color: ACCENT }}>promessas</span>. Vendemos operações que já{' '}
-              <span style={{ color: ACCENT }}>funcionam</span>.
-            </h2>
-            <p className="mt-6 text-white/70 leading-relaxed">
-              Do PMS que corre em centenas de propriedades ao SaaS de segurança no trabalho, do POS
-              para restauração ao coach emocional com IA — construímos, mantemos e escalamos produtos
-              digitais reais, com utilizadores reais, todos os dias.
-            </p>
-            <Link
-              to="/portfolio"
-              className="mt-10 inline-flex items-center gap-3 border-2 px-6 py-3.5 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: '#ffb494' }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-            >
-              Ver portefólio <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 gap-px bg-white/10">
+          <div className="mt-10 grid grid-cols-2 gap-6 md:grid-cols-4">
             {[
-              { k: '+300%', v: 'crescimento orgânico médio em 6 meses' },
-              { k: '−70%', v: 'tempo em tarefas administrativas' },
-              { k: '5x', v: 'reuniões comerciais qualificadas' },
-              { k: '30d', v: 'do zero a MVP em produção' },
-            ].map((r) => (
-              <div key={r.k} className="bg-[#120906] p-8">
-                <div className="font-mono text-4xl md:text-5xl font-black" style={{ color: ACCENT }}>
-                  {r.k}
-                </div>
-                <div className="mt-3 text-xs uppercase tracking-widest text-white/50 leading-relaxed">
-                  {r.v}
-                </div>
-              </div>
+              { k: METRICS.projectsDelivered.value, v: 'Projetos entregues' },
+              { k: '24/7', v: 'Agentes IA a operar' },
+              { k: '<30d', v: 'Do briefing ao MVP' },
+              { k: '3x', v: 'Leads qualificadas médias' },
+            ].map((stat, i) => (
+              <Reveal key={stat.v} i={i} className="text-center">
+                <div className="gb-text-h2 text-brand-600">{stat.k}</div>
+                <div className="gb-text-small mt-1 text-ink-secondary">{stat.v}</div>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA FINAL */}
-      <section className="relative bg-black text-white py-28 md:py-40 before:content-[''] before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-[#ff4000]/40 before:to-transparent">
-        <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="font-black leading-[0.95] tracking-tight text-[clamp(2rem,6.5vw,5.5rem)]"
-          >
-            Adoraria conhecer o teu <span style={{ color: ACCENT }}>projecto</span> e trabalhar{' '}
-            <span style={{ color: ACCENT }}>contigo</span>.
-          </motion.h2>
-          <p className="mt-8 text-white/60 max-w-2xl mx-auto text-lg">
-            Vamos criar algo extraordinário. Conta-nos o contexto, os objectivos e o prazo — voltamos
-            com um plano concreto em menos de 48 horas.
-          </p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-14 flex flex-wrap items-center justify-center gap-4"
-          >
-            <button
-              type="button"
-              onClick={() => setContactOpen((v) => !v)}
-              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: ACCENT }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-            >
-              {contactOpen ? 'Fechar formulário' : 'Falar com um consultor'}
-              <ArrowRight className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => { setPreloadedAudit(null); setAuditOpen(true); }}
-              className="inline-flex items-center gap-2 px-4 py-5 font-mono text-xs uppercase tracking-[0.28em] text-white/60 hover:text-white transition-colors"
-            >
-              <Zap className="h-4 w-4" style={{ color: ACCENT }} />
-              Auditoria grátis 7 min
-            </button>
-          </motion.div>
-
-          <ConsultantContactForm
-            open={contactOpen}
-            service={{
-              slug: 'homepage',
-              name: 'Getboost Digital',
-              accent: ACCENT,
-              eyebrow: 'Briefing · Projecto Digital',
-              headline: 'Vamos desenhar o próximo passo do teu negócio.',
-              subhead: 'Descreve o contexto, os objectivos e onde queres chegar. Voltamos com um plano concreto, prazos e investimento em menos de 48 horas.',
-              goalOptions: [
-                'Gerar mais leads qualificadas',
-                'Automatizar operações com IA',
-                'Lançar um produto/SaaS novo',
-                'Redesenhar o site e a marca',
-                'Estruturar marketing e vendas',
-                'Ainda a explorar',
-              ],
-              messagePlaceholder: 'Contexto do negócio, objectivos a 6 meses, orçamento aproximado, prazo desejado…',
-            }}
+      {/* =========================================== 03 BUSINESS SYSTEMS */}
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Sistemas, não tarefas"
+            title="Três sistemas que se conectam"
+            description="Cada peça funciona sozinha. Juntas, transformam o teu digital num sistema que atrai, converte e opera sem depender de heroísmos individuais."
+            proof="Aquisição, conversão e operação a partilharem os mesmos dados."
           />
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {systems.map((system, i) => (
+              <Reveal key={system.title} i={i}>
+                <div className="gb-surface-card h-full">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-canvas-tint text-brand-600">
+                    <system.icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="gb-text-h3 mt-5 text-ink-primary">{system.title}</h3>
+                  <p className="gb-text-body mt-3 text-ink-secondary">{system.body}</p>
+                  <p className="gb-eyebrow mt-6 text-ink-tertiary">{system.pillar}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
+
+      {/* ================================================ 04 FOUR PILLARS */}
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="O que fazemos"
+            title="Quatro alavancas para crescer com previsibilidade"
+            description="IA, Automação, Software e Growth — as quatro capacidades que combinamos para construir sistemas digitais completos."
+          />
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            {pillars.map((pillar, i) => (
+              <Reveal key={pillar.id} i={i}>
+                <div
+                  className="gb-surface-pillar-card h-full"
+                  style={{ ['--gb-pillar' as string]: `var(--gb-${pillar.id}-base)` }}
+                >
+                  <span
+                    className="flex h-11 w-11 items-center justify-center rounded-full"
+                    style={{ background: `var(--gb-${pillar.id}-tint)`, color: `var(--gb-${pillar.id}-strong)` }}
+                  >
+                    <pillar.icon className="h-5 w-5" />
+                  </span>
+                  <p className="gb-eyebrow mt-5" style={{ color: `var(--gb-${pillar.id}-strong)` }}>
+                    {pillar.eyebrow}
+                  </p>
+                  <h3 className="gb-text-h3 mt-2 text-ink-primary">{pillar.title}</h3>
+                  <p className="gb-text-body mt-3 text-ink-secondary">{pillar.body}</p>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {pillar.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full px-3 py-1.5 text-xs text-ink-secondary"
+                        style={{ background: `var(--gb-${pillar.id}-tint)`, border: `1px solid var(--gb-${pillar.id}-border)` }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <Link
+                    to={pillar.href}
+                    className="mt-7 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] transition-colors"
+                    style={{ color: `var(--gb-${pillar.id}-strong)` }}
+                  >
+                    Ver {pillar.eyebrow.toLowerCase()} <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================================================== 05 CASE STUDIES */}
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Prova real"
+            title="Não vendemos promessas. Vendemos operações que já funcionam."
+            description="Resultados médios de projectos em produção — cada número com origem rastreada e dono responsável."
+          />
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {caseStudies.map((study, i) => (
+              <Reveal key={study.k} i={i}>
+                <div className="gb-surface-card-elevated h-full">
+                  <div className="gb-text-display text-brand-600">{study.k}</div>
+                  <p className="gb-text-body mt-3 text-ink-secondary">{study.v}</p>
+                  <p className="gb-eyebrow mt-6 text-ink-tertiary">{study.pillar}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+          <div className="mt-10 flex flex-wrap gap-4">
+            <Button asChild variant="outline">
+              <Link to="/portfolio">
+                Ver portefólio <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild variant="ghost">
+              <Link to="/casos-de-sucesso">
+                Casos de sucesso <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ======================================================= 06 PRODUCTS */}
+      <section className="gb-surface-subtle gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Prova de execução"
+            title="Não só construímos software. Operamo-lo."
+            description="Seis produtos a correr em produção, com clientes reais — a mesma engenharia que aplicamos no projecto que vamos construir contigo."
+          />
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {PRODUCTS.map((product, i) => (
+              <Reveal key={product.slug} i={i % 3}>
+                <Link to={product.to} className="group block h-full">
+                  <div className="gb-surface-card h-full transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-card-hover">
+                    <span aria-hidden className="block h-1 w-10 rounded-full" style={{ background: product.accent }} />
+                    <h3 className="gb-text-h3 mt-4 text-ink-primary">{product.name}</h3>
+                    <p className="gb-text-small mt-2 font-medium text-ink-secondary">{product.tagline}</p>
+                    <span className="mt-5 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-brand-600">
+                      Conhecer <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+          <div className="mt-8">
+            <Button asChild variant="ghost">
+              <Link to="/produtos">
+                Ver todos os produtos <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================= 07 METHOD */}
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Como trabalhamos"
+            title="De briefing a resultado, sem drama"
+            description="Um processo obsessivo em quatro passos — com prioridades claras, prazos reais e decisões documentadas."
+          />
+          <div className="mt-12 grid gap-px overflow-hidden rounded-2xl bg-sand-200 md:grid-cols-2 lg:grid-cols-4">
+            {method.map((step, i) => (
+              <Reveal key={step.step} i={i} className="bg-canvas-base p-8 md:p-10">
+                <div className="font-mono text-sm tracking-[0.22em] text-brand-600">{step.step}</div>
+                <h3 className="gb-text-h3 mt-6 text-ink-primary">{step.title}</h3>
+                <p className="gb-text-small mt-4 text-ink-secondary">{step.body}</p>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ======================================================== 08 INSIGHTS */}
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Insights"
+            title="Conhecimento que aplicamos todos os dias"
+            description="Artigos, guias e análises sobre marketing, software e IA — para manteres a operação à frente."
+          />
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {(latestEntries ?? []).slice(0, 3).map((entry, i) => (
+              <Reveal key={entry.id} i={i}>
+                <Link to={`/blog/${entry.slug}`} className="group block h-full">
+                  <div className="gb-surface-card h-full transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-card-hover">
+                    {entry.ogImagePath ?? entry.coverMediaPath ? (
+                      <img
+                        src={mediaUrl(entry.ogImagePath ?? entry.coverMediaPath) ?? ''}
+                        alt={entry.title}
+                        className="mb-5 h-40 w-full rounded-lg object-cover"
+                        loading="lazy"
+                      />
+                    ) : null}
+                    <h3 className="gb-text-h3 text-ink-primary">{entry.title}</h3>
+                    <span className="mt-5 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-brand-600">
+                      Ler artigo <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+            {!latestEntries?.length ? (
+              <p className="gb-text-body text-ink-secondary">Sem artigos publicados de momento.</p>
+            ) : null}
+          </div>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Button asChild variant="ghost">
+              <Link to="/blog">
+                Ver todos os artigos <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild variant="ghost">
+              <Link to="/resources">
+                Recursos e guias <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ===================================================== 09 FINAL CTA */}
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <Reveal i={0}>
+            <div className="gb-cta-band text-center">
+              <h2 className="font-black leading-[0.98] tracking-tight text-[clamp(2rem,5vw,4rem)] text-ink-inverse">
+                Adoraria conhecer o teu{' '}
+                <span style={{ color: ACCENT }}>projecto</span> e trabalhar{' '}
+                <span style={{ color: ACCENT }}>contigo</span>.
+              </h2>
+              <p className="gb-text-body mx-auto mt-6 max-w-2xl text-white/70">
+                Conta-nos o contexto, os objectivos e o prazo — voltamos com um
+                plano concreto em menos de 48 horas.
+              </p>
+              <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+                <Button size="lg" onClick={() => setContactOpen((v) => !v)}>
+                  {contactOpen ? 'Fechar formulário' : 'Falar com um consultor'}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-white/40 !text-white hover:!bg-white hover:!text-ink-primary"
+                  onClick={() => { setPreloadedAudit(null); setAuditOpen(true); }}
+                >
+                  <Zap className="h-4 w-4" />
+                  Auditoria grátis 7 min
+                </Button>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      <ConsultantContactForm
+        open={contactOpen}
+        onClose={() => setContactOpen(false)}
+        service={{
+          slug: 'homepage',
+          name: 'Getboost Digital',
+          accent: ACCENT,
+          eyebrow: 'Briefing · Projecto Digital',
+          headline: 'Vamos desenhar o próximo passo do teu negócio.',
+          subhead: 'Descreve o contexto, os objectivos e onde queres chegar. Voltamos com um plano concreto, prazos e investimento em menos de 48 horas.',
+          goalOptions: [
+            'Gerar mais leads qualificadas',
+            'Automatizar operações com IA',
+            'Lançar um produto/SaaS novo',
+            'Redesenhar o site e a marca',
+            'Estruturar marketing e vendas',
+            'Ainda a explorar',
+          ],
+          messagePlaceholder: 'Contexto do negócio, objectivos a 6 meses, orçamento aproximado, prazo desejado…',
+        }}
+      />
 
       <CommercialAuditModal
         open={auditOpen}

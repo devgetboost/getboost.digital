@@ -1,12 +1,15 @@
 import { writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
-const SITE_URL = 'https://getboostsoft.lovable.app';
+const SITE_URL = 'https://getboost.digital';
 const TODAY = new Date().toISOString().split('T')[0];
 
 const staticRoutes = [
   '',
   '/solucoes',
+  '/produtos',
+  '/work',
+  '/insights',
   '/about',
   '/portfolio',
   '/blog',
@@ -54,19 +57,8 @@ const serviceSlugs = [
   'mvp-30-dias',
   // Automação & IA
   'bots-whatsapp-ia',
-  // Produtos / landings
-  'hostify',
-  'qook',
-  'qook/lisboa',
-  'qook/porto',
-  'qook/coimbra',
-  'qook/braga',
-  'qook/faro',
-  'qook/aveiro',
-  'qook/setubal',
-  'qook/leiria',
-  'qook/funchal',
-  'qook/figueira-da-foz'
+  // Wave 2A.6: removed 'hostify', 'qook' and 9 'qook/<city>' entries —
+  // redirect-only or no-route destinations. Sitemaps list canonical URLs only.
 ];
 
 const investorSlugs = ['qook', 'hostify', 'motivae', 'trackfy', 'prosafe360', 'pikto'];
@@ -130,21 +122,28 @@ function writeSitemapFile(filename, urls) {
 const demoProductSlugs = ['pikto', 'prosafe360', 'motivae', 'qook', 'hostify', 'trackfy'];
 const demoMultilingualSlugs = new Set(['qook']);
 
+/** XML-escapes a value: query-param URLs contain '&', invalid unescaped. */
+function xmlEscape(value) {
+  return value.replace(/&/g, '&amp;');
+}
+
 function generateDemoUrlXml(slug) {
   const isMulti = demoMultilingualSlugs.has(slug);
   const pt = `${SITE_URL}/demo?produto=${slug}`;
-  // R1C7: markets, not interface languages. BR is the pt-BR market, INTL is en.
+  // Wave 2A.6: market-model alternates. PT owns the bare URL (pt-PT); the EN
+  // variant carries the page's own ?lang=en (its i18n is query-param based).
+  // No `es` (presentation only) and no legacy bare `pt`.
   const en = `${pt}&lang=en`;
 
   let xml = '  <url>\n';
-  xml += `    <loc>${pt}</loc>\n`;
+  xml += `    <loc>${xmlEscape(pt)}</loc>\n`;
   xml += `    <lastmod>${TODAY}</lastmod>\n`;
   xml += `    <changefreq>weekly</changefreq>\n`;
   xml += `    <priority>0.7</priority>\n`;
   if (isMulti) {
-    xml += `    <xhtml:link rel="alternate" hreflang="pt" href="${pt}"/>\n`;
-    xml += `    <xhtml:link rel="alternate" hreflang="en" href="${en}"/>\n`;
-    xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${pt}"/>\n`;
+    xml += `    <xhtml:link rel="alternate" hreflang="pt-PT" href="${xmlEscape(pt)}"/>\n`;
+    xml += `    <xhtml:link rel="alternate" hreflang="en" href="${xmlEscape(en)}"/>\n`;
+    xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlEscape(pt)}"/>\n`;
   }
   xml += '  </url>\n';
 
@@ -153,13 +152,13 @@ function generateDemoUrlXml(slug) {
   // Emit dedicated entries for each language variant so crawlers index them all.
   for (const href of [en]) {
     xml += '  <url>\n';
-    xml += `    <loc>${href}</loc>\n`;
+    xml += `    <loc>${xmlEscape(href)}</loc>\n`;
     xml += `    <lastmod>${TODAY}</lastmod>\n`;
     xml += `    <changefreq>weekly</changefreq>\n`;
     xml += `    <priority>0.6</priority>\n`;
-    xml += `    <xhtml:link rel="alternate" hreflang="pt" href="${pt}"/>\n`;
-    xml += `    <xhtml:link rel="alternate" hreflang="en" href="${en}"/>\n`;
-    xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${pt}"/>\n`;
+    xml += `    <xhtml:link rel="alternate" hreflang="pt-PT" href="${xmlEscape(pt)}"/>\n`;
+    xml += `    <xhtml:link rel="alternate" hreflang="en" href="${xmlEscape(en)}"/>\n`;
+    xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlEscape(pt)}"/>\n`;
     xml += '  </url>\n';
   }
   return xml;

@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { normalizeToE164 } from '@/lib/whatsappPhone';
+import { ROLE_EMAILS } from '@/data/brandRegistry';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 type CsvRow = { name: string; email: string; phone: string };
@@ -87,7 +88,7 @@ export default function AdminCampaignNew() {
   const [body, setBody] = useState('');
   const [instances, setInstances] = useState<any[]>([]);
   const [instanceId, setInstanceId] = useState('');
-  const [senderEmail, setSenderEmail] = useState('no-reply@getboost.digital');
+  const [senderEmail, setSenderEmail] = useState(ROLE_EMAILS.noReply);
   const [senderName, setSenderName] = useState('GetBoost');
   const [templates, setTemplates] = useState<any[]>([]);
   const [waTemplates, setWaTemplates] = useState<any[]>([]);

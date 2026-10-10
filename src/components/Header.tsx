@@ -22,52 +22,73 @@ import prosafeLogo from '@/assets/logos/logo-prosafe360.svg';
 
 type ServiceLink = { slug: string; title: string; desc: string; Icon: React.ComponentType<{ className?: string }>; to?: string };
 
+/**
+ * Wave 3B — the four strategic pillars (GETBOOST_2027_DESIGN_FREEZE_V1).
+ * All 20 canonical /solucoes/* slugs are preserved, regrouped under the
+ * pillar IA; items without an explicit `to` resolve through
+ * SOLUCOES_SUBMENU_MAP (which holds each slug's canonical destination).
+ */
 const serviceGroups: { title: string; items: ServiceLink[] }[] = [
   {
-    title: 'Marketing & Growth',
+    title: 'IA',
     items: [
-      { slug: 'branding-identidade', title: 'Branding', desc: 'Identidade de marca memorável', Icon: Palette },
-      { slug: 'marketing-digital', title: 'Marketing Digital', desc: 'Estratégia digital integrada', Icon: Megaphone },
-      { slug: 'gestao-redes-sociais', title: 'Gestão de Redes Sociais', desc: 'Conteúdo estratégico e comunidade', Icon: Share2 },
-      { slug: 'copywriting-conteudo', title: 'Copywriting & Conteúdo', desc: 'Textos que convertem', Icon: PenTool },
-      { slug: 'seo-geo-webmcp', title: 'SEO, GEO e WebMCP', desc: 'Tráfego orgânico e visibilidade em IA', Icon: Search },
-      { slug: 'paid-media', title: 'Paid Media', desc: 'Campanhas Meta, Google e TikTok com ROI', Icon: Target },
-      { slug: 'email-marketing', title: 'Email Marketing', desc: 'Automação e nutrição de leads', Icon: Mail },
-      { slug: 'funis-vendas', title: 'Funis de Vendas', desc: 'Jornada otimizada para conversão', Icon: GitBranch },
-      { slug: 'landing-pages', title: 'Landing Pages', desc: 'Páginas focadas em resultado', Icon: LayoutTemplate },
-      { slug: 'video-fotografia', title: 'Vídeo e Fotografia', desc: 'Produção audiovisual e drone', Icon: Camera },
+      { slug: 'agentes-ia', title: 'Agentes de IA', desc: 'Operadores digitais 24/7', Icon: Bot, to: '/agentes-ia' },
+      { slug: 'bots-whatsapp-ia', title: 'WhatsApp & Conversational AI', desc: 'Atendimento 24/7', Icon: MessageSquare },
+      { slug: 'crm-sales-intelligence', title: 'CRM & Sales Intelligence', desc: 'Vendas orientadas por IA', Icon: TrendingUp, to: '/crm-sales-intelligence' },
     ],
   },
   {
-    title: 'Software Engineering',
+    title: 'Automação',
+    items: [
+      { slug: 'integracoes-erp-crm', title: 'Integrações ERP/CRM', desc: 'Sistemas conectados', Icon: Workflow },
+      { slug: 'funis-vendas', title: 'Funis de Vendas', desc: 'Jornada otimizada para conversão', Icon: GitBranch },
+      { slug: 'sistemas-gestao-pmes', title: 'Sistemas de Gestão', desc: 'ERPs à medida', Icon: Database },
+      { slug: 'email-marketing', title: 'Email Marketing', desc: 'Automação e nutrição de leads', Icon: Mail },
+    ],
+  },
+  {
+    title: 'Software',
     items: [
       { slug: 'desenvolvimento-web', title: 'Desenvolvimento Web', desc: 'Websites rápidos e otimizados', Icon: Globe },
       { slug: 'desenvolvimento-mobile', title: 'Desenvolvimento Mobile', desc: 'Apps nativas e híbridas', Icon: Smartphone },
       { slug: 'desenvolvimento-saas', title: 'Desenvolvimento SaaS', desc: 'Plataformas multi-tenant', Icon: Cloud },
-      { slug: 'sistemas-gestao-pmes', title: 'Sistemas de Gestão para PMEs', desc: 'ERPs à medida', Icon: Database },
-      { slug: 'integracoes-erp-crm', title: 'Integrações com ERPs/CRMs', desc: 'Sistemas conectados', Icon: Workflow },
       { slug: 'ux-ui-design', title: 'UX/UI Design', desc: 'Interfaces intuitivas', Icon: Layers },
       { slug: 'mvp-30-dias', title: 'MVP em 30 dias', desc: 'Do zero ao produto em 1 mês', Icon: Rocket },
     ],
   },
   {
-    title: 'Automação & IA',
+    title: 'Growth',
     items: [
-      { slug: 'agentes-ia', title: 'Agentic AI', desc: 'Agentes autónomos 24/7', Icon: Bot, to: '/agentes-ia' },
-      { slug: 'bots-whatsapp-ia', title: 'WhatsApp & Conversational AI', desc: 'Atendimento 24/7', Icon: MessageSquare },
-      { slug: 'crm-sales-intelligence', title: 'CRM & Sales Intelligence', desc: 'Vendas orientadas por IA', Icon: TrendingUp, to: '/crm-sales-intelligence' },
+      { slug: 'marketing-digital', title: 'Marketing Digital', desc: 'Estratégia digital integrada', Icon: Megaphone },
+      { slug: 'paid-media', title: 'Paid Media', desc: 'Campanhas Meta, Google e TikTok com ROI', Icon: Target },
+      { slug: 'seo-geo-webmcp', title: 'SEO, GEO e WebMCP', desc: 'Tráfego orgânico e visibilidade em IA', Icon: Search },
+      { slug: 'gestao-redes-sociais', title: 'Gestão de Redes Sociais', desc: 'Conteúdo estratégico e comunidade', Icon: Share2 },
+      { slug: 'copywriting-conteudo', title: 'Copywriting & Conteúdo', desc: 'Textos que convertem', Icon: PenTool },
+      { slug: 'branding-identidade', title: 'Branding', desc: 'Identidade de marca memorável', Icon: Palette },
+      { slug: 'landing-pages', title: 'Landing Pages', desc: 'Páginas focadas em resultado', Icon: LayoutTemplate },
+      { slug: 'video-fotografia', title: 'Vídeo e Fotografia', desc: 'Produção audiovisual e drone', Icon: Camera },
+    ],
+  },
+];
+
+/** Wave 3B — Work: delivery proof (portfolio + case studies). */
+const workGroups: { title: string; items: ServiceLink[] }[] = [
+  {
+    title: 'Prova de entrega',
+    items: [
+      { slug: 'portfolio', title: 'Portefólio', desc: 'Projectos selecionados', Icon: LayoutTemplate, to: '/portfolio' },
+      { slug: 'casos-de-sucesso', title: 'Casos de Sucesso', desc: 'PMEs que escalaram com tecnologia e IA', Icon: Trophy, to: '/casos-de-sucesso' },
     ],
   },
 ];
 
 const resourceGroups: { title: string; items: ServiceLink[] }[] = [
   {
-    title: 'Materiais Gratuitos',
+    title: 'Materiais',
     items: [
       { slug: 'blog', title: 'Blog', desc: 'Estratégia, tecnologia e IA aplicadas a PMEs.', Icon: Newspaper, to: '/blog' },
       { slug: 'guias-ebooks', title: 'Guias & Ebooks', desc: 'Passo a passo para digitalizar e automatizar o teu negócio.', Icon: BookOpen, to: '/resources?categoria=guias-ebooks' },
       { slug: 'podcast', title: 'Podcast BoostTalks', desc: 'Conversas sobre crescimento, automação e futuro digital.', Icon: Mic, to: '/podcast' },
-      { slug: 'casos-sucesso', title: 'Casos de Sucesso', desc: 'PMEs que escalaram com tecnologia e IA.', Icon: Trophy, to: '/casos-de-sucesso' },
     ],
   },
   {
@@ -253,11 +274,11 @@ const Header = () => {
 
   const localize = (path: string) => (i18n.language === 'pt' ? path : `/${i18n.language}${path === '/' ? '' : path}`);
 
-  const navItems: { path: string; label: string; mega?: 'services' | 'products' | 'resources' }[] = [
+  const navItems: { path: string; label: string; mega?: 'services' | 'products' | 'resources' | 'work' }[] = [
     { path: '/solucoes', label: t('nav.services'), mega: 'services' },
+    { path: '/work', label: t('nav.work', 'Trabalhos'), mega: 'work' },
     { path: '/produtos', label: t('nav.products', 'Produtos'), mega: 'products' },
-    { path: '/resources', label: t('nav.resources'), mega: 'resources' },
-    
+    { path: '/insights', label: t('nav.insights', 'Insights'), mega: 'resources' },
     { path: '/contact', label: t('nav.contact', 'Contacto') },
   ];
 
@@ -377,8 +398,8 @@ const Header = () => {
               />
               <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-12">
                 <div className="grid grid-cols-12 gap-10">
-                  {(openMenu === 'services' ? serviceGroups : openMenu === 'products' ? productGroups : resourceGroups).map((group) => (
-                    <div key={group.title} className="col-span-3">
+                  {(openMenu === 'services' ? serviceGroups : openMenu === 'products' ? productGroups : openMenu === 'work' ? workGroups : resourceGroups).map((group) => (
+                    <div key={group.title} className={openMenu === 'services' ? 'col-span-2' : 'col-span-3'}>
                       <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#ff4000] mb-5 pb-3 border-b border-white/10">
                         {group.title}
                       </div>
@@ -401,7 +422,7 @@ const Header = () => {
                   ))}
 
                   {/* Right-side card */}
-                  <div className={openMenu === 'products' ? 'col-span-9' : 'col-span-3'}>
+                  <div className={openMenu === 'products' ? 'col-span-9' : openMenu === 'services' ? 'col-span-4' : 'col-span-3'}>
                     {openMenu === 'products' ? (
                       (() => {
                         const p = productInfo[hoveredProduct] ?? productInfo.qook;
@@ -534,6 +555,40 @@ const Header = () => {
                           </div>
                         </div>
                       </Link>
+                    ) : openMenu === 'work' ? (
+                      <Link
+                        to="/casos-de-sucesso"
+                        onClick={() => setOpenMenu(null)}
+                        className="block group"
+                      >
+                        <div className="relative aspect-[4/5] overflow-hidden bg-[#0c0a09] border border-white/10">
+                          <div
+                            aria-hidden
+                            className="absolute inset-0 opacity-[0.15] pointer-events-none"
+                            style={{
+                              backgroundImage:
+                                'linear-gradient(#ff4000 1px, transparent 1px), linear-gradient(90deg, #ff4000 1px, transparent 1px)',
+                              backgroundSize: '32px 32px',
+                            }}
+                          />
+                          <div className="absolute inset-0 flex flex-col justify-between p-6">
+                            <div className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#ff4000]">
+                              Prova<span className="font-light italic">real</span>
+                            </div>
+                            <div>
+                              <h4 className="text-white text-2xl font-black leading-[1.05] tracking-tight">
+                                Projectos que<br />já correm em produção
+                              </h4>
+                              <p className="mt-3 font-mono text-[11px] uppercase tracking-widest text-white/80">
+                                Portefólio · Casos de sucesso
+                              </p>
+                              <span className="mt-5 inline-flex items-center gap-2 border-t border-white/40 pt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-white">
+                                Ver casos <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
                     ) : (
                       <div className="relative aspect-[4/5] overflow-hidden bg-black border border-white/10">
                         <AnimatePresence mode="wait">
@@ -625,8 +680,8 @@ const Header = () => {
                 const active = location.pathname === item.path || location.pathname === localizedPath;
 
                 if (item.mega) {
-                  const groups = item.mega === 'services' ? serviceGroups : item.mega === 'products' ? productGroups : resourceGroups;
-                  const basePath = item.mega === 'services' ? '/solucoes' : item.mega === 'products' ? '/produtos' : '/resources';
+                  const groups = item.mega === 'services' ? serviceGroups : item.mega === 'products' ? productGroups : item.mega === 'work' ? workGroups : resourceGroups;
+                  const basePath = item.mega === 'services' ? '/solucoes' : item.mega === 'products' ? '/produtos' : item.mega === 'work' ? '/work' : '/insights';
                   const isOpen = mobileMenu === item.mega;
                   return (
                     <div key={item.path} className="flex flex-col border-b border-white/10 pb-4">
@@ -674,8 +729,7 @@ const Header = () => {
                                 onClick={() => { setMobileOpen(false); setMobileMenu(null); }}
                                 className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-[#ff4000] mt-1"
                               >
-                                {item.mega === 'services' ? 'Ver todos os serviços' : item.mega === 'products' ? 'Ver todos os produtos' : 'Ver todos os recursos'} <ArrowRight className="h-4 w-4" />
-                              </Link>
+                                {item.mega === 'services' ? 'Ver todas as soluções' : item.mega === 'work' ? 'Ver todos os trabalhos' : item.mega === 'products' ? 'Ver todos os produtos' : 'Ver todos os insights'} <ArrowRight className="h-4 w-4" />                              </Link>
                             </div>
                           </motion.div>
                         )}

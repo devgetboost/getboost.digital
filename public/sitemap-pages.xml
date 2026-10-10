@@ -1,223 +1,253 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://getboostsoft.lovable.app/</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/solucoes</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/solucoes</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/solucoes"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/solucoes"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/solucoes"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/solucoes"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/solucoes"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/solucoes"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/solucoes"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/solucoes"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/about</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/produtos</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/about"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/about"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/about"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/about"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/produtos"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/produtos"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/produtos"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/produtos"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/portfolio</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/work</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/portfolio"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/portfolio"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/portfolio"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/portfolio"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/work"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/work"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/work"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/work"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/blog</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/insights</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/blog"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/blog"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/blog"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/blog"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/insights"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/insights"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/insights"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/insights"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/resources</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/about</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/resources"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/resources"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/resources"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/resources"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/about"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/about"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/about"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/about"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/contact</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/portfolio</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/contact"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/contact"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/contact"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/contact"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/portfolio"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/portfolio"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/portfolio"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/portfolio"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/booking</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/blog</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/booking"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/booking"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/booking"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/booking"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/blog"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/blog"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/blog"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/blog"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/investidores</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/resources</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/investidores"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/investidores"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/investidores"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/investidores"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/resources"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/resources"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/resources"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/resources"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/simulador</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/contact</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/simulador"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/simulador"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/simulador"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/simulador"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/contact"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/contact"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/contact"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/agentes-ia</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/booking</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/agentes-ia"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/agentes-ia"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/agentes-ia"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/agentes-ia"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/booking"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/booking"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/booking"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/booking"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/crm-sales-intelligence</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/investidores</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/crm-sales-intelligence"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/crm-sales-intelligence"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/crm-sales-intelligence"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/crm-sales-intelligence"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/investidores"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/investidores"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/investidores"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/investidores"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/tools/roi-calculator</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/simulador</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/tools/roi-calculator"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/tools/roi-calculator"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/tools/roi-calculator"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/tools/roi-calculator"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/simulador"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/simulador"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/simulador"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/simulador"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/tools/seo-analyzer</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/agentes-ia</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/tools/seo-analyzer"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/tools/seo-analyzer"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/tools/seo-analyzer"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/tools/seo-analyzer"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/agentes-ia"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/agentes-ia"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/agentes-ia"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/agentes-ia"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/tools/content-ideas</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/crm-sales-intelligence</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/tools/content-ideas"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/tools/content-ideas"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/tools/content-ideas"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/tools/content-ideas"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/crm-sales-intelligence"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/crm-sales-intelligence"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/crm-sales-intelligence"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/crm-sales-intelligence"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/tools/branding-guide</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/tools/roi-calculator</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/tools/branding-guide"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/tools/branding-guide"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/tools/branding-guide"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/tools/branding-guide"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/tools/roi-calculator"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/tools/roi-calculator"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/tools/roi-calculator"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/tools/roi-calculator"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/politica-de-privacidade</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/tools/seo-analyzer</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/politica-de-privacidade"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/politica-de-privacidade"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/politica-de-privacidade"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/politica-de-privacidade"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/tools/seo-analyzer"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/tools/seo-analyzer"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/tools/seo-analyzer"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/tools/seo-analyzer"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/politica-de-cookies</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/tools/content-ideas</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/politica-de-cookies"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/politica-de-cookies"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/politica-de-cookies"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/politica-de-cookies"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/tools/content-ideas"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/tools/content-ideas"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/tools/content-ideas"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/tools/content-ideas"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/agencia-marketing-digital-figueira-da-foz</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/tools/branding-guide</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/agencia-marketing-digital-figueira-da-foz"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/agencia-marketing-digital-figueira-da-foz"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/agencia-marketing-digital-figueira-da-foz"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/agencia-marketing-digital-figueira-da-foz"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/tools/branding-guide"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/tools/branding-guide"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/tools/branding-guide"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/tools/branding-guide"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/agencia-marketing-digital-coimbra</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/politica-de-privacidade</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/agencia-marketing-digital-coimbra"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/agencia-marketing-digital-coimbra"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/agencia-marketing-digital-coimbra"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/agencia-marketing-digital-coimbra"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/politica-de-privacidade"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/politica-de-privacidade"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/politica-de-privacidade"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/politica-de-privacidade"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/agencia-marketing-digital-leiria</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/politica-de-cookies</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/agencia-marketing-digital-leiria"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/agencia-marketing-digital-leiria"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/agencia-marketing-digital-leiria"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/agencia-marketing-digital-leiria"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/politica-de-cookies"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/politica-de-cookies"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/politica-de-cookies"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/politica-de-cookies"/>
   </url>
   <url>
-    <loc>https://getboostsoft.lovable.app/agencia-marketing-digital-pombal</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://getboost.digital/agencia-marketing-digital-figueira-da-foz</loc>
+    <lastmod>2026-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboostsoft.lovable.app/agencia-marketing-digital-pombal"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboostsoft.lovable.app/br/agencia-marketing-digital-pombal"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboostsoft.lovable.app/en/agencia-marketing-digital-pombal"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboostsoft.lovable.app/agencia-marketing-digital-pombal"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/agencia-marketing-digital-figueira-da-foz"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/agencia-marketing-digital-figueira-da-foz"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/agencia-marketing-digital-figueira-da-foz"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/agencia-marketing-digital-figueira-da-foz"/>
+  </url>
+  <url>
+    <loc>https://getboost.digital/agencia-marketing-digital-coimbra</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/agencia-marketing-digital-coimbra"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/agencia-marketing-digital-coimbra"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/agencia-marketing-digital-coimbra"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/agencia-marketing-digital-coimbra"/>
+  </url>
+  <url>
+    <loc>https://getboost.digital/agencia-marketing-digital-leiria</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/agencia-marketing-digital-leiria"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/agencia-marketing-digital-leiria"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/agencia-marketing-digital-leiria"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/agencia-marketing-digital-leiria"/>
+  </url>
+  <url>
+    <loc>https://getboost.digital/agencia-marketing-digital-pombal</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/agencia-marketing-digital-pombal"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/agencia-marketing-digital-pombal"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/agencia-marketing-digital-pombal"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/agencia-marketing-digital-pombal"/>
   </url>
 </urlset>

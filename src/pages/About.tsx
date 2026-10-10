@@ -9,6 +9,7 @@ import { StandardCTA } from '@/components/StandardCTA';
 import ClientFeedback from '@/components/ui/testimonial';
 import nunoPhoto from '@/assets/nuno-cruz.webp';
 import heroWorkspace from '@/assets/hero-workspace.jpg';
+import { METRICS } from '@/data/brandRegistry';
 
 const HERO_MARQUEE_IMAGES = [
   'https://images.unsplash.com/photo-1756312148347-611b60723c7a?w=900&auto=format&fit=crop&q=60',
@@ -24,7 +25,7 @@ const HERO_MARQUEE_IMAGES = [
 const skillIcons = [Target, Palette, Globe, MessageSquare, TrendingUp, BarChart3, Lightbulb, Rocket];
 const skillKeys = ['strategy', 'branding', 'seo', 'content', 'growth', 'analytics', 'consulting', 'automation'];
 
-const statValues = ['20+', '1500+', '98%', '3.2x'];
+const statValues = [METRICS.yearsExperience.value, METRICS.projectsDelivered.value, '98%', '3.2x'];
 const statKeys = ['years', 'projects', 'satisfaction', 'roi'];
 
 const timelineYears = ['2024', '2020', '2017', '2014', '2004'];

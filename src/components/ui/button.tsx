@@ -45,6 +45,24 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, loading = false, children, disabled, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
+    // Slot (asChild) requires exactly one element child: React.Children.count
+    // counts booleans as nodes, so a `{loading && <span/>}` sibling would make
+    // SlotClone throw "Children.only expected a single element". The spinner
+    // therefore renders only for native buttons; asChild keeps the Slot
+    // contract (disabled + aria-busy still merge onto the child element).
+    const content = asChild ? (
+      children
+    ) : (
+      <>
+        {loading && (
+          <span
+            aria-hidden
+            className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent"
+          />
+        )}
+        {children}
+      </>
+    );
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
@@ -53,13 +71,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={loading || undefined}
         {...props}
       >
-        {loading && (
-          <span
-            aria-hidden
-            className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent"
-          />
-        )}
-        {children}
+        {content}
       </Comp>
     );
   },

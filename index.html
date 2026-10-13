@@ -35,9 +35,21 @@
     <meta name="geo.region" content="PT-06" />
     <meta name="geo.placename" content="Figueira da Foz" />
 
+    <!-- R20.11 — global CSS linked from HTML (not JS) so the stylesheet is
+         discovered by the preload scanner instead of after bundle execution. -->
+    <link rel="stylesheet" href="/src/index.css" />
+    <link rel="stylesheet" href="/src/styles/design-system.css" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
+    <!-- R20.11 — the font stylesheet is the LCP element on every text-led
+         page. Loaded as a non-blocking stylesheet so first paint never waits
+         on fonts.googleapis.com; `display=swap` already prevents invisible
+         text, and the <noscript> keeps the stylesheet for no-JS clients.
+         Tradeoff: a brief fallback-font flash on slow connections. -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" /></noscript>
 
     
     

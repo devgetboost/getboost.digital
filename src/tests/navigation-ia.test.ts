@@ -7,12 +7,13 @@ const root = process.cwd();
 const read = (rel: string) => readFileSync(join(root, rel), "utf-8");
 
 /**
- * Wave 3B — navigation IA guards.
+ * Wave 3B / R18.5 — navigation IA guards.
  *
- * The frozen primary navigation is Home · Solutions · Work · Products ·
- * Insights · Contact (GETBOOST_2027_DESIGN_FREEZE_V1); COMPANY is
- * footer-only. CI fails on nav drift, company creeping back into the
- * primary nav, lost service slugs, or broken destinations.
+ * R18.5 premium header: Soluções · Produtos · Recursos · Empresa (+ logo
+ * home). The Empresa entry carries the company dropdown (Sobre Nós,
+ * Equipa, Portfólio, Carreiras); the company cluster also lives in the
+ * footer. CI fails on nav drift, lost service slugs, or broken
+ * destinations.
  */
 
 const HEADER = read("src/components/Header.tsx");
@@ -38,8 +39,8 @@ const SOLUTION_SLUGS = [
 ];
 
 describe("Wave 3B — navigation IA", () => {
-  it("the primary nav is exactly the frozen five destinations (home = logo)", () => {
-    expect(navPaths).toEqual(["/solucoes", "/work", "/produtos", "/insights", "/contact"]);
+  it("the primary nav is exactly Soluções · Produtos · Recursos · Empresa (home = logo)", () => {
+    expect(navPaths).toEqual(["/solucoes", "/produtos", "/insights", "/sobre-nos"]);
   });
 
   it("every primary nav destination is a real, canonical route", () => {
@@ -49,9 +50,10 @@ describe("Wave 3B — navigation IA", () => {
     }
   });
 
-  it("COMPANY is footer-only — no company route in the primary nav", () => {
-    for (const companyPath of ["/sobre-nos", "/equipa", "/carreira"]) {
-      expect(navBlock, `primary nav must not link ${companyPath}`).not.toContain(companyPath);
+  it("the Empresa dropdown carries the company surfaces (footer cluster intact)", () => {
+    // R18.5: company lives in the primary nav as a dropdown AND in the footer.
+    for (const companyPath of ["/sobre-nos", "/equipa", "/portfolio", "/carreira"]) {
+      expect(HEADER, `header must link ${companyPath}`).toContain(companyPath);
     }
     // …and the company cluster lives in the footer
     expect(FOOTER).toContain("Footer company");
@@ -61,8 +63,8 @@ describe("Wave 3B — navigation IA", () => {
   });
 
   it("the solutions mega menu is grouped by the four pillars", () => {
-    const groupsBlock = HEADER.slice(HEADER.indexOf("const serviceGroups"), HEADER.indexOf("const workGroups"));
-    for (const pillar of ["'IA'", "'Automação'", "'Software'", "'Growth'"]) {
+    const groupsBlock = HEADER.slice(HEADER.indexOf("const serviceGroups"), HEADER.indexOf("const resourceGroups"));
+    for (const pillar of ["'AI'", "'Automation'", "'Software'", "'Growth'"]) {
       expect(groupsBlock, `pillar group ${pillar}`).toContain(pillar);
     }
     // all 20 canonical services remain reachable
@@ -71,13 +73,10 @@ describe("Wave 3B — navigation IA", () => {
     }
   });
 
-  it("the Work and Insights entries exist with their surfaces", () => {
-    expect(HEADER).toContain("const workGroups");
-    expect(HEADER).toContain("/casos-de-sucesso");
-    expect(HEADER).toContain("/portfolio");
-    // caso-de-sucesso moved from the resources mega to Work
-    const resourcesBlock = HEADER.slice(HEADER.indexOf("const resourceGroups"), HEADER.indexOf("const productGroups"));
-    expect(resourcesBlock).not.toContain("casos-de-sucesso");
+  it("the Work hub route is preserved (reachable via footer, sitemap and hubs)", () => {
+    // R18.5 removed the Trabalhos nav entry; the /work route itself stays.
+    expect(appRoutes).toContain("/work");
+    expect(redirectOnly).not.toContain("/work");
   });
 
   it("the footer mirrors the navigation IA", () => {
@@ -91,14 +90,18 @@ describe("Wave 3B — navigation IA", () => {
   it("the utility row keeps login, language switcher and the primary CTA", () => {
     expect(HEADER).toContain('to="/login"');
     expect(HEADER).toContain("<LanguageSwitcher");
-    // primary CTA → booking
-    expect(HEADER).toMatch(/to=\{i18n\.language === 'pt' \? '\/booking' : `\/\$\{i18n\.language\}\/booking`\}/);
+    // primary CTA → booking (market-aware href), labelled per the R18.5 brief
+    expect(HEADER).toContain("bookingHref");
+    expect(HEADER).toContain("'/booking'");
+    expect(HEADER).toContain("Agendar Diagnóstico");
   });
 
   it("every product link in the footer strip resolves to its landing route", () => {
-    for (const product of PRODUCTS) {
+    for (const product of PRODUCTS.filter((p) => p.to !== undefined)) {
       expect(appRoutes, `product route ${product.to}`).toContain(product.to);
       expect(FOOTER).toContain("product.to");
     }
+    // institutional entries render as spans, never links
+    expect(FOOTER).toContain("Institutional entry");
   });
 });

@@ -6,34 +6,21 @@ import { analytics } from '@/lib/analytics';
 import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
-import PageHero from '@/components/PageHero';
-import heroAnalytics from '@/assets/hero-analytics.jpg';
+import { ScrollDepth } from '@/components/ScrollDepth';
+import { SectionHeader } from '@/components/ui/section-header';
+import { Button } from '@/components/ui/button';
+import { StandardCTA } from '@/components/StandardCTA';
 import { useProducts } from '@/hooks/useContent';
 import { mediaUrl } from '@/lib/contentApi';
-import { servicesData } from '@/data/services';
 import { PRODUCTS } from '@/data/products';
+import { SOLUCOES_SUBMENU } from '@/data/solucoesSubmenu';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import logoHostify from '@/assets/logos/logo-hostify.svg';
 import logoProsafe360 from '@/assets/logos/logo-prosafe360.svg';
 import logoQook from '@/assets/logos/logo-qook.svg';
 import logoMotivae from '@/assets/logos/logo-motivae.svg';
 import logoPikto from '@/assets/logos/logo-pikto.svg';
-
-type DbService = {
-  key: string;
-  slug: string;
-  image: string;
-  price: string;
-  icon: string;
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1, y: 0,
-    transition: { delay: i * 0.08, duration: 0.5 },
-  }),
-};
+import { Reveal } from '@/components/ui/reveal';
 
 const saasProducts = [
   {
@@ -82,7 +69,6 @@ const Services = () => {
     const hash = location.hash.replace('#', '');
     if (!hash) return;
     setActiveSlug(hash);
-    // Wait for the section to render before scrolling
     const t = setTimeout(() => {
       const el = document.getElementById(hash);
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -90,10 +76,6 @@ const Services = () => {
     return () => clearTimeout(t);
   }, [location.hash]);
 
-
-  // R1C6: published products from the Clean V1 `products` +
-  // `product_localizations` tables. The static `servicesData` fallback is gone:
-  // an empty catalogue renders the empty state.
   const { data: products, loading } = useProducts();
   const productImageMap = Object.fromEntries(
     (products ?? []).map(product => [product.slug, mediaUrl(product.logoPath) ?? mediaUrl(product.heroMediaPath) ?? '']),
@@ -109,6 +91,7 @@ const Services = () => {
 
   return (
     <Layout>
+    <ScrollDepth location="services" />
       <SEO
         title={`${t('servicesPage.title')} ${t('servicesPage.titleHighlight')}`}
         description={t('servicesPage.subtitle')}
@@ -130,118 +113,175 @@ const Services = () => {
           },
         ]}
       />
-      <PageHero
-        badgeAccent={t('servicesPage.badgeAccent')}
-        badge={t('servicesPage.badge')}
-        title={t('servicesPage.title')}
-        highlight={t('servicesPage.titleHighlight')}
-        subtitle={t('servicesPage.subtitle')}
-        cta={{ i18nKey: 'servicesPage.heroCta', href: '/booking', category: 'services', ctaType: 'hero_cta' }}
-        secondaryCta={{ i18nKey: 'servicesPage.heroSecondaryCta', href: '/portfolio', category: 'services', ctaType: 'hero_secondary_cta' }}
-        checkmarks={[t('servicesPage.checkSatisfaction'), t('servicesPage.checkROI'), t('servicesPage.checkProjects')]}
-        backgroundImage={heroAnalytics}
-      />
 
-      {/* Áreas de Atuação — 3 categorias com submenus */}
-      <section className="section-padding bg-section-alt">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12 max-w-2xl mx-auto">
-            <span className="inline-block text-xs font-bold tracking-widest text-primary uppercase mb-3">
-              Áreas de Atuação
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-              Três áreas, um <span className="text-primary">parceiro digital</span>
-            </h2>
-            <p className="mt-3 text-muted-foreground leading-relaxed">
-              Marketing, Engenharia de Software e IA aplicada — combinados para escalar o teu negócio.
-            </p>
-          </div>
+      {/* ==================================================== 01 HERO */}
+      <section className="gb-surface-page relative overflow-hidden">
+        <div aria-hidden className="gb-grid-overlay" />
+        <div className="gb-container relative gb-section !pt-10 md:!pt-16">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            <div>
+              <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
+                <span className="gb-eyebrow text-brand-600">Soluções · Marketing · Software · IA</span>
+              </motion.div>
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="gb-text-display mt-5 text-ink-primary"
+              >
+                Três áreas, um <span className="text-brand-600">parceiro digital</span>.
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="gb-text-body mt-6 max-w-xl text-ink-secondary"
+              >
+                Marketing, Engenharia de Software e IA aplicada — combinados para escalar o teu negócio.
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-10 flex flex-wrap items-center gap-4"
+              >
+                <StandardCTA i18nKey="servicesPage.heroCta" href="/booking" category="services" ctaType="hero_cta" showArrow />
+                <StandardCTA i18nKey="servicesPage.heroSecondaryCta" href="/portfolio" category="services" ctaType="hero_secondary_cta" variant="outline" showArrow />
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-8 flex flex-wrap gap-2.5"
+              >
+                {['Marketing', 'Software', 'IA', 'Automação'].map((item) => (
+                  <span key={item} className="gb-chip">
+                    <Check className="h-3.5 w-3.5 text-brand-600" />
+                    {item}
+                  </span>
+                ))}
+              </motion.div>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                icon: Megaphone,
-                id: 'area-marketing',
-                title: 'Marketing & Growth',
-                items: [
-                  { slug: 'branding-identidade', label: 'Branding & Identidade Visual' },
-                  { slug: 'marketing-digital', label: 'Marketing Digital' },
-                  { slug: 'gestao-redes-sociais', label: 'Gestão de Redes Sociais' },
-                  { slug: 'copywriting-conteudo', label: 'Copywriting & Conteúdo' },
-                  { slug: 'seo-blog', label: 'SEO & Blog' },
-                  { slug: 'google-meta-ads', label: 'Publicidade (Meta, Google, TikTok)' },
-                  { slug: 'funis-vendas', label: 'Funis de Vendas' },
-                  { slug: 'landing-pages', label: 'Landing Pages de Alta Conversão' },
-                  { slug: 'auditoria-marketing', label: 'Auditoria de Marketing' },
-                ],
-              },
-              {
-                icon: Code2,
-                id: 'area-software',
-                title: 'Software Engineering',
-                items: [
-                  { slug: 'desenvolvimento-web', label: 'Desenvolvimento Web' },
-                  { slug: 'desenvolvimento-mobile', label: 'Desenvolvimento Mobile (iOS/Android)' },
-                  { slug: 'desenvolvimento-saas', label: 'Desenvolvimento SaaS' },
-                  { slug: 'sistemas-gestao-pmes', label: 'Sistemas de Gestão para PMEs' },
-                  { slug: 'integracoes-erp-crm', label: 'Integrações com ERPs/CRMs' },
-                  { slug: 'ux-ui-design', label: 'UX/UI Design' },
-                  { slug: 'mvp-30-dias', label: 'MVP em 30 dias' },
-                ],
-              },
-              {
-                icon: Bot,
-                id: 'area-ia',
-                title: 'Automação & Inteligência Artificial',
-                items: [
-                  { slug: 'copilot-empresarial', label: 'Copilot Empresarial' },
-                  { slug: 'bots-whatsapp-ia', label: 'Bots de WhatsApp com IA' },
-                  { slug: 'treino-modelos-ia', label: 'Treino de Modelos com Dados Reais' },
-                ],
-              },
-            ].map((area, i) => {
-              const Icon = area.icon;
-              return (
-                <motion.div
-                  key={area.title}
-                  id={area.id}
-                  variants={fadeUp}
-                  custom={i}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  className="scroll-mt-28 bg-white dark:bg-card rounded-2xl border border-border/40 p-7 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
-                    <Icon className="h-6 w-6" />
+            {/* Hero visual: three pillars as a unified flow */}
+            <motion.div className="relative">
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className="gb-card !p-6 !shadow-lg">
+                  <div className="flex items-center justify-between">
+                    <span className="gb-eyebrow text-ink-tertiary">Como nasce cada projeto</span>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-success-bg px-2.5 py-1 text-[11px] font-semibold text-success">
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
+                      </span>
+                      Em produção
+                    </span>
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-4">{area.title}</h3>
-                  <ul className="space-y-2.5">
-                    {area.items.map((item) => (
-                      <li
-                        key={item.slug}
-                        id={item.slug}
-                        className={`scroll-mt-28 flex items-start gap-2.5 text-sm rounded-md px-2 py-1 -mx-2 transition-colors ${
-                          activeSlug === item.slug
-                            ? 'bg-primary/10 text-foreground font-medium'
-                            : 'text-muted-foreground'
-                        }`}
-                      >
-                        <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                        <span>{item.label}</span>
-                      </li>
+                  <MiniFlow
+                    steps={['IA', 'Automação', 'Software', 'Growth', 'Operação']}
+                    tint="var(--gb-brand-50)"
+                    strong="var(--gb-brand-600)"
+                  />
+                  <div className="mt-5 grid grid-cols-3 gap-2 border-t border-black/[0.06] pt-4 text-center">
+                    {[
+                      { k: `${PRODUCTS.filter(p => p.kind === 'saas').length}`, v: 'produtos próprios' },
+                      { k: `${SOLUCOES_SUBMENU.length}`, v: 'serviços' },
+                      { k: '3', v: 'pilares' },
+                    ].map((stat) => (
+                      <div key={stat.v}>
+                        <div className="gb-text-h3 text-brand-600">{stat.k}</div>
+                        <div className="text-[11px] font-medium text-ink-tertiary">{stat.v}</div>
+                      </div>
                     ))}
-                  </ul>
-                </motion.div>
-              );
-            })}
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
           </div>
-
+        </div>
+        <div className="gb-container pb-16">
+          <div className="gb-hairline-accent" />
         </div>
       </section>
 
-      <section className="section-padding">
-        <div className="max-w-7xl mx-auto">
+      {/* ==================================================== 02 ÁREAS DE ATUAÇÃO */}
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Áreas de Atuação"
+            title={'Três áreas, um parceiro digital'}
+            description="Marketing, Engenharia de Software e IA aplicada — combinados para escalar o teu negócio."
+          />
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {SOLUCOES_SUBMENU.map((group, i) => (
+              <Reveal key={group.title} i={i}>
+                <div className="gb-surface-card gb-card-lift h-full">
+                  <span
+                    className="gb-icon-chip"
+                    style={{ '--gb-chip-bg': `var(--gb-${group.id === 'area-marketing' ? 'growth' : group.id === 'area-software' ? 'software' : 'automation'}-tint)`, '--gb-chip-fg': `var(--gb-${group.id === 'area-marketing' ? 'growth' : group.id === 'area-software' ? 'software' : 'automation'}-strong)` }}
+                  >
+                    <group.icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="gb-text-h3 mt-4 !text-xl text-ink-primary">{group.title}</h3>
+                  <ul className="mt-4 flex flex-col gap-2">
+                    {group.items.map((item) => (
+                      <Link key={item.slug} to={item.to} className="group block rounded-xl border border-black/[0.06] bg-white p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg md:py-8">
+                        <span className="flex items-center gap-2 text-sm font-medium text-ink-primary">
+                          <Check className="h-4 w-4 text-brand-600" />
+                          {item.label}
+                        </span>
+                      </Link>
+                    ))}
+                  </ul>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ==================================================== 03 PRODUTOS EM DESTAQUE */}
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Produtos Próprios"
+            title="Construímos produtos, não apenas websites"
+            description="Seis plataformas desenhadas, desenvolvidas e operadas pela Getboost — a prova de que executamos produto, não só serviços."
+          />
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {PRODUCTS.filter((p) => p.kind === 'saas' && p.to && p.tagline).map((product, i) => (
+              <Reveal key={product.slug} i={i % 3}>
+                <Link to={product.to as string} className="group block h-full" onClick={() => analytics.trackProduct(product.slug, 'click', 'services_products')}>
+                  <div className="gb-surface-card gb-card-lift h-full">
+                    <div className="flex items-start justify-between gap-3">
+                      <span aria-hidden className="block h-1 w-10 rounded-full" style={{ background: product.accent }} />
+                      {product.status && (
+                        <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-success-bg px-2.5 py-1 text-[11px] font-semibold text-success">
+                          <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-success" />
+                          {product.status}
+                        </span>
+                      )}
+                    </div>
+                    {product.category && (
+                      <p className="gb-eyebrow mt-4 text-ink-tertiary">{product.category}</p>
+                    )}
+                    <h3 className="gb-text-h3 mt-2 text-ink-primary">{product.name}</h3>
+                    <p className="gb-text-small mt-2 font-medium text-ink-secondary">{product.tagline}</p>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ==================================================== 04 SAAS PRODUCTS */}
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
           <Tabs defaultValue="custom" className="w-full">
             <TabsList className="w-full max-w-2xl mx-auto mb-12 h-auto bg-transparent p-0 gap-4 flex justify-center">
               <TabsTrigger
@@ -280,14 +320,14 @@ const Services = () => {
                   {services.map((service, i) => (
                     <motion.div key={service.key} variants={fadeUp} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }}>
                       <Link to={`/solucoes/${service.slug}`} className="group block h-full" onClick={() => analytics.trackClick('services', `service_card_${service.slug}`, 'consideration')}>
-                        <div className="bg-white dark:bg-card rounded-2xl overflow-hidden h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-border/40">
+                        <div className="bg-white dark:bg-card rounded-2xl overflow-hidden h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-black/[0.06]">
                           <div className="aspect-[16/10] overflow-hidden">
                             <img src={service.image || productImageMap[service.key] || ''} alt={t(`servicesPage.items.${service.key}.title`)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" width={800} height={512} />
                           </div>
                           <div className="p-6">
                             <h3 className="text-xl font-bold text-foreground mb-2">{t(`servicesPage.items.${service.key}.title`)}</h3>
                             <p className="text-sm text-muted-foreground leading-relaxed mb-6">{t(`servicesPage.items.${service.key}.desc`)}</p>
-                            <div className="border-t border-border pt-4 flex items-end justify-between">
+                            <div className="border-t border-black/[0.06] pt-4 flex items-end justify-between">
                               <div>
                                 <span className="text-xs text-muted-foreground">{t('services.from')}</span>
                                 <p className="text-2xl font-bold text-foreground">{service.price}</p>
@@ -321,8 +361,8 @@ const Services = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {saasProducts.map((product, i) => (
                   <motion.div key={product.key} variants={fadeUp} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-                    <div className="group bg-white dark:bg-card rounded-2xl overflow-hidden h-full border border-border/40 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                      <Link to={PRODUCTS.find((p) => p.slug === product.key)?.to ?? '/produtos'} className="block h-full">
+                    <div className="group bg-white dark:bg-card rounded-2xl overflow-hidden h-full border border-black/[0.06] hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                      <Link to={PRODUCTS.find((p) => p.slug === product.key)?.to ?? '/produtos'} className="block h-full" onClick={() => analytics.trackProduct(product.key, 'click', 'services_products')}>
                         <div className="aspect-[16/10] overflow-hidden bg-gradient-to-br from-primary/5 to-primary/15 flex items-center justify-center p-10">
                           <img src={product.image} alt={product.name} className="h-16 w-auto object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" loading="lazy" />
                         </div>
@@ -336,7 +376,7 @@ const Services = () => {
                             )}
                           </div>
                           <p className="text-sm text-muted-foreground leading-relaxed mb-6">{t(`servicesPage.saasProducts.${product.key}.desc`)}</p>
-                          <div className="border-t border-border pt-4">
+                          <div className="border-t border-black/[0.06] pt-4">
                             <span className="inline-flex items-center gap-1 text-sm font-medium text-primary">
                               {t('servicesPage.saasLearnMore')} <ArrowRight className="h-4 w-4" />
                             </span>
@@ -349,6 +389,58 @@ const Services = () => {
               </div>
             </TabsContent>
           </Tabs>
+        </div>
+      </section>
+
+      {/* ==================================================== MID CTA */}
+      <section className="gb-surface-page gb-section !py-14">
+        <div className="gb-container">
+          <Reveal i={0}>
+            <div className="flex flex-col items-center justify-between gap-6 rounded-2xl border border-black/[0.06] bg-white px-8 py-8 shadow-premium md:flex-row md:px-10">
+              <div>
+                <h2 className="gb-text-h2 text-ink-primary">Tens um projeto em mente?</h2>
+                <p className="gb-text-body mt-2 text-ink-secondary">Um diagnóstico gratuito mostra o caminho — sem compromisso.</p>
+              </div>
+              <StandardCTA asChild size="lg">
+                <Link to={i18n.language === 'pt' ? '/booking' : `/${i18n.language}/booking`} onClick={() => analytics.trackClick('services', 'services_mid_booking', 'consideration')}>
+                  Agendar Diagnóstico
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </StandardCTA>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ==================================================== FINAL CTA */}
+      <section className="gb-surface-page gb-section !pt-0">
+        <div className="gb-container">
+          <Reveal i={0}>
+            <div className="gb-cta-band relative overflow-hidden border border-white/10 text-center">
+              <div className="relative">
+                <h2 className="font-black leading-[0.98] tracking-tight text-[clamp(2rem,5vw,4rem)] text-ink-inverse">
+                  Pronto para construir a <span style={{ color: '#ff4000' }}>próxima operação digital</span> do teu negócio?
+                </h2>
+                <p className="gb-text-body mx-auto mt-6 max-w-2xl text-white/70">
+                  Conta-nos o contexto e os objectivos — voltamos com um plano concreto em menos de 48 horas.
+                </p>
+                <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+                  <StandardCTA asChild size="lg">
+                    <Link to={i18n.language === 'pt' ? '/booking' : `/${i18n.language}/booking`} onClick={() => analytics.trackClick('services', 'services_final_booking', 'consideration')}>
+                      Agendar Diagnóstico
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </StandardCTA>
+                  <StandardCTA asChild size="lg" variant="outline" className="border-white/40 !text-white hover:!bg-white hover:!text-ink-primary">
+                    <Link to={i18n.language === 'pt' ? '/contact' : `/${i18n.language}/contact`} onClick={() => analytics.trackClick('services', 'services_final_contact', 'consideration')}>
+                      Falar com Especialista
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </StandardCTA>
+                </div>
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
     </Layout>

@@ -42,11 +42,12 @@ const SectionHeader = React.forwardRef<HTMLDivElement, SectionHeaderProps>(
         {eyebrow ? (
           <span className="gb-eyebrow text-brand-600">{eyebrow}</span>
         ) : null}
-        <Heading className="gb-text-h2 mt-3 text-ink-primary">{title}</Heading>
+        {/* R18.8 — frozen vertical rhythm: eyebrow ↓ title 24 · title ↓ desc 24 · desc ↓ content 48 (content spacing lives in sections). */}
+        <Heading className="gb-text-h2 mt-6 text-ink-primary">{title}</Heading>
         {description ? (
           <p
             className={cn(
-              "gb-text-body mt-4 max-w-2xl text-ink-secondary",
+              "gb-text-body mt-6 max-w-2xl text-ink-secondary",
               align === "center" && "mx-auto",
             )}
           >

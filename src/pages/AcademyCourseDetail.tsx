@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import {
   Accordion,
   AccordionContent,
@@ -218,8 +219,8 @@ const AcademyCourseDetail = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-screen bg-[#0a0603] flex items-center justify-center">
-          <div className="font-mono text-xs uppercase tracking-[0.22em] text-white/40">A carregar formação…</div>
+        <div className="gb-surface-page gb-section flex items-center justify-center">
+          <div className="font-mono text-xs uppercase tracking-[0.22em] text-ink-tertiary">A carregar formação…</div>
         </div>
       </Layout>
     );
@@ -228,7 +229,7 @@ const AcademyCourseDetail = () => {
   if (!course) {
     return (
       <Layout>
-        <div className="min-h-screen bg-[#0a0603] text-white flex flex-col items-center justify-center gap-6 px-6">
+        <div className="gb-surface-page gb-section flex flex-col items-center justify-center gap-6 px-6">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
             Formação não encontrada
           </p>
@@ -247,6 +248,7 @@ const AcademyCourseDetail = () => {
 
   return (
     <Layout>
+      <ScrollDepth location="academy_course" />
       <SEO
         title={`${course.title} — Getboost Academy`}
         description={course.subtitle || course.description || 'Formação prática Getboost Academy.'}
@@ -255,10 +257,10 @@ const AcademyCourseDetail = () => {
       />
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      <section className="gb-surface-page relative overflow-hidden">
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
+          className="absolute inset-0 gb-grid-overlay opacity-[0.05]"
           style={{
             backgroundImage:
               'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
@@ -270,13 +272,13 @@ const AcademyCourseDetail = () => {
         <div
           aria-hidden
           className="absolute -right-40 top-1/3 h-[640px] w-[640px] rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)' }}
+          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)' }}
         />
 
         <div className="relative max-w-7xl mx-auto px-6 md:px-12 pt-16 pb-24 md:pt-24 md:pb-32">
           <Link
             to="/academy"
-            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-white/60 hover:text-white transition-colors"
+            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-ink-secondary hover:text-ink-primary transition-colors"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Academy · {course.category ?? 'Formação'}
           </Link>
@@ -286,7 +288,7 @@ const AcademyCourseDetail = () => {
               <motion.span
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
+                className="gb-eyebrow text-brand-600"
                 style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
               >
                 <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
@@ -310,7 +312,7 @@ const AcademyCourseDetail = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.3 }}
-                  className="mt-8 max-w-2xl text-lg md:text-xl leading-relaxed text-white/75"
+                  className="mt-8 max-w-2xl text-lg md:text-xl leading-relaxed text-ink-secondary"
                 >
                   {course.subtitle}
                 </motion.p>
@@ -324,7 +326,7 @@ const AcademyCourseDetail = () => {
                 style={{ background: `${ACCENT}b3` }}
               />
 
-              <div className="mt-10 flex flex-wrap gap-x-8 gap-y-4 font-mono text-[11px] uppercase tracking-[0.22em] text-white/70">
+              <div className="mt-10 flex flex-wrap gap-x-8 gap-y-4 font-mono text-[11px] uppercase tracking-[0.22em] text-ink-secondary">
                 {course.level && (
                   <span className="inline-flex items-center gap-2">
                     <Award className="h-4 w-4" style={{ color: ACCENT }} /> {course.level}
@@ -351,16 +353,16 @@ const AcademyCourseDetail = () => {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative border border-white/10 bg-white/[0.03] backdrop-blur-sm p-8"
+              className="relative border border-black/10 bg-black/[0.03] backdrop-blur-sm p-8"
             >
               <div className="absolute inset-x-0 -top-px h-px" style={{ background: `linear-gradient(90deg, transparent, ${ACCENT}, transparent)` }} />
               <div className="flex items-baseline gap-3">
-                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/50">Investimento</span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink-tertiary">Investimento</span>
               </div>
               <div className="mt-3 text-4xl md:text-5xl font-black tracking-tight" style={{ color: ACCENT }}>
                 {course.price_label ?? (course.price ? `${course.price} €` : 'Sob consulta')}
               </div>
-              <p className="mt-3 text-sm text-white/60">
+              <p className="mt-3 text-sm text-ink-secondary">
                 Reserva de lugar. Após enviares o pedido, confirmamos disponibilidade e formas de pagamento em menos de 24h.
               </p>
 
@@ -370,7 +372,7 @@ const AcademyCourseDetail = () => {
                   placeholder="Nome"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full bg-black/40 border border-white/10 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-[#ff4000] focus:outline-none transition-colors"
+                  className="w-full bg-black/40 border border-black/10 px-4 py-3 text-sm text-ink-primary placeholder:text-ink-tertiary focus:border-[#ff4000] focus:outline-none transition-colors"
                   required
                 />
                 <input
@@ -378,7 +380,7 @@ const AcademyCourseDetail = () => {
                   placeholder="Email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full bg-black/40 border border-white/10 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-[#ff4000] focus:outline-none transition-colors"
+                  className="w-full bg-black/40 border border-black/10 px-4 py-3 text-sm text-ink-primary placeholder:text-ink-tertiary focus:border-[#ff4000] focus:outline-none transition-colors"
                   required
                 />
                 <input
@@ -386,27 +388,27 @@ const AcademyCourseDetail = () => {
                   placeholder="Telemóvel (opcional)"
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className="w-full bg-black/40 border border-white/10 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-[#ff4000] focus:outline-none transition-colors"
+                  className="w-full bg-black/40 border border-black/10 px-4 py-3 text-sm text-ink-primary placeholder:text-ink-tertiary focus:border-[#ff4000] focus:outline-none transition-colors"
                 />
                 <textarea
                   placeholder="Conta-nos o teu contexto (opcional)"
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
                   rows={3}
-                  className="w-full bg-black/40 border border-white/10 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-[#ff4000] focus:outline-none transition-colors resize-none"
+                  className="w-full bg-black/40 border border-black/10 px-4 py-3 text-sm text-ink-primary placeholder:text-ink-tertiary focus:border-[#ff4000] focus:outline-none transition-colors resize-none"
                 />
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full inline-flex items-center justify-center gap-3 border-2 px-6 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white disabled:opacity-50"
-                  style={{ borderColor: ACCENT, color: '#ffb494' }}
+                  className="w-full inline-flex items-center justify-center gap-3 border-2 px-6 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-ink-primary disabled:opacity-50"
+                  style={{ borderColor: ACCENT, color: ACCENT }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                 >
                   {submitting ? 'A enviar…' : 'Quero inscrever-me'}
                   <ArrowRight className="h-4 w-4" />
                 </button>
-                <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-white/40 text-center">
+                <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-ink-tertiary text-center">
                   Resposta em menos de 24h · Sem compromisso
                 </p>
               </form>
@@ -416,9 +418,9 @@ const AcademyCourseDetail = () => {
       </section>
 
       {/* INFO BAR */}
-      <section className="relative bg-[#0a0603] text-white border-t border-white/5">
+      <section className="gb-surface-page relative">
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 md:py-14">
-          <div className="grid grid-cols-2 md:grid-cols-5 border border-white/10 divide-y md:divide-y-0 md:divide-x divide-white/10">
+          <div className="grid grid-cols-2 md:grid-cols-5 border border-black/10 divide-y md:divide-y-0 md:divide-x divide-black/10">
             {[
               { label: 'Início', value: '9 Out, 2026' },
               { label: 'Fim', value: '15 Out, 2026' },
@@ -430,7 +432,7 @@ const AcademyCourseDetail = () => {
                 <div className="font-mono text-[10px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
                   {item.label}
                 </div>
-                <div className="mt-3 text-lg md:text-xl font-semibold tracking-tight text-white">
+                <div className="mt-3 text-lg md:text-xl font-semibold tracking-tight text-ink-primary">
                   {item.value}
                 </div>
               </div>
@@ -440,8 +442,8 @@ const AcademyCourseDetail = () => {
       </section>
 
       {/* SCHEDULE + INCLUDES */}
-      <section className="bg-[#0a0603] text-white py-20 md:py-28 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
           <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
             Calendário semanal
           </span>
@@ -464,7 +466,7 @@ const AcademyCourseDetail = () => {
                 className={
                   d.active
                     ? 'relative aspect-square border-b-2 bg-black flex flex-col justify-between p-4 md:p-5'
-                    : 'relative aspect-square border border-white/5 bg-white/[0.02] flex flex-col justify-between p-4 md:p-5'
+                    : 'relative aspect-square border border-black/5 bg-black/[0.02] flex flex-col justify-between p-4 md:p-5'
                 }
                 style={d.active ? { borderColor: ACCENT } : undefined}
               >
@@ -472,21 +474,21 @@ const AcademyCourseDetail = () => {
                   className={
                     d.active
                       ? 'text-3xl md:text-4xl font-black tracking-tight'
-                      : 'text-3xl md:text-4xl font-black tracking-tight text-white/20'
+                      : 'text-3xl md:text-4xl font-black tracking-tight text-ink-tertiary'
                   }
                   style={d.active ? { color: ACCENT } : undefined}
                 >
                   {d.day}
                 </span>
                 {d.active && (
-                  <span className="font-mono text-[10px] md:text-xs uppercase tracking-[0.18em] text-white/60">
+                  <span className="font-mono text-[10px] md:text-xs uppercase tracking-[0.18em] text-ink-secondary">
                     19h–23h
                   </span>
                 )}
               </div>
             ))}
           </div>
-          <p className="mt-5 text-sm text-white/50">
+          <p className="mt-5 text-sm text-ink-tertiary">
             Sessões ao vivo · gravadas e disponíveis depois de cada aula.
           </p>
 
@@ -503,12 +505,12 @@ const AcademyCourseDetail = () => {
               ].map((item) => (
                 <div
                   key={item.v}
-                  className="border border-white/10 bg-white/[0.02] p-8 md:p-10 hover:border-[#ff4000]/60 transition-colors"
+                  className="border border-black/10 bg-black/[0.02] p-8 md:p-10 hover:border-[#ff4000]/60 transition-colors"
                 >
                   <div className="text-5xl md:text-6xl font-black tracking-tight" style={{ color: ACCENT }}>
                     {item.k}
                   </div>
-                  <div className="mt-4 text-sm md:text-base text-white/60">{item.v}</div>
+                  <div className="mt-4 text-sm md:text-base text-ink-secondary">{item.v}</div>
                 </div>
               ))}
             </div>
@@ -519,15 +521,15 @@ const AcademyCourseDetail = () => {
 
       {/* MANIFESTO / DESCRIPTION */}
       {course.description && (
-        <section className="bg-[#0a0603] text-white py-24 md:py-32 border-t border-white/5">
-          <div className="max-w-5xl mx-auto px-6 md:px-12">
+        <section className="gb-surface-section gb-section">
+          <div className="gb-container">
             <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
               Sobre esta formação
             </span>
             <h2 className="mt-6 text-3xl md:text-5xl font-black leading-[1.05] tracking-tight max-w-3xl">
               Uma abordagem <span style={{ color: ACCENT }}>directa</span>, sem preencher horas com teoria.
             </h2>
-            <p className="mt-10 text-lg md:text-xl leading-relaxed text-white/75 whitespace-pre-line">
+            <p className="mt-10 text-lg md:text-xl leading-relaxed text-ink-secondary whitespace-pre-line">
               {course.description}
             </p>
           </div>
@@ -535,8 +537,8 @@ const AcademyCourseDetail = () => {
       )}
 
       {/* OUTCOMES */}
-      <section className="bg-black text-white py-24 md:py-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr,1.4fr] gap-14">
             <div>
               <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
@@ -545,7 +547,7 @@ const AcademyCourseDetail = () => {
               <h2 className="mt-6 text-3xl md:text-5xl font-black leading-[1.05] tracking-tight">
                 Resultados <span style={{ color: ACCENT }}>concretos</span>, não certificados de parede.
               </h2>
-              <p className="mt-8 text-white/60 leading-relaxed">
+              <p className="mt-8 text-ink-secondary leading-relaxed">
                 Cada objectivo abaixo é medido por um entregável real. Se não conseguires fazê-lo até ao fim do módulo, revemos contigo — em 1:1 — até dominares.
               </p>
             </div>
@@ -557,10 +559,10 @@ const AcademyCourseDetail = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: Math.min(i * 0.05, 0.4) }}
-                  className="border border-white/10 bg-white/[0.02] p-6 flex gap-4"
+                  className="border border-black/10 bg-black/[0.02] p-6 flex gap-4"
                 >
                   <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-1" style={{ color: ACCENT }} />
-                  <p className="text-sm md:text-base leading-relaxed text-white/85">{o}</p>
+                  <p className="text-sm md:text-base leading-relaxed text-ink-secondary">{o}</p>
                 </motion.div>
               ))}
             </div>
@@ -569,9 +571,9 @@ const AcademyCourseDetail = () => {
       </section>
 
       {/* CURRICULUM */}
-      <section className="bg-[#0a0603] text-white py-24 md:py-32 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="flex items-end justify-between gap-6 border-t border-white/10 pt-10 mb-14">
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <div className="flex items-end justify-between gap-6 border-t border-black/10 pt-10 mb-14">
             <div>
               <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
                 Currículo · {modules.length} módulos
@@ -592,7 +594,7 @@ const AcademyCourseDetail = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: Math.min(i * 0.08, 0.4) }}
-                  className="group relative border border-white/10 bg-white/[0.02] p-8 hover:border-[#ff4000]/60 transition-colors"
+                  className="group relative border border-black/10 bg-black/[0.02] p-8 hover:border-[#ff4000]/60 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div
@@ -601,15 +603,15 @@ const AcademyCourseDetail = () => {
                     >
                       <Icon className="h-5 w-5" style={{ color: ACCENT }} />
                     </div>
-                    <span className="font-mono text-4xl font-black leading-none text-white/10 group-hover:text-white/20 transition-colors">
+                    <span className="font-mono text-4xl font-black leading-none text-ink-tertiary group-hover:text-ink-tertiary transition-colors">
                       {String(i + 1).padStart(2, '0')}
                     </span>
                   </div>
                   <h3 className="mt-6 text-2xl font-bold tracking-tight">{m.title}</h3>
-                  <p className="mt-3 text-sm text-white/60 leading-relaxed">{m.summary}</p>
+                  <p className="mt-3 text-sm text-ink-secondary leading-relaxed">{m.summary}</p>
                   <ul className="mt-6 space-y-2.5">
                     {m.bullets.map((b) => (
-                      <li key={b} className="flex items-start gap-3 text-sm text-white/75">
+                      <li key={b} className="flex items-start gap-3 text-sm text-ink-secondary">
                         <span
                           className="mt-2 h-1 w-1 flex-shrink-0 rounded-full"
                           style={{ background: ACCENT }}
@@ -626,7 +628,7 @@ const AcademyCourseDetail = () => {
       </section>
 
       {/* FOR WHOM */}
-      <section className="bg-black text-white py-24 md:py-32">
+      <section className="gb-surface-page gb-section">
         <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
           {[
             {
@@ -645,18 +647,18 @@ const AcademyCourseDetail = () => {
               body: 'Se estás a mudar de área ou a lançar o teu primeiro projecto, damos-te a fundação sem enrolação.',
             },
           ].map(({ icon: Icon, title, body }) => (
-            <div key={title} className="border-t border-white/10 pt-8">
+            <div key={title} className="border-t border-black/10 pt-8">
               <Icon className="h-7 w-7" style={{ color: ACCENT }} />
               <h3 className="mt-6 text-xl font-bold tracking-tight">{title}</h3>
-              <p className="mt-3 text-white/60 leading-relaxed">{body}</p>
+              <p className="mt-3 text-ink-secondary leading-relaxed">{body}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="bg-[#0a0603] text-white py-24 md:py-32 border-t border-white/5">
-        <div className="max-w-4xl mx-auto px-6 md:px-12">
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
           <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
             Perguntas frequentes
           </span>
@@ -666,11 +668,11 @@ const AcademyCourseDetail = () => {
 
           <Accordion type="single" collapsible className="mt-12">
             {FAQS.map((f, i) => (
-              <AccordionItem key={i} value={`faq-${i}`} className="border-white/10">
+              <AccordionItem key={i} value={`faq-${i}`} className="border-black/10">
                 <AccordionTrigger className="text-left text-lg font-semibold hover:no-underline hover:text-[#ff4000]">
                   {f.q}
                 </AccordionTrigger>
-                <AccordionContent className="text-white/70 leading-relaxed text-base">
+                <AccordionContent className="text-ink-secondary leading-relaxed text-base">
                   {f.a}
                 </AccordionContent>
               </AccordionItem>
@@ -681,9 +683,9 @@ const AcademyCourseDetail = () => {
 
       {/* RELATED */}
       {related.length > 0 && (
-        <section className="bg-black text-white py-24 md:py-32">
-          <div className="max-w-7xl mx-auto px-6 md:px-12">
-            <div className="border-t border-white/10 pt-10 mb-14">
+        <section className="gb-surface-page gb-section">
+          <div className="gb-container">
+            <div className="border-t border-black/10 pt-10 mb-14">
               <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
                 Continua a aprender
               </span>
@@ -696,17 +698,17 @@ const AcademyCourseDetail = () => {
                 <Link
                   key={c.id}
                   to={`/academy/${c.slug}`}
-                  className="group border border-white/10 bg-white/[0.02] p-6 hover:border-[#ff4000]/60 transition-colors flex flex-col"
+                  className="group border border-black/10 bg-black/[0.02] p-6 hover:border-[#ff4000]/60 transition-colors flex flex-col"
                 >
-                  <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-white/50">
+                  <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-tertiary">
                     <GraduationCap className="h-3.5 w-3.5" style={{ color: ACCENT }} />
                     {c.category ?? 'Formação'}
                   </div>
                   <h3 className="mt-4 text-lg font-bold tracking-tight">{c.title}</h3>
-                  {c.subtitle && <p className="mt-2 text-sm text-white/60 leading-relaxed line-clamp-2">{c.subtitle}</p>}
-                  <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.22em]">
+                  {c.subtitle && <p className="mt-2 text-sm text-ink-secondary leading-relaxed line-clamp-2">{c.subtitle}</p>}
+                  <div className="mt-6 pt-4 border-t border-black/10 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.22em]">
                     <span style={{ color: ACCENT }}>{c.price_label ?? 'Sob consulta'}</span>
-                    <span className="inline-flex items-center gap-1.5 text-white/70 group-hover:text-white transition-colors">
+                    <span className="inline-flex items-center gap-1.5 text-ink-secondary group-hover:text-ink-primary transition-colors">
                       Ver <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                     </span>
                   </div>
@@ -718,7 +720,7 @@ const AcademyCourseDetail = () => {
       )}
 
       {/* FINAL CTA */}
-      <section className="bg-[#0a0603] text-white py-28 md:py-40 border-t border-white/5">
+      <section className="gb-surface-section gb-section">
         <div className="max-w-4xl mx-auto px-6 md:px-12 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -729,7 +731,7 @@ const AcademyCourseDetail = () => {
           >
             Reserva o teu <span style={{ color: ACCENT }}>lugar</span>.
           </motion.h2>
-          <p className="mt-8 text-white/60 text-lg">
+          <p className="mt-8 text-ink-secondary text-lg">
             Turmas reduzidas para garantir acompanhamento próximo. Assim que enviares o pedido, confirmamos disponibilidade em menos de 24h.
           </p>
           <div className="mt-14 flex flex-wrap items-center justify-center gap-4">
@@ -739,7 +741,7 @@ const AcademyCourseDetail = () => {
                 e.preventDefault();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-white"
+              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-ink-primary"
               style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
@@ -749,7 +751,7 @@ const AcademyCourseDetail = () => {
             </a>
             <Link
               to="/academy/formacao-empresas"
-              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-white/60 hover:text-white transition-colors"
+              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-ink-secondary hover:text-ink-primary transition-colors"
             >
               <Sparkles className="h-4 w-4" style={{ color: ACCENT }} />
               Formação à medida para a minha equipa

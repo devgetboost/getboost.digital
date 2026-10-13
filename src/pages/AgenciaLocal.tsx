@@ -1,10 +1,14 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, MapPin, Phone, Mail, CheckCircle2, Building2, Users, TrendingUp } from 'lucide-react';
+import { ArrowRight, MapPin, Phone, Mail, CheckCircle2, Building2, Users, TrendingUp, Check } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
+import { SectionHeader } from '@/components/ui/section-header';
+import { Button } from '@/components/ui/button';
+import { analytics } from '@/lib/analytics';
 import { CITIES, CITY_LIST } from '@/data/localCities';
-import { CONTACT } from '@/data/brandRegistry';
+import { CONTACT, METRICS } from '@/data/brandRegistry';
 
 const ACCENT = '#ff4000';
 const PHONE = CONTACT.phone.display;
@@ -108,6 +112,7 @@ export default function AgenciaLocal() {
 
   return (
     <Layout>
+      <ScrollDepth location="agency_local" />
       <SEO
         title={title}
         description={description}
@@ -116,55 +121,76 @@ export default function AgenciaLocal() {
       />
 
       {/* Hero */}
-      <section className="relative pt-32 pb-20 px-6 md:px-12 bg-gradient-to-b from-[#1a0f08] to-[#0a0603] text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-30 pointer-events-none" style={{ background: `radial-gradient(circle at 20% 30%, ${ACCENT}40 0%, transparent 50%)` }} />
-        <div className="max-w-6xl mx-auto relative z-10">
+      <section className="gb-surface-page relative overflow-hidden">
+        <div aria-hidden className="gb-grid-overlay" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full blur-3xl"
+          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)' }}
+        />
+        <div className="gb-container relative gb-section !pt-10 md:!pt-16">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: `${ACCENT}20`, border: `1px solid ${ACCENT}40` }}>
-              <MapPin size={16} style={{ color: ACCENT }} />
-              <span className="text-sm font-medium">{city.name} · {city.district}</span>
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
-              Agência de <span style={{ color: ACCENT }}>Marketing Digital</span>,<br />
+            <span className="gb-eyebrow text-brand-600">
+              <MapPin size={14} className="mr-2 inline" />
+              {city.name} · {city.district}
+            </span>
+            <h1 className="gb-text-display mt-5 text-ink-primary">
+              Agência de <span className="text-brand-600">Marketing Digital</span>,<br />
               Software & IA em {city.name}
             </h1>
-            <p className="text-lg md:text-xl text-white/70 max-w-3xl mb-8 leading-relaxed">
+            <p className="gb-text-body mt-6 max-w-3xl text-ink-secondary">
               Ajudamos PMEs de {city.name} a crescer com estratégia digital, sites que convertem, campanhas Google/Meta Ads,
               automação com IA e SEO Local. Diagnóstico gratuito de 7 minutos.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <Link to="/booking" className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-white transition-transform hover:scale-105" style={{ background: ACCENT }}>
-                Agendar diagnóstico gratuito <ArrowRight size={18} />
-              </Link>
-              <a href={`tel:${PHONE.replace(/\s/g, '')}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold border border-white/30 hover:bg-white/10 transition-colors">
-                <Phone size={18} /> {PHONE}
-              </a>
+            <div className="mt-10 flex flex-wrap gap-4">
+              <Button asChild size="lg">
+                <Link to="/booking" onClick={() => analytics.trackClick('agency_local_hero', 'agency_local_booking', 'consideration')}>
+                  Agendar diagnóstico gratuito <ArrowRight size={18} />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <a href={`tel:${PHONE.replace(/\s/g, '')}`} onClick={() => analytics.trackOutbound('phone', 'agencia_local')}>
+                  <Phone size={18} /> {PHONE}
+                </a>
+              </Button>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-2.5">
+              {['SEO Local', 'Google & Meta Ads', 'Software à medida', METRICS.projectsDelivered.value + ' projetos'].map((chip) => (
+                <span key={chip} className="gb-chip">
+                  <Check className="h-3.5 w-3.5 text-brand-600" />
+                  {chip}
+                </span>
+              ))}
             </div>
           </motion.div>
+        </div>
+        <div className="gb-container pb-16">
+          <div className="gb-hairline-accent" />
         </div>
       </section>
 
       {/* Contexto local */}
-      <section className="py-20 px-6 md:px-12 bg-[#f5f3ef]">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container grid gap-8 md:grid-cols-3">
           <div className="md:col-span-2">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#0a0603] mb-6">
-              Porque trabalhamos com PMEs em {city.name}
-            </h2>
-            <p className="text-lg text-[#0a0603]/80 leading-relaxed mb-6">{city.economyIntro}</p>
-            <p className="text-lg text-[#0a0603]/80 leading-relaxed">
+            <SectionHeader
+              eyebrow="Contexto local"
+              title={`Porque trabalhamos com PMEs em ${city.name}`}
+            />
+            <p className="gb-text-body mt-6 text-ink-secondary">{city.economyIntro}</p>
+            <p className="gb-text-body mt-6 text-ink-secondary">
               Sabemos como comunicar num mercado onde a confiança se constrói pelo nome, pela reputação e pela proximidade — e traduzimos
               isso em estratégia digital que funciona no {city.landmarks[0]}, no {city.landmarks[1] || 'centro'} e em qualquer freguesia do concelho.
             </p>
           </div>
-          <aside className="bg-white rounded-3xl p-8 shadow-sm border border-black/5">
-            <h3 className="font-bold text-[#0a0603] mb-4 flex items-center gap-2"><Building2 size={20} style={{ color: ACCENT }} /> Sectores fortes</h3>
-            <ul className="space-y-2">
+          <aside className="gb-surface-card h-fit">
+            <h3 className="gb-text-h3 !text-xl text-ink-primary flex items-center gap-2"><Building2 size={20} className="text-brand-600" /> Sectores fortes</h3>
+            <ul className="mt-4 space-y-2">
               {city.targetSectors.map(s => (
-                <li key={s} className="flex items-start gap-2 text-[#0a0603]/80"><CheckCircle2 size={16} className="mt-1 flex-shrink-0" style={{ color: ACCENT }} /> {s}</li>
+                <li key={s} className="flex items-start gap-2 text-ink-secondary"><CheckCircle2 size={16} className="mt-1 flex-shrink-0 text-brand-600" /> {s}</li>
               ))}
             </ul>
-            <div className="mt-6 pt-6 border-t border-black/10 text-sm text-[#0a0603]/60">
+            <div className="mt-6 pt-6 border-t border-black/[0.06] text-sm text-ink-tertiary">
               <div className="flex items-start gap-2 mb-2"><MapPin size={14} className="mt-1" /> {city.distanceFromHQ}</div>
               <div className="flex items-start gap-2"><Users size={14} className="mt-1" /> Presencial ou remoto</div>
             </div>
@@ -173,19 +199,22 @@ export default function AgenciaLocal() {
       </section>
 
       {/* Serviços */}
-      <section className="py-20 px-6 md:px-12 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0a0603] mb-4">Serviços disponíveis em {city.name}</h2>
-          <p className="text-lg text-[#0a0603]/70 mb-12 max-w-3xl">
-            Todos os serviços da Getboost estão disponíveis para empresas de {city.name}, com atendimento remoto ou reuniões presenciais na Figueira.
-          </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Serviços"
+            title={`Serviços disponíveis em ${city.name}`}
+            description={`Todos os serviços da Getboost estão disponíveis para empresas de ${city.name}, com atendimento remoto ou reuniões presenciais na Figueira.`}
+          />
+          <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {SERVICES.map((s, i) => (
               <motion.div key={s.href} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
-                <Link to={s.href} className="block p-6 rounded-2xl border border-black/10 hover:border-[color:var(--accent)] hover:shadow-lg transition-all h-full group" style={{ ['--accent' as string]: ACCENT }}>
-                  <h3 className="font-bold text-[#0a0603] mb-2 group-hover:text-[color:var(--accent)] transition-colors">{s.title}</h3>
-                  <p className="text-sm text-[#0a0603]/70 mb-4">{s.body}</p>
-                  <span className="text-sm font-semibold inline-flex items-center gap-1" style={{ color: ACCENT }}>Ver detalhes <ArrowRight size={14} /></span>
+                <Link to={s.href} onClick={() => analytics.trackClick('agency_local', 'agency_service', 'consideration')} className="group block h-full">
+                  <div className="gb-surface-card gb-card-lift h-full">
+                    <h3 className="gb-text-h3 !text-xl text-ink-primary group-hover:text-brand-600 transition-colors">{s.title}</h3>
+                    <p className="gb-text-small mt-2 text-ink-secondary">{s.body}</p>
+                    <span className="gb-link-more mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-600">Ver detalhes <ArrowRight size={14} /></span>
+                  </div>
                 </Link>
               </motion.div>
             ))}
@@ -194,47 +223,61 @@ export default function AgenciaLocal() {
       </section>
 
       {/* Outras cidades */}
-      <section className="py-20 px-6 md:px-12 bg-[#f5f3ef]">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#0a0603] mb-8 flex items-center gap-2">
-            <TrendingUp size={24} style={{ color: ACCENT }} /> Também trabalhamos com PMEs em
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Cobertura"
+            title="Também trabalhamos com PMEs em"
+          />
+          <div className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4">
             {CITY_LIST.filter(c => c.slug !== city.slug).map(c => (
-              <Link key={c.slug} to={`/agencia-marketing-digital-${c.slug}`} className="p-4 bg-white rounded-xl border border-black/5 hover:border-[color:var(--accent)] transition-colors group" style={{ ['--accent' as string]: ACCENT }}>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-semibold text-[#0a0603] group-hover:text-[color:var(--accent)]">{c.name}</div>
-                    <div className="text-xs text-[#0a0603]/60">{c.district}</div>
+              <Link key={c.slug} to={`/agencia-marketing-digital-${c.slug}`} className="group block">
+                <div className="gb-surface-card gb-card-lift">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-semibold text-ink-primary group-hover:text-brand-600">{c.name}</div>
+                      <div className="text-xs text-ink-tertiary">{c.district}</div>
+                    </div>
+                    <ArrowRight size={16} className="text-brand-600" />
                   </div>
-                  <ArrowRight size={16} style={{ color: ACCENT }} />
                 </div>
               </Link>
             ))}
+          </div>
+          <div className="mt-8 flex items-center gap-2 text-sm text-ink-tertiary">
+            <TrendingUp size={18} className="text-brand-600" /> Presencial na Figueira da Foz, remoto em todo o país.
           </div>
         </div>
       </section>
 
       {/* CTA final */}
-      <section className="py-24 px-6 md:px-12 bg-[#0a0603] text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            Adoraria conhecer o teu projecto e trabalhar contigo.<br />
-            <span style={{ color: ACCENT }}>Vamos criar algo extraordinário.</span>
-          </h2>
-          <p className="text-lg text-white/70 mb-8 max-w-2xl mx-auto">
-            Diagnóstico gratuito de 7 minutos, sem compromisso, para PMEs de {city.name}.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/booking" className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-white" style={{ background: ACCENT }}>
-              Agendar agora <ArrowRight size={18} />
-            </Link>
-            <a href={`mailto:${EMAIL}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold border border-white/30 hover:bg-white/10">
-              <Mail size={18} /> {EMAIL}
-            </a>
-          </div>
-          <div className="mt-8 text-sm text-white/50">
-            {HQ_ADDRESS}
+      <section className="gb-surface-page gb-section !pt-0">
+        <div className="gb-container">
+          <div className="gb-cta-band relative overflow-hidden border border-white/10 text-center">
+            <div className="relative">
+              <h2 className="font-black leading-[0.98] tracking-tight text-[clamp(2rem,5vw,4rem)] text-ink-inverse">
+                Adoraria conhecer o teu projecto e trabalhar contigo.<br />
+                <span style={{ color: ACCENT }}>Vamos criar algo extraordinário.</span>
+              </h2>
+              <p className="gb-text-body mx-auto mt-6 max-w-2xl text-white/70">
+                Diagnóstico gratuito de 7 minutos, sem compromisso, para PMEs de {city.name}.
+              </p>
+              <div className="mt-12 flex flex-wrap justify-center gap-4">
+                <Button asChild size="lg">
+                  <Link to="/booking" onClick={() => analytics.trackClick('agency_local_cta', 'agency_local_booking', 'consideration')}>
+                    Agendar agora <ArrowRight size={18} />
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="border-white/40 !text-white hover:!bg-white hover:!text-ink-primary">
+                  <a href={`mailto:${EMAIL}`} onClick={() => analytics.trackOutbound('email', 'agencia_local')}>
+                    <Mail size={18} /> {EMAIL}
+                  </a>
+                </Button>
+              </div>
+              <div className="mt-8 text-sm text-white/50">
+                {HQ_ADDRESS}
+              </div>
+            </div>
           </div>
         </div>
       </section>

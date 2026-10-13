@@ -1,0 +1,235 @@
+D  .env
+ M .gitignore
+ M deno.lock
+ M docs/redirect-inventory.md
+ M index.html
+ M public/llms.txt
+ M public/robots.txt
+ M public/sitemap-blog.xml
+ M public/sitemap-demo.xml
+ M public/sitemap-pages.xml
+ M public/sitemap-portfolio.xml
+ M public/sitemap-resources.xml
+ M public/sitemap-services.xml
+ M public/sitemap.xml
+ M scripts/generate-sitemap.js
+ M src/App.tsx
+ M src/components/AuditHistoryModal.tsx
+ M src/components/BlogShareContact.tsx
+D  src/components/CardBoost.tsx
+ M src/components/CommercialAuditModal.tsx
+ M src/components/ConsultantContactForm.tsx
+ M src/components/DronePriceCalculator.tsx
+ M src/components/Footer.tsx
+ M src/components/Header.tsx
+ M src/components/HeroCarousel.tsx
+ D src/components/HeroWaveDivider.tsx
+ M src/components/Layout.tsx
+ D src/components/PageHero.tsx
+ M src/components/ResourceCard.tsx
+ M src/components/ResourceHeroVisual.tsx
+ D src/components/SimpleProductLanding.tsx
+ M src/components/__tests__/hero-wave-clip.test.tsx
+ M src/components/admin/EmailTrackingStats.tsx
+ M src/components/admin/mail/AccountActions.tsx
+ M src/components/pillars/PillarLanding.tsx
+ M src/components/pillars/pillarData.ts
+ M src/components/ui/button.tsx
+ M src/components/ui/section-header.tsx
+ M src/components/ui/testimonial.tsx
+ M src/data/brandRegistry.ts
+ M src/data/investorProjects.ts
+ M src/data/products.ts
+ M src/index.css
+ M src/lib/analytics.ts
+ M src/main.tsx
+ D src/pages/About.tsx
+ M src/pages/Academy.tsx
+ M src/pages/AcademyCourseDetail.tsx
+ M src/pages/AcademyInCompany.tsx
+ M src/pages/AgenciaLocal.tsx
+ M src/pages/AgentesIA.tsx
+ M src/pages/Blog.tsx
+ M src/pages/BlogPost.tsx
+ M src/pages/Booking.tsx
+ M src/pages/BotsWhatsApp.tsx
+ M src/pages/BrandingGuide.tsx
+ M src/pages/BrandingIdentidade.tsx
+ M src/pages/Carreira.tsx
+ M src/pages/CasosSucesso.tsx
+ M src/pages/Contact.tsx
+ M src/pages/ContentIdeas.tsx
+ M src/pages/CopywritingConteudo.tsx
+ M src/pages/CrmSalesIntelligence.tsx
+ M src/pages/DemoRequest.tsx
+ M src/pages/DemoThankYou.tsx
+ M src/pages/DesenvolvimentoMobile.tsx
+ M src/pages/DesenvolvimentoSaaS.tsx
+ M src/pages/DesenvolvimentoWeb.tsx
+ M src/pages/DigitalAudit.tsx
+ M src/pages/DigitalAuditResults.tsx
+ M src/pages/EmailMarketing.tsx
+ M src/pages/Equipa.tsx
+ M src/pages/FunisVendas.tsx
+ M src/pages/GestaoRedesSociais.tsx
+ M src/pages/HostifyLanding.tsx
+ M src/pages/Index.tsx
+ M src/pages/Insights.tsx
+ M src/pages/IntegracoesErpCrm.tsx
+ M src/pages/Investidores.tsx
+ M src/pages/LandingPages.tsx
+ M src/pages/Login.tsx
+ M src/pages/MarketingDigital.tsx
+ M src/pages/MotivaeLanding.tsx
+ M src/pages/Mvp30Dias.tsx
+ M src/pages/NotFound.tsx
+ M src/pages/PaidMedia.tsx
+ M src/pages/PiktoLanding.tsx
+ M src/pages/PodcastBoostTalks.tsx
+ M src/pages/PoliticaCookies.tsx
+ M src/pages/PoliticaPrivacidade.tsx
+ M src/pages/Portfolio.tsx
+ M src/pages/PortfolioDetail.tsx
+ M src/pages/PriceSimulator.tsx
+ M src/pages/Products.tsx
+ M src/pages/ProjetoInvestidor.tsx
+ M src/pages/Prosafe360Landing.tsx
+ M src/pages/QookLanding.tsx
+ M src/pages/ROICalculator.tsx
+ M src/pages/ResetPassword.tsx
+ M src/pages/ResourceDetail.tsx
+ M src/pages/Resources.tsx
+ M src/pages/SEOAnalyzer.tsx
+ M src/pages/SeoGeoWebmcp.tsx
+ M src/pages/ServiceDetail.tsx
+ M src/pages/Services.tsx
+ M src/pages/SistemasGestaoPmes.tsx
+ M src/pages/SobreNos.tsx
+ M src/pages/SolucaoPlaceholder.tsx
+ M src/pages/TrackfyLanding.tsx
+ M src/pages/Unsubscribe.tsx
+ M src/pages/UxUiDesign.tsx
+ M src/pages/VideoFotografia.tsx
+ M src/pages/WebinarDetail.tsx
+ M src/pages/Webinars.tsx
+ M src/pages/Work.tsx
+ M src/pages/admin/AdminAuditLeads.tsx
+ M src/pages/admin/AdminCrmDeliveryStatus.tsx
+ M src/pages/admin/AdminDashboard.tsx
+ M src/pages/admin/AdminEmailAuth.tsx
+ M src/pages/admin/AdminInbox.tsx
+ M src/pages/admin/GmailOAuthCallback.tsx
+ M src/pages/admin/email-marketing/AdminEmailDashboard.tsx
+ M src/pages/admin/whatsapp/WhatsAppConciergeAudit.tsx
+ M src/pages/admin/whatsapp/WhatsAppHandoffs.tsx
+ M src/pages/client/ClientDashboard.tsx
+ M src/pages/client/ClientFinances.tsx
+ M src/pages/client/ClientServices.tsx
+ M src/pages/client/ClientSupport.tsx
+ M src/styles/design-system.css
+ M src/tests/brand-consistency.test.ts
+ M src/tests/commercial-flows.test.ts
+ M src/tests/design-system.test.tsx
+ M src/tests/homepage-blueprint.test.ts
+ M src/tests/navigation-ia.test.ts
+ M src/tests/pillar-pages.test.ts
+ M src/tests/products-hub.test.ts
+ M src/tests/wave-3e.test.ts
+ M tailwind.config.ts
+ M vite.config.ts
+?? docs/ai-sales-layer.md
+?? docs/analytics-inventory.md
+?? docs/case-studies-premium.md
+?? docs/crm-qualification.md
+?? docs/cro-foundation.md
+?? docs/design-audit-report.md
+?? docs/design-system-freeze.md
+?? docs/footer-v2.md
+?? docs/funnel-intelligence.md
+?? docs/global-layout-consolidation.md
+?? docs/hero-standardization.md
+?? docs/insights-blog-migration.md
+?? docs/lead-magnet-system.md
+?? docs/legacy-inventory.md
+?? docs/legacy-removal.md
+?? docs/migration-plan.md
+?? docs/motion-system.md
+?? docs/performance-optimization.md
+?? docs/platform-verification-runbook.md
+?? docs/product-demand-generation.md
+?? docs/production-release-readiness.md
+?? docs/products-migration.md
+?? docs/release-notes-r20.md
+?? docs/revenue-attribution.md
+?? docs/revenue-dashboard.md
+?? docs/seo-foundation-2.0.md
+?? docs/seo-landing-expansion.md
+?? docs/solutions-migration.md
+?? docs/visual-qa.md
+?? docs/work-portfolio-migration.md
+?? public/og-image.jpg
+?? rc1-diffstat.txt
+?? rc1-status.txt
+?? reports/
+?? scripts/add-cta-tracking.py
+?? scripts/audit-critical-path.mjs
+?? scripts/verify-spa-rewrite.mjs
+?? src/components/CaseProofStrip.tsx
+?? src/components/LeadMagnetModal.tsx
+?? src/components/ProcessTimeline.tsx
+?? src/components/ScrollDepth.tsx
+?? src/components/ui/count-up.tsx
+?? src/components/ui/mini-flow.tsx
+?? src/components/ui/reveal.tsx
+?? src/data/case-framework.ts
+?? src/data/cases.ts
+?? src/data/crm-contract.ts
+?? src/data/landings.ts
+?? src/data/product-demand.ts
+?? src/data/sales-model.ts
+?? src/lib/case-intelligence.ts
+?? src/lib/crm-qualification.ts
+?? src/lib/cro-foundation.ts
+?? src/lib/dashboard-data.ts
+?? src/lib/funnel-intelligence.ts
+?? src/lib/lead-magnets.ts
+?? src/lib/lead-score.ts
+?? src/lib/lead-signals.ts
+?? src/lib/performance.ts
+?? src/lib/product-demand-report.ts
+?? src/lib/product-intelligence.ts
+?? src/lib/product-waitlist.ts
+?? src/lib/revenue-attribution.ts
+?? src/lib/sales-actions.ts
+?? src/lib/sales-intelligence.ts
+?? src/pages/Dashboard.tsx
+?? src/pages/LandingPage.tsx
+?? src/tests/about-consolidation.test.ts
+?? src/tests/ai-agents.test.tsx
+?? src/tests/ai-sales-layer.test.ts
+?? src/tests/analytics-foundation.test.ts
+?? src/tests/authority-proof.test.ts
+?? src/tests/automation.test.tsx
+?? src/tests/booking-contact.test.tsx
+?? src/tests/case-proof-engine.test.ts
+?? src/tests/case-studies-premium.test.ts
+?? src/tests/catalog-integrity.test.ts
+?? src/tests/crm-qualification.test.ts
+?? src/tests/cro-foundation.test.ts
+?? src/tests/funnel-intelligence.test.ts
+?? src/tests/growth.test.tsx
+?? src/tests/lead-magnet.test.tsx
+?? src/tests/motion-system.test.tsx
+?? src/tests/performance.test.ts
+?? src/tests/portfolio-premium.test.tsx
+?? src/tests/product-demand.test.ts
+?? src/tests/release-readiness.test.ts
+?? src/tests/revenue-attribution.test.ts
+?? src/tests/revenue-dashboard.test.ts
+?? src/tests/revenue-migration.test.ts
+?? src/tests/seo-foundation-2.test.ts
+?? src/tests/seo-landings.test.ts
+?? src/tests/software.test.tsx
+?? src/tests/visual-storytelling.test.tsx
+?? supabase/functions/revenue-writeback/
+?? supabase/migrations_next/

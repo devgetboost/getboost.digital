@@ -31,7 +31,7 @@ export default function AdminEmailDashboard() {
     { label: "Listas", value: totalLists, icon: Users, color: "text-indigo-500" },
     { label: "Campanhas", value: totalCampaigns, icon: Send, color: "text-green-500" },
     { label: "Emails Enviados", value: stats?.requests || 0, icon: Send, color: "text-primary" },
-    { label: "Taxa de Abertura", value: `${openRate}%`, icon: MailOpen, color: "text-emerald-500" },
+    { label: "Taxa de Abertura", value: `${openRate}%`, icon: MailOpen, color: "text-success" },
     { label: "Taxa de Cliques", value: `${clickRate}%`, icon: MousePointerClick, color: "text-orange-500" },
     { label: "Taxa de Rejeição", value: `${bounceRate}%`, icon: AlertTriangle, color: "text-red-500" },
     { label: "Plano Brevo", value: plan?.type || "N/A", icon: TrendingUp, color: "text-purple-500" },

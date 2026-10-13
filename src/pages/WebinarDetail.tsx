@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, ArrowLeft, CalendarDays, Clock, MapPin, Users, Video, CheckCircle2, Ticket } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import ConsultantContactForm from '@/components/ConsultantContactForm';
 import { getWebinarBySlug, formatWebinarDate, webinars } from '@/data/webinars';
 
@@ -22,6 +23,7 @@ const WebinarDetail = () => {
 
   return (
     <Layout>
+      <ScrollDepth location="webinar_detail" />
       <SEO
         title={`${w.title} — ${w.format} | Getboost Digital`}
         description={w.tagline}
@@ -30,10 +32,10 @@ const WebinarDetail = () => {
       />
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      <section className="gb-surface-page relative overflow-hidden">
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
+          className="absolute inset-0 gb-grid-overlay opacity-[0.05]"
           style={{
             backgroundImage:
               'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
@@ -46,14 +48,14 @@ const WebinarDetail = () => {
           aria-hidden
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
           style={{
-            background: 'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)',
+            background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)',
           }}
         />
 
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-24 md:py-32">
+        <div className="gb-container relative gb-section">
           <Link
             to="/webinars"
-            className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.24em] text-white/60 hover:text-white transition-colors"
+            className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.24em] text-ink-secondary hover:text-ink-primary transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Todas as sessões
@@ -74,36 +76,36 @@ const WebinarDetail = () => {
             {w.title}
           </h1>
 
-          <p className="mt-8 max-w-2xl text-lg md:text-xl leading-relaxed text-white/75">
+          <p className="mt-8 max-w-2xl text-lg md:text-xl leading-relaxed text-ink-secondary">
             {w.tagline}
           </p>
 
-          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 border-t border-white/10 pt-8 max-w-4xl">
+          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 border-t border-black/10 pt-8 max-w-4xl">
             <div className="flex items-start gap-3">
               <CalendarDays className="h-5 w-5 mt-0.5" style={{ color: ACCENT }} />
               <div>
-                <div className="text-xs uppercase tracking-widest text-white/50">Data</div>
+                <div className="text-xs uppercase tracking-widest text-ink-tertiary">Data</div>
                 <div className="mt-1 text-sm font-medium">{formatWebinarDate(w.date)}</div>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <Clock className="h-5 w-5 mt-0.5" style={{ color: ACCENT }} />
               <div>
-                <div className="text-xs uppercase tracking-widest text-white/50">Duração</div>
+                <div className="text-xs uppercase tracking-widest text-ink-tertiary">Duração</div>
                 <div className="mt-1 text-sm font-medium">{w.durationMin} min</div>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <MapPin className="h-5 w-5 mt-0.5" style={{ color: ACCENT }} />
               <div>
-                <div className="text-xs uppercase tracking-widest text-white/50">Formato</div>
+                <div className="text-xs uppercase tracking-widest text-ink-tertiary">Formato</div>
                 <div className="mt-1 text-sm font-medium">{w.location}</div>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <Ticket className="h-5 w-5 mt-0.5" style={{ color: ACCENT }} />
               <div>
-                <div className="text-xs uppercase tracking-widest text-white/50">Investimento</div>
+                <div className="text-xs uppercase tracking-widest text-ink-tertiary">Investimento</div>
                 <div className="mt-1 text-sm font-medium">{w.price}</div>
               </div>
             </div>
@@ -113,8 +115,8 @@ const WebinarDetail = () => {
             <button
               type="button"
               onClick={() => setContactOpen(true)}
-              className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: '#ffb494' }}
+              className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-ink-primary"
+              style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
             >
@@ -122,7 +124,7 @@ const WebinarDetail = () => {
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </button>
             {w.seats ? (
-              <span className="font-mono text-xs uppercase tracking-[0.24em] text-white/60">
+              <span className="font-mono text-xs uppercase tracking-[0.24em] text-ink-secondary">
                 <Users className="inline h-4 w-4 mr-2" style={{ color: ACCENT }} />
                 {w.seats} vagas · confirma cedo
               </span>
@@ -132,7 +134,7 @@ const WebinarDetail = () => {
       </section>
 
       {/* SUMMARY + LEARN */}
-      <section className="bg-[#0a0603] text-white py-24 md:py-28">
+      <section className="gb-surface-section gb-section">
         <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20">
           <div>
             <div
@@ -144,17 +146,17 @@ const WebinarDetail = () => {
             <h2 className="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
               O que vais levar contigo
             </h2>
-            <p className="mt-6 text-white/75 leading-relaxed">{w.summary}</p>
+            <p className="mt-6 text-ink-secondary leading-relaxed">{w.summary}</p>
 
             <div className="mt-10">
-              <div className="text-xs uppercase tracking-widest text-white/50 mb-4">
+              <div className="text-xs uppercase tracking-widest text-ink-tertiary mb-4">
                 Para quem é
               </div>
               <div className="flex flex-wrap gap-2">
                 {w.audience.map((a) => (
                   <span
                     key={a}
-                    className="rounded-full border border-white/25 px-4 py-1.5 text-sm text-white/80"
+                    className="rounded-full border border-black/25 px-4 py-1.5 text-sm text-ink-secondary"
                   >
                     {a}
                   </span>
@@ -177,7 +179,7 @@ const WebinarDetail = () => {
               {w.learn.map((l) => (
                 <li key={l} className="flex items-start gap-3">
                   <CheckCircle2 className="h-5 w-5 mt-0.5 shrink-0" style={{ color: ACCENT }} />
-                  <span className="text-white/85">{l}</span>
+                  <span className="text-ink-secondary">{l}</span>
                 </li>
               ))}
             </ul>
@@ -186,9 +188,9 @@ const WebinarDetail = () => {
       </section>
 
       {/* AGENDA */}
-      <section className="bg-[#0a0603] text-white pb-24 md:pb-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="border-t border-white/10 pt-16">
+      <section className="gb-surface-page gb-section !pt-0">
+        <div className="gb-container">
+          <div className="border-t border-black/10 pt-16">
             <div
               className="font-mono text-[11px] uppercase tracking-[0.28em]"
               style={{ color: ACCENT }}
@@ -203,7 +205,7 @@ const WebinarDetail = () => {
               {w.agenda.map((item, idx) => (
                 <li
                   key={idx}
-                  className="grid grid-cols-[80px_1fr] md:grid-cols-[140px_1fr] gap-6 border-b border-white/10 pb-6"
+                  className="grid grid-cols-[80px_1fr] md:grid-cols-[140px_1fr] gap-6 border-b border-black/10 pb-6"
                 >
                   <div className="font-mono text-sm md:text-base" style={{ color: ACCENT }}>
                     {item.time}
@@ -211,7 +213,7 @@ const WebinarDetail = () => {
                   <div>
                     <div className="text-lg md:text-xl font-semibold">{item.title}</div>
                     {item.body && (
-                      <div className="mt-2 text-sm text-white/65 leading-relaxed">{item.body}</div>
+                      <div className="mt-2 text-sm text-ink-secondary leading-relaxed">{item.body}</div>
                     )}
                   </div>
                 </li>
@@ -228,7 +230,7 @@ const WebinarDetail = () => {
                 </div>
                 <ul className="mt-6 space-y-3">
                   {w.requirements.map((r) => (
-                    <li key={r} className="flex items-start gap-3 text-white/80">
+                    <li key={r} className="flex items-start gap-3 text-ink-secondary">
                       <span
                         className="mt-2 h-1.5 w-1.5 rounded-full shrink-0"
                         style={{ background: ACCENT }}
@@ -244,8 +246,8 @@ const WebinarDetail = () => {
       </section>
 
       {/* SPEAKER */}
-      <section className="bg-[#0a0603] text-white pb-24 md:pb-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 border-t border-white/10 pt-16">
+      <section className="gb-surface-page gb-section !pt-0">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 border-t border-black/10 pt-16">
           <div
             className="font-mono text-[11px] uppercase tracking-[0.28em]"
             style={{ color: ACCENT }}
@@ -265,17 +267,17 @@ const WebinarDetail = () => {
             </div>
             <div>
               <div className="text-2xl md:text-3xl font-bold">{w.speaker.name}</div>
-              <div className="mt-1 font-mono text-xs uppercase tracking-[0.22em] text-white/60">
+              <div className="mt-1 font-mono text-xs uppercase tracking-[0.22em] text-ink-secondary">
                 {w.speaker.role}
               </div>
-              <p className="mt-4 text-white/75 max-w-2xl leading-relaxed">{w.speaker.bio}</p>
+              <p className="mt-4 text-ink-secondary max-w-2xl leading-relaxed">{w.speaker.bio}</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA + REGISTRATION */}
-      <section className="bg-black text-white py-24 md:py-32">
+      <section className="gb-surface-page gb-section">
         <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -287,7 +289,7 @@ const WebinarDetail = () => {
             Reserva o teu lugar em{' '}
             <span style={{ color: ACCENT }}>{w.format.toLowerCase()}</span>.
           </motion.h2>
-          <p className="mt-6 text-white/70 max-w-2xl mx-auto">
+          <p className="mt-6 text-ink-secondary max-w-2xl mx-auto">
             {formatWebinarDate(w.date)} · {w.location} · {w.price}
           </p>
 
@@ -295,7 +297,7 @@ const WebinarDetail = () => {
             <button
               type="button"
               onClick={() => setContactOpen((v) => !v)}
-              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-white"
+              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-ink-primary"
               style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
@@ -328,8 +330,8 @@ const WebinarDetail = () => {
 
       {/* RELATED */}
       {related.length > 0 && (
-        <section className="bg-[#0a0603] text-white py-24 md:py-28">
-          <div className="max-w-7xl mx-auto px-6 md:px-12">
+        <section className="gb-surface-section gb-section">
+          <div className="gb-container">
             <div
               className="font-mono text-[11px] uppercase tracking-[0.28em]"
               style={{ color: ACCENT }}
@@ -341,15 +343,15 @@ const WebinarDetail = () => {
                 <Link
                   key={r.slug}
                   to={`/webinars/${r.slug}`}
-                  className="group border border-white/10 p-8 hover:border-white/40 transition-colors"
+                  className="group border border-black/10 p-8 hover:border-black/40 transition-colors"
                 >
-                  <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
+                  <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-secondary">
                     {r.format} · {r.location}
                   </div>
                   <div className="mt-4 text-xl md:text-2xl font-bold group-hover:translate-x-1 transition-transform">
                     {r.title}
                   </div>
-                  <div className="mt-3 text-sm text-white/70">{r.tagline}</div>
+                  <div className="mt-3 text-sm text-ink-secondary">{r.tagline}</div>
                   <div
                     className="mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.24em]"
                     style={{ color: ACCENT }}

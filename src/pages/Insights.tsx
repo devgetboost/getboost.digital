@@ -4,21 +4,15 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Newspaper, BookOpen, Mic, GraduationCap, Video, Gauge, Sparkles } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import { SectionHeader } from '@/components/ui/section-header';
 import { Button } from '@/components/ui/button';
 import { useContentEntries } from '@/hooks/useContent';
 import { mediaUrl } from '@/lib/contentApi';
+import { openLeadMagnet } from '@/components/LeadMagnetModal';
+import { fadeUp } from '@/components/ui/reveal';
 
 const ACCENT = '#ff4000';
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.08, duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
-  }),
-};
 
 const surfaces = [
   {
@@ -73,6 +67,7 @@ const Insights = () => {
 
   return (
     <Layout>
+    <ScrollDepth location="insights" />
       <SEO
         title="Insights — Blog, Recursos, Podcast e Formação | Getboost Digital"
         description="Conhecimento que aplicamos todos os dias: artigos, guias, podcast, academy, webinars e ferramentas gratuitas sobre marketing, software e IA."
@@ -222,6 +217,31 @@ const Insights = () => {
                 </Link>
               </motion.div>
             ))}
+            {/* R20.4 — lead-magnet entry: maturity assessments (modal, no route). */}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeUp}
+              custom={0}
+            >
+              <button
+                type="button"
+                onClick={() => openLeadMagnet()}
+                className="group block h-full w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+              >
+                <div className="gb-surface-card h-full transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-card-hover">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-canvas-tint text-brand-600">
+                    <Sparkles className="h-5 w-5" />
+                  </span>
+                  <h3 className="gb-text-h3 mt-4 text-ink-primary">Avaliação de Maturidade Digital</h3>
+                  <p className="gb-text-small mt-2 text-ink-secondary">IA, automação, software e growth em 3 minutos</p>
+                  <span className="mt-5 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-brand-600">
+                    Começar <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                  </span>
+                </div>
+              </button>
+            </motion.div>
           </div>
         </div>
       </section>

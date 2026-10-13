@@ -4,20 +4,13 @@ import { motion } from 'framer-motion';
 import { ArrowRight, LayoutTemplate, Trophy } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import { SectionHeader } from '@/components/ui/section-header';
 import { Button } from '@/components/ui/button';
 import { METRICS } from '@/data/brandRegistry';
+import { fadeUp } from '@/components/ui/reveal';
 
 const ACCENT = '#ff4000';
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.08, duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
-  }),
-};
 
 const proof = [
   { k: '+300%', v: 'crescimento orgânico médio em 6 meses' },
@@ -37,6 +30,7 @@ const Work = () => {
 
   return (
     <Layout>
+    <ScrollDepth location="work" />
       <SEO
         title="Trabalhos — Portefólio e Casos de Sucesso | Getboost Digital"
         description="Projectos entregues e casos de sucesso: software, agentes de IA e growth a correr em produção, com resultados mensuráveis."

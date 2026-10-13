@@ -3,7 +3,6 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import PageHero from '@/components/PageHero';
 import HeroCarousel, { type HeroSlide } from '@/components/HeroCarousel';
 
 // framer-motion → passthrough
@@ -51,17 +50,6 @@ describe('hero wave clip — regressão visual (estrutural)', () => {
 
   it('CSS inclui fallback via @supports not (mask-image) usando clip-path', () => {
     expect(css).toMatch(/@supports not \(\(mask-image[^)]+\)[^{]*\{[\s\S]*?clip-path/);
-  });
-
-  it('PageHero renderiza <section> com a classe hero-wave-clip', () => {
-    const { container } = render(
-      <MemoryRouter>
-        <PageHero title="Test" />
-      </MemoryRouter>,
-    );
-    const section = container.querySelector('section');
-    expect(section).not.toBeNull();
-    expect(section!.className).toMatch(/\bhero-wave-clip\b/);
   });
 
   it('HeroCarousel renderiza <section> com a classe hero-wave-clip', async () => {

@@ -3,6 +3,8 @@ import { Link, Navigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, TrendingUp, BarChart3, PieChart, Calculator, Download, Plus, Trash2 } from 'lucide-react';
 import Layout from '@/components/Layout';
+import SEO from '@/components/SEO';
+import { analytics } from '@/lib/analytics';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,7 +31,10 @@ const channelLabels: Record<string, string> = {
   outro: 'Outro',
 };
 
-const COLORS = ['#ff4000', '#ff6b35', '#ffa366', '#cc3300', '#ff8c42', '#e65100'];
+// R19 execution — the frozen brand ramp (design-system.css), in descending
+// strength, plus the status success token for the profit series.
+const COLORS = ['#ff4000', '#ff7647', '#ff9c78', '#db3800', '#ffc2a9', '#b72f00'];
+const PROFIT_COLOR = '#15803d';
 
 const emptyRow = (): Campaign => ({
   id: crypto.randomUUID(),
@@ -127,6 +132,11 @@ const ROICalculator = () => {
 
   return (
     <Layout>
+      <SEO
+        title="Calculadora de ROI de Marketing | Getboost Digital"
+        description="Calcula, compara e projeta o retorno das tuas campanhas de marketing: investimento, receita, leads, CPL, CPA e taxa de conversão."
+        canonical="/tools/roi-calculator"
+      />
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(26,10,0,0.92) 0%, rgba(255,64,0,0.80) 50%, rgba(26,10,0,0.90) 100%)' }} />
@@ -149,7 +159,7 @@ const ROICalculator = () => {
         </div>
       </section>
 
-      <section className="section-padding">
+      <section className="gb-section">
         <div className="max-w-7xl mx-auto">
           {/* Campaign Input */}
           <div className="mb-12">
@@ -217,7 +227,7 @@ const ROICalculator = () => {
           {/* KPIs */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
             {[
-              { label: 'ROI Total', value: `${stats.roi.toFixed(1)}%`, icon: TrendingUp, color: stats.roi >= 0 ? 'text-green-600' : 'text-red-600' },
+              { label: 'ROI Total', value: `${stats.roi.toFixed(1)}%`, icon: TrendingUp, color: stats.roi >= 0 ? 'text-success' : 'text-error' },
               { label: 'Receita Total', value: `${stats.totalRevenue.toLocaleString('pt-PT')}€`, icon: BarChart3, color: 'text-primary' },
               { label: 'Custo por Lead', value: `${stats.cpl.toFixed(2)}€`, icon: PieChart, color: 'text-foreground' },
               { label: 'Taxa Conversão', value: `${stats.convRate.toFixed(1)}%`, icon: TrendingUp, color: 'text-primary' },
@@ -256,7 +266,7 @@ const ROICalculator = () => {
                         <YAxis fontSize={12} />
                         <Tooltip formatter={(v: number) => `${v.toLocaleString('pt-PT')}€`} />
                         <Legend />
-                        <Bar dataKey="investment" fill="#ff6b35" name="Investimento" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="investment" fill="#ff9c78" name="Investimento" radius={[4, 4, 0, 0]} />
                         <Bar dataKey="revenue" fill="#ff4000" name="Receita" radius={[4, 4, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
@@ -287,7 +297,7 @@ const ROICalculator = () => {
                           {campaignComparison.map((c, i) => (
                             <tr key={i} className="border-b border-border/50">
                               <td className="py-3 font-medium">{c.name}</td>
-                              <td className={`py-3 text-right font-bold ${c.roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>{c.roi.toFixed(1)}%</td>
+                              <td className={`py-3 text-right font-bold ${c.roi >= 0 ? 'text-success' : 'text-error'}`}>{c.roi.toFixed(1)}%</td>
                               <td className="py-3 text-right">{c.cpl.toFixed(2)}€</td>
                               <td className="py-3 text-right">{c.cpa.toFixed(2)}€</td>
                             </tr>
@@ -330,8 +340,8 @@ const ROICalculator = () => {
                         <Tooltip formatter={(v: number) => `${v.toLocaleString('pt-PT')}€`} />
                         <Legend />
                         <Line type="monotone" dataKey="receita" stroke="#ff4000" strokeWidth={2} name="Receita" dot={false} />
-                        <Line type="monotone" dataKey="investimento" stroke="#ff6b35" strokeWidth={2} name="Investimento" strokeDasharray="5 5" dot={false} />
-                        <Line type="monotone" dataKey="lucro" stroke="#22c55e" strokeWidth={2} name="Lucro" dot={false} />
+                        <Line type="monotone" dataKey="investimento" stroke="#ff7647" strokeWidth={2} name="Investimento" strokeDasharray="5 5" dot={false} />
+                        <Line type="monotone" dataKey="lucro" stroke={PROFIT_COLOR} strokeWidth={2} name="Lucro" dot={false} />
                       </LineChart>
                     </ResponsiveContainer>
                   ) : (
@@ -406,7 +416,7 @@ const ROICalculator = () => {
             <h2 className="text-2xl font-bold mb-3">Precisas de ajuda a melhorar estes números?</h2>
             <p className="text-muted-foreground mb-6">Agenda uma consulta gratuita e vamos otimizar as tuas campanhas juntos.</p>
             <Button asChild size="lg" className="rounded-[12px] px-8 text-base font-semibold">
-              <Link to="/booking">Agendar Consulta Gratuita</Link>
+              <Link to="/booking" onClick={() => analytics.trackClick('roi_hero', 'roi_booking', 'consideration')}>Agendar Consulta Gratuita</Link>
             </Button>
           </div>
         </div>

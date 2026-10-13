@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import {
   Accordion,
   AccordionContent,
@@ -174,6 +175,7 @@ const AcademyInCompany = () => {
 
   return (
     <Layout>
+      <ScrollDepth location="academy_incompany" />
       <SEO
         title="Formação à medida para empresas — Getboost Academy"
         description="Programas de formação in-company em IA, automação e growth. Desenhados à volta dos teus KPIs, com entregáveis reais e medição antes/depois."
@@ -182,10 +184,10 @@ const AcademyInCompany = () => {
       />
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      <section className="gb-surface-page relative overflow-hidden">
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
+          className="absolute inset-0 gb-grid-overlay opacity-[0.05]"
           style={{
             backgroundImage:
               'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
@@ -197,13 +199,13 @@ const AcademyInCompany = () => {
         <div
           aria-hidden
           className="absolute -right-40 top-1/3 h-[640px] w-[640px] rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)' }}
+          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)' }}
         />
 
         <div className="relative max-w-7xl mx-auto px-6 md:px-12 pt-16 pb-24 md:pt-24 md:pb-32">
           <Link
             to="/academy"
-            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-white/60 hover:text-white transition-colors"
+            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-ink-secondary hover:text-ink-primary transition-colors"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Academy · In-company
           </Link>
@@ -213,7 +215,7 @@ const AcademyInCompany = () => {
               <motion.span
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
+                className="gb-eyebrow text-brand-600"
                 style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
               >
                 <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
@@ -236,7 +238,7 @@ const AcademyInCompany = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="mt-8 max-w-2xl text-lg md:text-xl leading-relaxed text-white/75"
+                className="mt-8 max-w-2xl text-lg md:text-xl leading-relaxed text-ink-secondary"
               >
                 Programas desenhados à volta dos teus KPIs, dos teus dados e do teu stack.
                 Sem slides genéricos. Sem "formação de gaveta". Entregas reais por módulo
@@ -262,7 +264,7 @@ const AcademyInCompany = () => {
                     <div className="font-mono text-2xl md:text-3xl font-bold" style={{ color: ACCENT }}>
                       {s.k}
                     </div>
-                    <div className="mt-1 text-[11px] uppercase tracking-widest text-white/50">{s.v}</div>
+                    <div className="mt-1 text-[11px] uppercase tracking-widest text-ink-tertiary">{s.v}</div>
                   </div>
                 ))}
               </div>
@@ -273,13 +275,13 @@ const AcademyInCompany = () => {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative border border-white/10 bg-white/[0.03] backdrop-blur-sm p-8"
+              className="relative border border-black/10 bg-black/[0.03] backdrop-blur-sm p-8"
             >
               <div
                 className="absolute inset-x-0 -top-px h-px"
                 style={{ background: `linear-gradient(90deg, transparent, ${ACCENT}, transparent)` }}
               />
-              <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/50">
+              <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink-tertiary">
                 Marcar diagnóstico gratuito
               </span>
               <h2 className="mt-3 text-2xl font-black tracking-tight">
@@ -300,7 +302,7 @@ const AcademyInCompany = () => {
                     value={(form as Record<string, string>)[f.key]}
                     onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
                     required={f.required}
-                    className="w-full bg-black/40 border border-white/10 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-[#ff4000] focus:outline-none transition-colors"
+                    className="w-full bg-black/40 border border-black/10 px-4 py-3 text-sm text-ink-primary placeholder:text-ink-tertiary focus:border-[#ff4000] focus:outline-none transition-colors"
                   />
                 ))}
                 <textarea
@@ -308,20 +310,20 @@ const AcademyInCompany = () => {
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
                   rows={3}
-                  className="w-full bg-black/40 border border-white/10 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-[#ff4000] focus:outline-none transition-colors resize-none"
+                  className="w-full bg-black/40 border border-black/10 px-4 py-3 text-sm text-ink-primary placeholder:text-ink-tertiary focus:border-[#ff4000] focus:outline-none transition-colors resize-none"
                 />
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full inline-flex items-center justify-center gap-3 border-2 px-6 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white disabled:opacity-50"
-                  style={{ borderColor: ACCENT, color: '#ffb494' }}
+                  className="w-full inline-flex items-center justify-center gap-3 border-2 px-6 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-ink-primary disabled:opacity-50"
+                  style={{ borderColor: ACCENT, color: ACCENT }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                 >
                   {submitting ? 'A enviar…' : 'Quero o diagnóstico'}
                   <ArrowRight className="h-4 w-4" />
                 </button>
-                <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-white/40 text-center">
+                <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-ink-tertiary text-center">
                   Sem custo · Sem compromisso · Resposta em 24h
                 </p>
               </form>
@@ -331,8 +333,8 @@ const AcademyInCompany = () => {
       </section>
 
       {/* WHY IN-COMPANY */}
-      <section className="bg-black text-white py-24 md:py-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr,1.4fr] gap-14">
             <div>
               <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
@@ -341,9 +343,9 @@ const AcademyInCompany = () => {
               <h2 className="mt-6 text-3xl md:text-5xl font-black leading-[1.05] tracking-tight">
                 Formação genérica <span style={{ color: ACCENT }}>não muda</span> KPIs.
               </h2>
-              <p className="mt-8 text-white/60 leading-relaxed">
+              <p className="mt-8 text-ink-secondary leading-relaxed">
                 A tua equipa não precisa de mais teoria — precisa de dominar as ferramentas
-                que resolvem os problemas <em className="not-italic text-white">desta</em> operação.
+                que resolvem os problemas <em className="not-italic text-ink-primary">desta</em> operação.
                 Trabalhamos com os teus dados, os teus clientes e os teus processos.
                 Cada sessão termina com algo pronto a usar na segunda-feira.
               </p>
@@ -356,10 +358,10 @@ const AcademyInCompany = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: Math.min(i * 0.05, 0.4) }}
-                  className="border border-white/10 bg-white/[0.02] p-6 flex gap-4"
+                  className="border border-black/10 bg-black/[0.02] p-6 flex gap-4"
                 >
                   <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-1" style={{ color: ACCENT }} />
-                  <p className="text-sm leading-relaxed text-white/85">{o}</p>
+                  <p className="text-sm leading-relaxed text-ink-secondary">{o}</p>
                 </motion.div>
               ))}
             </div>
@@ -368,16 +370,16 @@ const AcademyInCompany = () => {
       </section>
 
       {/* PROGRAMS */}
-      <section className="bg-[#0a0603] text-white py-24 md:py-32 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="border-t border-white/10 pt-10 mb-14">
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <div className="border-t border-black/10 pt-10 mb-14">
             <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
               Programas base
             </span>
             <h2 className="mt-4 text-4xl md:text-6xl font-black leading-[1.02] tracking-tight max-w-3xl">
               Quatro trilhas para <span style={{ color: ACCENT }}>combinar</span> à vontade.
             </h2>
-            <p className="mt-6 text-white/60 max-w-2xl">
+            <p className="mt-6 text-ink-secondary max-w-2xl">
               Escolhe uma trilha, combina módulos de várias ou desenha algo 100% novo com o nosso lead trainer.
             </p>
           </div>
@@ -392,7 +394,7 @@ const AcademyInCompany = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: Math.min(i * 0.08, 0.4) }}
-                  className="group relative border border-white/10 bg-white/[0.02] p-8 hover:border-[#ff4000]/60 transition-colors"
+                  className="group relative border border-black/10 bg-black/[0.02] p-8 hover:border-[#ff4000]/60 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div
@@ -401,12 +403,12 @@ const AcademyInCompany = () => {
                     >
                       <Icon className="h-5 w-5" style={{ color: ACCENT }} />
                     </div>
-                    <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/50">
+                    <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-tertiary">
                       {p.duration}
                     </span>
                   </div>
                   <h3 className="mt-6 text-2xl font-bold tracking-tight">{p.title}</h3>
-                  <p className="mt-3 text-white/60 leading-relaxed">{p.body}</p>
+                  <p className="mt-3 text-ink-secondary leading-relaxed">{p.body}</p>
                 </motion.div>
               );
             })}
@@ -415,9 +417,9 @@ const AcademyInCompany = () => {
       </section>
 
       {/* PROCESS */}
-      <section className="bg-black text-white py-24 md:py-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="border-t border-white/10 pt-10 mb-14">
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <div className="border-t border-black/10 pt-10 mb-14">
             <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
               Como trabalhamos
             </span>
@@ -430,10 +432,10 @@ const AcademyInCompany = () => {
               const Icon = p.icon;
               return (
                 <div key={p.title} className="border-t-2 pt-6" style={{ borderColor: ACCENT }}>
-                  <span className="font-mono text-4xl font-black text-white/10">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="font-mono text-4xl font-black text-ink-tertiary">{String(i + 1).padStart(2, '0')}</span>
                   <Icon className="h-6 w-6 mt-4" style={{ color: ACCENT }} />
                   <h3 className="mt-4 text-xl font-bold tracking-tight">{p.title}</h3>
-                  <p className="mt-3 text-sm text-white/60 leading-relaxed">{p.body}</p>
+                  <p className="mt-3 text-sm text-ink-secondary leading-relaxed">{p.body}</p>
                 </div>
               );
             })}
@@ -442,25 +444,25 @@ const AcademyInCompany = () => {
       </section>
 
       {/* GUARANTEES */}
-      <section className="bg-[#0a0603] text-white py-24 md:py-32 border-t border-white/5">
+      <section className="gb-surface-section gb-section">
         <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-10">
           {[
             { icon: Target, title: 'Foco em ROI', body: 'Cada programa é validado contra 2–3 KPIs de negócio. Se não movermos, refazemos.' },
             { icon: Users, title: 'Formadores que operam', body: 'Todos os nossos trainers têm empresas ou operações activas. Não vieram do PowerPoint.' },
             { icon: ShieldCheck, title: 'Documentação completa', body: 'Facturas, certificados, conteúdos programáticos e documentação para financiamento.' },
           ].map(({ icon: Icon, title, body }) => (
-            <div key={title} className="border-t border-white/10 pt-8">
+            <div key={title} className="border-t border-black/10 pt-8">
               <Icon className="h-7 w-7" style={{ color: ACCENT }} />
               <h3 className="mt-6 text-xl font-bold tracking-tight">{title}</h3>
-              <p className="mt-3 text-white/60 leading-relaxed">{body}</p>
+              <p className="mt-3 text-ink-secondary leading-relaxed">{body}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="bg-black text-white py-24 md:py-32">
-        <div className="max-w-4xl mx-auto px-6 md:px-12">
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
           <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
             Perguntas frequentes
           </span>
@@ -469,11 +471,11 @@ const AcademyInCompany = () => {
           </h2>
           <Accordion type="single" collapsible className="mt-12">
             {FAQS.map((f, i) => (
-              <AccordionItem key={i} value={`faq-${i}`} className="border-white/10">
+              <AccordionItem key={i} value={`faq-${i}`} className="border-black/10">
                 <AccordionTrigger className="text-left text-lg font-semibold hover:no-underline hover:text-[#ff4000]">
                   {f.q}
                 </AccordionTrigger>
-                <AccordionContent className="text-white/70 leading-relaxed text-base">
+                <AccordionContent className="text-ink-secondary leading-relaxed text-base">
                   {f.a}
                 </AccordionContent>
               </AccordionItem>
@@ -483,12 +485,12 @@ const AcademyInCompany = () => {
       </section>
 
       {/* CTA */}
-      <section className="bg-[#0a0603] text-white py-28 md:py-40 border-t border-white/5">
+      <section className="gb-surface-section gb-section">
         <div className="max-w-4xl mx-auto px-6 md:px-12 text-center">
           <h2 className="font-black leading-[0.95] tracking-tight text-[clamp(2rem,6vw,5rem)]">
             Marca o <span style={{ color: ACCENT }}>diagnóstico</span> gratuito.
           </h2>
-          <p className="mt-8 text-white/60 text-lg">
+          <p className="mt-8 text-ink-secondary text-lg">
             45 minutos para perceber onde a tua equipa pode acelerar. Proposta em 48h se fizer sentido avançar.
           </p>
           <div className="mt-14 flex flex-wrap items-center justify-center gap-4">
@@ -498,7 +500,7 @@ const AcademyInCompany = () => {
                 e.preventDefault();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-white"
+              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-ink-primary"
               style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
@@ -508,7 +510,7 @@ const AcademyInCompany = () => {
             </a>
             <Link
               to="/academy"
-              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-white/60 hover:text-white transition-colors"
+              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-ink-secondary hover:text-ink-primary transition-colors"
             >
               Ver formações abertas
             </Link>

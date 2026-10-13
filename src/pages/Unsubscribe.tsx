@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import Layout from '@/components/Layout';
+import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Check, AlertTriangle, Loader2, MailX } from 'lucide-react';
@@ -54,8 +55,8 @@ const Unsubscribe = () => {
   const content: Record<Status, { icon: React.ReactNode; title: string; desc: string }> = {
     loading: { icon: <Loader2 className="h-8 w-8 animate-spin text-primary" />, title: 'A verificar...', desc: '' },
     valid: { icon: <MailX className="h-8 w-8 text-primary" />, title: 'Cancelar subscrição', desc: 'Tem a certeza de que pretende deixar de receber os nossos emails?' },
-    already: { icon: <Check className="h-8 w-8 text-green-500" />, title: 'Já cancelou a subscrição', desc: 'Este email já foi removido da nossa lista de envio.' },
-    success: { icon: <Check className="h-8 w-8 text-green-500" />, title: 'Subscrição cancelada', desc: 'Não receberá mais emails da nossa parte.' },
+    already: { icon: <Check className="h-8 w-8 text-success" />, title: 'Já cancelou a subscrição', desc: 'Este email já foi removido da nossa lista de envio.' },
+    success: { icon: <Check className="h-8 w-8 text-success" />, title: 'Subscrição cancelada', desc: 'Não receberá mais emails da nossa parte.' },
     invalid: { icon: <AlertTriangle className="h-8 w-8 text-destructive" />, title: 'Link inválido', desc: 'Este link de cancelamento não é válido ou já expirou.' },
     error: { icon: <AlertTriangle className="h-8 w-8 text-destructive" />, title: 'Erro', desc: 'Algo correu mal. Por favor, tente novamente mais tarde.' },
   };
@@ -64,6 +65,7 @@ const Unsubscribe = () => {
 
   return (
     <Layout>
+      <SEO title="Cancelar subscrição" noIndex />
       <div className="min-h-[60vh] flex items-center justify-center px-4">
         <Card className="max-w-md w-full border border-border shadow-none">
           <CardContent className="p-8 text-center">

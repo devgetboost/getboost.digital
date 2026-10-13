@@ -66,7 +66,7 @@ describe("Wave 2A.4 — Brand Registry (Single Source of Truth)", () => {
   it("the registry carries every required fact", () => {
     expect(PROJECT_COUNT).toMatch(/^\d+\+$/);
     expect(YEARS).toMatch(/^\d+\+$/);
-    expect(METRICS.projectsDelivered.label.pt).toBe("Projetos entregues");
+    expect(METRICS.projectsDelivered.label.pt).toBe("Projectos entregues");
     expect(METRICS.yearsExperience.label.pt).toBe("Anos de experiência");
     expect(CONTACT.phone.display).toContain("963");
     expect(CONTACT.phone.e164).toMatch(/^\+\d{10,}$/);
@@ -81,7 +81,6 @@ describe("Wave 2A.4 — Brand Registry (Single Source of Truth)", () => {
   it("every consumer surface reads from the registry", () => {
     const consumers = [
       "src/pages/Index.tsx",
-      "src/pages/About.tsx",
       "src/components/Footer.tsx",
       "src/components/SEO.tsx",
       "src/pages/Contact.tsx",

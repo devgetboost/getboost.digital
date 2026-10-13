@@ -1,8 +1,14 @@
 import { createRoot } from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
+import { MotionConfig } from "framer-motion";
 import App from "./App.tsx";
-import "./index.css";
-import "@/styles/design-system.css";
+// R20.11 — the global stylesheets are linked from index.html instead. When
+// CSS is imported here, the browser only discovers it after this module
+// executes, which puts a full round trip between the HTML and first paint.
+// Vite processes <link rel="stylesheet" href="/src/..."> through the same
+// PostCSS pipeline and emits a hashed stylesheet plus a preload, so CSS and
+// JS download in parallel. Order is preserved (index.css, then the token
+// layer) exactly as these imports had it.
 
 // Auto-reload once when a stale dynamic import chunk fails (post-deploy cache)
 const RELOAD_KEY = "__chunk_reload__";
@@ -37,6 +43,10 @@ try {
 
 createRoot(document.getElementById("root")!).render(
   <HelmetProvider>
-    <App />
+    {/* R18.7: framer-motion honours the OS reduced-motion setting globally —
+        transform/parallax/loop animations resolve to instant opacity fades. */}
+    <MotionConfig reducedMotion="user">
+      <App />
+    </MotionConfig>
   </HelmetProvider>
 );

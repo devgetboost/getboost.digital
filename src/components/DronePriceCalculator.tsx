@@ -114,7 +114,7 @@ const DronePriceCalculator = () => {
   const extraCost = calculateExtraCost();
 
   return (
-    <section className="section-padding bg-section-alt relative overflow-hidden" id="drone-plans">
+    <section className="gb-surface-section gb-section relative overflow-hidden" id="drone-plans">
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl" />
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full -ml-32 -mb-32 blur-3xl" />
 
@@ -255,7 +255,7 @@ const DronePriceCalculator = () => {
               </div>
 
               <div className="lg:col-span-2">
-                <div className="bg-section-alt rounded-2xl p-6 border border-border space-y-4">
+                <div className="gb-surface-subtle rounded-2xl p-6 border border-border space-y-4">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-muted-foreground">{t('droneCalculator.totalDist')}:</span>
                     <span className="font-bold">{distance !== null ? `${distance} km` : '---'}</span>

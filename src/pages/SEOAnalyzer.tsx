@@ -10,6 +10,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -97,9 +98,9 @@ const ScoreCircle = ({ score, size = 80, strokeWidth = 6 }: { score: number; siz
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
   const color =
-    score >= 80 ? '#22c55e' :
-    score >= 60 ? '#eab308' :
-    score >= 40 ? ACCENT : '#ef4444';
+    score >= 80 ? 'var(--gb-success)' :
+    score >= 60 ? 'var(--gb-warning)' :
+    score >= 40 ? 'var(--gb-brand-500)' : 'var(--gb-error)';
 
   return (
     <div className="relative" style={{ width: size, height: size }}>
@@ -117,13 +118,13 @@ const ScoreCircle = ({ score, size = 80, strokeWidth = 6 }: { score: number; siz
 };
 
 const MetricBar = ({ label, value, icon: Icon }: { label: string; value: number; icon: React.ElementType }) => {
-  const color = value >= 80 ? 'bg-green-500' : value >= 60 ? 'bg-yellow-500' : value >= 40 ? 'bg-orange-500' : 'bg-red-500';
+  const color = value >= 80 ? 'bg-success' : value >= 60 ? 'bg-warning' : value >= 40 ? 'bg-brand-500' : 'bg-error';
   return (
     <div className="flex items-center gap-3">
-      <Icon className="h-4 w-4 text-white/50 flex-shrink-0" />
-      <span className="text-sm text-white/80 flex-1">{label}</span>
-      <span className="text-sm font-semibold text-white w-10 text-right">{value}</span>
-      <div className="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
+      <Icon className="h-4 w-4 text-ink-tertiary flex-shrink-0" />
+      <span className="text-sm text-ink-secondary flex-1">{label}</span>
+      <span className="text-sm font-semibold text-ink-primary w-10 text-right">{value}</span>
+      <div className="w-24 h-1.5 bg-black/10 rounded-full overflow-hidden">
         <div className={`h-full rounded-full ${color} transition-all duration-1000 ease-out`} style={{ width: `${value}%` }} />
       </div>
     </div>
@@ -201,7 +202,7 @@ const SEOAnalyzer = () => {
     if (!resultsRef.current) return;
     setExporting(true);
     try {
-      const canvas = await html2canvas(resultsRef.current, { scale: 2, useCORS: true, logging: false, backgroundColor: '#0a0603' });
+      const canvas = await html2canvas(resultsRef.current, { scale: 2, useCORS: true, logging: false, backgroundColor: 'var(--gb-ink-primary)' });
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const imgWidth = 190;
@@ -231,6 +232,7 @@ const SEOAnalyzer = () => {
 
   return (
     <Layout>
+      <ScrollDepth location="seo_analyzer" />
       <SEO
         title="Análise SEO — Auditoria Técnica Gratuita | Getboost Digital"
         description="Auditoria SEO completa e gratuita: técnica, on-page, Core Web Vitals, segurança e mobile. Recebe um plano de ação priorizado para o teu site."
@@ -239,10 +241,10 @@ const SEOAnalyzer = () => {
       />
 
       {/* HERO — manifesto */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      <section className="gb-surface-page relative overflow-hidden">
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
+          className="absolute inset-0 gb-grid-overlay opacity-[0.05]"
           style={{
             backgroundImage:
               'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
@@ -254,22 +256,15 @@ const SEOAnalyzer = () => {
         <div
           aria-hidden
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)' }}
-        />
-        <motion.div
-          aria-hidden
-          initial={{ y: '-100%' }}
-          animate={{ y: '120%' }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          className="pointer-events-none absolute inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#ff4000]/10 to-transparent"
+          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)' }}
         />
 
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-24 md:py-32">
+        <div className="gb-container relative gb-section">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
+            className="gb-eyebrow text-brand-600"
             style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
@@ -304,7 +299,7 @@ const SEOAnalyzer = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-white/75"
+            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-ink-secondary"
           >
             A tua página vai ser inspecionada como o Google a vê: rastreabilidade, arquitetura,
             performance real, segurança e mobile. Devolvemos-te uma pontuação 0–100 e as ações
@@ -320,33 +315,33 @@ const SEOAnalyzer = () => {
           >
             <form
               onSubmit={handleAnalyze}
-              className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur p-6 md:p-8 space-y-5"
+              className="rounded-2xl border border-black/10 bg-black/[0.03] backdrop-blur p-6 md:p-8 space-y-5"
             >
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-[11px] font-mono uppercase tracking-[0.2em] text-white/60 mb-2 block">Nome</Label>
+                  <Label className="text-[11px] font-mono uppercase tracking-[0.2em] text-ink-secondary mb-2 block">Nome</Label>
                   <Input value={name} onChange={e => setName(e.target.value)} placeholder="O teu nome"
-                    className="h-12 bg-transparent border-white/15 text-white placeholder:text-white/30 focus-visible:ring-[#ff4000]/40"
+                    className="h-12 bg-transparent border-black/15 text-ink-primary placeholder:text-ink-tertiary focus-visible:ring-[#ff4000]/40"
                     required maxLength={100} />
                 </div>
                 <div>
-                  <Label className="text-[11px] font-mono uppercase tracking-[0.2em] text-white/60 mb-2 block">Email</Label>
+                  <Label className="text-[11px] font-mono uppercase tracking-[0.2em] text-ink-secondary mb-2 block">Email</Label>
                   <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="tu@empresa.pt"
-                    className="h-12 bg-transparent border-white/15 text-white placeholder:text-white/30 focus-visible:ring-[#ff4000]/40"
+                    className="h-12 bg-transparent border-black/15 text-ink-primary placeholder:text-ink-tertiary focus-visible:ring-[#ff4000]/40"
                     required maxLength={255} />
                 </div>
               </div>
               <div>
-                <Label className="text-[11px] font-mono uppercase tracking-[0.2em] text-white/60 mb-2 block">URL do site</Label>
+                <Label className="text-[11px] font-mono uppercase tracking-[0.2em] text-ink-secondary mb-2 block">URL do site</Label>
                 <Input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://oteusite.pt"
-                  className="h-12 bg-transparent border-white/15 text-white placeholder:text-white/30 focus-visible:ring-[#ff4000]/40"
+                  className="h-12 bg-transparent border-black/15 text-ink-primary placeholder:text-ink-tertiary focus-visible:ring-[#ff4000]/40"
                   required maxLength={500} />
               </div>
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-14 rounded-none border-2 bg-transparent font-mono text-xs uppercase tracking-[0.24em] hover:!text-white"
-                style={{ borderColor: ACCENT, color: '#ffb494' }}
+                className="w-full h-14 rounded-none border-2 bg-transparent font-mono text-xs uppercase tracking-[0.24em] hover:!text-ink-primary"
+                style={{ borderColor: ACCENT, color: ACCENT }}
                 onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
                 onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
               >
@@ -370,7 +365,7 @@ const SEOAnalyzer = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1.1 }}
-            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 border-t border-white/10 pt-8"
+            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 border-t border-black/10 pt-8"
           >
             {[
               { k: '5', v: 'Pilares auditados' },
@@ -380,7 +375,7 @@ const SEOAnalyzer = () => {
             ].map((s) => (
               <div key={s.k}>
                 <div className="font-mono text-3xl md:text-4xl font-bold" style={{ color: ACCENT }}>{s.k}</div>
-                <div className="mt-1 text-xs uppercase tracking-widest text-white/50">{s.v}</div>
+                <div className="mt-1 text-xs uppercase tracking-widest text-ink-tertiary">{s.v}</div>
               </div>
             ))}
           </motion.div>
@@ -388,8 +383,8 @@ const SEOAnalyzer = () => {
       </section>
 
       {/* PILLARS — accordion */}
-      <section className="bg-[#0a0603] text-white py-24 md:py-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
           <div className="mb-14">
             <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
               O que auditamos
@@ -398,15 +393,15 @@ const SEOAnalyzer = () => {
               Cinco pilares. Uma única leitura clara.
             </h2>
           </div>
-          <div className="border-t border-white/10">
+          <div className="border-t border-black/10">
             {pillars.map((f, i) => {
               const isOpen = openIndex === i;
               return (
-                <div key={f.title} className="border-b border-white/10">
+                <div key={f.title} className="border-b border-black/10">
                   <button
                     type="button"
                     onClick={() => setOpenIndex(isOpen ? -1 : i)}
-                    className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 py-10 md:py-14 text-left transition-colors hover:bg-white/[0.02]"
+                    className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 py-10 md:py-14 text-left transition-colors hover:bg-black/[0.02]"
                   >
                     <div>
                       <div className="flex items-start gap-5">
@@ -417,7 +412,7 @@ const SEOAnalyzer = () => {
                       </div>
                       <div className="mt-8 ml-0 md:ml-10 flex flex-wrap gap-3">
                         {f.tags.map((tag) => (
-                          <span key={tag} className="rounded-full border border-white/25 px-4 py-1.5 text-xs md:text-sm text-white/80">
+                          <span key={tag} className="rounded-full border border-black/25 px-4 py-1.5 text-xs md:text-sm text-ink-secondary">
                             {tag}
                           </span>
                         ))}
@@ -446,7 +441,7 @@ const SEOAnalyzer = () => {
                             animate={{ opacity: 1, height: 'auto', marginTop: 24 }}
                             exit={{ opacity: 0, height: 0, marginTop: 0 }}
                             transition={{ duration: 0.35 }}
-                            className="overflow-hidden text-sm md:text-base leading-relaxed text-white/70"
+                            className="overflow-hidden text-sm md:text-base leading-relaxed text-ink-secondary"
                           >
                             {f.body}
                           </motion.p>
@@ -463,8 +458,8 @@ const SEOAnalyzer = () => {
 
       {/* RESULTS */}
       {result && (
-        <section className="bg-[#0a0603] text-white py-20 md:py-28 border-t border-white/10">
-          <div className="max-w-6xl mx-auto px-6 md:px-12">
+        <section className="gb-surface-section gb-section">
+          <div className="gb-container">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
               <div>
@@ -472,15 +467,15 @@ const SEOAnalyzer = () => {
                   Relatório · {new Date().toLocaleDateString('pt-PT')}
                 </span>
                 <h2 className="text-3xl md:text-4xl font-bold mt-2">Resultado da auditoria SEO</h2>
-                <p className="text-white/60 text-sm mt-1">{result.url}</p>
+                <p className="text-ink-secondary text-sm mt-1">{result.url}</p>
               </div>
               <div className="flex gap-3">
                 <Button variant="outline" size="sm" onClick={handleReset}
-                  className="bg-transparent border-white/20 text-white hover:bg-white/5 hover:text-white">
+                  className="bg-transparent border-black/20 text-ink-primary hover:bg-black/5 hover:text-ink-primary">
                   <RotateCcw className="w-4 h-4 mr-2" /> Nova análise
                 </Button>
                 <Button size="sm" onClick={handleExportPDF} disabled={exporting}
-                  style={{ background: ACCENT }} className="text-white hover:opacity-90">
+                  style={{ background: ACCENT }} className="text-ink-primary hover:opacity-90">
                   <Download className="w-4 h-4 mr-2" /> {exporting ? 'A exportar…' : 'Descarregar PDF'}
                 </Button>
               </div>
@@ -488,12 +483,12 @@ const SEOAnalyzer = () => {
 
             <div ref={resultsRef} className="space-y-6">
               {/* Overall */}
-              <Card className="bg-white/[0.03] border-white/10">
+              <Card className="bg-black/[0.03] border-black/10">
                 <CardContent className="p-8 flex flex-col md:flex-row items-center justify-between gap-8">
                   <div>
-                    <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/50">Pontuação global</p>
-                    <h3 className="text-2xl font-bold mt-2 text-white">{result.rating}</h3>
-                    <p className="text-white/60 text-sm mt-2 max-w-md">
+                    <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-tertiary">Pontuação global</p>
+                    <h3 className="text-2xl font-bold mt-2 text-ink-primary">{result.rating}</h3>
+                    <p className="text-ink-secondary text-sm mt-2 max-w-md">
                       Combinação ponderada de SEO técnico, on-page, performance e segurança.
                     </p>
                   </div>
@@ -509,20 +504,20 @@ const SEOAnalyzer = () => {
                   { label: 'Performance', score: result.scores.performance, Icon: Zap },
                   { label: 'Segurança', score: result.scores.security, Icon: Shield },
                 ].map((item) => (
-                  <Card key={item.label} className="bg-white/[0.03] border-white/10">
+                  <Card key={item.label} className="bg-black/[0.03] border-black/10">
                     <CardContent className="p-6 flex flex-col items-center gap-3">
                       <item.Icon className="w-4 h-4" style={{ color: ACCENT }} />
                       <ScoreCircle score={item.score} size={72} strokeWidth={6} />
-                      <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-white/60">{item.label}</span>
+                      <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-ink-secondary">{item.label}</span>
                     </CardContent>
                   </Card>
                 ))}
               </div>
 
               {/* Metrics */}
-              <Card className="bg-white/[0.03] border-white/10">
+              <Card className="bg-black/[0.03] border-black/10">
                 <CardContent className="p-8">
-                  <h3 className="text-lg font-bold mb-6 text-white">Métricas detalhadas</h3>
+                  <h3 className="text-lg font-bold mb-6 text-ink-primary">Métricas detalhadas</h3>
                   <div className="grid md:grid-cols-2 gap-x-12 gap-y-4">
                     {Object.entries(result.metrics).map(([key, m]) => (
                       <MetricBar key={key} label={m.label} value={m.value} icon={metricIcons[key] || Globe} />
@@ -536,12 +531,12 @@ const SEOAnalyzer = () => {
                 {detailIcons.map((d) => {
                   const val = result.details[d.key as keyof typeof result.details];
                   return (
-                    <Card key={d.key} className="bg-white/[0.03] border-white/10">
+                    <Card key={d.key} className="bg-black/[0.03] border-black/10">
                       <CardContent className="p-5">
                         <d.icon className="w-5 h-5 mb-2" style={{ color: ACCENT }} />
-                        <p className="text-[11px] text-white/50 uppercase tracking-widest">{d.label}</p>
-                        <p className="text-base font-bold mt-1 text-white">{String(val)}</p>
-                        <p className="text-[11px] text-white/40 mt-1">{d.sub}</p>
+                        <p className="text-[11px] text-ink-tertiary uppercase tracking-widest">{d.label}</p>
+                        <p className="text-base font-bold mt-1 text-ink-primary">{String(val)}</p>
+                        <p className="text-[11px] text-ink-tertiary mt-1">{d.sub}</p>
                       </CardContent>
                     </Card>
                   );
@@ -550,9 +545,9 @@ const SEOAnalyzer = () => {
 
               {/* Issues */}
               {(result.issues.critical.length > 0 || result.issues.warnings.length > 0) && (
-                <Card className="bg-white/[0.03] border-white/10">
+                <Card className="bg-black/[0.03] border-black/10">
                   <CardContent className="p-8">
-                    <h3 className="text-lg font-bold mb-6 flex items-center gap-2 text-white">
+                    <h3 className="text-lg font-bold mb-6 flex items-center gap-2 text-ink-primary">
                       <AlertCircle className="w-5 h-5" style={{ color: ACCENT }} /> Problemas encontrados
                     </h3>
 
@@ -565,8 +560,8 @@ const SEOAnalyzer = () => {
                           {result.issues.critical.map((issue, i) => (
                             <div key={i} className="border rounded-xl p-4"
                               style={{ background: 'rgba(255,64,0,0.06)', borderColor: 'rgba(255,64,0,0.25)' }}>
-                              <p className="font-semibold text-sm text-white">{issue.title}</p>
-                              <p className="text-sm text-white/60 mt-1">{issue.description}</p>
+                              <p className="font-semibold text-sm text-ink-primary">{issue.title}</p>
+                              <p className="text-sm text-ink-secondary mt-1">{issue.description}</p>
                             </div>
                           ))}
                         </div>
@@ -575,14 +570,14 @@ const SEOAnalyzer = () => {
 
                     {result.issues.warnings.length > 0 && (
                       <div>
-                        <p className="text-sm font-semibold text-yellow-400 flex items-center gap-1.5 mb-3">
+                        <p className="text-sm font-semibold text-warning flex items-center gap-1.5 mb-3">
                           <AlertTriangle className="w-4 h-4" /> Aviso ({result.issues.warnings.length})
                         </p>
                         <div className="space-y-3">
                           {result.issues.warnings.map((issue, i) => (
-                            <div key={i} className="bg-yellow-500/[0.06] border border-yellow-500/25 rounded-xl p-4">
-                              <p className="font-semibold text-sm text-yellow-200">{issue.title}</p>
-                              <p className="text-sm text-white/60 mt-1">{issue.description}</p>
+                            <div key={i} className="bg-warning/[0.06] border border-warning/25 rounded-xl p-4">
+                              <p className="font-semibold text-sm text-warning">{issue.title}</p>
+                              <p className="text-sm text-ink-secondary mt-1">{issue.description}</p>
                             </div>
                           ))}
                         </div>
@@ -594,16 +589,16 @@ const SEOAnalyzer = () => {
 
               {/* Passed */}
               {result.passed.length > 0 && (
-                <Card className="bg-white/[0.03] border-white/10">
+                <Card className="bg-black/[0.03] border-black/10">
                   <CardContent className="p-8">
-                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-white">
-                      <CheckCircle2 className="w-5 h-5 text-green-500" /> Verificações aprovadas ({result.passed.length})
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-ink-primary">
+                      <CheckCircle2 className="w-5 h-5 text-success" /> Verificações aprovadas ({result.passed.length})
                     </h3>
                     <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
                       {result.passed.map((p, i) => (
-                        <div key={i} className="flex items-center gap-2 text-sm bg-green-500/[0.06] border border-green-500/20 rounded-lg px-4 py-2.5">
-                          <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
-                          <span className="text-white/80">{p}</span>
+                        <div key={i} className="flex items-center gap-2 text-sm bg-success/[0.06] border border-success/20 rounded-lg px-4 py-2.5">
+                          <CheckCircle2 className="w-4 h-4 text-success flex-shrink-0" />
+                          <span className="text-ink-secondary">{p}</span>
                         </div>
                       ))}
                     </div>
@@ -616,7 +611,7 @@ const SEOAnalyzer = () => {
       )}
 
       {/* CTA FINAL */}
-      <section className="bg-black text-white py-24 md:py-32 border-t border-white/10">
+      <section className="bg-black text-ink-primary py-24 md:py-32 border-t border-black/10">
         <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -635,7 +630,7 @@ const SEOAnalyzer = () => {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-8 max-w-2xl mx-auto text-white/70"
+            className="mt-8 max-w-2xl mx-auto text-ink-secondary"
           >
             Podemos implementar as recomendações contigo — sem contratos longos, sem lock-in.
             Marca uma conversa de 30 minutos e mostramos-te por onde começar.
@@ -650,7 +645,7 @@ const SEOAnalyzer = () => {
           >
             <RouterLink
               to="/booking"
-              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-white"
+              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-ink-primary"
               style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}

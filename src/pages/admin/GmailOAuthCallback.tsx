@@ -42,7 +42,7 @@ export default function GmailOAuthCallback() {
     <div className="min-h-[50vh] flex items-center justify-center p-6">
       <div className="max-w-md w-full text-center space-y-4 rounded-lg border bg-background p-8">
         {state === "working" && <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />}
-        {state === "ok" && <CheckCircle2 className="mx-auto h-8 w-8 text-emerald-500" />}
+        {state === "ok" && <CheckCircle2 className="mx-auto h-8 w-8 text-success" />}
         {state === "error" && <XCircle className="mx-auto h-8 w-8 text-destructive" />}
         <h1 className="text-lg font-semibold">
           {state === "working" ? "A ligar Gmail…" : state === "ok" ? "Gmail ligado" : "Erro na ligação"}

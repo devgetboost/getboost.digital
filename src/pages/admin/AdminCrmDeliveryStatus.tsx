@@ -199,7 +199,7 @@ const AdminCrmDeliveryStatus = () => {
                           <XCircle className="h-3.5 w-3.5" /> Falhou
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-emerald-600 text-xs font-medium">
+                        <span className="inline-flex items-center gap-1 text-success text-xs font-medium">
                           <CheckCircle2 className="h-3.5 w-3.5" /> Enviado
                         </span>
                       )}
@@ -268,7 +268,7 @@ const AdminCrmDeliveryStatus = () => {
                       <XCircle className="h-3.5 w-3.5" /> Falhou
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 text-emerald-600 text-xs font-medium">
+                    <span className="inline-flex items-center gap-1 text-success text-xs font-medium">
                       <CheckCircle2 className="h-3.5 w-3.5" /> Enviado
                     </span>
                   )}

@@ -33,7 +33,7 @@ const VideoBackground = () => {
         <source src={loginVideoAsset.url} type="video/mp4" />
       </video>
       {/* Layered overlays: brand tint + darkening for legibility */}
-      <div className="absolute inset-0 bg-[#0a0603]/70 z-10" />
+      <div className="absolute inset-0 bg-canvas-inverse/70 z-10" />
       <div
         className="absolute inset-0 z-10 mix-blend-overlay opacity-40"
         style={{
@@ -129,7 +129,7 @@ const Login = () => {
   return (
     <>
       <SEO title={t('login.seoTitle')} description={t('login.seoDesc')} canonical="/login" noIndex />
-      <div className="relative min-h-screen w-full flex items-center justify-center px-4 py-12 overflow-hidden bg-[#0a0603]">
+      <div className="relative min-h-screen w-full flex items-center justify-center px-4 py-12 overflow-hidden bg-canvas-inverse">
         <VideoBackground />
 
         {/* Back to site */}

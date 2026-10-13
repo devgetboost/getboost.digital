@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Download, User, Target, Camera, Rocket, MessageSquare, CheckCircle, ArrowRight, Sparkles } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { analytics } from '@/lib/analytics';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useRef, useCallback } from 'react';
@@ -55,7 +56,7 @@ const BrandingGuide = () => {
             </span>
             <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight mb-4">{t('brandingGuide.heroTitle')}</h1>
             <p className="text-lg text-white/75 max-w-2xl mx-auto mb-8">{t('brandingGuide.heroSubtitle')}</p>
-            <Button size="lg" className="rounded-full h-14 px-8 text-base font-semibold" onClick={handleDownloadPDF}>
+            <Button size="lg" className="rounded-full h-14 px-8 text-base font-semibold" onClick={() => { analytics.trackClick('branding_guide', 'guide_download', 'conversion'); handleDownloadPDF(); }}>
               <Download className="w-5 h-5 mr-2" /> {t('brandingGuide.downloadPdf')}
             </Button>
           </motion.div>
@@ -68,7 +69,7 @@ const BrandingGuide = () => {
       {/* Guide Content */}
       <div ref={guideRef}>
         {/* Section 1: Framework de Posicionamento Pessoal */}
-        <section className="section-padding">
+        <section className="gb-section">
           <div className="max-w-4xl mx-auto">
             <motion.div {...fadeIn}>
               <SectionHeader icon={<Target className="w-7 h-7 text-primary" />} number="01" title={t('brandingGuide.s1Title')} subtitle={t('brandingGuide.s1Subtitle')} />
@@ -82,7 +83,7 @@ const BrandingGuide = () => {
         </section>
 
         {/* Section 2: Estratégia de Conteúdo */}
-        <section className="section-padding bg-secondary/30">
+        <section className="gb-surface-section gb-section">
           <div className="max-w-4xl mx-auto">
             <motion.div {...fadeIn}>
               <SectionHeader icon={<MessageSquare className="w-7 h-7 text-primary" />} number="02" title={t('brandingGuide.s2Title')} subtitle={t('brandingGuide.s2Subtitle')} />
@@ -97,7 +98,7 @@ const BrandingGuide = () => {
         </section>
 
         {/* Section 3: Templates de Bio e Elevator Pitch */}
-        <section className="section-padding">
+        <section className="gb-section">
           <div className="max-w-4xl mx-auto">
             <motion.div {...fadeIn}>
               <SectionHeader icon={<User className="w-7 h-7 text-primary" />} number="03" title={t('brandingGuide.s3Title')} subtitle={t('brandingGuide.s3Subtitle')} />
@@ -111,7 +112,7 @@ const BrandingGuide = () => {
         </section>
 
         {/* Section 4: Fotografia e Identidade Visual */}
-        <section className="section-padding bg-secondary/30">
+        <section className="gb-surface-section gb-section">
           <div className="max-w-4xl mx-auto">
             <motion.div {...fadeIn}>
               <SectionHeader icon={<Camera className="w-7 h-7 text-primary" />} number="04" title={t('brandingGuide.s4Title')} subtitle={t('brandingGuide.s4Subtitle')} />
@@ -124,7 +125,7 @@ const BrandingGuide = () => {
         </section>
 
         {/* Section 5: Plano de Ação 30 Dias */}
-        <section className="section-padding">
+        <section className="gb-section">
           <div className="max-w-4xl mx-auto">
             <motion.div {...fadeIn}>
               <SectionHeader icon={<Rocket className="w-7 h-7 text-primary" />} number="05" title={t('brandingGuide.s5Title')} subtitle={t('brandingGuide.s5Subtitle')} />
@@ -139,11 +140,11 @@ const BrandingGuide = () => {
       </div>
 
       {/* CTA Download */}
-      <section className="section-padding">
+      <section className="gb-section">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">{t('brandingGuide.ctaTitle')}</h2>
           <p className="text-muted-foreground mb-8">{t('brandingGuide.ctaDesc')}</p>
-          <Button size="lg" className="rounded-full h-14 px-8 text-base font-semibold" onClick={handleDownloadPDF}>
+          <Button size="lg" className="rounded-full h-14 px-8 text-base font-semibold" onClick={() => { analytics.trackClick('branding_guide', 'guide_download', 'conversion'); handleDownloadPDF(); }}>
             <Download className="w-5 h-5 mr-2" /> {t('brandingGuide.downloadPdf')}
           </Button>
         </div>

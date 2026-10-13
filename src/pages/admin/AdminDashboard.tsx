@@ -89,7 +89,7 @@ const AdminDashboard = () => {
 
   const kpis = [
     { label: 'Leads Totais', value: leadsTotal, icon: Users, trend: leadsTrend, color: 'text-primary', bg: 'bg-primary/8' },
-    { label: 'Leads (7 dias)', value: leadsNew7d, icon: TrendingUp, trend: leadsTrend, color: 'text-emerald-500', bg: 'bg-emerald-500/8' },
+    { label: 'Leads (7 dias)', value: leadsNew7d, icon: TrendingUp, trend: leadsTrend, color: 'text-success', bg: 'bg-emerald-500/8' },
     { label: 'Reuniões Agendadas', value: bookingsPending + bookingsConfirmed, icon: CalendarIcon, color: 'text-blue-500', bg: 'bg-blue-500/8' },
     { label: 'Reuniões Concluídas', value: bookingsCompleted, icon: CheckCircle, color: 'text-green-500', bg: 'bg-green-500/8' },
     { label: 'Projetos Ativos', value: activeProjects, icon: FolderKanban, color: 'text-indigo-500', bg: 'bg-indigo-500/8' },
@@ -171,7 +171,7 @@ const AdminDashboard = () => {
                   <kpi.icon className={`h-5 w-5 ${kpi.color}`} />
                 </div>
                 {kpi.trend !== undefined && kpi.trend !== 0 && (
-                  <Badge variant="outline" className={`text-[10px] px-1.5 py-0 h-5 gap-0.5 ${kpi.trend > 0 ? 'text-emerald-500 border-emerald-500/30' : 'text-red-500 border-red-500/30'}`}>
+                  <Badge variant="outline" className={`text-[10px] px-1.5 py-0 h-5 gap-0.5 ${kpi.trend > 0 ? 'text-success border-emerald-500/30' : 'text-red-500 border-red-500/30'}`}>
                     {kpi.trend > 0 ? <ArrowUp className="h-2.5 w-2.5" /> : <ArrowDown className="h-2.5 w-2.5" />}
                     {Math.abs(kpi.trend)}
                   </Badge>

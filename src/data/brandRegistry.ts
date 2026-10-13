@@ -31,7 +31,7 @@ export const METRICS = {
    */
   projectsDelivered: {
     value: '30+',
-    label: { pt: 'Projetos entregues', en: 'Projects delivered', es: 'Proyectos entregados' },
+    label: { pt: 'Projectos entregues', en: 'Projects delivered', es: 'Proyectos entregados' },
   },
   /** Experience claim. All public copy says 20+ — keep them identical. */
   yearsExperience: {

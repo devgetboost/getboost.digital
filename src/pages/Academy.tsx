@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, GraduationCap, Clock, PlayCircle, Award, Sparkles } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import { supabase } from '@/integrations/supabase/client';
 
 const ACCENT = '#ff4000';
@@ -51,6 +52,7 @@ const Academy = () => {
 
   return (
     <Layout>
+      <ScrollDepth location="academy" />
       <SEO
         title="Getboost Academy — Cursos e Formações | Getboost Digital"
         description="Formações práticas em Inteligência Artificial, Automação, Growth Marketing e Desenvolvimento. Aprende com quem opera. Aplica no dia seguinte."
@@ -59,10 +61,10 @@ const Academy = () => {
       />
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      <section className="gb-surface-page relative overflow-hidden">
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
+          className="absolute inset-0 gb-grid-overlay opacity-[0.05]"
           style={{
             backgroundImage:
               'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
@@ -74,29 +76,22 @@ const Academy = () => {
         <div
           aria-hidden
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)' }}
-        />
-        <motion.div
-          aria-hidden
-          initial={{ y: '-100%' }}
-          animate={{ y: '120%' }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          className="pointer-events-none absolute inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#ff4000]/10 to-transparent"
+          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)' }}
         />
 
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-28 md:py-40">
+        <div className="gb-container relative gb-section !pt-10 md:!pt-16">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
+            className="gb-eyebrow text-brand-600"
             style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
             Getboost Academy · Formação Prática · Aplica no dia seguinte
           </motion.div>
 
-          <h1 className="mt-8 font-black leading-[0.92] tracking-tight text-[clamp(2.75rem,8vw,7rem)]">
+          <h1 className="gb-text-display mt-5 text-ink-primary">
             {manifestoLines.map((line, i) => (
               <motion.span
                 key={line}
@@ -126,9 +121,9 @@ const Academy = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-white/75"
+            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-ink-secondary"
           >
-            Não te ensinamos <em className="not-italic text-white">teoria</em>. Ensinamos-te a operar.
+            Não te ensinamos <em className="not-italic text-ink-primary">teoria</em>. Ensinamos-te a operar.
             Formações desenhadas por quem constrói agentes de IA, automações e campanhas de performance
             todos os dias. Cada aula tem um output prático. Cada curso, um projecto real.
           </motion.p>
@@ -143,8 +138,8 @@ const Academy = () => {
               href={ACADEMY_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: '#ffb494' }}
+              className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-ink-primary"
+              style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
             >
@@ -153,7 +148,7 @@ const Academy = () => {
             </a>
             <Link
               to="/academy/formacao-empresas"
-              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-white/60 transition-colors hover:text-white"
+              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-ink-secondary transition-colors hover:text-ink-primary"
             >
               <Sparkles className="h-4 w-4" style={{ color: ACCENT }} />
               Formação à medida para equipas
@@ -164,7 +159,7 @@ const Academy = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1.1 }}
-            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 border-t border-white/10 pt-8"
+            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 border-t border-black/10 pt-8"
           >
             {[
               { k: '100%', v: 'Prático e aplicado' },
@@ -174,7 +169,7 @@ const Academy = () => {
             ].map((s) => (
               <div key={s.k}>
                 <div className="font-mono text-3xl md:text-4xl font-bold" style={{ color: ACCENT }}>{s.k}</div>
-                <div className="mt-1 text-xs uppercase tracking-widest text-white/50">{s.v}</div>
+                <div className="mt-1 text-xs uppercase tracking-widest text-ink-tertiary">{s.v}</div>
               </div>
             ))}
           </motion.div>
@@ -182,9 +177,9 @@ const Academy = () => {
       </section>
 
       {/* COURSES */}
-      <section className="bg-[#0a0603] text-white py-24 md:py-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="flex items-end justify-between gap-6 border-t border-white/10 pt-10 mb-14">
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <div className="flex items-end justify-between gap-6 border-t border-black/10 pt-10 mb-14">
             <div>
               <span
                 className="font-mono text-[11px] uppercase tracking-[0.22em]"
@@ -199,11 +194,11 @@ const Academy = () => {
           </div>
 
           {loading ? (
-            <div className="py-20 text-center text-white/40 font-mono text-xs uppercase tracking-[0.22em]">
+            <div className="py-20 text-center text-ink-tertiary font-mono text-xs uppercase tracking-[0.22em]">
               A carregar formações…
             </div>
           ) : courses.length === 0 ? (
-            <div className="py-20 text-center text-white/40 font-mono text-xs uppercase tracking-[0.22em]">
+            <div className="py-20 text-center text-ink-tertiary font-mono text-xs uppercase tracking-[0.22em]">
               Novas formações em breve.
             </div>
           ) : (
@@ -218,12 +213,12 @@ const Academy = () => {
                 >
                 <Link
                   to={goto(c)}
-                  className="group relative flex flex-col overflow-hidden border border-white/10 bg-white/[0.02] transition-all hover:border-[#ff4000]/60 hover:bg-white/[0.04] h-full"
+                  className="group relative flex flex-col overflow-hidden border border-black/10 bg-black/[0.02] transition-all hover:border-[#ff4000]/60 hover:bg-black/[0.04] h-full"
                 >
                   {c.is_featured && (
                     <span
                       className="absolute right-4 top-4 z-10 font-mono text-[10px] uppercase tracking-[0.22em] px-2 py-1 border"
-                      style={{ borderColor: ACCENT, color: ACCENT, background: '#0a0603cc' }}
+                      style={{ borderColor: ACCENT, color: ACCENT, background: 'rgb(28 25 23 / 0.8)' }}
                     >
                       Destaque
                     </span>
@@ -247,8 +242,8 @@ const Academy = () => {
                         }}
                       />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0603] via-transparent to-transparent" />
-                    <div className="absolute left-5 bottom-4 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-white/80">
+                    <div className="absolute inset-0 bg-gradient-to-t from-ink-primary via-transparent to-transparent" />
+                    <div className="absolute left-5 bottom-4 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-ink-secondary">
                       <GraduationCap className="h-4 w-4" style={{ color: ACCENT }} />
                       {c.category ?? 'Formação'}
                     </div>
@@ -259,10 +254,10 @@ const Academy = () => {
                       {c.title}
                     </h3>
                     {c.subtitle && (
-                      <p className="text-sm text-white/60 leading-relaxed">{c.subtitle}</p>
+                      <p className="text-sm text-ink-secondary leading-relaxed">{c.subtitle}</p>
                     )}
 
-                    <div className="mt-auto flex flex-wrap items-center gap-4 pt-4 border-t border-white/10 font-mono text-[11px] uppercase tracking-[0.18em] text-white/50">
+                    <div className="mt-auto flex flex-wrap items-center gap-4 pt-4 border-t border-black/10 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-tertiary">
                       {c.level && <span className="flex items-center gap-1.5"><Award className="h-3.5 w-3.5" />{c.level}</span>}
                       {c.duration && <span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" />{c.duration}</span>}
                       {c.lessons ? <span className="flex items-center gap-1.5"><PlayCircle className="h-3.5 w-3.5" />{c.lessons} aulas</span> : null}
@@ -272,7 +267,7 @@ const Academy = () => {
                       <span className="font-mono text-sm font-bold" style={{ color: ACCENT }}>
                         {c.price_label ?? 'Sob consulta'}
                       </span>
-                      <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-white/80 group-hover:text-white transition-colors">
+                      <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-ink-secondary group-hover:text-ink-primary transition-colors">
                         Ver curso
                         <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                       </span>
@@ -287,7 +282,7 @@ const Academy = () => {
       </section>
 
       {/* CTA */}
-      <section className="bg-black text-white py-28 md:py-40">
+      <section className="gb-surface-page gb-section">
         <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -298,7 +293,7 @@ const Academy = () => {
           >
             Prontos para <span style={{ color: ACCENT }}>subir de nível</span>?
           </motion.h2>
-          <p className="mt-8 max-w-2xl mx-auto text-white/60 text-lg">
+          <p className="mt-8 max-w-2xl mx-auto text-ink-secondary text-lg">
             Aceder à plataforma completa da Getboost Academy — trilhas, aulas, certificados e comunidade.
           </p>
           <div className="mt-14">
@@ -306,7 +301,7 @@ const Academy = () => {
               href={ACADEMY_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-white"
+              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-ink-primary"
               style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}

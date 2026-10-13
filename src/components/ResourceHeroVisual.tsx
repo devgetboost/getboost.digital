@@ -25,11 +25,11 @@ const Card: React.FC<React.PropsWithChildren> = ({ children }) => (
 
 const Bar = ({ pct, delay = 0, label, value }: { pct: number; delay?: number; label: string; value: string }) => (
   <div>
-    <div className="flex items-center justify-between text-[11px] text-[#1a1b3a] mb-1.5">
+    <div className="flex items-center justify-between text-[11px] text-ink-primary mb-1.5">
       <span className="font-medium">{label}</span>
       <span className="font-bold text-primary">{value}</span>
     </div>
-    <div className="h-2 rounded-full bg-[#f5f3ef] overflow-hidden">
+    <div className="h-2 rounded-full bg-canvas-section overflow-hidden">
       <motion.div
         initial={{ width: 0 }}
         animate={{ width: `${pct}%` }}
@@ -42,10 +42,10 @@ const Bar = ({ pct, delay = 0, label, value }: { pct: number; delay?: number; la
 
 const AuditVisual = () => (
   <Card>
-    <div className="flex items-center justify-between pb-4 border-b border-[#1a1b3a]/10">
+    <div className="flex items-center justify-between pb-4 border-b border-ink-primary/10">
       <div>
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-[#1a1b3a]/50">Análise</div>
-        <div className="text-lg font-bold text-[#1a1b3a]">
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-ink-primary/50">Análise</div>
+        <div className="text-lg font-bold text-ink-primary">
           Resultado: <span className="text-primary">yoursite.com</span>
         </div>
       </div>
@@ -69,7 +69,7 @@ const AuditVisual = () => (
         { k: 'Avisos', v: '12' },
         { k: 'Ok', v: '38' },
       ].map((m) => (
-        <div key={m.k} className="p-2.5 rounded-lg bg-[#0a0a0a] text-center">
+        <div key={m.k} className="p-2.5 rounded-lg bg-canvas-inverse text-center">
           <div className="text-[10px] text-white/50 uppercase tracking-wider">{m.k}</div>
           <div className="text-base font-bold text-primary">{m.v}</div>
         </div>
@@ -82,10 +82,10 @@ const ChecklistVisual = () => {
   const items = ['Meta tags otimizadas', 'Títulos H1 únicos', 'Alt text em imagens', 'Sitemap XML válido', 'Core Web Vitals'];
   return (
     <Card>
-      <div className="flex items-center justify-between pb-4 border-b border-[#1a1b3a]/10">
+      <div className="flex items-center justify-between pb-4 border-b border-ink-primary/10">
         <div className="flex items-center gap-2">
           <CheckSquare className="w-5 h-5 text-primary" />
-          <div className="text-lg font-bold text-[#1a1b3a]">Checklist SEO</div>
+          <div className="text-lg font-bold text-ink-primary">Checklist SEO</div>
         </div>
         <div className="text-[11px] font-bold text-primary bg-primary/10 px-2 py-1 rounded-md">50+ itens</div>
       </div>
@@ -96,7 +96,7 @@ const ChecklistVisual = () => {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 + i * 0.15 }}
-            className="flex items-center gap-3 p-3 rounded-lg bg-[#f5f3ef] border border-[#1a1b3a]/5"
+            className="flex items-center gap-3 p-3 rounded-lg bg-canvas-section border border-ink-primary/5"
           >
             <motion.div
               initial={{ scale: 0 }}
@@ -106,7 +106,7 @@ const ChecklistVisual = () => {
             >
               <svg viewBox="0 0 20 20" className="w-3.5 h-3.5 text-white fill-current"><path d="M7.5 13.5L4 10l1.4-1.4 2.1 2.1 6.1-6.1L15 6z" /></svg>
             </motion.div>
-            <span className="text-sm text-[#1a1b3a] font-medium">{it}</span>
+            <span className="text-sm text-ink-primary font-medium">{it}</span>
           </motion.li>
         ))}
       </ul>
@@ -116,10 +116,10 @@ const ChecklistVisual = () => {
 
 const DocumentVisual = ({ title, badge }: { title: string; badge: string }) => (
   <Card>
-    <div className="flex items-center justify-between pb-4 border-b border-[#1a1b3a]/10">
+    <div className="flex items-center justify-between pb-4 border-b border-ink-primary/10">
       <div className="flex items-center gap-2">
         <FileText className="w-5 h-5 text-primary" />
-        <div className="text-lg font-bold text-[#1a1b3a]">{title}</div>
+        <div className="text-lg font-bold text-ink-primary">{title}</div>
       </div>
       <div className="text-[11px] font-bold text-primary bg-primary/10 px-2 py-1 rounded-md">{badge}</div>
     </div>
@@ -130,7 +130,7 @@ const DocumentVisual = ({ title, badge }: { title: string; badge: string }) => (
           initial={{ width: 0, opacity: 0 }}
           animate={{ width: `${w}%`, opacity: 1 }}
           transition={{ delay: 0.5 + i * 0.1, duration: 0.8 }}
-          className={`h-3 rounded-full ${i % 3 === 0 ? 'bg-primary/70' : 'bg-[#1a1b3a]/15'}`}
+          className={`h-3 rounded-full ${i % 3 === 0 ? 'bg-primary/70' : 'bg-ink-primary/15'}`}
         />
       ))}
     </div>
@@ -141,7 +141,7 @@ const DocumentVisual = ({ title, badge }: { title: string; badge: string }) => (
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 1 + i * 0.1 }}
-          className="p-2 rounded-lg bg-[#0a0a0a] text-center"
+          className="p-2 rounded-lg bg-canvas-inverse text-center"
         >
           <div className="text-[10px] text-white/50">{q}</div>
           <div className="text-xs font-bold text-primary">{['12%', '28%', '19%', '41%'][i]}</div>
@@ -153,12 +153,12 @@ const DocumentVisual = ({ title, badge }: { title: string; badge: string }) => (
 
 const CalendarVisual = () => (
   <Card>
-    <div className="flex items-center justify-between pb-4 border-b border-[#1a1b3a]/10">
+    <div className="flex items-center justify-between pb-4 border-b border-ink-primary/10">
       <div className="flex items-center gap-2">
         <Calendar className="w-5 h-5 text-primary" />
-        <div className="text-lg font-bold text-[#1a1b3a]">Calendário Editorial</div>
+        <div className="text-lg font-bold text-ink-primary">Calendário Editorial</div>
       </div>
-      <div className="text-[11px] font-bold text-[#1a1b3a]/60">Outubro</div>
+      <div className="text-[11px] font-bold text-ink-primary/60">Outubro</div>
     </div>
     <div className="mt-4 grid grid-cols-7 gap-1.5">
       {Array.from({ length: 28 }).map((_, i) => {
@@ -170,7 +170,7 @@ const CalendarVisual = () => (
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4 + i * 0.02 }}
             className={`aspect-square rounded-md flex items-center justify-center text-[10px] font-bold ${
-              marked ? 'bg-primary text-white' : 'bg-[#f5f3ef] text-[#1a1b3a]/60'
+              marked ? 'bg-primary text-white' : 'bg-canvas-section text-ink-primary/60'
             }`}
           >
             {i + 1}
@@ -178,7 +178,7 @@ const CalendarVisual = () => (
         );
       })}
     </div>
-    <div className="mt-4 flex items-center gap-2 text-[11px] text-[#1a1b3a]/70">
+    <div className="mt-4 flex items-center gap-2 text-[11px] text-ink-primary/70">
       <span className="w-2 h-2 rounded-full bg-primary" /> 9 publicações agendadas
     </div>
   </Card>
@@ -186,10 +186,10 @@ const CalendarVisual = () => (
 
 const CalculatorVisual = () => (
   <Card>
-    <div className="flex items-center justify-between pb-4 border-b border-[#1a1b3a]/10">
+    <div className="flex items-center justify-between pb-4 border-b border-ink-primary/10">
       <div className="flex items-center gap-2">
         <Calculator className="w-5 h-5 text-primary" />
-        <div className="text-lg font-bold text-[#1a1b3a]">Calculadora de ROI</div>
+        <div className="text-lg font-bold text-ink-primary">Calculadora de ROI</div>
       </div>
       <motion.div
         animate={{ scale: [1, 1.05, 1] }}
@@ -204,14 +204,14 @@ const CalculatorVisual = () => (
         { k: 'Investimento', v: '5.000€' },
         { k: 'Receita', v: '23.400€' },
       ].map((m) => (
-        <div key={m.k} className="p-3 rounded-lg bg-[#f5f3ef]">
-          <div className="text-[10px] text-[#1a1b3a]/60 uppercase">{m.k}</div>
-          <div className="text-lg font-bold text-[#1a1b3a]">{m.v}</div>
+        <div key={m.k} className="p-3 rounded-lg bg-canvas-section">
+          <div className="text-[10px] text-ink-primary/60 uppercase">{m.k}</div>
+          <div className="text-lg font-bold text-ink-primary">{m.v}</div>
         </div>
       ))}
     </div>
     <div className="mt-4 p-5 rounded-xl bg-primary/10 border border-primary/20 text-center">
-      <div className="text-[11px] uppercase tracking-wider text-[#1a1b3a]/60">ROI</div>
+      <div className="text-[11px] uppercase tracking-wider text-ink-primary/60">ROI</div>
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -239,14 +239,14 @@ const IdeasVisual = () => {
   const ideas = ['5 hooks para Reels de moda', '10 posts sobre produtividade', 'Carrossel: mitos de SEO'];
   return (
     <Card>
-      <div className="flex items-center justify-between pb-4 border-b border-[#1a1b3a]/10">
+      <div className="flex items-center justify-between pb-4 border-b border-ink-primary/10">
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-primary" />
-          <div className="text-lg font-bold text-[#1a1b3a]">Ideias com IA</div>
+          <div className="text-lg font-bold text-ink-primary">Ideias com IA</div>
         </div>
         <div className="text-[11px] font-bold text-primary bg-primary/10 px-2 py-1 rounded-md">GPT · pronto</div>
       </div>
-      <div className="mt-4 p-3 rounded-lg bg-[#f5f3ef] text-xs text-[#1a1b3a]/70">
+      <div className="mt-4 p-3 rounded-lg bg-canvas-section text-xs text-ink-primary/70">
         <span className="text-primary font-bold">nicho:</span> café artesanal
       </div>
       <div className="mt-3 space-y-2">
@@ -256,17 +256,17 @@ const IdeasVisual = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 + i * 0.25 }}
-            className="flex items-center gap-3 p-3 rounded-lg border border-[#1a1b3a]/10 bg-white"
+            className="flex items-center gap-3 p-3 rounded-lg border border-ink-primary/10 bg-white"
           >
             <Lightbulb className="w-4 h-4 text-primary flex-shrink-0" />
-            <span className="text-sm text-[#1a1b3a] font-medium">{it}</span>
+            <span className="text-sm text-ink-primary font-medium">{it}</span>
           </motion.div>
         ))}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: [0, 1, 1, 0] }}
           transition={{ delay: 1.4, duration: 1.5, repeat: Infinity, repeatDelay: 0.5 }}
-          className="flex items-center gap-2 p-3 text-xs text-[#1a1b3a]/50"
+          className="flex items-center gap-2 p-3 text-xs text-ink-primary/50"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
           A gerar mais ideias...
@@ -278,10 +278,10 @@ const IdeasVisual = () => {
 
 const BookVisual = () => (
   <Card>
-    <div className="flex items-center justify-between pb-4 border-b border-[#1a1b3a]/10">
+    <div className="flex items-center justify-between pb-4 border-b border-ink-primary/10">
       <div className="flex items-center gap-2">
         <Book className="w-5 h-5 text-primary" />
-        <div className="text-lg font-bold text-[#1a1b3a]">Guia Completo</div>
+        <div className="text-lg font-bold text-ink-primary">Guia Completo</div>
       </div>
       <div className="text-[11px] font-bold text-primary bg-primary/10 px-2 py-1 rounded-md">PDF · 48 pág.</div>
     </div>
@@ -292,11 +292,11 @@ const BookVisual = () => (
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 + i * 0.12 }}
-          className="aspect-[3/4] rounded-lg bg-gradient-to-br from-[#f5f3ef] to-white border border-[#1a1b3a]/10 p-3 flex flex-col justify-between"
+          className="aspect-[3/4] rounded-lg bg-gradient-to-br from-canvas-section to-white border border-ink-primary/10 p-3 flex flex-col justify-between"
         >
           <div className="space-y-1.5">
-            <div className="h-1.5 rounded bg-[#1a1b3a]/20 w-3/4" />
-            <div className="h-1.5 rounded bg-[#1a1b3a]/10 w-1/2" />
+            <div className="h-1.5 rounded bg-ink-primary/20 w-3/4" />
+            <div className="h-1.5 rounded bg-ink-primary/10 w-1/2" />
           </div>
           <div className="text-[10px] font-bold text-primary">Cap. {i}</div>
         </motion.div>

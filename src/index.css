@@ -339,17 +339,6 @@
     @apply bg-background/80 backdrop-blur-xl border-b border-border/60;
   }
 
-  .section-padding {
-    @apply px-6 py-20 md:px-12 lg:px-24 lg:py-32;
-  }
-
-  /* Boost card border effect — used across pages for consistent card style */
-  .card-boost {
-    @apply rounded-xl border border-border transition-all duration-300;
-  }
-  .card-boost-hover {
-    @apply hover:shadow-lg;
-  }
 }
 
 

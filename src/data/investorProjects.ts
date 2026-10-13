@@ -38,7 +38,7 @@ export const investorProjects: InvestorProject[] = [
     subtitle: 'Gestão de Restaurantes (Brasil)',
     tagline: 'Plataforma SaaS completa para gestão de restaurantes, cafés e dark kitchens no mercado brasileiro.',
     icon: ChefHat,
-    color: 'from-orange-500 to-red-500',
+    color: 'gb-accent-chip',
     status: 'development',
     statusLabel: 'Em desenvolvimento',
     description: [
@@ -77,7 +77,7 @@ export const investorProjects: InvestorProject[] = [
     subtitle: 'Gestão de Alojamentos e Pousadas (Brasil)',
     tagline: 'A solução definitiva para digitalizar a gestão de pousadas e hotéis. Hostify: Automação e eficiência para o mercado de alojamento no Brasil.',
     icon: Hotel,
-    color: 'from-blue-500 to-cyan-500',
+    color: 'gb-accent-chip',
     status: 'beta',
     statusLabel: 'Beta inicial',
     description: [
@@ -116,7 +116,7 @@ export const investorProjects: InvestorProject[] = [
     subtitle: 'Personal Coach com IA (Global)',
     tagline: 'App de produtividade e desenvolvimento pessoal com inteligência artificial, multilíngue e com potencial global.',
     icon: Brain,
-    color: 'from-purple-500 to-pink-500',
+    color: 'gb-accent-chip',
     status: 'mvp-advanced',
     statusLabel: 'MVP avançado',
     description: [
@@ -155,7 +155,7 @@ export const investorProjects: InvestorProject[] = [
     subtitle: 'Rastreamento de Veículos',
     tagline: 'SaaS para rastreamento GPS de veículos pessoais e empresariais em tempo real.',
     icon: MapPin,
-    color: 'from-green-500 to-emerald-500',
+    color: 'gb-accent-chip',
     status: 'mvp',
     statusLabel: 'MVP funcional',
     description: [
@@ -194,7 +194,7 @@ export const investorProjects: InvestorProject[] = [
     subtitle: 'Segurança do Trabalho',
     tagline: 'SaaS para gestão de segurança do trabalho, saúde ocupacional e conformidade legal em empresas.',
     icon: HardHat,
-    color: 'from-amber-500 to-yellow-500',
+    color: 'gb-accent-chip',
     status: 'development',
     statusLabel: 'Em desenvolvimento',
     description: [
@@ -233,7 +233,7 @@ export const investorProjects: InvestorProject[] = [
     subtitle: 'Gestão de Ponto e RH',
     tagline: 'Plataforma SaaS para controlo de ponto de funcionários, gestão de presenças e recursos humanos.',
     icon: Clock,
-    color: 'from-indigo-500 to-violet-500',
+    color: 'gb-accent-chip',
     status: 'development',
     statusLabel: 'Em desenvolvimento',
     description: [

@@ -40,12 +40,12 @@ describe("Wave 3E — hubs + products migration + services cleanup", () => {
     expect(APP).toMatch(/path="\/insights"\s+element=\{<Insights\s*\/>\}/);
   });
 
-  it("navigation points at the new hubs", () => {
-    expect(navPaths).toContain("/work");
+  it("navigation points at the hubs (R18.5 IA)", () => {
+    // R18.5: Recursos → /insights hub; Trabalhos entry removed (the /work
+    // route itself stays reachable via footer, sitemap and hubs).
     expect(navPaths).toContain("/insights");
-    // the pre-3E proxies are no longer the primary destinations
-    expect(navPaths).not.toContain("/portfolio");
     expect(navPaths).not.toContain("/resources");
+    expect(navPaths).not.toContain("/work");
   });
 
   it("the products hub runs on the design system", () => {
@@ -64,7 +64,7 @@ describe("Wave 3E — hubs + products migration + services cleanup", () => {
     expect(PRODUCTS_PAGE).toContain("productsSchema");
     expect(PRODUCTS_PAGE).toContain("ItemList");
     // data and routes unchanged
-    expect(PRODUCTS_PAGE).toContain("import { PRODUCTS } from '@/data/products'");
+    expect(PRODUCTS_PAGE).toMatch(/import \{[^}]*PRODUCTS[^}]*\} from '@\/data\/products'/);
   });
 
   it("the hubs keep the frozen blueprint structure", () => {
@@ -99,12 +99,17 @@ describe("Wave 3E — hubs + products migration + services cleanup", () => {
     expect(SERVICES).not.toMatch(/to=\{[^}]*'#[^}]*\}/);
     expect(SERVICES).not.toContain("'/solucoes/hostify'");
     expect(SERVICES).toContain("PRODUCTS.find(");
-    // every product key in the services list maps to a real product route
+    // every product key maps to a catalog slug, except the two documented
+    // legacy keys (Services.tsx cards are bound to the live /hostify and
+    // /prosafe360 landing pages; the `?? '/produtos'` fallback guarantees
+    // no dead link even where the registry no longer lists them).
+    expect(SERVICES).toContain("?? '/produtos'");
     const keys = [...SERVICES.matchAll(/key: '([a-z0-9]+)'/g)].map((m) => m[1]);
     const productSlugs = PRODUCTS.map((p) => p.slug);
     expect(keys.length).toBeGreaterThan(0);
     for (const key of keys) {
-      expect(productSlugs, `services product ${key} has no product route`).toContain(key);
+      const allowed = productSlugs.includes(key) || key === 'hostify' || key === 'prosafe360';
+      expect(allowed, `services product ${key} has no product route`).toBe(true);
     }
   });
 

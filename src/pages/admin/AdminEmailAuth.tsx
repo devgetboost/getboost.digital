@@ -279,7 +279,7 @@ export default function AdminEmailAuth() {
                     {anyFail ? (
                       <ShieldAlert className="h-4 w-4 text-red-600" />
                     ) : (
-                      <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                      <ShieldCheck className="h-4 w-4 text-success" />
                     )}
                     {domain}
                   </CardTitle>

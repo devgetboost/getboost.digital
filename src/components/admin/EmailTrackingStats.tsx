@@ -698,8 +698,8 @@ function Stat({
     const cls = isFlat
       ? "text-muted-foreground"
       : good
-        ? "text-emerald-600"
-        : "text-red-600";
+        ? "text-success"
+        : "text-error";
     const sign = isFlat ? "" : isUp ? "+" : "";
     deltaNode = (
       <p className={`text-[11px] flex items-center gap-0.5 ${cls}`}>

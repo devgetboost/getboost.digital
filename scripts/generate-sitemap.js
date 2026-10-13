@@ -10,7 +10,6 @@ const staticRoutes = [
   '/produtos',
   '/work',
   '/insights',
-  '/about',
   '/portfolio',
   '/blog',
   '/resources',
@@ -30,7 +29,18 @@ const staticRoutes = [
   '/agencia-marketing-digital-figueira-da-foz',
   '/agencia-marketing-digital-coimbra',
   '/agencia-marketing-digital-leiria',
-  '/agencia-marketing-digital-pombal'
+  '/agencia-marketing-digital-pombal',
+  // R20.6 — SEO satellite landings (single source: src/data/landings.ts)
+  '/ai-agentes-imobiliario',
+  '/ai-agentes-clinicas',
+  '/ai-agentes-restauracao',
+  '/automacao-whatsapp',
+  '/integracao-crm',
+  '/integracao-erp',
+  '/desenvolvimento-saas',
+  '/software-gestao',
+  '/growth-system',
+  '/geracao-leads'
 ];
 
 

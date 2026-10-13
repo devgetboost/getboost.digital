@@ -5,6 +5,9 @@ import { motion } from 'framer-motion';
 import { Search, Clock, ArrowRight, Loader2 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
+import { Button } from '@/components/ui/button';
+import { analytics } from '@/lib/analytics';
 import { supabase } from '@/integrations/supabase/client';
 import { useContentEntriesWithFallback } from '@/hooks/useContent';
 import { estimateReadingMinutes, mediaUrl } from '@/lib/contentApi';
@@ -54,6 +57,7 @@ const Blog = () => {
 
   return (
     <Layout>
+      <ScrollDepth location="blog" />
       <SEO
         title={`${t('blog.title')} — Marketing Digital, SEO & IA`}
         description={t('blog.heroSubtitle')}
@@ -62,10 +66,10 @@ const Blog = () => {
       />
 
       {/* HERO — manifesto style */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      <section className="gb-surface-page relative overflow-hidden">
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
+          className="absolute inset-0 gb-grid-overlay opacity-[0.05]"
           style={{
             backgroundImage:
               'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
@@ -78,30 +82,23 @@ const Blog = () => {
           aria-hidden
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
           style={{
-            background: 'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)',
+            background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)',
           }}
         />
-        <motion.div
-          aria-hidden
-          initial={{ y: '-100%' }}
-          animate={{ y: '120%' }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          className="pointer-events-none absolute inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#ff4000]/10 to-transparent"
-        />
 
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-24 md:py-32">
+        <div className="gb-container relative gb-section">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
+            className="gb-eyebrow text-brand-600"
             style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
             Blog & Insights · Marketing · IA · SEO
           </motion.div>
 
-          <h1 className="mt-8 font-black leading-[0.92] tracking-tight text-[clamp(2.5rem,7vw,6rem)]">
+          <h1 className="gb-text-display mt-5 text-ink-primary">
             <motion.span
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
@@ -133,7 +130,7 @@ const Blog = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-white/75"
+            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-ink-secondary"
           >
             {t('blog.heroSubtitle')}
           </motion.p>
@@ -147,7 +144,7 @@ const Blog = () => {
             {['SEO', t('blog.featureSocial'), 'Branding', t('blog.featureStrategy'), 'IA', 'Automação'].map((f) => (
               <span
                 key={f}
-                className="rounded-full border border-white/20 px-4 py-1.5 text-xs md:text-sm text-white/70"
+                className="rounded-full border border-black/20 px-4 py-1.5 text-xs md:text-sm text-ink-secondary"
               >
                 {f}
               </span>
@@ -157,18 +154,18 @@ const Blog = () => {
       </section>
 
       {/* LISTING — dark canvas */}
-      <section className="bg-[#0a0603] text-white py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
           {/* Toolbar */}
-          <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between mb-12 border-b border-white/10 pb-8">
+          <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between mb-12 border-b border-black/10 pb-8">
             <div className="relative w-full lg:max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-tertiary" />
               <input
                 type="text"
                 placeholder={t('blog.search')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-white/[0.03] border border-white/15 rounded-full pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-[#ff4000]/60 transition-colors"
+                className="w-full bg-black/[0.03] border border-black/15 rounded-full pl-10 pr-4 py-2.5 text-sm text-ink-primary placeholder:text-ink-tertiary focus:outline-none focus:border-[#ff4000]/60 transition-colors"
               />
             </div>
             <div className="flex flex-wrap gap-2">
@@ -180,8 +177,8 @@ const Blog = () => {
                     onClick={() => setCategory(c)}
                     className={`px-4 py-2 rounded-full text-xs font-mono uppercase tracking-[0.18em] border transition-all ${
                       active
-                        ? 'bg-[#ff4000] text-white border-[#ff4000]'
-                        : 'bg-transparent text-white/60 border-white/15 hover:border-[#ff4000]/50 hover:text-white'
+                        ? 'bg-[#ff4000] text-ink-primary border-[#ff4000]'
+                        : 'bg-transparent text-ink-secondary border-black/15 hover:border-[#ff4000]/50 hover:text-ink-primary'
                     }`}
                   >
                     {c === 'all' ? t('blog.all') : c}
@@ -203,7 +200,7 @@ const Blog = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="mb-20 group cursor-pointer border border-white/10 rounded-2xl overflow-hidden hover:border-[#ff4000]/50 transition-all"
+                    className="mb-20 group cursor-pointer border border-black/10 rounded-2xl overflow-hidden hover:border-[#ff4000]/50 transition-all"
                   >
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                       <div className="overflow-hidden aspect-[16/10] lg:aspect-auto lg:min-h-[420px]">
@@ -216,7 +213,7 @@ const Blog = () => {
                           />
                         ) : null}
                       </div>
-                      <div className="flex flex-col justify-center p-8 md:p-12 bg-white/[0.02]">
+                      <div className="flex flex-col justify-center p-8 md:p-12 bg-black/[0.02]">
                         <span
                           className="font-mono text-[11px] uppercase tracking-[0.22em]"
                           style={{ color: ACCENT }}
@@ -226,8 +223,8 @@ const Blog = () => {
                         <h2 className="text-3xl md:text-4xl font-black mt-4 leading-[1.05] tracking-tight group-hover:text-[#ff4000] transition-colors">
                           {featured!.title}
                         </h2>
-                        <p className="text-white/70 mt-4 leading-relaxed">{featured!.excerpt}</p>
-                        <div className="flex items-center gap-4 mt-6 text-xs font-mono uppercase tracking-[0.18em] text-white/50">
+                        <p className="text-ink-secondary mt-4 leading-relaxed">{featured!.excerpt}</p>
+                        <div className="flex items-center gap-4 mt-6 text-xs font-mono uppercase tracking-[0.18em] text-ink-tertiary">
                           <span>{featuredDate}</span>
                           <span className="flex items-center gap-1.5">
                             <Clock className="h-3.5 w-3.5" />
@@ -258,7 +255,7 @@ const Blog = () => {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.08 }}
-                      className="group cursor-pointer h-full border border-white/10 rounded-2xl overflow-hidden hover:border-[#ff4000]/50 hover:bg-white/[0.02] transition-all"
+                      className="group cursor-pointer h-full border border-black/10 rounded-2xl overflow-hidden hover:border-[#ff4000]/50 hover:bg-black/[0.02] transition-all"
                     >
                       <div className="overflow-hidden aspect-[16/10]">
                         {postImage ? (
@@ -280,11 +277,11 @@ const Blog = () => {
                         <h3 className="text-xl font-bold mt-3 leading-tight group-hover:text-[#ff4000] transition-colors">
                           {post.title}
                         </h3>
-                        <p className="text-sm text-white/60 mt-3 leading-relaxed line-clamp-3">
+                        <p className="text-sm text-ink-secondary mt-3 leading-relaxed line-clamp-3">
                           {post.excerpt}
                         </p>
-                        <div className="flex items-center justify-between mt-6 pt-5 border-t border-white/10">
-                          <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-[0.18em] text-white/40">
+                        <div className="flex items-center justify-between mt-6 pt-5 border-t border-black/10">
+                          <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-[0.18em] text-ink-tertiary">
                             <span>{new Date(post.createdAt).toLocaleDateString(dateLocale)}</span>
                             <span className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
@@ -304,18 +301,48 @@ const Blog = () => {
               </div>
 
               {crossMarket && (
-                <div className="mb-8 border border-amber-500/30 bg-amber-500/10 rounded-lg p-4 text-sm text-amber-100">
+                <div className="mb-8 border border-warning/30 bg-warning-bg rounded-lg p-4 text-sm text-warning">
                   {t('blog.notLocalized', 'Este conteúdo ainda não está traduzido para o teu mercado. Mostramos a versão original.')}
                 </div>
               )}
 
               {!loading && filtered.length === 0 && (
-                <div className="text-center py-24 text-white/50 font-mono text-sm uppercase tracking-[0.22em]">
+                <div className="text-center py-24 text-ink-tertiary font-mono text-sm uppercase tracking-[0.22em]">
                   {t('blog.noResults')}
                 </div>
               )}
             </>
           )}
+        </div>
+      </section>
+
+      {/* CTA — every reader gets a commercial next step */}
+      <section className="gb-surface-page gb-section !pt-0">
+        <div className="gb-container">
+          <div className="gb-cta-band relative overflow-hidden border border-white/10 text-center">
+            <div className="relative">
+              <h2 className="font-black leading-[0.98] tracking-tight text-[clamp(2rem,5vw,4rem)] text-ink-inverse">
+                Gostas do que lês? <span style={{ color: '#ff4000' }}>Aplica-o</span> ao teu negócio.
+              </h2>
+              <p className="gb-text-body mx-auto mt-6 max-w-2xl text-white/70">
+                Diagnóstico gratuito de 30 minutos — saís com um plano concreto.
+              </p>
+              <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+                <Button asChild size="lg">
+                  <Link to="/booking" onClick={() => analytics.trackClick('blog', 'blog_booking', 'consideration')}>
+                    Agendar Diagnóstico
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="border-white/40 !text-white hover:!bg-white hover:!text-ink-primary">
+                  <Link to="/contact" onClick={() => analytics.trackClick('blog', 'blog_contact', 'consideration')}>
+                    Falar com Especialista
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </Layout>

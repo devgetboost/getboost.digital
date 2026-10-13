@@ -269,7 +269,7 @@ const UI_I18N: Record<Lang, UIStrings> = {
     submit: 'Solicitar demonstração', submitting: 'A enviar...', reply: 'Resposta em menos de 48 h',
     countries: ['Portugal', 'Brasil', 'Espanha', 'França', 'Reino Unido', 'Estados Unidos', 'Outro'],
     sizes: COMPANY_SIZES_PT,
-    fallbackNoProductInvalid: (slug) => <>Não reconhecemos <span className="font-semibold text-white">"{slug}"</span>. Podes enviar um pedido geral abaixo ou escolher um produto específico.</>,
+    fallbackNoProductInvalid: (slug) => <>Não reconhecemos <span className="font-semibold text-ink-primary">"{slug}"</span>. Podes enviar um pedido geral abaixo ou escolher um produto específico.</>,
     fallbackNoProduct: <>Não selecionaste um produto. Envia um pedido geral abaixo ou escolhe primeiro um produto específico.</>,
     seeAllProducts: 'Ver todos os produtos',
     seoTitle: (n, e) => `Demonstração ${n} — ${e}`,
@@ -287,7 +287,7 @@ const UI_I18N: Record<Lang, UIStrings> = {
     submit: 'Book demo', submitting: 'Sending...', reply: 'Reply within 48 h',
     countries: ['Portugal', 'Brazil', 'Spain', 'France', 'United Kingdom', 'United States', 'Other'],
     sizes: ['1 person', '2-10', '11-50', '51-200', '201-500', '500+'],
-    fallbackNoProductInvalid: (slug) => <>We don't recognize <span className="font-semibold text-white">"{slug}"</span>. You can send a general request below or pick a specific product.</>,
+    fallbackNoProductInvalid: (slug) => <>We don't recognize <span className="font-semibold text-ink-primary">"{slug}"</span>. You can send a general request below or pick a specific product.</>,
     fallbackNoProduct: <>You haven't selected a product. Send a general request below or pick a specific product first.</>,
     seeAllProducts: 'See all products',
     seoTitle: (n, e) => `${n} demo — ${e}`,
@@ -305,7 +305,7 @@ const UI_I18N: Record<Lang, UIStrings> = {
     submit: 'Solicitar demostración', submitting: 'Enviando...', reply: 'Respuesta en menos de 48 h',
     countries: ['Portugal', 'Brasil', 'España', 'Francia', 'Reino Unido', 'Estados Unidos', 'Otro'],
     sizes: ['1 persona', '2-10', '11-50', '51-200', '201-500', '500+'],
-    fallbackNoProductInvalid: (slug) => <>No reconocemos <span className="font-semibold text-white">"{slug}"</span>. Puedes enviar una solicitud general abajo o elegir un producto específico.</>,
+    fallbackNoProductInvalid: (slug) => <>No reconocemos <span className="font-semibold text-ink-primary">"{slug}"</span>. Puedes enviar una solicitud general abajo o elegir un producto específico.</>,
     fallbackNoProduct: <>No has seleccionado un producto. Envía una solicitud general abajo o elige primero un producto específico.</>,
     seeAllProducts: 'Ver todos los productos',
     seoTitle: (n, e) => `Demo de ${n} — ${e}`,
@@ -536,7 +536,7 @@ export default function DemoRequest() {
           canonical="/demo"
           noIndex
         />
-        <section className="relative overflow-hidden bg-[#0a0603] text-white min-h-[calc(100vh-3.5rem)] flex items-center">
+        <section className="gb-surface-page relative overflow-hidden gb-section min-h-[calc(100vh-3.5rem)] flex items-center">
           <div
             aria-hidden
             className="absolute inset-0 opacity-[0.15]"
@@ -559,19 +559,19 @@ export default function DemoRequest() {
             <h1 className="font-black leading-[0.95] tracking-tight text-[clamp(2rem,5vw,3.5rem)]">
               Não encontrámos o produto <span style={{ color: ACCENT }}>"{rawSlug}"</span>.
             </h1>
-            <p className="mt-6 text-lg text-white/70">
+            <p className="mt-6 text-lg text-ink-secondary">
               O link que seguiste aponta para um produto que não existe no nosso catálogo.
               Podes escolher um produto válido, voltar ao pedido geral de demonstração ou explorar todas as soluções.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
-              <Button asChild size="lg" className="rounded-full bg-[#ff4000] hover:bg-[#ff4000]/90 text-white font-semibold">
-                <Link to="/demo">Pedido de demo geral <ArrowRight className="ml-2 h-4 w-4" /></Link>
+              <Button asChild size="lg" className="rounded-full bg-[#ff4000] hover:bg-[#ff4000]/90 text-ink-primary font-semibold">
+                <Link to="/demo" onClick={() => analytics.trackClick('demo_hero', 'demo_demo', 'consideration')}>Pedido de demo geral <ArrowRight className="ml-2 h-4 w-4" /></Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-full border-white/20 text-white hover:bg-white/10 hover:text-white bg-transparent">
+              <Button asChild size="lg" variant="outline" className="rounded-full border-black/20 text-ink-primary hover:bg-black/10 hover:text-white bg-transparent">
                 <Link to="/solucoes">Ver todos os produtos</Link>
               </Button>
             </div>
-            <p className="mt-8 text-xs font-mono uppercase tracking-[0.22em] text-white/40">
+            <p className="mt-8 text-xs font-mono uppercase tracking-[0.22em] text-ink-tertiary">
               Produtos disponíveis: {ALLOWED_SLUGS.join(' · ')}
             </p>
           </div>
@@ -598,6 +598,7 @@ export default function DemoRequest() {
 
   return (
     <Layout>
+      <ScrollDepth location="demo" />
       <SEO
         title={seoTitle}
         description={seoDescription}
@@ -610,29 +611,12 @@ export default function DemoRequest() {
 
 
       {/* HERO — /agentes-ia style */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
-        <div
-          aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
-            backgroundSize: '56px 56px',
-            maskImage: 'radial-gradient(ellipse at 30% 40%, black 20%, transparent 70%)',
-            WebkitMaskImage: 'radial-gradient(ellipse at 30% 40%, black 20%, transparent 70%)',
-          }}
-        />
+      <section className="gb-surface-page relative overflow-hidden">
+                <div aria-hidden className="gb-grid-overlay" />
         <div
           aria-hidden
           className="absolute -right-40 top-1/3 h-[620px] w-[620px] rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)' }}
-        />
-        <motion.div
-          aria-hidden
-          initial={{ y: '-100%' }}
-          animate={{ y: '120%' }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          className="pointer-events-none absolute inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#ff4000]/10 to-transparent"
+          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)' }}
         />
 
         <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-20 md:py-28 grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-12 lg:gap-16 items-start">
@@ -642,7 +626,7 @@ export default function DemoRequest() {
               <div
                 role="group"
                 aria-label="Language selector"
-                className="mb-6 inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] p-1"
+                className="mb-6 inline-flex items-center gap-1 rounded-full border border-black/10 bg-black/[0.04] p-1"
               >
                 {SUPPORTED_LANGS.map((l) => (
                   <button
@@ -651,7 +635,7 @@ export default function DemoRequest() {
                     onClick={() => setLang(l)}
                     aria-pressed={lang === l}
                     className={`px-3 py-1 rounded-full text-[11px] font-mono uppercase tracking-[0.22em] transition-colors ${
-                      lang === l ? 'bg-[#ff4000] text-white' : 'text-white/60 hover:text-white'
+                      lang === l ? 'bg-[#ff4000] text-ink-primary' : 'text-ink-secondary hover:text-white'
                     }`}
                   >
                     {LANG_LABEL[l]}
@@ -662,24 +646,24 @@ export default function DemoRequest() {
 
             {showFallbackNotice ? (
               <div className="mb-6 rounded-2xl border border-[#ff4000]/30 bg-[#ff4000]/5 p-5">
-                <p className="text-sm text-white/85">
+                <p className="text-sm text-ink-secondary">
                   {isInvalid ? t.fallbackNoProductInvalid(rawSlug ?? '') : t.fallbackNoProduct}
                 </p>
-                <Button asChild size="sm" className="mt-4 rounded-full bg-[#ff4000] hover:bg-[#ff4000]/90 text-white font-semibold">
+                <Button asChild size="sm" className="mt-4 rounded-full bg-[#ff4000] hover:bg-[#ff4000]/90 text-ink-primary font-semibold">
                   <Link to="/solucoes">{t.seeAllProducts} <ArrowRight className="ml-2 h-4 w-4" /></Link>
                 </Button>
               </div>
             ) : (
               <Link
                 to={product.backHref}
-                className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.22em] text-white/60 hover:text-[#ffb494] transition-colors mb-8"
+                className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.22em] text-ink-secondary hover:text-[#ffb494] transition-colors mb-8"
               >
                 {t.back} {product.name}
               </Link>
             )}
 
             <div
-              className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
+              className="gb-eyebrow text-brand-600"
               style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
             >
               <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
@@ -695,30 +679,30 @@ export default function DemoRequest() {
               ))}
             </h1>
 
-            <p className="mt-6 text-lg text-white/70 max-w-xl">{product.tagline}</p>
+            <p className="mt-6 text-lg text-ink-secondary max-w-xl">{product.tagline}</p>
 
             {/* Metrics strip */}
-            <div className="mt-10 grid grid-cols-3 gap-4 md:gap-6 border-t border-white/10 pt-6">
+            <div className="mt-10 grid grid-cols-3 gap-4 md:gap-6 border-t border-black/10 pt-6">
               {product.metrics.map((m) => (
                 <div key={m.label}>
                   <div className="font-black text-2xl md:text-3xl" style={{ color: ACCENT }}>{m.value}</div>
-                  <div className="mt-1 text-[11px] font-mono uppercase tracking-[0.16em] text-white/50 leading-snug">{m.label}</div>
+                  <div className="mt-1 text-[11px] font-mono uppercase tracking-[0.16em] text-ink-tertiary leading-snug">{m.label}</div>
                 </div>
               ))}
             </div>
 
             {/* Agenda */}
             <div className="mt-10">
-              <div className="text-[11px] font-mono uppercase tracking-[0.22em] text-white/50 mb-4">
+              <div className="text-[11px] font-mono uppercase tracking-[0.22em] text-ink-tertiary mb-4">
                 {t.whatSee}
               </div>
               <ol className="space-y-3">
                 {product.agenda.map((item) => (
-                  <li key={item.time} className="group flex gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 hover:border-[#ff4000]/40 transition-colors">
+                  <li key={item.time} className="group flex gap-4 rounded-2xl border border-black/10 bg-black/[0.03] p-4 hover:border-[#ff4000]/40 transition-colors">
                     <div className="font-mono text-xs text-[#ffb494] w-14 pt-0.5 shrink-0">{item.time}</div>
                     <div>
-                      <div className="text-sm font-semibold text-white">{item.title}</div>
-                      <div className="mt-1 text-sm text-white/60 leading-relaxed">{item.detail}</div>
+                      <div className="text-sm font-semibold text-ink-primary">{item.title}</div>
+                      <div className="mt-1 text-sm text-ink-secondary leading-relaxed">{item.detail}</div>
                     </div>
                   </li>
                 ))}
@@ -740,20 +724,20 @@ export default function DemoRequest() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="relative rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-xl p-6 md:p-8 shadow-2xl shadow-black/40"
+            className="relative rounded-3xl border border-black/10 bg-black/[0.04] backdrop-blur-xl p-6 md:p-8 shadow-2xl shadow-black/40"
           >
             <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-[#ff4000]/60 to-transparent" />
 
             <input type="hidden" name="produto" value={product.slug} />
-            <div className="text-[11px] font-mono uppercase tracking-[0.22em] text-white/50">{t.request}</div>
-            <h2 className="mt-1 text-2xl md:text-3xl font-bold text-white">{t.reserve}</h2>
-            <p className="mt-2 text-sm text-white/60">
-              {t.reference} <span className="font-semibold text-white">{product.name}</span>
+            <div className="text-[11px] font-mono uppercase tracking-[0.22em] text-ink-tertiary">{t.request}</div>
+            <h2 className="mt-1 text-2xl md:text-3xl font-bold text-ink-primary">{t.reserve}</h2>
+            <p className="mt-2 text-sm text-ink-secondary">
+              {t.reference} <span className="font-semibold text-ink-primary">{product.name}</span>
             </p>
 
             <div className="mt-6 space-y-4">
               <div>
-                <label htmlFor="demo-name" className="text-xs font-medium text-white/70 mb-1.5 block uppercase tracking-wider">{t.name}</label>
+                <label htmlFor="demo-name" className="text-xs font-medium text-ink-secondary mb-1.5 block uppercase tracking-wider">{t.name}</label>
                 <Input
                   id="demo-name"
                   value={form.name}
@@ -762,13 +746,13 @@ export default function DemoRequest() {
                   required
                   aria-invalid={!!errors.name}
                   aria-describedby={errors.name ? 'demo-name-error' : undefined}
-                  className={`bg-white/5 text-white placeholder:text-white/30 focus-visible:ring-[#ff4000]/60 ${errors.name ? 'border-red-500/70' : 'border-white/10'}`}
+                  className={`bg-black/5 text-ink-primary placeholder:text-ink-tertiary focus-visible:ring-[#ff4000]/60 ${errors.name ? 'border-error/70' : 'border-black/10'}`}
                 />
-                {errors.name && <p id="demo-name-error" role="alert" className="mt-1.5 text-xs text-red-400">{errors.name}</p>}
+                {errors.name && <p id="demo-name-error" role="alert" className="mt-1.5 text-xs text-error">{errors.name}</p>}
               </div>
 
               <div>
-                <label htmlFor="demo-email" className="text-xs font-medium text-white/70 mb-1.5 block uppercase tracking-wider">{t.email}</label>
+                <label htmlFor="demo-email" className="text-xs font-medium text-ink-secondary mb-1.5 block uppercase tracking-wider">{t.email}</label>
                 <Input
                   id="demo-email"
                   type="email"
@@ -778,17 +762,17 @@ export default function DemoRequest() {
                   required
                   aria-invalid={!!errors.email}
                   aria-describedby={errors.email ? 'demo-email-error' : undefined}
-                  className={`bg-white/5 text-white placeholder:text-white/30 focus-visible:ring-[#ff4000]/60 ${errors.email ? 'border-red-500/70' : 'border-white/10'}`}
+                  className={`bg-black/5 text-ink-primary placeholder:text-ink-tertiary focus-visible:ring-[#ff4000]/60 ${errors.email ? 'border-error/70' : 'border-black/10'}`}
                 />
-                {errors.email && <p id="demo-email-error" role="alert" className="mt-1.5 text-xs text-red-400">{errors.email}</p>}
+                {errors.email && <p id="demo-email-error" role="alert" className="mt-1.5 text-xs text-error">{errors.email}</p>}
               </div>
 
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-white/70 mb-1.5 block uppercase tracking-wider">{t.country}</label>
+                  <label className="text-xs font-medium text-ink-secondary mb-1.5 block uppercase tracking-wider">{t.country}</label>
                   <Select value={form.country} onValueChange={(v) => setForm({ ...form, country: v })}>
-                    <SelectTrigger className="bg-white/5 border-white/10 text-white"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="bg-black/5 border-black/10 text-ink-primary"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {t.countries.map((c) => (
                         <SelectItem key={c} value={c}>{c}</SelectItem>
@@ -798,7 +782,7 @@ export default function DemoRequest() {
                 </div>
 
                 <div>
-                  <label htmlFor="demo-phone" className="text-xs font-medium text-white/70 mb-1.5 block uppercase tracking-wider">{t.phone}</label>
+                  <label htmlFor="demo-phone" className="text-xs font-medium text-ink-secondary mb-1.5 block uppercase tracking-wider">{t.phone}</label>
                   <Input
                     id="demo-phone"
                     type="tel"
@@ -807,16 +791,16 @@ export default function DemoRequest() {
                     placeholder="+351 ..."
                     aria-invalid={!!errors.phone}
                     aria-describedby={errors.phone ? 'demo-phone-error' : undefined}
-                    className={`bg-white/5 text-white placeholder:text-white/30 focus-visible:ring-[#ff4000]/60 ${errors.phone ? 'border-red-500/70' : 'border-white/10'}`}
+                    className={`bg-black/5 text-ink-primary placeholder:text-ink-tertiary focus-visible:ring-[#ff4000]/60 ${errors.phone ? 'border-error/70' : 'border-black/10'}`}
                   />
-                  {errors.phone && <p id="demo-phone-error" role="alert" className="mt-1.5 text-xs text-red-400">{errors.phone}</p>}
+                  {errors.phone && <p id="demo-phone-error" role="alert" className="mt-1.5 text-xs text-error">{errors.phone}</p>}
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-medium text-white/70 mb-1.5 block uppercase tracking-wider">{t.companySize}</label>
+                <label className="text-xs font-medium text-ink-secondary mb-1.5 block uppercase tracking-wider">{t.companySize}</label>
                 <Select value={form.companySize} onValueChange={(v) => setForm({ ...form, companySize: v })}>
-                  <SelectTrigger className="bg-white/5 border-white/10 text-white"><SelectValue placeholder={t.selectSize} /></SelectTrigger>
+                  <SelectTrigger className="bg-black/5 border-black/10 text-ink-primary"><SelectValue placeholder={t.selectSize} /></SelectTrigger>
                   <SelectContent>
                     {t.sizes.map((s) => (
                       <SelectItem key={s} value={s}>{s}</SelectItem>
@@ -829,14 +813,14 @@ export default function DemoRequest() {
                 <Checkbox
                   checked={form.newsletter}
                   onCheckedChange={(v) => setForm({ ...form, newsletter: !!v })}
-                  className="mt-0.5 border-white/30 data-[state=checked]:bg-[#ff4000] data-[state=checked]:border-[#ff4000]"
+                  className="mt-0.5 border-black/30 data-[state=checked]:bg-[#ff4000] data-[state=checked]:border-[#ff4000]"
                 />
-                <span className="text-xs text-white/60 leading-relaxed">
+                <span className="text-xs text-ink-secondary leading-relaxed">
                   {t.newsletter}
                 </span>
               </label>
 
-              <p className="text-[11px] text-white/40 leading-relaxed">
+              <p className="text-[11px] text-ink-tertiary leading-relaxed">
                 {t.termsBefore}{' '}
                 <Link to="/politica-privacidade" className="text-[#ffb494] underline underline-offset-2 hover:text-white">
                   {t.termsLink}
@@ -847,13 +831,13 @@ export default function DemoRequest() {
                 type="submit"
                 size="lg"
                 disabled={submitting}
-                className="w-full rounded-full bg-[#ff4000] hover:bg-[#ff4000]/90 text-white font-semibold h-12 shadow-lg shadow-[#ff4000]/30"
+                className="w-full rounded-full bg-[#ff4000] hover:bg-[#ff4000]/90 text-ink-primary font-semibold h-12 shadow-lg shadow-[#ff4000]/30"
               >
                 {submitting ? t.submitting : t.submit}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
 
-              <p className="text-center text-[11px] font-mono uppercase tracking-[0.18em] text-white/40">
+              <p className="text-center text-[11px] font-mono uppercase tracking-[0.18em] text-ink-tertiary">
                 {t.reply}
               </p>
             </div>

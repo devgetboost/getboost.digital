@@ -1,13 +1,28 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Sparkles, Grid2x2, Minus, Circle } from 'lucide-react';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import {
+  ArrowRight,
+  Zap,
+  Check,
+  Brain,
+  Heart,
+  Sparkles,
+} from 'lucide-react';
 import Layout from '@/components/Layout';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import SEO from '@/components/SEO';
+import { SectionHeader } from '@/components/ui/section-header';
+import { Button } from '@/components/ui/button';
+import { MiniFlow } from '@/components/ui/mini-flow';
+import { CaseProofStrip } from '@/components/CaseProofStrip';
+import { CountUp } from '@/components/ui/count-up';
+import CommercialAuditModal from '@/components/CommercialAuditModal';
 import ConsultantContactForm from '@/components/ConsultantContactForm';
-
-const ACCENT = '#ff4000';
+import { analytics } from '@/lib/analytics';
+import type { StoredAudit } from '@/lib/auditHistory';
+import { Reveal } from '@/components/ui/reveal';
 
 const manifestoLines = ['Menos ruído.', 'Mais direção.'];
 
@@ -67,13 +82,35 @@ const beneficios = [
   { k: '0 burnout', v: 'Produtividade sustentável' },
 ];
 
+const problemas = [
+  'Sobrecarga mental e emocional constante',
+  'Falta de clareza sobre o que realmente importa',
+  'Sensação de urgência que nunca desliga',
+  'Ansiedade por tarefas acumuladas',
+  'Dificuldade em manter foco por mais de 30 minutos',
+  'Ciclo silencioso: culpa → procrastinação → frustração',
+];
+
+/**
+ * R19.7 — Motivae premium page on the frozen design system.
+ * All copy preserved verbatim; SEO props, routes and tracking untouched.
+ */
 const MotivaeLanding = () => {
   const { i18n } = useTranslation();
-  const [openIndex, setOpenIndex] = useState<number>(0);
+  const [auditOpen, setAuditOpen] = useState(false);
+  const [preloadedAudit, setPreloadedAudit] = useState<StoredAudit | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
+  const reduceMotion = useReducedMotion() ?? false;
+
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const clusterY = useTransform(scrollYProgress, [0, 1], [0, 32]);
+
+  const bookingHref = i18n.language === 'pt' ? '/booking' : `/${i18n.language}/booking`;
 
   return (
     <Layout>
+      <ScrollDepth location="motivae" />
       <SEO
         title="Motivae — Produtividade Emocional com IA | Getboost Digital"
         description="Plataforma de produtividade emocional que combina IA e psicologia leve para ajudar pessoas a viver com clareza, foco e direção — sem pressão."
@@ -81,337 +118,351 @@ const MotivaeLanding = () => {
         lang={i18n.language as 'pt' | 'en' | 'es'}
       />
 
-      {/* HERO — manifesto */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      {/* ==================================================== 01 HERO */}
+      <section ref={heroRef} className="gb-surface-page relative overflow-hidden">
+        <div aria-hidden className="gb-grid-overlay" />
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
-            backgroundSize: '56px 56px',
-            maskImage: 'radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%)',
-            WebkitMaskImage: 'radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%)',
-          }}
+          className="pointer-events-none absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full blur-3xl"
+          style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.10) 0%, rgba(255,255,255,0) 65%)' }}
         />
-        <div
-          aria-hidden
-          className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
-          style={{
-            background:
-              'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)',
-          }}
-        />
-        <motion.div
-          aria-hidden
-          initial={{ y: '-100%' }}
-          animate={{ y: '120%' }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          className="pointer-events-none absolute inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#ff4000]/10 to-transparent"
-        />
+        <div className="gb-container relative gb-section !pt-10 md:!pt-16">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            <div>
+              <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
+                <span className="gb-eyebrow text-brand-600">Motivae · Produtividade Emocional · IA Humana</span>
+              </motion.div>
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="gb-text-display mt-5 text-ink-primary"
+              >
+                {manifestoLines[0]}{' '}
+                <span style={{ color: 'var(--gb-ai-strong)' }}>{manifestoLines[1]}</span>
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="gb-text-body mt-6 max-w-xl text-ink-secondary"
+              >
+                A Motivae é a plataforma de produtividade emocional que combina IA, psicologia leve e design humano. Um espaço seguro onde entendes o que sentes, organizas a mente e crias rotinas que respeitam o teu ritmo — sem pressão, sem culpa, sem burnout.
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-10 flex flex-wrap items-center gap-4"
+              >
+                <Button size="lg" onClick={() => setContactOpen(true)}>
+                  Entrar na beta
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+                <Button asChild size="lg" variant="outline">
+                  <Link to={bookingHref} onClick={() => analytics.trackClick('motivae_hero', 'motivae_booking', 'consideration')}>
+                    Ver como funciona
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-8 flex flex-wrap gap-2.5"
+              >
+                {['Coach IA', 'Check-in diário', 'Hábitos saudáveis', 'Privacidade total'].map((item) => (
+                  <span key={item} className="gb-chip">
+                    <Check className="h-3.5 w-3.5 text-brand-600" />
+                    {item}
+                  </span>
+                ))}
+              </motion.div>
+            </div>
 
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-28 md:py-40">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
-            style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
-          >
-            <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
-            Motivae · Produtividade Emocional · IA Humana
-          </motion.div>
-
-          <h1 className="mt-8 font-black leading-[0.92] tracking-tight text-[clamp(2.75rem,8vw,7rem)]">
-            {manifestoLines.map((line, i) => (
-              <motion.span
-                key={line}
+            <motion.div style={{ y: reduceMotion ? 0 : clusterY }} className="relative">
+              <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.15 + i * 0.12 }}
-                className="block"
+                transition={{ delay: 0.35, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               >
-                {i === manifestoLines.length - 1 ? (
-                  <span style={{ color: ACCENT, textShadow: '0 0 40px rgba(255,64,0,0.4)' }}>
-                    {line}
-                  </span>
-                ) : (
-                  line
-                )}
-              </motion.span>
-            ))}
-          </h1>
+                <motion.div
+                  animate={reduceMotion ? undefined : { y: [0, -8, 0] }}
+                  transition={reduceMotion ? undefined : { duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                >
+                  <div className="gb-card !p-6 !shadow-lg">
+                    <div className="flex items-center justify-between">
+                      <span className="gb-eyebrow text-ink-tertiary">Coach IA emocional</span>
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-success-bg px-2.5 py-1 text-[11px] font-semibold text-success">
+                        <span className="relative flex h-1.5 w-1.5">
+                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+                          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
+                        </span>
+                        Online
+                      </span>
+                    </div>
+                    <MiniFlow
+                      steps={['Check-in', 'Coach IA', 'Plano leve', 'Rotina', 'Evolução']}
+                      tint="var(--gb-ai-tint)"
+                      strong="var(--gb-ai-strong)"
+                    />
+                    <div className="mt-5 grid grid-cols-2 gap-2 border-t border-black/[0.06] pt-4 text-center">
+                      {beneficios.map((s) => (
+                        <div key={s.k} className="rounded-xl bg-black/[0.03] px-2 py-3">
+                          <div className="text-base font-extrabold tracking-tight text-ink-primary">{s.k}</div>
+                          <div className="mt-1 text-[11px] font-medium text-ink-tertiary">{s.v}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+        <div className="gb-container pb-16">
+          <div className="gb-hairline-accent" />
+        </div>
+      </section>
 
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="mt-10 h-px w-40 origin-left"
-            style={{ background: `${ACCENT}b3` }}
+      {/* ==================================================== 02 PROBLEMA */}
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="O problema"
+            title="Vives em piloto automático?"
+            description="A sobrecarga mental não se resolve com mais uma app de tarefas."
           />
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-white/75"
-          >
-            A Motivae é a plataforma de <em className="not-italic text-white">produtividade emocional</em>
-            {' '}que combina IA, psicologia leve e design humano. Um espaço seguro onde entendes o que sentes,
-            organizas a mente e crias rotinas que respeitam o teu ritmo — sem pressão, sem culpa, sem burnout.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.9 }}
-            className="mt-12 flex flex-wrap items-center gap-4"
-          >
-            <button
-              type="button"
-              onClick={() => setContactOpen(true)}
-              className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: '#ffb494' }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-            >
-              Entrar na beta
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </button>
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-white/60 transition-colors hover:text-white"
-            >
-              <Sparkles className="h-4 w-4" style={{ color: ACCENT }} />
-              Ver como funciona
-            </Link>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 1.1 }}
-            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 border-t border-white/10 pt-8"
-          >
-            {beneficios.map((s) => (
-              <div key={s.k}>
-                <div className="font-mono text-2xl md:text-3xl font-bold" style={{ color: ACCENT }}>
-                  {s.k}
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {problemas.map((p, i) => (
+              <Reveal key={p} i={i % 3}>
+                <div className="gb-card h-full opacity-90">
+                  <div className="flex items-start gap-3 text-[15px] text-ink-secondary">
+                    <span aria-hidden="true" className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: 'var(--gb-ai-base)' }} />
+                    {p}
+                  </div>
                 </div>
-                <div className="mt-1 text-xs uppercase tracking-widest text-white/50">{s.v}</div>
-              </div>
+              </Reveal>
             ))}
-          </motion.div>
+          </div>
+          <Reveal i={0}>
+            <div className="gb-card gb-card-lift mt-6" style={{ ['--gb-glow' as string]: 'var(--gb-ai-glow)' }}>
+              <MiniFlow
+                steps={['Sobrecarga', 'Check-in', 'Clareza', 'Rotina leve', 'Evolução']}
+                tint="var(--gb-ai-tint)"
+                strong="var(--gb-ai-strong)"
+              />
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* PROBLEMA */}
-      <section className="bg-[#0a0603] text-white border-t border-white/10 py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 grid md:grid-cols-12 gap-10">
-          <div className="md:col-span-4">
-            <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
-              O problema
-            </span>
-            <h2 className="mt-4 text-3xl md:text-5xl font-bold leading-[1.05] tracking-tight">
-              Vives em piloto automático?
-            </h2>
-          </div>
-          <ul className="md:col-span-8 grid sm:grid-cols-2 gap-x-10 gap-y-5 text-white/75 text-base md:text-lg">
-            {[
-              'Sobrecarga mental e emocional constante',
-              'Falta de clareza sobre o que realmente importa',
-              'Sensação de urgência que nunca desliga',
-              'Ansiedade por tarefas acumuladas',
-              'Dificuldade em manter foco por mais de 30 minutos',
-              'Ciclo silencioso: culpa → procrastinação → frustração',
-            ].map((p) => (
-              <li key={p} className="flex items-start gap-3 border-b border-white/10 pb-4">
-                <span className="mt-2 h-1.5 w-1.5 shrink-0" style={{ background: ACCENT }} />
-                {p}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* FEATURE LIST — accordion */}
-      <section className="bg-[#0a0603] text-white py-24 md:py-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="mb-12 md:mb-16 max-w-2xl">
-            <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
-              O que a Motivae faz
-            </span>
-            <h2 className="mt-4 text-4xl md:text-6xl font-bold leading-[1.02] tracking-tight">
-              Uma plataforma inteira desenhada à volta de <span style={{ color: ACCENT }}>como te sentes</span>.
-            </h2>
-          </div>
-
-          <div className="border-t border-white/10">
+      {/* ==================================================== 03 CAPACIDADES */}
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="O que a Motivae faz"
+            title="Uma plataforma inteira desenhada à volta de como te sentes"
+            description="Cinco capacidades que combinamos no teu ritmo — nunca pacotes fechados."
+          />
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f, i) => {
-              const isOpen = openIndex === i;
+              const Icon = [Brain, Heart, Check, Sparkles, ShieldCheck][i % 5] ?? Brain;
               return (
-                <div key={f.title} className="border-b border-white/10">
-                  <button
-                    type="button"
-                    onClick={() => setOpenIndex(isOpen ? -1 : i)}
-                    className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 py-10 md:py-14 text-left transition-colors hover:bg-white/[0.02]"
-                  >
-                    <div>
-                      <div className="flex items-start gap-5">
-                        <span className="mt-3 shrink-0" style={{ color: isOpen ? ACCENT : 'rgba(255,255,255,0.5)' }}>
-                          {isOpen ? <Circle className="h-4 w-4 fill-current" /> : <Grid2x2 className="h-5 w-5" />}
-                        </span>
-                        <h3 className="text-3xl md:text-5xl font-bold leading-[1.05] tracking-tight">
-                          {f.title}
-                        </h3>
-                      </div>
-                      <div className="mt-8 ml-0 md:ml-10 flex flex-wrap gap-3">
-                        {f.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="rounded-full border border-white/25 px-4 py-1.5 text-xs md:text-sm text-white/80"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
+                <Reveal key={f.title} i={i % 3}>
+                  <div className="gb-card gb-card-lift h-full !p-6">
+                    <span
+                      className="gb-icon-chip"
+                      style={{ ['--gb-chip-bg' as string]: 'var(--gb-ai-tint)', ['--gb-chip-fg' as string]: 'var(--gb-ai-strong)' }}
+                    >
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <p className="gb-eyebrow mt-5" style={{ color: 'var(--gb-ai-strong)' }}>{f.eyebrow}</p>
+                    <h3 className="gb-text-h3 mt-2 !text-xl text-ink-primary">{f.title}</h3>
+                    <p className="gb-text-small mt-2 text-ink-secondary">{f.body}</p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {f.tags.map((tag) => (
+                        <span key={tag} className="gb-chip">{tag}</span>
+                      ))}
                     </div>
-
-                    <div className="flex flex-col">
-                      <div className="flex items-start justify-between gap-6">
-                        <span
-                          className="font-mono text-[11px] md:text-xs uppercase tracking-[0.22em]"
-                          style={{ color: isOpen ? ACCENT : 'rgba(255,255,255,0.6)' }}
-                        >
-                          {f.eyebrow}
-                        </span>
-                        <Minus
-                          className="h-6 w-6 shrink-0 transition-transform"
-                          style={{
-                            color: isOpen ? ACCENT : 'rgba(255,255,255,0.5)',
-                            transform: isOpen ? 'rotate(0deg)' : 'rotate(90deg)',
-                          }}
-                        />
-                      </div>
-                      <AnimatePresence initial={false}>
-                        {isOpen && (
-                          <motion.p
-                            initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                            animate={{ opacity: 1, height: 'auto', marginTop: 24 }}
-                            exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                            transition={{ duration: 0.35 }}
-                            className="overflow-hidden text-sm md:text-base leading-relaxed text-white/70"
-                          >
-                            {f.body}
-                          </motion.p>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </button>
-                </div>
+                  </div>
+                </Reveal>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* PARA QUEM */}
-      <section className="bg-[#0a0603] text-white border-t border-white/10 py-24 md:py-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="max-w-2xl">
-            <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
-              Para quem foi feita
-            </span>
-            <h2 className="mt-4 text-4xl md:text-6xl font-bold leading-[1.02] tracking-tight">
-              Pensada para quem sente <span style={{ color: ACCENT }}>demasiado</span> e organiza <span style={{ color: ACCENT }}>pouco</span>.
-            </h2>
-          </div>
-          <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10">
+      {/* ==================================================== 04 PARA QUEM */}
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Para quem foi feita"
+            title="Pensada para quem sente demasiado e organiza pouco"
+          />
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {paraQuem.map((p, i) => (
-              <div key={p} className="bg-[#0a0603] p-8 md:p-10">
-                <div className="font-mono text-xs" style={{ color: ACCENT }}>
-                  {String(i + 1).padStart(2, '0')}
+              <Reveal key={p} i={i % 3}>
+                <div className="gb-card gb-card-lift h-full !p-6">
+                  <div className="font-mono text-sm tracking-[0.22em]" style={{ color: 'var(--gb-ai-strong)' }}>{String(i + 1).padStart(2, '0')}</div>
+                  <p className="gb-text-h3 mt-4 !text-xl text-ink-primary">{p}</p>
                 </div>
-                <p className="mt-4 text-lg md:text-xl leading-snug">{p}</p>
-              </div>
+              </Reveal>
+            ))}
+          </div>
+          <Reveal i={0}>
+            <div className="gb-card mt-6 text-center">
+              <p className="gb-text-h3 !text-2xl text-ink-primary">
+                A Motivae não é mais uma app de produtividade. É a primeira plataforma onde o foco nasce da <span style={{ color: 'var(--gb-ai-strong)' }}>clareza interior</span> — não da pressão.
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ==================================================== 05 PROVA */}
+            {/* 10B CASOS — resultados de clientes (motor partilhado, sem conteúdo inventado) */}
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <CaseProofStrip
+            slugs={['motivae']}
+            tint="var(--gb-ai-tint)"
+            strong="var(--gb-ai-strong)"
+            trackingLocation="motivae_cases"
+          />
+        </div>
+      </section>
+
+<section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Resultados"
+            title="O que muda quando o dia respeita o teu ritmo"
+            description="Benefícios reportados por utilizadores da beta — sem métricas inventadas."
+          />
+          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {beneficios.map((s, i) => (
+              <Reveal key={s.k} i={i}>
+                <div className="gb-surface-card-elevated h-full text-center">
+                  <div className="gb-text-h2" style={{ color: 'var(--gb-ai-strong)' }}><CountUp value={s.k} /></div>
+                  <p className="gb-text-small mt-2 text-ink-secondary">{s.v}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* PROPOSTA DE VALOR */}
-      <section className="bg-[#0a0603] text-white border-t border-white/10 py-24 md:py-32">
-        <div className="max-w-5xl mx-auto px-6 md:px-12 text-center">
-          <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
-            Proposta de valor
-          </span>
-          <p className="mt-6 text-3xl md:text-5xl font-bold leading-[1.1] tracking-tight">
-            A Motivae não é mais uma app de produtividade.
-            <br />
-            É a primeira plataforma onde o foco nasce da{' '}
-            <span style={{ color: ACCENT }}>clareza interior</span> — não da pressão.
-          </p>
-        </div>
-      </section>
-
-      {/* CTA FINAL */}
-      <section className="bg-black text-white py-28 md:py-40">
-        <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="font-black leading-[0.95] tracking-tight text-[clamp(2.25rem,7vw,6rem)]"
-          >
-            Prontos para viver com mais{' '}
-            <span style={{ color: ACCENT }}>clareza</span>?
-          </motion.h2>
-          <p className="mt-8 max-w-2xl mx-auto text-white/60 text-lg">
-            Entra na beta privada da Motivae e recebe acesso antecipado ao Coach IA emocional.
-          </p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-14"
-          >
-            <button
-              type="button"
-              onClick={() => setContactOpen((v) => !v)}
-              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: ACCENT }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-            >
-              {contactOpen ? 'Fechar formulário' : 'Pedir acesso à beta'}
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </motion.div>
-
-          <ConsultantContactForm
-            open={contactOpen}
-            service={{
-              slug: 'motivae',
-              name: 'Motivae',
-              accent: ACCENT,
-              eyebrow: 'Beta · Motivae',
-              headline: 'Vamos conhecer o teu ritmo antes de dar acesso.',
-              subhead: 'Conta-nos onde te sentes sobrecarregado e o que gostavas de organizar. Enviamos convite prioritário para a beta privada.',
-              goalOptions: [
-                'Reduzir ansiedade e sobrecarga',
-                'Organizar prioridades do dia',
-                'Criar rotinas sustentáveis',
-                'Melhorar foco e produtividade',
-                'Explorar coach IA emocional',
-              ],
-              messagePlaceholder: 'O que sentes hoje quando pensas no teu dia? Onde perdes mais energia?',
-            }}
+      {/* ==================================================== 06 FINAL CTA */}
+            {/* OBJEÇÕES */}
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Perguntas que ouvimos sempre"
+            title="Dúvidas legítimas, respostas diretas"
+            description="O que nos perguntam antes de avançar — respondido sem rodeios."
           />
+          <div className="mt-12 grid gap-4 md:grid-cols-2">
+              <Reveal key="objecao-0" i={0}>
+                <div className="gb-card h-full">
+                  <h3 className="gb-text-h3 !text-xl text-ink-primary">Isto substitui acompanhamento psicológico?</h3>
+                  <p className="gb-text-body mt-3 text-ink-secondary">Não. A Motivae é produtividade emocional — organização, foco e rotinas. Para questões clínicas, procura sempre um profissional.</p>
+                </div>
+              </Reveal>
+              <Reveal key="objecao-1" i={1}>
+                <div className="gb-card h-full">
+                  <h3 className="gb-text-h3 !text-xl text-ink-primary">Os meus dados emocionais ficam expostos?</h3>
+                  <p className="gb-text-body mt-3 text-ink-secondary">Não: interface privada, linguagem humana e privacidade total — sem gamificação tóxica nem partilha.</p>
+                </div>
+              </Reveal>
+              <Reveal key="objecao-2" i={0}>
+                <div className="gb-card h-full">
+                  <h3 className="gb-text-h3 !text-xl text-ink-primary">Quanto tempo ocupa por dia?</h3>
+                  <p className="gb-text-body mt-3 text-ink-secondary">Um check-in curto por dia. Micro-passos em vez de maratonas — a rotina adapta-se à tua energia, nunca ao contrário.</p>
+                </div>
+              </Reveal>
+              <Reveal key="objecao-3" i={1}>
+                <div className="gb-card h-full">
+                  <h3 className="gb-text-h3 !text-xl text-ink-primary">É grátis?</h3>
+                  <p className="gb-text-body mt-3 text-ink-secondary">A beta privada é gratuita: pede acesso e recebe convite prioritário para o Coach IA emocional.</p>
+                </div>
+              </Reveal>
+          </div>
         </div>
       </section>
+
+<section className="gb-surface-page gb-section !pt-0">
+        <div className="gb-container">
+          <Reveal i={0}>
+            <div className="gb-cta-band relative overflow-hidden border border-white/10 text-center">
+              <motion.div
+                aria-hidden
+                className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+                style={{ background: 'radial-gradient(ellipse, rgba(124,58,237,0.25) 0%, rgba(0,0,0,0) 65%)' }}
+                animate={reduceMotion ? undefined : { x: ['-50%', '-46%', '-50%'], opacity: [0.7, 1, 0.7] }}
+                transition={reduceMotion ? undefined : { duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+              />
+              <div className="relative">
+                <h2 className="font-black leading-[0.98] tracking-tight text-[clamp(2rem,5vw,4rem)] text-ink-inverse">
+                  Prontos para viver com mais <span style={{ color: '#ff4000' }}>clareza</span>?
+                </h2>
+                <p className="gb-text-body mx-auto mt-6 max-w-2xl text-white/70">
+                  Entra na beta privada da Motivae e recebe acesso antecipado ao Coach IA emocional.
+                </p>
+                <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+                  <Button size="lg" onClick={() => setContactOpen((v) => !v)}>
+                    {contactOpen ? 'Fechar formulário' : 'Pedir acesso à beta'}
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                  <Button asChild size="lg" variant="outline" className="border-white/40 !text-white hover:!bg-white hover:!text-ink-primary">
+                    <Link to={bookingHref} onClick={() => analytics.trackClick('motivae_cta', 'motivae_booking', 'consideration')}>
+                      Agendar Diagnóstico
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setPreloadedAudit(null); setAuditOpen(true); }}
+                  className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-white/60 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+                >
+                  <Zap className="h-4 w-4" />
+                  ou faz a auditoria grátis de 7 min
+                </button>
+                <div className="mx-auto mt-10 max-w-3xl text-left">
+                  <ConsultantContactForm
+                    open={contactOpen}
+                    service={{
+                      slug: 'motivae',
+                      name: 'Motivae',
+                      accent: '#ff4000',
+                      eyebrow: 'Beta · Motivae',
+                      headline: 'Vamos conhecer o teu ritmo antes de dar acesso.',
+                      subhead: 'Conta-nos onde te sentes sobrecarregado e o que gostavas de organizar. Enviamos convite prioritário para a beta privada.',
+                      goalOptions: [
+                        'Reduzir ansiedade e sobrecarga',
+                        'Organizar prioridades do dia',
+                        'Criar rotinas sustentáveis',
+                        'Melhorar foco e produtividade',
+                        'Explorar coach IA emocional',
+                      ],
+                      messagePlaceholder: 'O que sentes hoje quando pensas no teu dia? Onde perdes mais energia?',
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      <CommercialAuditModal
+        open={auditOpen}
+        trackingSource="motivae"
+        onClose={() => { setAuditOpen(false); setPreloadedAudit(null); }}
+        preloaded={preloadedAudit}
+      />
     </Layout>
   );
 };

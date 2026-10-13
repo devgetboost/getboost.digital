@@ -74,6 +74,15 @@ describe('trusted server-side write paths exist', () => {
     });
   }
 
+  it('revenue-writeback is server-only and never invoked from the browser (R20.18)', () => {
+    const fn = read('supabase/functions/revenue-writeback/index.ts');
+    expect(fn).toContain('REVENUE_WEBHOOK_SECRET');
+    expect(fn).toContain('secretsMatch');
+    // The browser must never reach the revenue ledger.
+    const api = stripComments(read('src/lib/commercialApi.ts'));
+    expect(api).not.toContain('revenue-writeback');
+  });
+
   it('never exposes the service-role key to the browser', () => {
     const api = stripComments(read('src/lib/commercialApi.ts'));
     expect(api).not.toContain('SERVICE_ROLE');

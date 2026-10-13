@@ -11,6 +11,7 @@ import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import { FOUNDER } from '@/data/brandRegistry';
 
 const ACCENT = '#ff4000';
@@ -169,14 +170,15 @@ const PriceSimulator = () => {
 
   const optionBtn = (active: boolean) =>
     `w-full text-left transition-all border ${active
-      ? 'border-[#ff4000] bg-[#ff4000]/10 text-white'
-      : 'border-white/15 bg-white/[0.02] text-white/80 hover:border-white/40 hover:bg-white/[0.05]'}`;
+      ? 'border-[#ff4000] bg-[#ff4000]/10 text-ink-primary'
+      : 'border-black/15 bg-black/[0.02] text-ink-secondary hover:border-black/40 hover:bg-black/[0.05]'}`;
 
   const darkInput =
-    'w-full bg-transparent border-0 border-b border-white/20 rounded-none h-11 px-0 text-white placeholder:text-white/30 focus-visible:ring-0 focus-visible:border-[#ff4000] transition-colors';
+    'w-full bg-transparent border-0 border-b border-black/20 rounded-none h-11 px-0 text-ink-primary placeholder:text-ink-tertiary focus-visible:ring-0 focus-visible:border-[#ff4000] transition-colors';
 
   return (
     <Layout>
+      <ScrollDepth location="price_simulator" />
       <SEO
         title="Simulador de Orçamento — Estimativa Realista em 2 Min | Getboost Digital"
         description="Calcula uma estimativa realista para o teu projecto digital em menos de 2 minutos. Sem compromisso, sem cadastro obrigatório."
@@ -185,10 +187,10 @@ const PriceSimulator = () => {
       />
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      <section className="gb-surface-page relative overflow-hidden">
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
+          className="absolute inset-0 gb-grid-overlay opacity-[0.05]"
           style={{
             backgroundImage:
               'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
@@ -200,22 +202,15 @@ const PriceSimulator = () => {
         <div
           aria-hidden
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)' }}
-        />
-        <motion.div
-          aria-hidden
-          initial={{ y: '-100%' }}
-          animate={{ y: '120%' }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          className="pointer-events-none absolute inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#ff4000]/10 to-transparent"
+          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)' }}
         />
 
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-24 md:py-32">
+        <div className="gb-container relative gb-section">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
+            className="gb-eyebrow text-brand-600"
             style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
@@ -250,9 +245,9 @@ const PriceSimulator = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-white/75"
+            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-ink-secondary"
           >
-            Um <em className="not-italic text-white">preço realista</em> em vez de uma tabela genérica.
+            Um <em className="not-italic text-ink-primary">preço realista</em> em vez de uma tabela genérica.
             Respondes a 5 perguntas e recebes uma banda de investimento calculada com base em centenas
             de projectos executados. Sem inscrição obrigatória.
           </motion.p>
@@ -266,8 +261,8 @@ const PriceSimulator = () => {
             <button
               type="button"
               onClick={scrollToSimulator}
-              className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: '#ffb494' }}
+              className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-ink-primary"
+              style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
             >
@@ -276,7 +271,7 @@ const PriceSimulator = () => {
             </button>
             <a
               href="/booking"
-              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-white/60 transition-colors hover:text-white"
+              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-ink-secondary transition-colors hover:text-ink-primary"
             >
               <Phone className="h-4 w-4" style={{ color: ACCENT }} />
               Prefiro falar com alguém
@@ -287,7 +282,7 @@ const PriceSimulator = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1.1 }}
-            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 border-t border-white/10 pt-8"
+            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 border-t border-black/10 pt-8"
           >
             {[
               { k: '<2min', v: 'Para responder' },
@@ -297,7 +292,7 @@ const PriceSimulator = () => {
             ].map((s) => (
               <div key={s.k}>
                 <div className="font-mono text-3xl md:text-4xl font-bold" style={{ color: ACCENT }}>{s.k}</div>
-                <div className="mt-1 text-xs uppercase tracking-widest text-white/50">{s.v}</div>
+                <div className="mt-1 text-xs uppercase tracking-widest text-ink-tertiary">{s.v}</div>
               </div>
             ))}
           </motion.div>
@@ -305,9 +300,9 @@ const PriceSimulator = () => {
       </section>
 
       {/* COMO FUNCIONA */}
-      <section className="bg-[#0a0603] text-white py-20">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-white/10 pt-14">
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-black/10 pt-14">
             {[
               { Icon: Target, title: 'Descreve o projecto', desc: 'Tipo de solução, serviços envolvidos, complexidade e dimensão da empresa.' },
               { Icon: BarChart3, title: 'Recebe a banda', desc: 'Estimativa mín–máx calculada com base em projectos reais executados.' },
@@ -319,7 +314,7 @@ const PriceSimulator = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="border border-white/10 bg-white/[0.02] p-6 md:p-8"
+                className="border border-black/10 bg-black/[0.02] p-6 md:p-8"
               >
                 <div
                   className="flex h-10 w-10 items-center justify-center border"
@@ -331,7 +326,7 @@ const PriceSimulator = () => {
                   Passo {String(i + 1).padStart(2, '0')}
                 </div>
                 <h3 className="mt-2 text-xl font-bold tracking-tight">{it.title}</h3>
-                <p className="mt-3 text-sm text-white/60 leading-relaxed">{it.desc}</p>
+                <p className="mt-3 text-sm text-ink-secondary leading-relaxed">{it.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -339,7 +334,7 @@ const PriceSimulator = () => {
       </section>
 
       {/* SIMULADOR */}
-      <section ref={simulatorRef} className="bg-[#0a0603] text-white py-20 md:py-28">
+      <section ref={simulatorRef} className="gb-surface-section gb-section">
         <div className="max-w-3xl mx-auto px-6 md:px-12">
           <div className="text-center mb-10">
             <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
@@ -351,14 +346,14 @@ const PriceSimulator = () => {
           </div>
 
           {!showResult ? (
-            <div className="border border-white/10 bg-white/[0.02] p-6 md:p-10">
+            <div className="border border-black/10 bg-black/[0.02] p-6 md:p-10">
               {/* progress */}
               <div className="flex items-center gap-2 mb-10">
                 {stepLabels.map((label, i) => (
                   <div key={i} className="flex-1">
                     <div className="h-0.5" style={{ background: i <= step ? ACCENT : 'rgba(255,255,255,0.15)' }} />
                     <p
-                      className={`text-[10px] mt-2 text-center font-mono uppercase tracking-[0.18em] ${i <= step ? 'text-white' : 'text-white/30'}`}
+                      className={`text-[10px] mt-2 text-center font-mono uppercase tracking-[0.18em] ${i <= step ? 'text-ink-primary' : 'text-ink-tertiary'}`}
                     >
                       {label}
                     </p>
@@ -370,7 +365,7 @@ const PriceSimulator = () => {
                 <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
                   {step === 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold mb-6 text-white">Que tipo de solução procuras?</h3>
+                      <h3 className="text-lg font-semibold mb-6 text-ink-primary">Que tipo de solução procuras?</h3>
                       <div className="space-y-3">
                         {solutionTypeIds.map(id => {
                           const Icon = solutionTypeIcons[id];
@@ -388,7 +383,7 @@ const PriceSimulator = () => {
 
                   {step === 1 && (
                     <div>
-                      <h3 className="text-lg font-semibold mb-6 text-white">Que serviços? <span className="text-sm font-normal text-white/50">(selecciona vários)</span></h3>
+                      <h3 className="text-lg font-semibold mb-6 text-ink-primary">Que serviços? <span className="text-sm font-normal text-ink-tertiary">(selecciona vários)</span></h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {serviceOptionData.map(s => {
                           const active = selectedServices.includes(s.id);
@@ -405,14 +400,14 @@ const PriceSimulator = () => {
 
                   {step === 2 && (
                     <div>
-                      <h3 className="text-lg font-semibold mb-6 text-white">Qual o nível de complexidade?</h3>
+                      <h3 className="text-lg font-semibold mb-6 text-ink-primary">Qual o nível de complexidade?</h3>
                       <div className="space-y-3">
                         {complexityData.map(c => {
                           const active = complexity === c.id;
                           return (
                             <button key={c.id} onClick={() => setComplexity(c.id)} className={`${optionBtn(active)} p-4`}>
                               <div className="font-semibold">{c.label}</div>
-                              <p className="text-sm text-white/50 mt-1">{c.desc}</p>
+                              <p className="text-sm text-ink-tertiary mt-1">{c.desc}</p>
                             </button>
                           );
                         })}
@@ -422,7 +417,7 @@ const PriceSimulator = () => {
 
                   {step === 3 && (
                     <div>
-                      <h3 className="text-lg font-semibold mb-6 text-white">Dimensão da empresa?</h3>
+                      <h3 className="text-lg font-semibold mb-6 text-ink-primary">Dimensão da empresa?</h3>
                       <div className="space-y-3">
                         {businessSizeData.map(b => {
                           const active = businessSize === b.id;
@@ -439,7 +434,7 @@ const PriceSimulator = () => {
 
                   {step === 4 && (
                     <div>
-                      <h3 className="text-lg font-semibold mb-6 text-white">Qual o objectivo principal?</h3>
+                      <h3 className="text-lg font-semibold mb-6 text-ink-primary">Qual o objectivo principal?</h3>
                       <div className="space-y-3">
                         {objectiveIds.map(o => {
                           const active = objective === o.id;
@@ -461,7 +456,7 @@ const PriceSimulator = () => {
                   type="button"
                   onClick={handleBack}
                   disabled={step === 0}
-                  className="inline-flex items-center gap-2 border border-white/20 px-5 py-3 font-mono text-[11px] uppercase tracking-[0.22em] text-white/70 transition-colors hover:border-white/50 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-2 border border-black/20 px-5 py-3 font-mono text-[11px] uppercase tracking-[0.22em] text-ink-secondary transition-colors hover:border-black/50 hover:text-ink-primary disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" /> Voltar
                 </button>
@@ -469,8 +464,8 @@ const PriceSimulator = () => {
                   type="button"
                   onClick={handleNext}
                   disabled={!canAdvance()}
-                  className="group inline-flex items-center gap-2 border-2 px-6 py-3 font-mono text-[11px] uppercase tracking-[0.22em] transition-all hover:!text-white disabled:opacity-40 disabled:cursor-not-allowed"
-                  style={{ borderColor: ACCENT, color: '#ffb494' }}
+                  className="group inline-flex items-center gap-2 border-2 px-6 py-3 font-mono text-[11px] uppercase tracking-[0.22em] transition-all hover:!text-ink-primary disabled:opacity-40 disabled:cursor-not-allowed"
+                  style={{ borderColor: ACCENT, color: ACCENT }}
                   onMouseEnter={(e) => { if (canAdvance()) e.currentTarget.style.background = ACCENT; }}
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                 >
@@ -481,7 +476,7 @@ const PriceSimulator = () => {
             </div>
           ) : !showLeadForm ? (
             <motion.div
-              className="border border-white/10 bg-white/[0.02] p-8 md:p-12 text-center"
+              className="border border-black/10 bg-black/[0.02] p-8 md:p-12 text-center"
               initial={{ opacity: 0, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
             >
@@ -496,20 +491,20 @@ const PriceSimulator = () => {
               </div>
               <p className="mt-6 font-black leading-none tracking-tight text-4xl md:text-6xl">
                 <span style={{ color: ACCENT }}>€{price.min.toLocaleString('pt-PT')}</span>
-                <span className="text-white/40 mx-3">—</span>
+                <span className="text-ink-tertiary mx-3">—</span>
                 <span style={{ color: ACCENT }}>€{price.max.toLocaleString('pt-PT')}</span>
               </p>
-              <p className="mt-4 text-xs uppercase tracking-widest text-white/40 font-mono">
+              <p className="mt-4 text-xs uppercase tracking-widest text-ink-tertiary font-mono">
                 Sem IVA · valor de referência
               </p>
 
-              <div className="text-left mt-10 border-t border-white/10 pt-6">
-                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/50 mb-3">
+              <div className="text-left mt-10 border-t border-black/10 pt-6">
+                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink-tertiary mb-3">
                   Baseado em
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {serviceOptionData.filter(s => selectedServices.includes(s.id)).map(s => (
-                    <span key={s.id} className="px-3 py-1 border border-white/15 text-xs text-white/70">
+                    <span key={s.id} className="px-3 py-1 border border-black/15 text-xs text-ink-secondary">
                       {s.label}
                     </span>
                   ))}
@@ -520,7 +515,7 @@ const PriceSimulator = () => {
                 <button
                   type="button"
                   onClick={() => { setShowLeadForm(true); setTimeout(() => leadFormRef.current?.scrollIntoView({ behavior: 'smooth' }), 100); }}
-                  className="flex-1 inline-flex items-center justify-center gap-2 border-2 px-6 py-4 font-mono text-[11px] uppercase tracking-[0.24em] transition-all hover:!text-white"
+                  className="flex-1 inline-flex items-center justify-center gap-2 border-2 px-6 py-4 font-mono text-[11px] uppercase tracking-[0.24em] transition-all hover:!text-ink-primary"
                   style={{ borderColor: ACCENT, color: '#ffb494', background: 'transparent' }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
@@ -530,7 +525,7 @@ const PriceSimulator = () => {
                 <button
                   type="button"
                   onClick={() => { setShowResult(false); setStep(0); }}
-                  className="flex-1 inline-flex items-center justify-center gap-2 border border-white/20 px-6 py-4 font-mono text-[11px] uppercase tracking-[0.24em] text-white/70 hover:border-white/50 hover:text-white transition-colors"
+                  className="flex-1 inline-flex items-center justify-center gap-2 border border-black/20 px-6 py-4 font-mono text-[11px] uppercase tracking-[0.24em] text-ink-secondary hover:border-black/50 hover:text-ink-primary transition-colors"
                 >
                   Simular novamente
                 </button>
@@ -542,10 +537,10 @@ const PriceSimulator = () => {
 
       {/* LEAD FORM */}
       {showLeadForm && (
-        <section ref={leadFormRef} className="bg-[#0a0603] text-white pb-24">
+        <section ref={leadFormRef} className="gb-surface-page gb-section !pt-0">
           <div className="max-w-2xl mx-auto px-6 md:px-12">
             {!leadSubmitted ? (
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="border border-white/10 bg-white/[0.02] p-6 md:p-10">
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="border border-black/10 bg-black/[0.02] p-6 md:p-10">
                 <div className="mb-8">
                   <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
                     Briefing final
@@ -566,7 +561,7 @@ const PriceSimulator = () => {
                   <select
                     value={leadForm.timeline}
                     onChange={e => setLeadForm(p => ({ ...p, timeline: e.target.value }))}
-                    className="w-full bg-transparent border-0 border-b border-white/20 rounded-none h-11 px-0 text-white focus-visible:outline-none focus-visible:border-[#ff4000] transition-colors [&>option]:bg-[#0a0603] [&>option]:text-white"
+                    className="w-full bg-transparent border-0 border-b border-black/20 rounded-none h-11 px-0 text-ink-primary focus-visible:outline-none focus-visible:border-[#ff4000] transition-colors [&>option]:bg-white [&>option]:text-ink-primary"
                   >
                     <option value="">Quando queres começar?</option>
                     <option value="imediato">Imediato</option>
@@ -574,13 +569,13 @@ const PriceSimulator = () => {
                     <option value="3-months">Em 3 meses</option>
                     <option value="exploring">Ainda a explorar</option>
                   </select>
-                  <Textarea placeholder="Contexto adicional (opcional)" value={leadForm.message} onChange={e => setLeadForm(p => ({ ...p, message: e.target.value }))} maxLength={1000} rows={3} className="w-full bg-transparent border border-white/15 rounded-none text-white placeholder:text-white/30 focus-visible:ring-0 focus-visible:border-[#ff4000]" />
+                  <Textarea placeholder="Contexto adicional (opcional)" value={leadForm.message} onChange={e => setLeadForm(p => ({ ...p, message: e.target.value }))} maxLength={1000} rows={3} className="w-full bg-transparent border border-black/15 rounded-none text-ink-primary placeholder:text-ink-tertiary focus-visible:ring-0 focus-visible:border-[#ff4000]" />
 
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full inline-flex items-center justify-center gap-3 border-2 px-8 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white disabled:opacity-50"
-                    style={{ borderColor: ACCENT, color: '#ffb494' }}
+                    className="w-full inline-flex items-center justify-center gap-3 border-2 px-8 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-ink-primary disabled:opacity-50"
+                    style={{ borderColor: ACCENT, color: ACCENT }}
                     onMouseEnter={(e) => { if (!submitting) e.currentTarget.style.background = ACCENT; }}
                     onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                   >
@@ -589,15 +584,15 @@ const PriceSimulator = () => {
                 </form>
               </motion.div>
             ) : (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border border-white/10 bg-white/[0.02] p-10 md:p-14 text-center">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border border-black/10 bg-black/[0.02] p-10 md:p-14 text-center">
                 <div className="inline-flex h-14 w-14 items-center justify-center border mb-6" style={{ borderColor: `${ACCENT}66`, color: ACCENT }}>
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
                 <h3 className="text-2xl md:text-3xl font-black tracking-tight">Pedido enviado.</h3>
-                <p className="text-white/60 mt-4">A proposta detalhada chega ao teu email em menos de 24h úteis.</p>
+                <p className="text-ink-secondary mt-4">A proposta detalhada chega ao teu email em menos de 24h úteis.</p>
                 <a
                   href="/"
-                  className="mt-8 inline-flex items-center gap-2 border border-white/20 px-6 py-3 font-mono text-[11px] uppercase tracking-[0.22em] text-white/70 hover:border-white/50 hover:text-white transition-colors"
+                  className="mt-8 inline-flex items-center gap-2 border border-black/20 px-6 py-3 font-mono text-[11px] uppercase tracking-[0.22em] text-ink-secondary hover:border-black/50 hover:text-ink-primary transition-colors"
                 >
                   Voltar ao início
                 </a>
@@ -608,25 +603,25 @@ const PriceSimulator = () => {
       )}
 
       {/* FAQ */}
-      <section className="bg-[#0a0603] text-white py-24 md:py-28">
-        <div className="max-w-4xl mx-auto px-6 md:px-12">
-          <div className="border-t border-white/10 pt-14 mb-10">
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <div className="border-t border-black/10 pt-14 mb-10">
             <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>Perguntas frequentes</span>
             <h2 className="mt-4 text-3xl md:text-5xl font-black leading-[1.02] tracking-tight">
               O que <span style={{ color: ACCENT }}>convém</span> saber.
             </h2>
           </div>
-          <div className="border-t border-white/10">
+          <div className="border-t border-black/10">
             {faqs.map((f, i) => (
-              <details key={i} className="group border-b border-white/10 py-6">
+              <details key={i} className="group border-b border-black/10 py-6">
                 <summary className="flex items-center justify-between gap-6 cursor-pointer list-none">
-                  <span className="text-lg md:text-xl font-semibold text-white">{f.q}</span>
+                  <span className="text-lg md:text-xl font-semibold text-ink-primary">{f.q}</span>
                   <span
                     className="shrink-0 font-mono text-lg transition-transform group-open:rotate-45"
                     style={{ color: ACCENT }}
                   >+</span>
                 </summary>
-                <p className="mt-4 text-white/60 leading-relaxed">{f.a}</p>
+                <p className="mt-4 text-ink-secondary leading-relaxed">{f.a}</p>
               </details>
             ))}
           </div>
@@ -634,7 +629,7 @@ const PriceSimulator = () => {
       </section>
 
       {/* CTA FINAL */}
-      <section className="bg-black text-white py-28 md:py-40">
+      <section className="gb-surface-page gb-section">
         <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -645,12 +640,12 @@ const PriceSimulator = () => {
           >
             Adoraria conhecer o teu <span style={{ color: ACCENT }}>projecto</span> e trabalhar contigo.
           </motion.h2>
-          <p className="mt-8 max-w-2xl mx-auto text-white/60 text-lg">Vamos criar algo extraordinário.</p>
+          <p className="mt-8 max-w-2xl mx-auto text-ink-secondary text-lg">Vamos criar algo extraordinário.</p>
           <div className="mt-14 flex flex-wrap justify-center gap-4">
             <button
               type="button"
               onClick={scrollToSimulator}
-              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-white"
+              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-ink-primary"
               style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
@@ -659,7 +654,7 @@ const PriceSimulator = () => {
             </button>
             <a
               href="/booking"
-              className="inline-flex items-center gap-3 border border-white/25 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] text-white/80 hover:border-white hover:text-white transition-colors"
+              className="inline-flex items-center gap-3 border border-black/25 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] text-ink-secondary hover:border-white hover:text-ink-primary transition-colors"
             >
               <Phone className="h-4 w-4" /> Falar com especialista
             </a>

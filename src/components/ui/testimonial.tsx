@@ -82,7 +82,7 @@ const GridPattern = () => (
 const Card = ({ t, i }: { t: Testimonial; i: number }) => {
   const styles: Record<Variant, string> = {
     light: "bg-white text-foreground border border-border",
-    dark: "bg-[#0a0a0a] text-white",
+    dark: "bg-canvas-inverse text-white",
     accent: "bg-primary text-primary-foreground",
   };
 
@@ -124,7 +124,7 @@ const Card = ({ t, i }: { t: Testimonial; i: number }) => {
 
 export default function ClientFeedback() {
   return (
-    <section className="section-padding bg-section-alt">
+    <section className="gb-surface-section gb-section">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

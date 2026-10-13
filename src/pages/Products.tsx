@@ -3,62 +3,55 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Boxes } from 'lucide-react';
 import Layout from '@/components/Layout';
+import { analytics } from '@/lib/analytics';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import SEO, { SITE_URL } from '@/components/SEO';
 import { SectionHeader } from '@/components/ui/section-header';
 import { Button } from '@/components/ui/button';
-import { PRODUCTS } from '@/data/products';
+import { PRODUCTS, SAAS_PRODUCTS, PLATFORM_PRODUCTS } from '@/data/products';
 import logoQook from '@/assets/logos/logo-qook.svg';
-import logoHostify from '@/assets/logos/logo-hostify.svg';
 import logoMotivae from '@/assets/logos/logo-motivae.svg';
 import logoPikto from '@/assets/logos/logo-pikto.svg';
-import logoProsafe360 from '@/assets/logos/logo-prosafe360.svg';
+import { fadeUp } from '@/components/ui/reveal';
 
 const ACCENT = '#ff4000';
 
 const PRODUCT_LOGOS: Record<string, string> = {
   qook: logoQook,
-  hostify: logoHostify,
   motivae: logoMotivae,
   pikto: logoPikto,
-  prosafe360: logoProsafe360,
 };
 
-/** ItemList of the six products on canonical routes — the hub's proof role. */
+/** ItemList of the routable products on canonical routes — structured data stays valid. */
 const productsSchema = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
   name: 'Produtos Getboost',
-  itemListElement: PRODUCTS.map((p, i) => ({
+  itemListElement: PRODUCTS.filter((p) => p.to).map((p, i) => ({
     '@type': 'ListItem',
     position: i + 1,
     name: p.name,
-    description: p.tagline,
-    url: `${SITE_URL}${p.to}`,
+    description: p.tagline ?? p.name,
+    url: `${SITE_URL}${p.to as string}`,
   })),
 };
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.08, duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
-  }),
-};
-
 /**
- * Getboost 2027 — Wave 3E · Products hub, migrated to the Wave 3A design
- * system (was the pre-system dark build from Wave 2A.5). Routes, product
- * data, structured data and SEO are unchanged.
+ * Getboost 2027 — R19.8 · Products hub on the official catalog:
+ * PRODUTOS SAAS (routable cards) + PLATAFORMAS (institutional
+ * representation, never links). Routes, structured data validity
+ * and SEO integrity preserved.
  */
 const Products = () => {
   const { i18n } = useTranslation();
 
   return (
     <Layout>
+      {/* R20.1 — scroll depth (renders nothing). */}
+      <ScrollDepth location="products" />
       <SEO
         title="Produtos — software que a Getboost constrói e opera"
-        description="Conhece os produtos Getboost: Qook para restauração, Hostify para alojamento local, Motivae, Pikto, Trackfy e ProSafe360. Software real, com utilizadores reais."
+        description="Conhece o ecossistema Getboost: Qook, Motivae, Alojify, Pikto, Trackfy e Safely, mais as plataformas Descobre Quem Tu És e Guia Cities. Software real, com utilizadores reais."
         canonical="/produtos"
         lang={i18n.language as 'pt' | 'en' | 'es'}
         jsonLd={productsSchema}
@@ -71,16 +64,16 @@ const Products = () => {
           <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
             <span className="gb-eyebrow inline-flex items-center gap-2 rounded-full border border-sand-200 px-3 py-1.5 text-brand-600">
               <Boxes className="h-3.5 w-3.5" />
-              Produtos Getboost
+              Ecossistema Getboost
             </span>
             <h1 className="gb-text-display mt-6 max-w-4xl text-ink-primary">
               Não só construímos software.{' '}
               <span className="text-brand-600">Operamo-lo todos os dias.</span>
             </h1>
             <p className="gb-text-body mt-6 max-w-2xl text-ink-secondary">
-              Seis produtos a correr em produção, com clientes reais — cada um
-              nasceu de um problema de negócio concreto. É a mesma engenharia
-              que aplicamos no projecto que vamos construir contigo.
+              O ecossistema de software da Getboost — cada produto nasceu de
+              um problema de negócio concreto. É a mesma engenharia que
+              aplicamos no projecto que vamos construir contigo.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Button asChild size="lg">
@@ -102,16 +95,16 @@ const Products = () => {
         </div>
       </section>
 
-      {/* ==================================================== PRODUCT GRID */}
+      {/* ==================================================== PRODUTOS SAAS */}
       <section className="gb-surface-section gb-section">
         <div className="gb-container">
           <SectionHeader
-            eyebrow="O portefólio de produto"
-            title="Seis produtos, seis problemas resolvidos"
+            eyebrow="Produtos SaaS"
+            title="Software como serviço, em produção"
             description="Cada produto começou como um briefing real. Explora o que fazem e para quem são."
           />
           <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {PRODUCTS.map((product, i) => {
+            {SAAS_PRODUCTS.filter((p) => p.to && p.tagline).map((product, i) => {
               const logo = PRODUCT_LOGOS[product.slug];
               return (
                 <motion.div
@@ -122,9 +115,17 @@ const Products = () => {
                   variants={fadeUp}
                   custom={i}
                 >
-                  <Link to={product.to} className="group block h-full">
-                    <div className="gb-surface-card h-full transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-card-hover">
-                      <span aria-hidden className="block h-1 w-10 rounded-full" style={{ background: product.accent }} />
+                  <Link to={product.to as string} className="group block h-full" onClick={() => analytics.trackProduct(product.slug, 'click', 'products_hub')}>
+                    <div className="gb-surface-card gb-card-lift h-full">
+                      <div className="flex items-start justify-between gap-3">
+                        <span aria-hidden className="block h-1 w-10 rounded-full" style={{ background: product.accent }} />
+                        {product.status && (
+                          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-success-bg px-2.5 py-1 text-[11px] font-semibold text-success">
+                            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-success" />
+                            {product.status}
+                          </span>
+                        )}
+                      </div>
                       <div className="mt-5 flex h-12 items-center">
                         {logo ? (
                           <img
@@ -137,10 +138,15 @@ const Products = () => {
                           <span className="gb-eyebrow text-ink-tertiary">{product.name}</span>
                         )}
                       </div>
-                      <h2 className="gb-text-h3 mt-4 text-ink-primary">{product.name}</h2>
+                      {product.category && (
+                        <p className="gb-eyebrow mt-4 text-ink-tertiary">{product.category}</p>
+                      )}
+                      <h2 className="gb-text-h3 mt-2 text-ink-primary">{product.name}</h2>
                       <p className="gb-text-small mt-2 font-medium text-ink-secondary">{product.tagline}</p>
-                      <p className="gb-text-body mt-4 text-ink-secondary">{product.description}</p>
-                      <span className="mt-6 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-brand-600">
+                      {product.description && (
+                        <p className="gb-text-body mt-4 text-ink-secondary">{product.description}</p>
+                      )}
+                      <span className="gb-link-more mt-6 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-brand-600">
                         Conhecer o {product.name}
                         <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                       </span>
@@ -149,6 +155,41 @@ const Products = () => {
                 </motion.div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ==================================================== PLATAFORMAS */}
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Plataformas"
+            title="O ecossistema continua a crescer"
+            description="Representação institucional das plataformas Getboost."
+          />
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            {PLATFORM_PRODUCTS.map((product, i) => (
+              <motion.div
+                key={product.slug}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeUp}
+                custom={i}
+              >
+                {/* Institutional entry: representation only, never a link. */}
+                <div className="gb-surface-card h-full">
+                  <span aria-hidden className="block h-1 w-10 rounded-full" style={{ background: product.accent }} />
+                  <div className="mt-5 flex h-12 items-center">
+                    <span aria-hidden="true" className="flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black text-white" style={{ background: product.accent }}>
+                      {product.name.charAt(0)}
+                    </span>
+                  </div>
+                  <p className="gb-eyebrow mt-4 text-ink-tertiary">Plataforma</p>
+                  <h2 className="gb-text-h3 mt-2 text-ink-primary">{product.name}</h2>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>

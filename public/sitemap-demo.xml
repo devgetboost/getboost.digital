@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://getboost.digital/demo</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/demo"/>
@@ -12,25 +12,25 @@
   </url>
   <url>
     <loc>https://getboost.digital/demo?produto=pikto</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://getboost.digital/demo?produto=prosafe360</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://getboost.digital/demo?produto=motivae</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://getboost.digital/demo?produto=qook</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/demo?produto=qook"/>
@@ -39,7 +39,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/demo?produto=qook&amp;lang=en</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/demo?produto=qook"/>
@@ -48,13 +48,13 @@
   </url>
   <url>
     <loc>https://getboost.digital/demo?produto=hostify</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://getboost.digital/demo?produto=trackfy</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

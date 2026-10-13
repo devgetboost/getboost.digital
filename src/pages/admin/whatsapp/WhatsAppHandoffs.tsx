@@ -60,12 +60,12 @@ function slaBadge(h: Handoff): { label: string; color: string } | null {
 
 const CATEGORY_META: Record<Category, { label: string; icon: any; color: string }> = {
   human_request: { label: 'Pedido humano', icon: UserRound, color: 'bg-blue-500/15 text-blue-700 border-blue-300' },
-  complaint_legal: { label: 'Reclamação / Jurídico', icon: ShieldAlert, color: 'bg-red-500/15 text-red-700 border-red-300' },
+  complaint_legal: { label: 'Reclamação / Jurídico', icon: ShieldAlert, color: 'bg-error/15 text-red-700 border-red-300' },
   urgency: { label: 'Urgência', icon: AlertTriangle, color: 'bg-amber-500/15 text-amber-700 border-amber-300' },
 };
 
 const STATUS_META: Record<Status, { label: string; color: string }> = {
-  pending: { label: 'Pendente', color: 'bg-orange-500/15 text-orange-700 border-orange-300' },
+  pending: { label: 'Pendente', color: 'bg-brand-500/15 text-orange-700 border-orange-300' },
   in_review: { label: 'Em revisão', color: 'bg-indigo-500/15 text-indigo-700 border-indigo-300' },
   resolved: { label: 'Resolvido', color: 'bg-emerald-500/15 text-emerald-700 border-emerald-300' },
   forwarded: { label: 'Reencaminhado', color: 'bg-purple-500/15 text-purple-700 border-purple-300' },

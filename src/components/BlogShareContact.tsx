@@ -63,10 +63,10 @@ const BlogShareContact = ({ postTitle, postSlug }: BlogShareContactProps) => {
           ))}
         </div>
         <div className="flex items-center justify-center gap-2 text-base">
-          <a href={`mailto:${CONTACT.email}`} className="text-primary hover:underline font-medium">
+          <a href={`mailto:${CONTACT.email}`} onClick={() => analytics.trackOutbound('email', 'blog_author')} className="text-primary hover:underline font-medium">
             {CONTACT.email}
           </a>
-          <a href={`mailto:${CONTACT.email}`} className="font-semibold text-foreground hover:text-primary transition-colors">
+          <a href={`mailto:${CONTACT.email}`} onClick={() => analytics.trackOutbound('email', 'blog_author')} className="font-semibold text-foreground hover:text-primary transition-colors">
             {t('blog.contactUs')}
           </a>
         </div>
@@ -84,7 +84,7 @@ const BlogShareContact = ({ postTitle, postSlug }: BlogShareContactProps) => {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span className="font-bold text-foreground">Getboost Digital</span>
-              <a href={`mailto:${CONTACT.email}`} className="text-muted-foreground hover:text-primary transition-colors text-sm">
+              <a href={`mailto:${CONTACT.email}`} onClick={() => analytics.trackOutbound('email', 'blog_author')} className="text-muted-foreground hover:text-primary transition-colors text-sm">
                 {CONTACT.email}
               </a>
             </div>

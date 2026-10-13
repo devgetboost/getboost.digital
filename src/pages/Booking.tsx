@@ -1,16 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { analytics } from '@/lib/analytics';
+import { analytics, getJourney, getJourneyOrigin } from '@/lib/analytics';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { pt, es, enGB } from 'date-fns/locale';
 import {
-  CalendarIcon, Clock, Check, ArrowLeft, ArrowRight, Video, Clock3, ShieldCheck,
+  CalendarIcon, Clock, Check, ArrowLeft, ArrowRight, Video,
   ChevronRight, Globe, User, Mail, Phone, Building2, Zap,
 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
+import { MiniFlow } from '@/components/ui/mini-flow';
+import { PRODUCTS } from '@/data/products';
+import { SOLUCOES_SUBMENU } from '@/data/solucoesSubmenu';
+import { MARKET_CODES } from '@/lib/markets';
 import { legacySupabase } from '@/integrations/supabase/client';
 import {
   lookupBooking,
@@ -108,6 +113,49 @@ const Booking = () => {
   const [previewMeetingLink, setPreviewMeetingLink] = useState<string>('');
   const [confirmedPhone, setConfirmedPhone] = useState<string | null>(null);
   const [existingBookingId, setExistingBookingId] = useState<string | null>(null);
+  // R20.1 — form lifecycle (start/progress/abandon). success/error keep
+  // their dedicated events; these refs only gate lifecycle attribution.
+  const lifecycleStarted = useRef(false);
+  const lifecycleSubmitted = useRef(false);
+  const stepRef = useRef(step);
+  stepRef.current = step;
+
+  useEffect(() => {
+    if (lifecycleStarted.current) return;
+    const interacted =
+      step > 1 ||
+      meetingType !== '' ||
+      date !== undefined ||
+      time !== '' ||
+      form.name !== '' ||
+      form.email !== '' ||
+      form.phone !== '';
+    if (interacted) {
+      lifecycleStarted.current = true;
+      analytics.trackFormStep('booking', 'start');
+    }
+  }, [step, meetingType, date, time, form.name, form.email, form.phone]);
+
+  useEffect(() => {
+    if (step > 1 && step < 5) {
+      analytics.trackFormStep('booking', 'progress', { step });
+    }
+  }, [step]);
+
+  useEffect(() => {
+    const onAbandon = () => {
+      if (lifecycleStarted.current && !lifecycleSubmitted.current) {
+        analytics.trackFormStep('booking', 'abandon', { step: stepRef.current, origin: getJourneyOrigin() });
+        lifecycleStarted.current = false; // fire once per page lifecycle
+      }
+    };
+    window.addEventListener('pagehide', onAbandon);
+    return () => {
+      window.removeEventListener('pagehide', onAbandon);
+      onAbandon(); // in-app navigation away (unmount only — stable deps)
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   // R1C8: proof of possession for a reschedule is the booking email. A visitor
   // arriving from an email link confirms the address before the booking moves.
   const [rescheduleEmail, setRescheduleEmail] = useState<string>('');
@@ -212,12 +260,14 @@ const Booking = () => {
   };
 
   // ---- Shared dark UI classes (agentes-ia style) ----
-  const panelClass = 'border border-white/10 bg-white/[0.02] backdrop-blur-sm rounded-2xl';
-  const inputClass = 'bg-white/[0.03] border-white/15 text-white placeholder:text-white/40 focus-visible:ring-[#ff4000]/40';
-  const labelClass = 'font-mono text-[11px] uppercase tracking-[0.22em] text-white/60 mb-2 block';
+  const panelClass = 'border border-black/10 bg-black/[0.02] backdrop-blur-sm rounded-2xl';
+  const inputClass = 'bg-black/[0.03] border-black/15 text-ink-primary placeholder:text-ink-tertiary focus-visible:ring-[#ff4000]/40';
+  const labelClass = 'font-mono text-[11px] uppercase tracking-[0.22em] text-ink-secondary mb-2 block';
 
   const runSubmit = async () => {
     setSubmitting(true);
+    // R20.1 — explicit submit step (success/error keep dedicated events).
+    analytics.trackFormStep('booking', 'submit', { origin: getJourneyOrigin() });
     const normalizedPhone = confirmedPhone;
     const isReschedule = !!existingBookingId;
     const meetingDateStr = date ? format(date, 'yyyy-MM-dd') : '';
@@ -314,14 +364,19 @@ const Booking = () => {
         meeting_date: meetingDateStr,
         meeting_time: time,
         language: i18n.language,
+        // R20.1 — funnel attribution: paths only, never PII.
+        journey: getJourney(),
+        origin: getJourneyOrigin(),
       });
       analytics.trackForm('booking', 'booking_form_success', {
         meeting_type: meetingType,
         meeting_date: meetingDateStr,
         meeting_time: time,
-        email: form.email,
-        phone: normalizedPhone,
-        company: form.company || null,
+        // R20.1 — analytics payloads never carry PII (lead data travels
+        // through the booking edge function, not through analytics).
+        // Funnel attribution only:
+        journey: getJourney(),
+        origin: getJourneyOrigin(),
       });
       const meetingLabels: Record<string, string> = {
         discovery: t('booking.confirmLabels.discovery'),
@@ -393,6 +448,7 @@ const Booking = () => {
         },
       }).catch(console.error);
       if (createdBookingId) setExistingBookingId(createdBookingId);
+      lifecycleSubmitted.current = true; // converted — no abandon afterwards
       setIsRescheduling(false);
       setStep(5);
       if (isReschedule) toast.success(t('booking.rescheduleSuccess', 'Reunião reagendada com sucesso'));
@@ -404,121 +460,142 @@ const Booking = () => {
 
   return (
     <Layout>
+      <ScrollDepth location="booking" />
       <SEO
         title={`${t('booking.heroBadge')} — ${t('booking.title')}`}
         description={t('booking.heroSubtitle')}
         canonical="/booking"
       />
 
-      {/* HERO — manifesto style (agentes-ia) */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      {/* HERO — R19.4 light premium (form itself is the CTA; no duplicate conversion). */}
+      <section className="gb-surface-page relative overflow-hidden">
+        <div aria-hidden className="gb-grid-overlay" />
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
-            backgroundSize: '56px 56px',
-            maskImage: 'radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%)',
-            WebkitMaskImage: 'radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%)',
-          }}
+          className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full blur-3xl"
+          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.08) 0%, rgba(255,255,255,0) 65%)' }}
         />
-        <div
-          aria-hidden
-          className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
-          style={{
-            background: 'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)',
-          }}
-        />
-        <motion.div
-          aria-hidden
-          initial={{ y: '-100%' }}
-          animate={{ y: '120%' }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          className="pointer-events-none absolute inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#ff4000]/10 to-transparent"
-        />
-
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-24 md:py-32">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
-            style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
-          >
-            <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
-            {t('booking.heroBadge')}
-          </motion.div>
-
-          <h1 className="mt-8 font-black leading-[0.92] tracking-tight text-[clamp(2.5rem,7vw,6rem)]">
-            <motion.span
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.15 }}
-              className="block"
-            >
-              {t('booking.heroTitle')}
-            </motion.span>
-            <motion.span
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.27 }}
-              className="block"
-              style={{ color: ACCENT, textShadow: '0 0 40px rgba(255,64,0,0.4)' }}
-            >
-              {t('booking.heroHighlight')}
-            </motion.span>
-          </h1>
-
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="mt-10 h-px w-40 origin-left"
-            style={{ background: `${ACCENT}b3` }}
-          />
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-white/75"
-          >
-            {t('booking.heroSubtitle')}
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.9 }}
-            className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4"
-          >
-            {[
-              { icon: Clock3, label: t('booking.check30min') },
-              { icon: ShieldCheck, label: t('booking.checkNoCommitment') },
-              { icon: Video, label: t('booking.checkVideo') },
-            ].map((c, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 border border-white/10 bg-white/[0.03] rounded-xl px-5 py-4"
+        <div className="gb-container relative gb-section !pt-10 md:!pt-16">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            <div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               >
-                <c.icon className="h-5 w-5 shrink-0" style={{ color: ACCENT }} />
-                <span className="text-sm text-white/80">{c.label}</span>
+                <span className="gb-eyebrow text-brand-600">{t('booking.heroBadge')}</span>
+              </motion.div>
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="gb-text-display mt-5 text-ink-primary"
+              >
+                Vamos transformar a tua{' '}
+                <span className="text-brand-600">operação digital</span>.
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="gb-text-body mt-6 max-w-xl text-ink-secondary"
+              >
+                Partilha os teus objetivos. Vamos analisar o teu negócio e
+                apresentar um plano concreto de crescimento.
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-8 flex flex-wrap gap-2.5"
+              >
+                {['IA', 'Software', 'Automação', 'Growth'].map((item) => (
+                  <span key={item} className="gb-chip">
+                    <Check className="h-3.5 w-3.5 text-brand-600" />
+                    {item}
+                  </span>
+                ))}
+              </motion.div>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                className="gb-text-small mt-6 text-ink-tertiary"
+              >
+                30 min · Online · 0€ — desce para começar o pedido
+              </motion.p>
+            </div>
+
+            {/* O que acontece a seguir — expectation preview (illustrative). */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="relative"
+            >
+              <div className="gb-card !p-6 !shadow-lg">
+                <p className="gb-eyebrow text-ink-tertiary">O que acontece a seguir</p>
+                <ol className="mt-4 flex flex-col gap-3">
+                  {[
+                    { n: '1', t: 'Recebemos o pedido' },
+                    { n: '2', t: 'Analisamos o contexto' },
+                    { n: '3', t: 'Preparamos proposta' },
+                    { n: '4', t: 'Entramos em contacto' },
+                  ].map((step) => (
+                    <li key={step.n} className="flex items-center gap-3 rounded-xl bg-black/[0.03] px-4 py-3">
+                      <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#ff4000]/10 font-mono text-xs font-bold text-brand-600">
+                        {step.n}
+                      </span>
+                      <span className="text-[15px] font-medium text-ink-primary">{step.t}</span>
+                    </li>
+                  ))}
+                </ol>
               </div>
+            </motion.div>
+          </div>
+
+          {/* Processo — MiniFlow padrão R18.9. */}
+          <div className="gb-card mt-12 !p-6 md:!p-8">
+            <p className="gb-eyebrow text-ink-tertiary">Como trabalhamos</p>
+            <MiniFlow
+              steps={['Diagnóstico', 'Planeamento', 'Implementação', 'Escala']}
+              tint="var(--gb-brand-50)"
+              strong="var(--gb-brand-600)"
+            />
+          </div>
+        </div>
+        <div className="gb-container pb-16">
+          <div className="gb-hairline-accent" />
+        </div>
+      </section>
+
+      {/* AUTHORITY STRIP — R19.4 (dados reais do sistema, nunca hardcoded). */}
+      <section className="gb-surface-subtle gb-section !py-12">
+        <div className="gb-container">
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+            {[
+              { k: `${PRODUCTS.length}`, v: 'produtos próprios' },
+              { k: `${SOLUCOES_SUBMENU.length}`, v: 'serviços especializados' },
+              { k: `${MARKET_CODES.length}`, v: 'mercados' },
+            ].map((fact) => (
+              <span key={fact.v} className="inline-flex items-center gap-2 text-sm text-ink-secondary">
+                <Check className="h-4 w-4 text-brand-600" aria-hidden="true" />
+                <strong className="font-bold text-ink-primary">{fact.k}</strong> {fact.v}
+              </span>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* WIZARD — dark canvas */}
-      <section className="bg-[#0a0603] text-white pb-28 pt-4">
+      <section className="gb-surface-page gb-section">
         <div className="max-w-3xl mx-auto px-6 md:px-12">
           {/* Benefits strip */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-12">
             {benefits.map((b, i) => (
-              <div key={i} className="flex items-center gap-3 border border-white/10 bg-white/[0.02] rounded-xl px-5 py-3">
+              <div key={i} className="flex items-center gap-3 border border-black/10 bg-black/[0.02] rounded-xl px-5 py-3">
                 <b.icon className="h-4 w-4 shrink-0" style={{ color: ACCENT }} />
-                <span className="text-xs font-mono uppercase tracking-[0.18em] text-white/70">{b.label}</span>
+                <span className="text-xs font-mono uppercase tracking-[0.18em] text-ink-secondary">{b.label}</span>
               </div>
             ))}
           </div>
@@ -534,15 +611,15 @@ const Booking = () => {
                   <div
                     className={cn(
                       'w-10 h-10 rounded-full flex items-center justify-center text-sm font-mono font-semibold border transition-all',
-                      isCompleted && 'border-[#ff4000] bg-[#ff4000] text-white',
+                      isCompleted && 'border-[#ff4000] bg-[#ff4000] text-ink-primary',
                       isCurrent && 'border-[#ff4000] text-[#ff4000] bg-transparent',
-                      !isCompleted && !isCurrent && 'border-white/15 text-white/40 bg-transparent'
+                      !isCompleted && !isCurrent && 'border-black/15 text-ink-tertiary bg-transparent'
                     )}
                   >
                     {isCompleted ? <Check className="h-4 w-4" /> : stepNum}
                   </div>
                   {i < totalSteps - 1 && (
-                    <div className={cn('w-10 h-px mx-1', stepNum < step ? 'bg-[#ff4000]' : 'bg-white/15')} />
+                    <div className={cn('w-10 h-px mx-1', stepNum < step ? 'bg-[#ff4000]' : 'bg-black/15')} />
                   )}
                 </div>
               );
@@ -553,7 +630,7 @@ const Booking = () => {
           {step > 1 && step <= 4 && (
             <button
               onClick={() => setStep(s => s - 1)}
-              className="flex items-center gap-2 text-xs font-mono uppercase tracking-[0.22em] text-white/60 hover:text-white transition-colors mb-6"
+              className="flex items-center gap-2 text-xs font-mono uppercase tracking-[0.22em] text-ink-secondary hover:text-ink-primary transition-colors mb-6"
             >
               <ArrowLeft className="h-4 w-4" /> {t('booking.back')}
             </button>
@@ -578,7 +655,7 @@ const Booking = () => {
                           'w-full text-left border rounded-xl p-5 transition-all flex items-start gap-4 group',
                           meetingType === mt.id
                             ? 'border-[#ff4000] bg-[#ff4000]/5'
-                            : 'border-white/15 bg-transparent hover:border-[#ff4000]/50 hover:bg-white/[0.03]'
+                            : 'border-black/15 bg-transparent hover:border-[#ff4000]/50 hover:bg-black/[0.03]'
                         )}
                       >
                         <div className="w-11 h-11 rounded-lg border border-[#ff4000]/40 bg-[#ff4000]/10 flex items-center justify-center shrink-0">
@@ -586,11 +663,11 @@ const Booking = () => {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
-                            <h3 className="font-semibold text-white">{mt.title}</h3>
-                            <ChevronRight className="h-5 w-5 text-white/40 group-hover:text-[#ff4000] transition-colors shrink-0" />
+                            <h3 className="font-semibold text-ink-primary">{mt.title}</h3>
+                            <ChevronRight className="h-5 w-5 text-ink-tertiary group-hover:text-[#ff4000] transition-colors shrink-0" />
                           </div>
-                          <p className="text-sm text-white/60 mt-1">{mt.desc}</p>
-                          <div className="flex items-center gap-1.5 mt-3 text-xs font-mono uppercase tracking-[0.18em] text-white/50">
+                          <p className="text-sm text-ink-secondary mt-1">{mt.desc}</p>
+                          <div className="flex items-center gap-1.5 mt-3 text-xs font-mono uppercase tracking-[0.18em] text-ink-tertiary">
                             <Clock className="h-3.5 w-3.5" />
                             <span>{mt.duration} min</span>
                           </div>
@@ -605,7 +682,7 @@ const Booking = () => {
               {step === 2 && (
                 <div className={cn(panelClass, 'p-6 md:p-10')}>
                   {isRescheduling && (
-                    <div className="mb-4 rounded-lg border border-[#ff4000]/40 bg-[#ff4000]/10 px-4 py-3 text-sm text-white/90">
+                    <div className="mb-4 rounded-lg border border-[#ff4000]/40 bg-[#ff4000]/10 px-4 py-3 text-sm text-ink-secondary">
                       {t('booking.rescheduleHint', 'A escolher uma nova hora para a tua reunião. O agendamento anterior será atualizado.')}
                     </div>
                   )}
@@ -614,7 +691,7 @@ const Booking = () => {
                   </p>
                   <h2 className="text-2xl md:text-3xl font-bold mt-2 mb-6">{t('booking.selectDate')}</h2>
                   <div className="flex justify-center">
-                    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-2 [&_.rdp]:text-white [&_button]:text-white [&_.rdp-day_selected]:!bg-[#ff4000] [&_.rdp-day_selected]:!text-white [&_.rdp-day]:hover:!bg-white/10 [&_.rdp-day_today]:!text-[#ff4000] [&_.rdp-nav_button]:!text-white/70 [&_.rdp-head_cell]:!text-white/50">
+                    <div className="rounded-xl border border-black/10 bg-black/[0.02] p-2 [&_.rdp]:text-ink-primary [&_button]:text-ink-primary [&_.rdp-day_selected]:!bg-[#ff4000] [&_.rdp-day_selected]:!text-ink-primary [&_.rdp-day]:hover:!bg-black/10 [&_.rdp-day_today]:!text-[#ff4000] [&_.rdp-nav_button]:!text-ink-secondary [&_.rdp-head_cell]:!text-ink-tertiary">
                       <Calendar
                         mode="single"
                         selected={date}
@@ -626,11 +703,11 @@ const Booking = () => {
                     </div>
                   </div>
                   {selectedMeeting && (
-                    <div className="mt-6 flex items-center gap-3 border border-white/10 bg-white/[0.03] rounded-xl px-5 py-4">
+                    <div className="mt-6 flex items-center gap-3 border border-black/10 bg-black/[0.03] rounded-xl px-5 py-4">
                       <Video className="h-5 w-5 shrink-0" style={{ color: ACCENT }} />
                       <div>
-                        <p className="font-semibold text-sm text-white">{selectedMeeting.title}</p>
-                        <p className="text-xs font-mono uppercase tracking-[0.18em] text-white/50 mt-0.5">
+                        <p className="font-semibold text-sm text-ink-primary">{selectedMeeting.title}</p>
+                        <p className="text-xs font-mono uppercase tracking-[0.18em] text-ink-tertiary mt-0.5">
                           {selectedMeeting.duration} {t('booking.minutes')}
                         </p>
                       </div>
@@ -643,7 +720,7 @@ const Booking = () => {
               {step === 3 && (
                 <div className={cn(panelClass, 'p-6 md:p-10')}>
                   {isRescheduling && (
-                    <div className="mb-4 rounded-lg border border-[#ff4000]/40 bg-[#ff4000]/10 px-4 py-3 text-sm text-white/90">
+                    <div className="mb-4 rounded-lg border border-[#ff4000]/40 bg-[#ff4000]/10 px-4 py-3 text-sm text-ink-secondary">
                       {t('booking.rescheduleHint', 'A escolher uma nova hora para a tua reunião. O agendamento anterior será atualizado.')}
                     </div>
                   )}
@@ -651,7 +728,7 @@ const Booking = () => {
                     03 · Horário
                   </p>
                   <h2 className="text-2xl md:text-3xl font-bold mt-2">{t('booking.selectTime2')}</h2>
-                  <p className="text-sm text-white/60 mb-6 mt-1">
+                  <p className="text-sm text-ink-secondary mb-6 mt-1">
                     {date && formatDateLocalized(date)}
                   </p>
 
@@ -670,7 +747,7 @@ const Booking = () => {
                       </SelectContent>
                     </Select>
                     {form.timezone !== 'lisbon' && (
-                      <p className="text-xs text-white/50 mt-2">
+                      <p className="text-xs text-ink-tertiary mt-2">
                         {t('booking.timezoneHint', 'Horários convertidos para o teu fuso. A referência interna é Lisboa.')}
                       </p>
                     )}
@@ -687,8 +764,8 @@ const Booking = () => {
                           className={cn(
                             'py-3 rounded-xl text-sm font-mono font-semibold transition-all flex flex-col items-center border',
                             active
-                              ? 'bg-[#ff4000] text-white border-[#ff4000]'
-                              : 'bg-transparent text-white/80 border-white/15 hover:border-[#ff4000]/60 hover:text-white'
+                              ? 'bg-[#ff4000] text-ink-primary border-[#ff4000]'
+                              : 'bg-transparent text-ink-secondary border-black/15 hover:border-[#ff4000]/60 hover:text-ink-primary'
                           )}
                         >
                           <span>{local}</span>
@@ -716,8 +793,8 @@ const Booking = () => {
                       }
                       setStep(4);
                     }}
-                    className="mt-8 w-full inline-flex items-center justify-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white"
-                    style={{ borderColor: ACCENT, color: '#ffb494' }}
+                    className="mt-8 w-full inline-flex items-center justify-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-ink-primary"
+                    style={{ borderColor: ACCENT, color: ACCENT }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
                     onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                   >
@@ -736,18 +813,18 @@ const Booking = () => {
                   <h2 className="text-2xl md:text-3xl font-bold mt-2 mb-6">{t('booking.yourData')}</h2>
 
                   {/* Summary */}
-                  <div className="border border-white/10 bg-white/[0.03] rounded-xl p-4 mb-8 space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-white/80">
+                  <div className="border border-black/10 bg-black/[0.03] rounded-xl p-4 mb-8 space-y-2">
+                    <div className="flex items-center gap-2 text-sm text-ink-secondary">
                       <CalendarIcon className="h-4 w-4" style={{ color: ACCENT }} />
                       <span>{date && formatDateLocalized(date)}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-white/80">
+                    <div className="flex items-center gap-2 text-sm text-ink-secondary">
                       <Clock className="h-4 w-4" style={{ color: ACCENT }} />
                       <span>
                         {date && time ? convertSlotToTz(date, time, form.timezone) : time} ({selectedMeeting?.duration} min)
-                        <span className="text-white/50 ml-1">· {t(`booking.timezones.${form.timezone}`)}</span>
+                        <span className="text-ink-tertiary ml-1">· {t(`booking.timezones.${form.timezone}`)}</span>
                         {form.timezone !== 'lisbon' && (
-                          <span className="text-white/50 ml-1">({time} Lx)</span>
+                          <span className="text-ink-tertiary ml-1">({time} Lx)</span>
                         )}
                       </span>
                     </div>
@@ -757,7 +834,7 @@ const Booking = () => {
                     <div>
                       <label className={labelClass}>{t('booking.name')} *</label>
                       <div className="relative">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-tertiary" />
                         <Input value={form.name} onChange={(e) => updateForm('name', e.target.value)} placeholder={t('booking.namePlaceholder')} maxLength={100} className={cn(inputClass, 'pl-10', errors.name && 'border-destructive')} aria-invalid={!!errors.name} />
                       </div>
                       {errors.name && <p className="text-xs text-destructive mt-1">{errors.name}</p>}
@@ -765,7 +842,7 @@ const Booking = () => {
                     <div>
                       <label className={labelClass}>{t('booking.email')} *</label>
                       <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-tertiary" />
                         <Input type="email" value={form.email} onChange={(e) => updateForm('email', e.target.value)} placeholder={t('booking.emailPlaceholder')} maxLength={255} className={cn(inputClass, 'pl-10', errors.email && 'border-destructive')} aria-invalid={!!errors.email} />
                       </div>
                       {errors.email && <p className="text-xs text-destructive mt-1">{errors.email}</p>}
@@ -774,7 +851,7 @@ const Booking = () => {
                       <div>
                         <label className={labelClass}>{t('booking.phone')}</label>
                         <div className="relative">
-                          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+                          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-tertiary" />
                           <Input value={form.phone} onChange={(e) => updateForm('phone', e.target.value)} placeholder={t('booking.phonePlaceholder')} maxLength={30} className={cn(inputClass, 'pl-10', errors.phone && 'border-destructive')} aria-invalid={!!errors.phone} />
                         </div>
                         {errors.phone && <p className="text-xs text-destructive mt-1">{errors.phone}</p>}
@@ -782,7 +859,7 @@ const Booking = () => {
                       <div>
                         <label className={labelClass}>{t('booking.company')}</label>
                         <div className="relative">
-                          <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+                          <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-tertiary" />
                           <Input value={form.company} onChange={(e) => updateForm('company', e.target.value)} placeholder={t('booking.companyPlaceholder')} maxLength={120} className={cn(inputClass, 'pl-10', errors.company && 'border-destructive')} aria-invalid={!!errors.company} />
                         </div>
                         {errors.company && <p className="text-xs text-destructive mt-1">{errors.company}</p>}
@@ -798,13 +875,13 @@ const Booking = () => {
                       <Textarea value={form.challenges} onChange={(e) => updateForm('challenges', e.target.value)} maxLength={1000} className={cn(inputClass, 'min-h-[120px]', errors.challenges && 'border-destructive')} placeholder={t('booking.challengesPlaceholder')} aria-invalid={!!errors.challenges} />
                       <div className="flex justify-between mt-1">
                         {errors.challenges ? <p className="text-xs text-destructive">{errors.challenges}</p> : <span />}
-                        <p className="text-xs text-white/40 font-mono">{form.challenges.length}/1000</p>
+                        <p className="text-xs text-ink-tertiary font-mono">{form.challenges.length}/1000</p>
                       </div>
                     </div>
                     <div>
                       <label className={labelClass}>{t('booking.timezone')}</label>
                       <div className="relative">
-                        <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40 z-10" />
+                        <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-tertiary z-10" />
                         <Select value={form.timezone} onValueChange={(v) => updateForm('timezone', v)}>
                           <SelectTrigger className={cn(inputClass, 'pl-10')}><SelectValue /></SelectTrigger>
                           <SelectContent>
@@ -878,8 +955,8 @@ const Booking = () => {
                         setPreviewMeetingLink(`https://meet.jit.si/getboost-${crypto.randomUUID().slice(0, 8)}-${Date.now().toString(36)}`);
                         setConfirmOpen(true);
                       }}
-                      className="mt-4 w-full inline-flex items-center justify-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white disabled:opacity-60"
-                      style={{ borderColor: ACCENT, color: '#ffb494' }}
+                      className="mt-4 w-full inline-flex items-center justify-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-ink-primary disabled:opacity-60"
+                      style={{ borderColor: ACCENT, color: ACCENT }}
                       onMouseEnter={(e) => { if (!submitting) e.currentTarget.style.background = ACCENT; }}
                       onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                     >
@@ -916,26 +993,26 @@ const Booking = () => {
                   !submitting &&
                   (!isRescheduling || rescheduleVerified);
                 const Row = ({ label, value, optional }: { label: string; value: React.ReactNode; optional?: boolean }) => (
-                  <div className="flex items-baseline justify-between gap-4 py-1.5 border-b border-white/5 last:border-0">
-                    <span className="text-white/50 text-xs uppercase tracking-wider font-mono">
-                      {label}{optional && <span className="ml-1 normal-case tracking-normal text-white/30">({t('booking.confirmReview.optional', 'opcional')})</span>}
+                  <div className="flex items-baseline justify-between gap-4 py-1.5 border-b border-black/5 last:border-0">
+                    <span className="text-ink-tertiary text-xs uppercase tracking-wider font-mono">
+                      {label}{optional && <span className="ml-1 normal-case tracking-normal text-ink-tertiary">({t('booking.confirmReview.optional', 'opcional')})</span>}
                     </span>
-                    <span className="text-white/90 text-right break-all">{value || <span className="text-white/30">—</span>}</span>
+                    <span className="text-ink-secondary text-right break-all">{value || <span className="text-ink-tertiary">—</span>}</span>
                   </div>
                 );
                 return (
                   <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-                    <AlertDialogContent className="bg-[#0f0a08] border-white/10 text-white max-h-[90vh] overflow-y-auto">
+                    <AlertDialogContent className="bg-canvas-inverse border-black/10 text-ink-primary max-h-[90vh] overflow-y-auto">
                       <AlertDialogHeader>
                         <AlertDialogTitle>{t('booking.confirmReview.title', 'Confirma os teus dados')}</AlertDialogTitle>
-                        <AlertDialogDescription className="text-white/60">
+                        <AlertDialogDescription className="text-ink-secondary">
                           {t('booking.confirmReview.description', 'Verifica se está tudo correto antes de agendar a reunião.')}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
 
                       {/* Reunião */}
-                      <div className="border border-white/10 rounded-lg p-4 bg-white/[0.03]">
-                        <div className="text-[10px] uppercase tracking-[0.24em] text-white/40 mb-2 font-mono">
+                      <div className="border border-black/10 rounded-lg p-4 bg-black/[0.03]">
+                        <div className="text-[10px] uppercase tracking-[0.24em] text-ink-tertiary mb-2 font-mono">
                           {t('booking.confirmReview.sectionMeeting', 'Reunião')}
                         </div>
                         <Row label={t('booking.meeting', 'Reunião')} value={selectedMeeting?.title} />
@@ -947,8 +1024,8 @@ const Booking = () => {
                       </div>
 
                       {/* Contacto */}
-                      <div className="border border-white/10 rounded-lg p-4 bg-white/[0.03]">
-                        <div className="text-[10px] uppercase tracking-[0.24em] text-white/40 mb-2 font-mono">
+                      <div className="border border-black/10 rounded-lg p-4 bg-black/[0.03]">
+                        <div className="text-[10px] uppercase tracking-[0.24em] text-ink-tertiary mb-2 font-mono">
                           {t('booking.confirmReview.sectionContact', 'Contacto')}
                         </div>
                         <Row label={t('booking.name', 'Nome')} value={form.name} />
@@ -959,17 +1036,17 @@ const Booking = () => {
                       </div>
 
                       {/* Contexto */}
-                      <div className="border border-white/10 rounded-lg p-4 bg-white/[0.03]">
-                        <div className="text-[10px] uppercase tracking-[0.24em] text-white/40 mb-2 font-mono">
+                      <div className="border border-black/10 rounded-lg p-4 bg-black/[0.03]">
+                        <div className="text-[10px] uppercase tracking-[0.24em] text-ink-tertiary mb-2 font-mono">
                           {t('booking.confirmReview.sectionContext', 'Contexto')}
                         </div>
-                        <p className="text-sm text-white/85 whitespace-pre-wrap">{form.challenges}</p>
+                        <p className="text-sm text-ink-secondary whitespace-pre-wrap">{form.challenges}</p>
                       </div>
 
                       {/* Link preview */}
                       {previewMeetingLink && (
-                        <div className="text-xs border border-white/10 rounded-lg p-4 bg-white/[0.02] break-all">
-                          <div className="text-[10px] uppercase tracking-[0.24em] text-white/40 mb-1 font-mono">
+                        <div className="text-xs border border-black/10 rounded-lg p-4 bg-black/[0.02] break-all">
+                          <div className="text-[10px] uppercase tracking-[0.24em] text-ink-tertiary mb-1 font-mono">
                             {t('booking.confirmReview.meetingLink', 'Link da reunião')}
                           </div>
                           <a href={previewMeetingLink} target="_blank" rel="noreferrer" style={{ color: ACCENT }} className="underline">
@@ -980,14 +1057,14 @@ const Booking = () => {
 
                       {/* Validation issues */}
                       {(issues.length > 0 || !hasDateTime) && (
-                        <div className="border border-red-500/40 bg-red-500/10 rounded-lg p-3 text-xs text-red-100 space-y-1">
-                          <div className="font-semibold text-red-200">
+                        <div className="border border-error/40 bg-error/10 rounded-lg p-3 text-xs text-ink-inverse space-y-1">
+                          <div className="font-semibold text-error">
                             {t('booking.confirmReview.fixIssues', 'Corrige antes de agendar:')}
                           </div>
                           <ul className="list-disc pl-5">
                             {!hasDateTime && <li>{t('booking.confirmReview.missingDateTime', 'Seleciona data e hora')}</li>}
                             {issues.map((i, idx) => (
-                              <li key={idx}><span className="uppercase text-white/60 mr-1">{i.field}:</span>{i.message}</li>
+                              <li key={idx}><span className="uppercase text-ink-secondary mr-1">{i.field}:</span>{i.message}</li>
                             ))}
                           </ul>
                         </div>
@@ -995,11 +1072,11 @@ const Booking = () => {
 
                       {/* R1C5: proof of possession for a reschedule. */}
                       {isRescheduling && !rescheduleVerified && (
-                        <div className="border border-white/15 rounded-lg p-4 bg-white/[0.03] space-y-3">
-                          <div className="text-[10px] uppercase tracking-[0.24em] text-white/40 font-mono">
+                        <div className="border border-black/15 rounded-lg p-4 bg-black/[0.03] space-y-3">
+                          <div className="text-[10px] uppercase tracking-[0.24em] text-ink-tertiary font-mono">
                             {t('booking.reschedule.verifyTitle', 'Confirmar identidade')}
                           </div>
-                          <p className="text-xs text-white/60">
+                          <p className="text-xs text-ink-secondary">
                             {t('booking.reschedule.verifyBody', 'Para reagendar, confirma o email usado na reserva')}
                             {rescheduleLookup?.email_hint ? ` (${rescheduleLookup.email_hint})` : ''}.
                           </p>
@@ -1010,7 +1087,7 @@ const Booking = () => {
                             placeholder={t('booking.email', 'Email')}
                             className={inputClass}
                           />
-                          {formError && <p className="text-xs text-red-300">{formError}</p>}
+                          {formError && <p className="text-xs text-error">{formError}</p>}
                           <Button type="button" size="sm" onClick={confirmReschedule} className="w-full">
                             {t('booking.reschedule.verifyAction', 'Confirmar')}
                           </Button>
@@ -1018,14 +1095,14 @@ const Booking = () => {
                       )}
 
                       <AlertDialogFooter>
-                        <AlertDialogCancel disabled={submitting} className="bg-transparent border-white/20 text-white hover:bg-white/10">
+                        <AlertDialogCancel disabled={submitting} className="bg-transparent border-black/20 text-ink-primary hover:bg-black/10">
                           {t('booking.confirmReview.edit', 'Editar')}
                         </AlertDialogCancel>
                         <AlertDialogAction
                           disabled={!canConfirm}
                           onClick={(e) => { e.preventDefault(); if (canConfirm) runSubmit(); }}
                           style={{ background: canConfirm ? ACCENT : 'rgba(255,64,0,0.4)' }}
-                          className="text-white hover:opacity-90 disabled:cursor-not-allowed"
+                          className="text-ink-primary hover:opacity-90 disabled:cursor-not-allowed"
                         >
                           {submitting ? t('booking.sending', 'A enviar…') : t('booking.confirmReview.confirm', 'Está correto, agendar')}
                         </AlertDialogAction>
@@ -1047,20 +1124,20 @@ const Booking = () => {
                     Reunião confirmada
                   </p>
                   <h2 className="text-3xl md:text-4xl font-black mt-3 tracking-tight">{t('booking.confirmed')}</h2>
-                  <p className="text-white/60 mt-3">{t('booking.confirmedMsg')}</p>
-                  <div className="mt-8 p-6 rounded-xl border border-white/10 bg-white/[0.03] text-left space-y-2.5">
-                    <p className="text-sm text-white/80"><span className="text-white/40 font-mono uppercase tracking-wider text-[10px] mr-2">{t('booking.meeting')}</span> {selectedMeeting?.title}</p>
-                    <p className="text-sm text-white/80"><span className="text-white/40 font-mono uppercase tracking-wider text-[10px] mr-2">{t('booking.date')}</span> {date && formatDateFull(date)}</p>
-                    <p className="text-sm text-white/80">
-                      <span className="text-white/40 font-mono uppercase tracking-wider text-[10px] mr-2">{t('booking.time')}</span>
+                  <p className="text-ink-secondary mt-3">{t('booking.confirmedMsg')}</p>
+                  <div className="mt-8 p-6 rounded-xl border border-black/10 bg-black/[0.03] text-left space-y-2.5">
+                    <p className="text-sm text-ink-secondary"><span className="text-ink-tertiary font-mono uppercase tracking-wider text-[10px] mr-2">{t('booking.meeting')}</span> {selectedMeeting?.title}</p>
+                    <p className="text-sm text-ink-secondary"><span className="text-ink-tertiary font-mono uppercase tracking-wider text-[10px] mr-2">{t('booking.date')}</span> {date && formatDateFull(date)}</p>
+                    <p className="text-sm text-ink-secondary">
+                      <span className="text-ink-tertiary font-mono uppercase tracking-wider text-[10px] mr-2">{t('booking.time')}</span>
                       {date && time ? convertSlotToTz(date, time, form.timezone) : time}
-                      {' '}<span className="text-white/40">· {t(`booking.timezones.${form.timezone}`)}</span>
-                      {form.timezone !== 'lisbon' && <span className="text-white/40"> ({time} Lisboa)</span>}
+                      {' '}<span className="text-ink-tertiary">· {t(`booking.timezones.${form.timezone}`)}</span>
+                      {form.timezone !== 'lisbon' && <span className="text-ink-tertiary"> ({time} Lisboa)</span>}
                     </p>
-                    <p className="text-sm text-white/80"><span className="text-white/40 font-mono uppercase tracking-wider text-[10px] mr-2">{t('booking.name')}</span> {form.name}</p>
-                    <p className="text-sm text-white/80"><span className="text-white/40 font-mono uppercase tracking-wider text-[10px] mr-2">{t('booking.email')}</span> {form.email}</p>
-                    {form.phone && <p className="text-sm text-white/80"><span className="text-white/40 font-mono uppercase tracking-wider text-[10px] mr-2">{t('booking.phone')}</span> {form.phone}</p>}
-                    {form.company && <p className="text-sm text-white/80"><span className="text-white/40 font-mono uppercase tracking-wider text-[10px] mr-2">{t('booking.company')}</span> {form.company}</p>}
+                    <p className="text-sm text-ink-secondary"><span className="text-ink-tertiary font-mono uppercase tracking-wider text-[10px] mr-2">{t('booking.name')}</span> {form.name}</p>
+                    <p className="text-sm text-ink-secondary"><span className="text-ink-tertiary font-mono uppercase tracking-wider text-[10px] mr-2">{t('booking.email')}</span> {form.email}</p>
+                    {form.phone && <p className="text-sm text-ink-secondary"><span className="text-ink-tertiary font-mono uppercase tracking-wider text-[10px] mr-2">{t('booking.phone')}</span> {form.phone}</p>}
+                    {form.company && <p className="text-sm text-ink-secondary"><span className="text-ink-tertiary font-mono uppercase tracking-wider text-[10px] mr-2">{t('booking.company')}</span> {form.company}</p>}
                   </div>
                   <div className="mt-8 flex flex-wrap gap-3 justify-center">
                     <button
@@ -1071,14 +1148,14 @@ const Booking = () => {
                         setTime('');
                         setStep(2);
                       }}
-                      className="inline-flex items-center gap-3 border-2 border-white/20 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] text-white/80 transition-all hover:border-white/50 hover:text-white"
+                      className="inline-flex items-center gap-3 border-2 border-black/20 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] text-ink-secondary transition-all hover:border-black/50 hover:text-ink-primary"
                     >
                       {t('booking.reschedule', 'Reagendar')}
                     </button>
                     <Link
                       to="/"
-                      className="inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white"
-                      style={{ borderColor: ACCENT, color: '#ffb494' }}
+                      className="inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-ink-primary"
+                      style={{ borderColor: ACCENT, color: ACCENT }}
                       onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
                       onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                     >

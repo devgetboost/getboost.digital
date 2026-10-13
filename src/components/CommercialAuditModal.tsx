@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { analytics } from '@/lib/analytics';
 import { X, ArrowRight, ArrowLeft, Loader2, Sparkles, Check, TrendingUp, Clock, Wallet } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -49,9 +50,15 @@ interface Props {
   open: boolean;
   onClose: () => void;
   preloaded?: StoredAudit | null;
+  /**
+   * R20.1 — booking-intent attribution. When provided, opening the modal
+   * fires a consideration event (e.g. 'ai_agents', 'homepage'). Optional
+   * so every existing call site keeps working unchanged.
+   */
+  trackingSource?: string;
 }
 
-const CommercialAuditModal = ({ open, onClose, preloaded = null }: Props) => {
+const CommercialAuditModal = ({ open, onClose, preloaded = null, trackingSource }: Props) => {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<Answers>>({});
   const [contact, setContact] = useState({ name: '', email: '', company: '', phone: '' });
@@ -76,6 +83,17 @@ const CommercialAuditModal = ({ open, onClose, preloaded = null }: Props) => {
       setStep(steps.length);
     }
   }, [open, preloaded]);
+
+  // R20.1 — booking intent: the audit modal is the primary consideration
+  // vehicle on content pages. Fires once per opening when a source is set.
+  const intentFired = useRef(false);
+  useEffect(() => {
+    if (open && trackingSource && !intentFired.current) {
+      intentFired.current = true;
+      analytics.trackClick(trackingSource, 'audit_open', 'consideration');
+    }
+    if (!open) intentFired.current = false;
+  }, [open, trackingSource]);
 
   const totalSteps = steps.length + 1;
   const isQuiz = step < steps.length;
@@ -176,7 +194,7 @@ const CommercialAuditModal = ({ open, onClose, preloaded = null }: Props) => {
           exit={{ opacity: 0, y: 20, scale: 0.98 }}
           transition={{ duration: 0.3 }}
           onClick={(e) => e.stopPropagation()}
-          className="relative w-full max-w-3xl my-auto rounded-2xl border border-white/10 bg-[#0a0603] text-white shadow-[0_20px_80px_-20px_rgba(255,64,0,0.5)] overflow-hidden"
+          className="relative w-full max-w-3xl my-auto rounded-2xl border border-white/10 bg-canvas-inverse text-white shadow-[0_20px_80px_-20px_rgba(255,64,0,0.5)] overflow-hidden"
         >
           {/* ambient */}
           <div

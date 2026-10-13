@@ -92,10 +92,10 @@ describe("Wave 3C — homepage blueprint", () => {
     expect(hero).toContain("gb-surface-page");
   });
 
-  it("products remain proof — all six link to their canonical landings", () => {
-    expect(SRC).toContain("import { PRODUCTS } from '@/data/products'");
-    expect(SRC).toContain("PRODUCTS.map(");
-    for (const product of PRODUCTS) {
+  it("products remain proof — SaaS cards link to their canonical landings", () => {
+    expect(SRC).toMatch(/import \{[^}]*PRODUCTS[^}]*\} from '@\/data\/products'/);
+    expect(SRC).toMatch(/PRODUCTS\.filter\(.*\)\.map\(/);
+    for (const product of PRODUCTS.filter((p) => p.to !== undefined)) {
       expect(appRoutes, `product route ${product.to}`).toContain(product.to);
       expect(redirectOnly, `product route ${product.to} is a redirect`).not.toContain(product.to);
     }

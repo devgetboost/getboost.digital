@@ -68,18 +68,22 @@
   --gb-ai-strong: #6d28d9;
   --gb-ai-tint: #f5f3ff;
   --gb-ai-border: #ddd6fe;
+  --gb-ai-glow: rgb(124 58 237 / 0.32);
   --gb-automation-base: #0d9488;
   --gb-automation-strong: #0f766e;
   --gb-automation-tint: #f0fdfa;
   --gb-automation-border: #ccfbf1;
+  --gb-automation-glow: rgb(13 148 136 / 0.32);
   --gb-software-base: #2563eb;
   --gb-software-strong: #1d4ed8;
   --gb-software-tint: #eff6ff;
   --gb-software-border: #dbeafe;
+  --gb-software-glow: rgb(37 99 235 / 0.32);
   --gb-growth-base: #16a34a;
   --gb-growth-strong: #15803d;
   --gb-growth-tint: #f0fdf4;
   --gb-growth-border: #dcfce7;
+  --gb-growth-glow: rgb(22 163 74 / 0.32);
 
   /* -------------------------------------------------------------- spacing */
   /* 8pt base grid (4pt half-steps where needed) */
@@ -97,9 +101,22 @@
   --gb-space-32: 8rem; /* 128 */
 
   /* -------------------------------------------------------- radii/shadow */
-  --gb-radius-card: 0.875rem; /* 14px */
+  /* R18.8: single card radius — rounded-2xl (1rem) is the de-facto card
+     radius across every new surface; the token follows the built result. */
+  --gb-radius-card: 1rem;
+  --gb-radius-inner: 0.75rem;
   --gb-shadow-rest: 0 1px 2px rgb(28 25 23 / 0.05);
   --gb-shadow-hover: 0 8px 24px rgb(28 25 23 / 0.08);
+  /* R18.8 — shadow scale. One ramp for the whole platform. */
+  --gb-shadow-sm: 0 1px 2px rgb(16 24 40 / 0.05);
+  --gb-shadow-md: 0 8px 24px -8px rgb(16 24 40 / 0.12);
+  --gb-shadow-lg: 0 20px 50px -20px rgb(16 24 40 / 0.18);
+  --gb-shadow-premium: 0 24px 60px -24px rgb(16 24 40 / 0.25);
+  /* R18.8 — the single hairline token for light surfaces. */
+  --gb-line: rgb(17 24 39 / 0.08);
+  /* R18.8 — brand gradients. One gradient language for CTAs. */
+  --gb-gradient-brand: linear-gradient(135deg, #ff4000 0%, #cc3300 100%);
+  --gb-gradient-card: linear-gradient(180deg, #ffffff 0%, #fafaf9 100%);
 }
 
 /* ============================================================ typography */
@@ -182,10 +199,10 @@
   }
 }
 
-/* Card — surface + hairline + soft shadow, 14px radius. */
+/* Card — surface + hairline + soft shadow, card radius. */
 .gb-surface-card {
   background: var(--gb-canvas-base);
-  border: 1px solid var(--gb-sand-200);
+  border: 1px solid var(--gb-line);
   border-radius: var(--gb-radius-card);
   box-shadow: var(--gb-shadow-rest);
   padding: var(--gb-space-8);
@@ -199,8 +216,97 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .gb-surface-card-elevated:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--gb-shadow-hover);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--gb-shadow-hover), 0 18px 44px -16px rgb(28 25 23 / 0.22);
+}
+
+/* R18.7 — premium card lift. translateY(-6px) + scale(1.02) + deepening
+   shadow over 250ms. Pillar glow via --gb-glow (rgba); defaults to a
+   soft brand-orange glow. Apply to plain (non-motion) card elements —
+   never on elements whose transform framer-motion controls. */
+.gb-card-lift {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.gb-card-lift:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--gb-shadow-hover), 0 18px 44px -16px var(--gb-glow, rgb(255 64 0 / 0.35));
+}
+
+/* R18.7 — link micro-interaction: underline draws from the left, 180ms. */
+.gb-link-more {
+  position: relative;
+}
+.gb-link-more::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.18s ease;
+}
+.gb-link-more:hover::after,
+.gb-link-more:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* R18.8 — the card DNA. Every card on the platform shares this base:
+   white surface, hairline border, card radius, standard padding. Variants
+   (elevated, pillar, feature) add behaviour on top — never restate DNA. */
+.gb-card {
+  background: var(--gb-canvas-base);
+  border: 1px solid var(--gb-line);
+  border-radius: var(--gb-radius-card);
+  box-shadow: var(--gb-shadow-sm);
+  padding: var(--gb-space-8);
+}
+
+/* R18.8 — Surface 3 (feature): white with a soft tint wash + deeper shadow. */
+.gb-surface-feature {
+  background: var(--gb-gradient-card);
+  border: 1px solid var(--gb-line);
+  border-radius: var(--gb-radius-card);
+  box-shadow: var(--gb-shadow-md);
+  padding: var(--gb-space-8);
+}
+
+/* R18.8 — chips: trust chips, feature tags, status pills share one shape. */
+.gb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border: 1px solid var(--gb-line);
+  background: var(--gb-canvas-base);
+  padding: 0.375rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--gb-ink-secondary);
+  box-shadow: var(--gb-shadow-sm);
+  white-space: nowrap;
+}
+
+/* R18.8 — icon chips: one shape for card glyphs. Tint via --gb-chip-bg /
+   --gb-chip-fg (defaults: soft brand). */
+.gb-icon-chip {
+  display: flex;
+  height: 2.75rem;
+  width: 2.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--gb-radius-inner);
+  background: var(--gb-chip-bg, var(--gb-brand-50));
+  color: var(--gb-chip-fg, var(--gb-brand-600));
+}
+
+/* R18.8 — brand gradient for CTA-grade surfaces (one gradient language). */
+.gb-gradient-brand {
+  background: var(--gb-gradient-brand);
 }
 
 /* Pillar card — identity via a 4px top accent; never a full fill.
@@ -263,4 +369,48 @@
   background-image: linear-gradient(var(--gb-sand-800) 1px, transparent 1px),
     linear-gradient(90deg, var(--gb-sand-800) 1px, transparent 1px);
   background-size: 64px 64px;
+}
+
+/* R18.9 — flow connectors for mini diagrams. A dashed line that drifts
+   slowly (marching-ants flow); vertical on mobile, horizontal from sm up.
+   Decorative only — nodes carry the readable text. */
+.gb-flow-connector {
+  --gb-flow-color: var(--gb-ink-tertiary);
+  opacity: 0.55;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+@media (max-width: 639.98px) {
+  .gb-flow-connector {
+    width: 2px;
+    height: 0.9rem;
+    margin-left: 0.7rem;
+    background-image: linear-gradient(180deg, var(--gb-flow-color) 55%, transparent 45%);
+    background-size: 2px 6px;
+    animation: gb-flow-dash-y 1.4s linear infinite;
+  }
+}
+@media (min-width: 640px) {
+  .gb-flow-connector {
+    width: 1.4rem;
+    height: 2px;
+    background-image: linear-gradient(90deg, var(--gb-flow-color) 55%, transparent 45%);
+    background-size: 6px 2px;
+    animation: gb-flow-dash-x 1.4s linear infinite;
+  }
+}
+@keyframes gb-flow-dash-x {
+  to {
+    background-position: 6px 0;
+  }
+}
+@keyframes gb-flow-dash-y {
+  to {
+    background-position: 0 6px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gb-flow-connector {
+    animation: none;
+  }
 }

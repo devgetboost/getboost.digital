@@ -89,9 +89,24 @@ export default {
           inverse: "var(--gb-ink-inverse)",
           "on-brand": "var(--gb-ink-on-brand)",
         },
-        success: "var(--gb-success)",
-        warning: "var(--gb-warning)",
-        error: "var(--gb-error)",
+        // R19 execution — the status scale mirrors every frozen status token
+        // (base, tinted bg, soft border). DEFAULT keeps the flat utilities
+        // (`text-success`) working exactly as before.
+        success: {
+          DEFAULT: "var(--gb-success)",
+          bg: "var(--gb-success-bg)",
+          border: "var(--gb-success-border)",
+        },
+        warning: {
+          DEFAULT: "var(--gb-warning)",
+          bg: "var(--gb-warning-bg)",
+          border: "var(--gb-warning-border)",
+        },
+        error: {
+          DEFAULT: "var(--gb-error)",
+          bg: "var(--gb-error-bg)",
+          border: "var(--gb-error-border)",
+        },
         ai: {
           base: "var(--gb-ai-base)",
           strong: "var(--gb-ai-strong)",
@@ -155,6 +170,11 @@ export default {
         // Frozen surface elevation (Wave 3A).
         "card-rest": "var(--gb-shadow-rest)",
         "card-hover": "var(--gb-shadow-hover)",
+        // R18.8 — the single shadow scale for the whole platform.
+        sm: "var(--gb-shadow-sm)",
+        md: "var(--gb-shadow-md)",
+        lg: "var(--gb-shadow-lg)",
+        premium: "var(--gb-shadow-premium)",
       },
       keyframes: {
         "accordion-down": {

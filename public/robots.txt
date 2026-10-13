@@ -4,6 +4,8 @@ Allow: /demo
 Allow: /demo?produto=
 Disallow: /admin/
 Disallow: /cliente/
+Disallow: /colaborador
+Disallow: /dashboard
 Disallow: /login
 Disallow: /reset-password
 Disallow: /unsubscribe

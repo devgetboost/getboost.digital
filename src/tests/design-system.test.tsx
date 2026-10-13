@@ -121,9 +121,19 @@ const TYPE_CLASSES = [
 ];
 
 describe("Wave 3A — design system foundation", () => {
-  it("the token stylesheet ships and is imported", () => {
+  it("the token stylesheet ships and is linked before first paint", () => {
     expect(CSS).toContain(":root");
-    expect(read("src/main.tsx")).toContain('@/styles/design-system.css');
+    // R20.11 — global CSS moved from main.tsx to index.html so the browser's
+    // preload scanner finds it without waiting for the bundle to execute. The
+    // guard follows the stylesheet: it must ship, and it must be linked from
+    // HTML with the token layer AFTER the base layer (cascade order).
+    const HTML = read("index.html");
+    expect(HTML).toContain('<link rel="stylesheet" href="/src/index.css" />');
+    const designAt = HTML.indexOf('/src/styles/design-system.css');
+    const baseAt = HTML.indexOf('/src/index.css');
+    expect(designAt).toBeGreaterThan(-1);
+    expect(designAt).toBeGreaterThan(baseAt);
+    expect(read("src/main.tsx")).not.toContain("design-system.css");
   });
 
   it("every frozen colour token exists with its frozen value", () => {
@@ -149,8 +159,8 @@ describe("Wave 3A — design system foundation", () => {
       expect(CSS, token).toContain(`${token}: ${value}`);
     }
     expect(CSS).toMatch(/\.gb-container\s*\{[^}]*max-width:\s*1280px/);
-    expect(CSS).toMatch(/--gb-radius-card:\s*0\.875rem/);
-    expect(read("src/index.css")).toMatch(/--radius:\s*0\.875rem/);
+    // R18.8: the card radius follows the built standard (rounded-2xl = 1rem).
+    expect(CSS).toMatch(/--gb-radius-card:\s*1rem/);
   });
 
   it("all surface patterns and type utilities exist", () => {
@@ -160,6 +170,19 @@ describe("Wave 3A — design system foundation", () => {
     expect(CSS).toMatch(/gb-surface-pillar-card[^}]*var\(--gb-pillar/);
     // grid overlay stays subtle (≤6%)
     expect(CSS).toMatch(/\.gb-grid-overlay\s*\{[^}]*opacity:\s*0\.0[0-9]/);
+  });
+
+  it("the R18.8 unification primitives exist (card, chip, icon, shadows)", () => {
+    for (const cls of [".gb-card", ".gb-chip", ".gb-icon-chip", ".gb-surface-feature", ".gb-gradient-brand"]) {
+      expect(CSS, cls).toContain(cls);
+    }
+    for (const token of ["--gb-shadow-sm", "--gb-shadow-md", "--gb-shadow-lg", "--gb-shadow-premium", "--gb-line"]) {
+      expect(CSS, token).toContain(token);
+    }
+    const config = read("tailwind.config.ts");
+    for (const scale of ["sm", "md", "lg", "premium"]) {
+      expect(config, `tailwind shadow scale: ${scale}`).toMatch(new RegExp(`${scale}:\\s*"var\\(--gb-shadow`));
+    }
   });
 
   it("the Tailwind config mirrors every scale", () => {

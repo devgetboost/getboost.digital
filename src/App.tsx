@@ -6,7 +6,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import '@/i18n';
 import ScrollToTop from "./components/ScrollToTop";
-import { Component, lazy as reactLazy, Suspense, useEffect } from "react";
+import { LANDINGS } from "./data/landings";
+import { Component, Fragment, lazy as reactLazy, Suspense, useEffect } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import type { ComponentType, ErrorInfo, ReactNode } from "react";
 
 // Retry a dynamic import a few times before surfacing the error (handles
@@ -38,6 +40,10 @@ import Index from "./pages/Index.tsx";
 // Lazy load all other routes
 const Services = lazy(() => import("./pages/Services.tsx"));
 const Products = lazy(() => import("./pages/Products.tsx"));
+const LandingPage = lazy(() => import("./pages/LandingPage.tsx"));
+// R20.12 — internal command centre. Lazy so none of the intelligence layer
+// it imports (R20.1–R20.10) reaches the visitor critical path (R20.11).
+const Dashboard = lazy(() => import("./pages/Dashboard.tsx"));
 const Work = lazy(() => import("./pages/Work.tsx"));
 const Insights = lazy(() => import("./pages/Insights.tsx"));
 const ServiceDetail = lazy(() => import("./pages/ServiceDetail.tsx"));
@@ -48,7 +54,6 @@ const Blog = lazy(() => import("./pages/Blog.tsx"));
 const BlogPostPage = lazy(() => import("./pages/BlogPost.tsx"));
 const Resources = lazy(() => import("./pages/Resources.tsx"));
 const ResourceDetail = lazy(() => import("./pages/ResourceDetail.tsx"));
-const About = lazy(() => import("./pages/About.tsx"));
 const Booking = lazy(() => import("./pages/Booking.tsx"));
 const Contact = lazy(() => import("./pages/Contact.tsx"));
 const Login = lazy(() => import("./pages/Login.tsx"));
@@ -121,6 +126,9 @@ const AdminClients = lazy(() => import("./pages/admin/AdminClients.tsx"));
 const AdminHeroSlides = lazy(() => import("./pages/admin/AdminHeroSlides.tsx"));
 const ChatWidget = lazy(() => import("./components/ChatWidget.tsx"));
 const CookieConsent = lazy(() => import("./components/CookieConsent.tsx"));
+const LeadMagnetHost = lazy(() =>
+  import("./components/LeadMagnetModal.tsx").then((m) => ({ default: m.LeadMagnetHost })),
+);
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe.tsx"));
 const ROICalculator = lazy(() => import("./pages/ROICalculator.tsx"));
 const PriceSimulator = lazy(() => import("./pages/PriceSimulator.tsx"));
@@ -186,7 +194,7 @@ const AgenciaLocal = lazy(() => import("./pages/AgenciaLocal.tsx"));
 
 import { normalizePath } from "@/lib/utils";
 import { useLocation, useNavigate } from "react-router-dom";
-import { analytics } from "@/lib/analytics";
+import { analytics, recordJourneyStep } from "@/lib/analytics";
 
 const LAZY_RELOAD_KEY = "__lazy_route_reload__";
 const LAZY_RELOAD_MAX = 2;
@@ -265,9 +273,33 @@ const PageTracker = () => {
     // The SEO component handles the title, so we track after it's likely updated
     const title = document.title || 'Getboost Digital';
     analytics.trackPageView(location.pathname, title);
+    // R20.1 — funnel attribution: paths only, never query strings or PII.
+    recordJourneyStep(location.pathname);
   }, [location.pathname]);
 
   return null;
+};
+
+/**
+ * R19.11B — route transition. A short fade-up on every pathname change so
+ * cross-page navigation feels continuous instead of a hard cut. Fully
+ * disabled under prefers-reduced-motion. Keyed remount is intentional:
+ * Suspense boundaries inside already handle per-route loading states.
+ */
+const RouteTransition = ({ children }: { children: ReactNode }) => {
+  const location = useLocation();
+  const reduceMotion = useReducedMotion() ?? false;
+  if (reduceMotion) return <>{children}</>;
+  return (
+    <motion.div
+      key={location.pathname}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
 };
 
 const ServicesRedirect = () => {
@@ -322,6 +354,7 @@ const App = () => (
         <Suspense fallback={<PageFallback />}>
           <LanguageManager>
             <AuthProvider>
+            <RouteTransition>
             <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/:lang" element={<Index />} />
@@ -423,6 +456,14 @@ const App = () => (
             <Route path="/insights" element={<Insights />} />
             <Route path="/:lang/insights" element={<Insights />} />
 
+            {/* R20.6 — SEO satellite landings (data-driven, bare + market twins) */}
+            {LANDINGS.map((landing) => (
+              <Fragment key={landing.slug}>
+                <Route path={`/${landing.slug}`} element={<LandingPage slug={landing.slug} />} />
+                <Route path={`/:lang/${landing.slug}`} element={<LandingPage slug={landing.slug} />} />
+              </Fragment>
+            ))}
+
             {/* Legacy /services URLs → redirect to /solucoes */}
             <Route path="/services/*" element={<ServicesRedirect />} />
             <Route path="/:lang/services/*" element={<ServicesRedirect />} />
@@ -494,8 +535,9 @@ const App = () => (
             
             <Route path="/resources/:id" element={<ResourceDetail />} />
             <Route path="/:lang/resources/:id" element={<ResourceDetail />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/:lang/about" element={<About />} />
+            {/* R19.9 OPÇÃO A: /about consolidado em /sobre-nos (redirect; host-301 candidato). */}
+            <Route path="/about" element={<Navigate to="/sobre-nos" replace />} />
+            <Route path="/:lang/about" element={<Navigate to="/:lang/sobre-nos" replace />} />
             
             <Route path="/booking" element={<Booking />} />
             <Route path="/:lang/booking" element={<Booking />} />
@@ -586,6 +628,10 @@ const App = () => (
                 </RequireArea>
               }
             />
+            {/* R20.12 — internal dashboard. Guarded by RequireRoles inside the
+                page and absent from every navigation surface. */}
+            <Route path="/dashboard" element={<Dashboard />} />
+
             <Route path="/unsubscribe" element={<Unsubscribe />} />
             <Route path="/tools/roi-calculator" element={<ROICalculator />} />
             <Route path="/:lang/tools/roi-calculator" element={<ROICalculator />} />
@@ -621,6 +667,7 @@ const App = () => (
             
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </RouteTransition>
           </AuthProvider>
           </LanguageManager>
         </Suspense>
@@ -628,6 +675,8 @@ const App = () => (
         <Suspense fallback={null}>
           <ChatWidget />
           <CookieConsent />
+          {/* R20.4 — global lead-magnet host (renders nothing until opened). */}
+          <LeadMagnetHost />
         </Suspense>
       </BrowserRouter>
     </TooltipProvider>

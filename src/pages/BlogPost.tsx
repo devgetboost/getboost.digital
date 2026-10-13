@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Clock, ArrowRight, Loader2, List } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
+import { analytics } from '@/lib/analytics';
 import { supabase } from '@/integrations/supabase/client';
 import { isHtmlContent } from '@/lib/markdown-to-html';
 import { parseContentBody, type ContentBlock } from '@/lib/contentBody';
@@ -33,7 +35,7 @@ const BlogPostPage = () => {
 
   if (loading) return (
     <Layout>
-      <div className="flex items-center justify-center min-h-[60vh] bg-[#0a0603]">
+      <div className="gb-surface-page flex items-center justify-center min-h-[60vh]">
         <Loader2 className="h-6 w-6 animate-spin" style={{ color: ACCENT }} />
       </div>
     </Layout>
@@ -94,7 +96,7 @@ const BlogPostPage = () => {
     let lastIndex = 0; let match; let keyIdx = 0;
     while ((match = regex.exec(text)) !== null) {
       if (match.index > lastIndex) tokens.push(text.slice(lastIndex, match.index));
-      if (match[2]) tokens.push(<strong key={keyIdx++} className="text-white font-semibold">{match[2]}</strong>);
+      if (match[2]) tokens.push(<strong key={keyIdx++} className="text-ink-primary font-semibold">{match[2]}</strong>);
       else if (match[3] && match[4]) tokens.push(<Link key={keyIdx++} to={match[4]} className="hover:underline font-medium" style={{ color: ACCENT }}>{match[3]}</Link>);
       else if (match[5]) tokens.push(<span key={keyIdx++}>{renderInline(match[5])}</span>);
       lastIndex = match.index + match[0].length;
@@ -113,14 +115,14 @@ const BlogPostPage = () => {
       return <div className="blog-rich-content prose-invert" dangerouslySetInnerHTML={{ __html: safeHtml }} />;
     }
     return content.split('\n').map((line, i) => {
-      if (line.startsWith('# ')) { const text = line.replace('# ', ''); return <h2 key={i} id={slugify(text)} className="text-3xl md:text-4xl font-black mt-12 mb-6 tracking-tight text-white scroll-mt-24">{renderInline(text)}</h2>; }
-      if (line.startsWith('## ')) { const text = line.replace('## ', ''); return <h2 key={i} id={slugify(text)} className="text-2xl md:text-3xl font-bold mt-12 mb-4 tracking-tight text-white scroll-mt-24">{renderInline(text)}</h2>; }
-      if (line.startsWith('### ')) { const text = line.replace('### ', ''); return <h3 key={i} id={slugify(text)} className="text-xl font-semibold mt-8 mb-3 text-white scroll-mt-24">{renderInline(text)}</h3>; }
-      if (line.startsWith('> ')) return <blockquote key={i} className="pl-5 py-2 my-6 text-white/80 italic border-l-2" style={{ borderColor: ACCENT }}>{renderInline(line.slice(2))}</blockquote>;
-      if (line.startsWith('- ')) return <li key={i} className="ml-6 mb-2 list-disc text-white/75 leading-relaxed marker:text-[#ff4000]">{renderInline(line.slice(2))}</li>;
-      if (/^\d+\.\s/.test(line)) return <li key={i} className="ml-6 mb-2 list-decimal text-white/75 leading-relaxed marker:text-[#ff4000] marker:font-mono">{renderInline(line.replace(/^\d+\.\s/, ''))}</li>;
+      if (line.startsWith('# ')) { const text = line.replace('# ', ''); return <h2 key={i} id={slugify(text)} className="text-3xl md:text-4xl font-black mt-12 mb-6 tracking-tight text-ink-primary scroll-mt-24">{renderInline(text)}</h2>; }
+      if (line.startsWith('## ')) { const text = line.replace('## ', ''); return <h2 key={i} id={slugify(text)} className="text-2xl md:text-3xl font-bold mt-12 mb-4 tracking-tight text-ink-primary scroll-mt-24">{renderInline(text)}</h2>; }
+      if (line.startsWith('### ')) { const text = line.replace('### ', ''); return <h3 key={i} id={slugify(text)} className="text-xl font-semibold mt-8 mb-3 text-ink-primary scroll-mt-24">{renderInline(text)}</h3>; }
+      if (line.startsWith('> ')) return <blockquote key={i} className="pl-5 py-2 my-6 text-ink-secondary italic border-l-2" style={{ borderColor: ACCENT }}>{renderInline(line.slice(2))}</blockquote>;
+      if (line.startsWith('- ')) return <li key={i} className="ml-6 mb-2 list-disc text-ink-secondary leading-relaxed marker:text-[#ff4000]">{renderInline(line.slice(2))}</li>;
+      if (/^\d+\.\s/.test(line)) return <li key={i} className="ml-6 mb-2 list-decimal text-ink-secondary leading-relaxed marker:text-[#ff4000] marker:font-mono">{renderInline(line.replace(/^\d+\.\s/, ''))}</li>;
       if (line.trim() === '' || line.trim() === '---') return <div key={i} className="h-2" />;
-      return <p key={i} className="text-white/75 leading-relaxed mb-4 text-base md:text-lg">{renderInline(line)}</p>;
+      return <p key={i} className="text-ink-secondary leading-relaxed mb-4 text-base md:text-lg">{renderInline(line)}</p>;
     });
   };
 
@@ -129,7 +131,7 @@ const BlogPostPage = () => {
   const renderBody = (body: unknown) => {
     const segments = parseContentBody(body);
     if (segments.length === 0) {
-      return <p className="text-white/50">{t('blog.noContent', 'Conteúdo brevemente disponível.')}</p>;
+      return <p className="text-ink-tertiary">{t('blog.noContent', 'Conteúdo brevemente disponível.')}</p>;
     }
     return segments.map((segment, si) => {
       if (segment.kind === 'rich-text') {
@@ -147,13 +149,13 @@ const BlogPostPage = () => {
     switch (block.type) {
       case 'heading':
         return block.text ? (
-          <h3 key={key} id={slugify(block.text)} className="text-xl font-semibold mt-8 mb-3 text-white scroll-mt-24">
+          <h3 key={key} id={slugify(block.text)} className="text-xl font-semibold mt-8 mb-3 text-ink-primary scroll-mt-24">
             {renderInline(block.text)}
           </h3>
         ) : null;
       case 'list':
         return (
-          <ul key={key} className="ml-6 mb-4 list-disc text-white/75 leading-relaxed marker:text-[#ff4000]">
+          <ul key={key} className="ml-6 mb-4 list-disc text-ink-secondary leading-relaxed marker:text-[#ff4000]">
             {(block.items ?? []).map((item, ii) => (
               <li key={ii}>{renderInline(item)}</li>
             ))}
@@ -161,27 +163,27 @@ const BlogPostPage = () => {
         );
       case 'quote':
         return (
-          <blockquote key={key} className="pl-5 py-2 my-6 text-white/80 italic border-l-2" style={{ borderColor: ACCENT }}>
+          <blockquote key={key} className="pl-5 py-2 my-6 text-ink-secondary italic border-l-2" style={{ borderColor: ACCENT }}>
             {renderInline(block.text ?? '')}
           </blockquote>
         );
       case 'code':
         return (
-          <pre key={key} className="my-6 overflow-x-auto rounded-lg border border-white/10 bg-black/40 p-4 text-sm text-white/80">
+          <pre key={key} className="my-6 overflow-x-auto rounded-lg border border-black/10 bg-black/40 p-4 text-sm text-ink-secondary">
             <code>{block.text ?? ''}</code>
           </pre>
         );
       case 'image':
         return block.src ? (
           <figure key={key} className="my-8">
-            <img src={block.src} alt={block.alt ?? ''} className="w-full rounded-xl border border-white/10" loading="lazy" />
-            {block.caption ? <figcaption className="mt-2 text-center text-xs text-white/40">{block.caption}</figcaption> : null}
+            <img src={block.src} alt={block.alt ?? ''} className="w-full rounded-xl border border-black/10" loading="lazy" />
+            {block.caption ? <figcaption className="mt-2 text-center text-xs text-ink-tertiary">{block.caption}</figcaption> : null}
           </figure>
         ) : null;
       case 'divider':
-        return <hr key={key} className="my-10 border-white/10" />;
+        return <hr key={key} className="my-10 border-black/10" />;
       default:
-        return block.text ? <p key={key} className="text-white/75 leading-relaxed mb-4 text-base md:text-lg">{renderInline(block.text)}</p> : null;
+        return block.text ? <p key={key} className="text-ink-secondary leading-relaxed mb-4 text-base md:text-lg">{renderInline(block.text)}</p> : null;
     }
   };
 
@@ -190,10 +192,11 @@ const BlogPostPage = () => {
 
   return (
     <Layout>
+      <ScrollDepth location="blog_post" />
       <SEO title={post.seoTitle || post.title} description={post.seoDescription || post.excerpt || undefined} canonical={currentPath} image={postCover} type="article" jsonLd={articleSchema} lang={i18n.language as 'pt' | 'en' | 'es'} />
 
       {/* HERO — manifesto style */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      <section className="gb-surface-page relative overflow-hidden">
         <div
           aria-hidden
           className="absolute inset-0 opacity-[0.14]"
@@ -208,14 +211,14 @@ const BlogPostPage = () => {
         <div
           aria-hidden
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)' }}
+          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)' }}
         />
 
         <div className="relative max-w-4xl mx-auto px-6 md:px-12 pt-24 md:pt-32 pb-16 md:pb-20">
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
             <Link
               to="/blog"
-              className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.22em] text-white/60 hover:text-white transition-colors mb-10"
+              className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.22em] text-ink-secondary hover:text-white transition-colors mb-10"
             >
               <ArrowLeft className="w-4 h-4" /> {t('blog.backToBlog')}
             </Link>
@@ -225,7 +228,7 @@ const BlogPostPage = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
+            className="gb-eyebrow text-brand-600"
             style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
@@ -253,7 +256,7 @@ const BlogPostPage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.6 }}
-            className="mt-6 flex items-center gap-5 text-xs font-mono uppercase tracking-[0.22em] text-white/50"
+            className="mt-6 flex items-center gap-5 text-xs font-mono uppercase tracking-[0.22em] text-ink-tertiary"
           >
             <span>
               {new Date(post.publishedAt ?? post.createdAt).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -267,13 +270,13 @@ const BlogPostPage = () => {
       </section>
 
       {/* COVER strip */}
-      <section className="bg-[#0a0603]">
+      <section className="gb-surface-page">
         <div className="max-w-5xl mx-auto px-6 md:px-12 -mt-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="overflow-hidden rounded-2xl border border-white/10 aspect-[16/8]"
+            className="overflow-hidden rounded-2xl border border-black/10 aspect-[16/8]"
           >
             {postCover ? <img src={postCover} alt={post.title} className="w-full h-full object-cover" /> : null}
           </motion.div>
@@ -281,18 +284,18 @@ const BlogPostPage = () => {
       </section>
 
       {/* CONTENT */}
-      <section className="bg-[#0a0603] text-white py-20 md:py-28">
+      <section className="gb-surface-section gb-section">
         <div className="max-w-3xl mx-auto px-6 md:px-12">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }}>
-            <p className="text-xl md:text-2xl leading-relaxed font-light text-white/85 mb-10 pb-10 border-b border-white/10">
+            <p className="text-xl md:text-2xl leading-relaxed font-light text-ink-secondary mb-10 pb-10 border-b border-black/10">
               {post.excerpt}
             </p>
 
             {toc.length > 1 && (
-              <div className="border border-white/10 bg-white/[0.02] rounded-2xl p-6 md:p-8 mb-12">
+              <div className="border border-black/10 bg-black/[0.02] rounded-2xl p-6 md:p-8 mb-12">
                 <div className="flex items-center gap-2 mb-5">
                   <List className="h-4 w-4" style={{ color: ACCENT }} />
-                  <h2 className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
+                  <h2 className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-secondary">
                     {t('blog.tableOfContents')}
                   </h2>
                 </div>
@@ -301,9 +304,9 @@ const BlogPostPage = () => {
                     <li key={i} className={item.level === 3 ? 'ml-5' : ''}>
                       <a
                         href={`#${item.id}`}
-                        className="text-white/75 hover:text-[#ff4000] transition-colors leading-relaxed inline-flex items-center gap-2 group"
+                        className="text-ink-secondary hover:text-[#ff4000] transition-colors leading-relaxed inline-flex items-center gap-2 group"
                       >
-                        <span className="font-mono text-[10px] text-white/30 group-hover:text-[#ff4000]">
+                        <span className="font-mono text-[10px] text-ink-tertiary group-hover:text-[#ff4000]">
                           {String(i + 1).padStart(2, '0')}
                         </span>
                         {item.text}
@@ -318,7 +321,7 @@ const BlogPostPage = () => {
               {renderBody(post.body)}
             </div>
 
-            <div className="mt-16 pt-10 border-t border-white/10">
+            <div className="mt-16 pt-10 border-t border-black/10">
               <BlogShareContact postTitle={post.title} postSlug={post.slug} />
             </div>
             <BlogComments postId={post.id} />
@@ -327,7 +330,7 @@ const BlogPostPage = () => {
       </section>
 
       {/* CTA */}
-      <section className="bg-black text-white py-24 md:py-32">
+      <section className="gb-surface-page gb-section">
         <div className="max-w-4xl mx-auto px-6 md:px-12 text-center">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
             Próximo passo
@@ -342,15 +345,14 @@ const BlogPostPage = () => {
             {t('blog.needHelp')}{' '}
             <span style={{ color: ACCENT }}>{post.category?.name || post.category?.key}</span>?
           </motion.h2>
-          <p className="text-white/60 mt-6 max-w-xl mx-auto">{t('blog.needHelpSubtitle')}</p>
+          <p className="text-ink-secondary mt-6 max-w-xl mx-auto">{t('blog.needHelpSubtitle')}</p>
           <div className="mt-10">
             <Link
               to="/booking"
               className="inline-flex items-center gap-3 border-2 px-8 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: '#ffb494' }}
+              style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-            >
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')} onClick={() => analytics.trackClick('blog_post_hero', 'blog_post_booking', 'consideration')}>
               {t('blog.bookFree')}
               <ArrowRight className="h-4 w-4" />
             </Link>
@@ -360,8 +362,8 @@ const BlogPostPage = () => {
 
       {/* RELATED */}
       {related.length > 0 && (
-        <section className="bg-[#0a0603] text-white py-20 md:py-28 border-t border-white/10">
-          <div className="max-w-7xl mx-auto px-6 md:px-12">
+        <section className="gb-surface-section gb-section">
+          <div className="gb-container">
             <div className="mb-12">
               <p className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
                 Continua a ler
@@ -378,7 +380,7 @@ const BlogPostPage = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08 }}
-                    className="group cursor-pointer h-full border border-white/10 rounded-2xl overflow-hidden hover:border-[#ff4000]/50 hover:bg-white/[0.02] transition-all"
+                    className="group cursor-pointer h-full border border-black/10 rounded-2xl overflow-hidden hover:border-[#ff4000]/50 hover:bg-black/[0.02] transition-all"
                   >
                     <div className="overflow-hidden aspect-[16/10]">
                       <img
@@ -395,7 +397,7 @@ const BlogPostPage = () => {
                       <h3 className="text-lg font-bold mt-3 leading-tight group-hover:text-[#ff4000] transition-colors">
                         {p.title}
                       </h3>
-                      <div className="flex items-center gap-3 mt-5 text-[10px] font-mono uppercase tracking-[0.18em] text-white/40">
+                      <div className="flex items-center gap-3 mt-5 text-[10px] font-mono uppercase tracking-[0.18em] text-ink-tertiary">
                         <span>{new Date(p.createdAt).toLocaleDateString(dateLocale)}</span>
                         <span className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />{t('blog.readTime', { minutes: estimateReadingMinutes(p.body) })}

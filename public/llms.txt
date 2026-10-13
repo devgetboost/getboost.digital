@@ -1,34 +1,63 @@
-# Getboost Digital — Marketing Digital & IA
+# Getboost Digital — IA, Automação, Software e Growth para PMEs
 
-> Especialista em Marketing Digital, Transformação Digital e Inteligência Artificial na Figueira da Foz, Portugal. +20 anos de experiência e 30+ projetos entregues.
+> Parceiro de growth e engenharia de PMEs: agentes de IA, automação, software à medida e growth orientado a receita. +20 anos de experiência e 30+ projetos entregues. Portugal e Brasil.
 
 ## Pages
 
-- [Home](/): Apresentação e principais serviços.
-- [Sobre](/about): Percurso, valores e abordagem de trabalho.
-- [Serviços](/services): Gestão de redes sociais, desenvolvimento web, Google Ads, consultoria e mais.
-- [Portfólio](/portfolio): Projetos e casos de estudo.
-- [Investidores](/investidores): Projetos com participação como investidor (Qook, Hostify, Motivae, entre outros).
+- [Home](/): Agentes IA, Growth e Software que geram clientes.
+- [Sobre Nós](/sobre-nos): Quem é a Getboost Digital — tecnologia, produto e operação.
+- [Soluções](/solucoes): IA, automação, software e growth.
+- [Produtos](/produtos): Qook, Motivae, Alojify, Pikto, Trackfy, Safely e plataformas.
+- [Trabalho](/work): Portefólio e casos de sucesso.
+- [Insights](/insights): Blog, recursos, podcast, academy e ferramentas gratuitas.
+- [Portefólio](/portfolio): Projetos e casos de estudo.
+- [Casos de Sucesso](/casos-de-sucesso): Histórias de execução — desafio, diagnóstico, solução e resultado.
+- [Investidores](/investidores): Projetos com participação como investidor.
 - [Blog](/blog): Artigos sobre marketing digital, IA e transformação digital.
 - [Recursos](/resources): Guias, ebooks e ferramentas gratuitas.
-- [Contacto](/contact): Formulário de contacto e dados de contacto.
-- [Agendamento](/booking): Marcar diagnóstico gratuito de 7 minutos.
+- [Contacto](/contact): Falar com a equipa Getboost Digital.
+- [Agendamento](/booking): Marcar diagnóstico gratuito.
 
-## Serviços principais
+## Pilares
 
-- [Gestão de Redes Sociais](/services/gestao-redes-sociais)
-- [Desenvolvimento Web](/services/desenvolvimento-web)
-- [Google & Meta Ads](/services/google-meta-ads)
-- [Consultoria Estratégica](/services/consultoria-estrategica)
-- [Google Business Profile](/services/google-business-profile)
-- [Fotografia & Drone](/services/fotografia-drone)
+- [Agentes de IA](/agentes-ia): Operadores digitais 24/7 que atendem, qualificam e agendam.
+- [Automação](/solucoes/integracoes-erp-crm): Integrações ERP/CRM e fluxos automáticos.
+- [Software](/solucoes/desenvolvimento-software): SaaS, web, mobile e MVP em 30 dias.
+- [Growth](/solucoes/marketing-digital): Paid media, SEO e conversão orientada a receita.
 
-## Optional
+## Produtos SaaS
 
-- [Simulador de Preços](/simulador): Calcular orçamento estimado.
+- [Qook](/qook): Sistema all-in-one para restauração moderna.
+- [Motivae](/motivae): Plataforma de benefícios e engagement de equipas.
+- [Alojify](/produtos): Gestão inteligente para alojamento local.
+- [Pikto](/pikto): Criatividade visual assistida por IA.
+- [Trackfy](/trackfy): Rastreamento e operações em tempo real.
+- [Safely](/produtos): Segurança e compliance operacional em tempo real.
+
+## Plataformas
+
+- Descobre Quem Tu És e Guia Cities — representação institucional em [/produtos](/produtos).
+
+## Landings por intenção
+
+- [AI Agents para Imobiliárias](/ai-agentes-imobiliario): Atendimento, qualificação e agendamento de visitas 24/7.
+- [AI Agents para Clínicas](/ai-agentes-clinicas): Marcações, confirmações e triagem de pacientes.
+- [AI Agents para Restauração](/ai-agentes-restauracao): Reservas, pedidos e atendimento nos picos.
+- [Automação de WhatsApp](/automacao-whatsapp): Canal de vendas e atendimento automático, integrado com CRM.
+- [Integração de CRM](/integracao-crm): Dados de clientes centralizados e follow-up automático.
+- [Integração ERP](/integracao-erp): Stocks, encomendas e faturação sincronizados.
+- [Desenvolvimento SaaS](/desenvolvimento-saas): Plataformas multi-tenant do MVP à produção.
+- [Software de Gestão](/software-gestao): Sistemas de gestão à medida para PMEs.
+- [Growth System](/growth-system): Aquisição, conversão e retenção num sistema contínuo.
+- [Geração de Leads B2B](/geracao-leads): Pipeline previsível de oportunidades qualificadas.
+
+## Ferramentas gratuitas
+
+- [Simulador de Serviços](/simulador): Identificar processos automatizáveis com IA.
 - [Calculadora de ROI](/tools/roi-calculator): Estimar retorno de campanhas.
-- [Analisador SEO](/tools/seo-analyzer): Análise SEO gratuita.
+- [Análise SEO](/tools/seo-analyzer): Análise SEO gratuita.
 - [Ideias de Conteúdo](/tools/content-ideas): Gerador de ideias para conteúdo.
+- [Auditoria Digital](/tools/digital-audit): Diagnóstico 360º gratuito.
 - [Política de Privacidade](/politica-de-privacidade)
 - [Política de Cookies](/politica-de-cookies)
 

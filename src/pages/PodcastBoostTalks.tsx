@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Mic, Headphones, Radio, Play, Pause, SkipForward, SkipBack, Volume2 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import ConsultantContactForm from '@/components/ConsultantContactForm';
 import { supabase } from '@/integrations/supabase/client';
 import { publicMediaUrl } from '@/lib/storage';
@@ -113,6 +114,7 @@ const PodcastBoostTalks = () => {
 
   return (
     <Layout>
+      <ScrollDepth location="podcast" />
       <SEO
         title="Podcast BoostTalks — Conversas sobre Crescimento e IA | Getboost Digital"
         description="BoostTalks é o podcast da Getboost Digital: episódios sem filtros sobre marketing, tecnologia, agentes de IA e o futuro dos negócios digitais."
@@ -128,10 +130,10 @@ const PodcastBoostTalks = () => {
       />
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      <section className="gb-surface-page relative overflow-hidden">
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
+          className="absolute inset-0 gb-grid-overlay opacity-[0.05]"
           style={{
             backgroundImage:
               'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
@@ -143,27 +145,20 @@ const PodcastBoostTalks = () => {
         <div
           aria-hidden
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)' }}
-        />
-        <motion.div
-          aria-hidden
-          initial={{ y: '-100%' }}
-          animate={{ y: '120%' }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          className="pointer-events-none absolute inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#ff4000]/10 to-transparent"
+          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)' }}
         />
 
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-28 md:py-40">
+        <div className="gb-container relative gb-section !pt-10 md:!pt-16">
           <motion.div
             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
+            className="gb-eyebrow text-brand-600"
             style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
             BoostTalks · Podcast · Novos episódios quinzenais
           </motion.div>
 
-          <h1 className="mt-8 font-black leading-[0.92] tracking-tight text-[clamp(2.75rem,8vw,7rem)]">
+          <h1 className="gb-text-display mt-5 text-ink-primary">
             {manifestoLines.map((line, i) => (
               <motion.span
                 key={line}
@@ -185,9 +180,9 @@ const PodcastBoostTalks = () => {
 
           <motion.p
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-white/75"
+            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-ink-secondary"
           >
-            <em className="not-italic text-white">BoostTalks</em> é o podcast onde falamos do que
+            <em className="not-italic text-ink-primary">BoostTalks</em> é o podcast onde falamos do que
             realmente move negócios em Portugal — estratégia, tecnologia, IA aplicada, vendas e
             marca. Conversas longas, honestas, com quem constrói e opera.
           </motion.p>
@@ -200,8 +195,8 @@ const PodcastBoostTalks = () => {
             <button
               type="button"
               onClick={togglePlay}
-              className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: '#ffb494' }}
+              className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-ink-primary"
+              style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
             >
@@ -210,7 +205,7 @@ const PodcastBoostTalks = () => {
             </button>
             <a
               href="#episodios"
-              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-white/60 transition-colors hover:text-white"
+              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-ink-secondary transition-colors hover:text-ink-primary"
             >
               <Headphones className="h-4 w-4" style={{ color: ACCENT }} />
               Ver playlist
@@ -220,35 +215,35 @@ const PodcastBoostTalks = () => {
       </section>
 
       {/* PLAYLIST */}
-      <section id="episodios" className="bg-[#0a0603] text-white py-24 md:py-32">
-        <div className="max-w-5xl mx-auto px-6 md:px-12">
+      <section id="episodios" className="gb-surface-section gb-section">
+        <div className="gb-container">
           <div className="mb-12 flex items-center gap-4">
             <Radio className="h-5 w-5" style={{ color: ACCENT }} />
-            <span className="font-mono text-xs uppercase tracking-[0.28em] text-white/60">
+            <span className="font-mono text-xs uppercase tracking-[0.28em] text-ink-secondary">
               Playlist · {episodes.length} {episodes.length === 1 ? 'episódio' : 'episódios'}
             </span>
           </div>
 
           {loading && (
-            <p className="text-white/50 py-12 text-center font-mono text-sm">A carregar…</p>
+            <p className="text-ink-tertiary py-12 text-center font-mono text-sm">A carregar…</p>
           )}
 
           {!loading && episodes.length === 0 && (
-            <div className="border border-white/10 rounded-lg p-12 text-center">
-              <Mic className="h-10 w-10 mx-auto mb-4 text-white/30" />
-              <p className="text-white/60">Ainda sem episódios publicados. Volta em breve.</p>
+            <div className="border border-black/10 rounded-lg p-12 text-center">
+              <Mic className="h-10 w-10 mx-auto mb-4 text-ink-tertiary" />
+              <p className="text-ink-secondary">Ainda sem episódios publicados. Volta em breve.</p>
             </div>
           )}
 
-          <div className="border-t border-white/10">
+          <div className="border-t border-black/10">
             {episodes.map((ep, i) => {
               const isCurrent = currentIdx === i;
               const hasAudio = !!ep.audio_url;
               return (
                 <div
                   key={ep.id}
-                  className={`border-b border-white/10 grid grid-cols-[auto_1fr_auto] gap-4 md:gap-6 py-5 md:py-6 items-center transition-colors ${
-                    isCurrent ? 'bg-white/[0.03]' : 'hover:bg-white/[0.02]'
+                  className={`border-b border-black/10 grid grid-cols-[auto_1fr_auto] gap-4 md:gap-6 py-5 md:py-6 items-center transition-colors ${
+                    isCurrent ? 'bg-black/[0.03]' : 'hover:bg-black/[0.02]'
                   }`}
                 >
                   <button
@@ -256,7 +251,7 @@ const PodcastBoostTalks = () => {
                     onClick={() => hasAudio && (isCurrent && playing ? (audioRef.current?.pause(), setPlaying(false)) : playIdx(i))}
                     disabled={!hasAudio}
                     className="h-12 w-12 md:h-14 md:w-14 rounded-full border-2 flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105"
-                    style={{ borderColor: ACCENT, color: isCurrent && playing ? '#0a0603' : ACCENT, background: isCurrent && playing ? ACCENT : 'transparent' }}
+                    style={{ borderColor: ACCENT, color: isCurrent && playing ? 'var(--gb-ink-primary)' : ACCENT, background: isCurrent && playing ? ACCENT : 'transparent' }}
                     aria-label={isCurrent && playing ? 'Pausar' : 'Reproduzir'}
                   >
                     {isCurrent && playing ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
@@ -271,23 +266,23 @@ const PodcastBoostTalks = () => {
                     )}
                     <h3 className="text-lg md:text-2xl font-bold leading-tight truncate">
                       {ep.episode_number != null && (
-                        <span className="text-white/40 mr-2 font-mono">#{String(ep.episode_number).padStart(2, '0')}</span>
+                        <span className="text-ink-tertiary mr-2 font-mono">#{String(ep.episode_number).padStart(2, '0')}</span>
                       )}
                       {ep.title}
                     </h3>
                     {ep.description && (
-                      <p className="mt-2 text-sm text-white/60 line-clamp-2 hidden md:block">{ep.description}</p>
+                      <p className="mt-2 text-sm text-ink-secondary line-clamp-2 hidden md:block">{ep.description}</p>
                     )}
                     {ep.tags.length > 0 && (
                       <div className="mt-3 hidden md:flex flex-wrap gap-2">
                         {ep.tags.slice(0, 4).map((t) => (
-                          <span key={t} className="rounded-full border border-white/20 px-2.5 py-0.5 text-[10px] text-white/60">{t}</span>
+                          <span key={t} className="rounded-full border border-black/20 px-2.5 py-0.5 text-[10px] text-ink-secondary">{t}</span>
                         ))}
                       </div>
                     )}
                   </div>
 
-                  <div className="font-mono text-xs md:text-sm text-white/50 tabular-nums">
+                  <div className="font-mono text-xs md:text-sm text-ink-tertiary tabular-nums">
                     {ep.duration_seconds ? fmt(ep.duration_seconds) : '—'}
                   </div>
                 </div>
@@ -303,30 +298,30 @@ const PodcastBoostTalks = () => {
           <motion.div
             initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }}
             transition={{ type: 'spring', stiffness: 260, damping: 30 }}
-            className="fixed bottom-0 inset-x-0 z-40 bg-[#0a0603] border-t border-white/15 shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.6)]"
+            className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-black/[0.06] shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.25)]"
           >
             <div className="max-w-7xl mx-auto px-4 md:px-8 py-3 flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <button onClick={prevEp} className="text-white/70 hover:text-white p-1" aria-label="Anterior">
+                <button onClick={prevEp} className="text-ink-secondary hover:text-ink-primary p-1" aria-label="Anterior">
                   <SkipBack className="h-4 w-4" />
                 </button>
                 <button
                   onClick={togglePlay}
                   className="h-10 w-10 rounded-full flex items-center justify-center transition-transform hover:scale-105"
-                  style={{ background: ACCENT, color: '#0a0603' }}
+                  style={{ background: ACCENT, color: 'var(--gb-ink-primary)' }}
                   aria-label={playing ? 'Pausar' : 'Reproduzir'}
                 >
                   {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
                 </button>
-                <button onClick={nextEp} className="text-white/70 hover:text-white p-1" aria-label="Seguinte">
+                <button onClick={nextEp} className="text-ink-secondary hover:text-ink-primary p-1" aria-label="Seguinte">
                   <SkipForward className="h-4 w-4" />
                 </button>
               </div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline justify-between gap-4">
-                  <div className="text-white text-sm font-semibold truncate">{currentEp.title}</div>
-                  <div className="font-mono text-[10px] text-white/50 tabular-nums shrink-0">
+                  <div className="text-ink-primary text-sm font-semibold truncate">{currentEp.title}</div>
+                  <div className="font-mono text-[10px] text-ink-tertiary tabular-nums shrink-0">
                     {fmt(progress)} / {fmt(duration || currentEp.duration_seconds || 0)}
                   </div>
                 </div>
@@ -344,14 +339,14 @@ const PodcastBoostTalks = () => {
                 />
               </div>
 
-              <Volume2 className="h-4 w-4 text-white/40 hidden md:block" />
+              <Volume2 className="h-4 w-4 text-ink-tertiary hidden md:block" />
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* CTA FINAL */}
-      <section className="bg-black text-white py-28 md:py-40 pb-40">
+      <section className="bg-black text-ink-primary py-28 md:py-40 pb-40">
         <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
@@ -370,7 +365,7 @@ const PodcastBoostTalks = () => {
             <button
               type="button"
               onClick={() => setContactOpen((v) => !v)}
-              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-white"
+              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-ink-primary"
               style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}

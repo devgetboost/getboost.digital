@@ -202,7 +202,7 @@ const AdminAuditLeads = () => {
         </CardContent></Card>
         <Card><CardContent className="p-4">
           <div className="text-xs text-muted-foreground uppercase tracking-wider">Alta maturidade (≥75)</div>
-          <div className="text-2xl font-bold mt-1 text-emerald-600">{stats.high}</div>
+          <div className="text-2xl font-bold mt-1 text-success">{stats.high}</div>
         </CardContent></Card>
         <Card><CardContent className="p-4">
           <div className="text-xs text-muted-foreground uppercase tracking-wider">Por rever</div>

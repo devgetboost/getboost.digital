@@ -18,6 +18,7 @@ import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
 import { analytics } from '@/lib/analytics';
 import { toast } from 'sonner';
 import { Link as RouterLink } from 'react-router-dom';
+import { fadeUp } from '@/components/ui/reveal';
 
 interface ContentIdeas {
   posts: { title: string; description: string; hashtags: string[]; bestTime: string }[];
@@ -26,11 +27,6 @@ interface ContentIdeas {
   stories: { title: string; description: string; type: string }[];
   carousels: { title: string; slides: string[]; cta: string }[];
 }
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.06, duration: 0.4 } }),
-};
 
 const CopyButton = ({ text }: { text: string }) => {
   const [copied, setCopied] = useState(false);
@@ -41,7 +37,7 @@ const CopyButton = ({ text }: { text: string }) => {
   };
   return (
     <button onClick={handleCopy} className="p-1.5 rounded-md hover:bg-muted transition-colors" title="Copiar">
-      {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5 text-muted-foreground" />}
+      {copied ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5 text-muted-foreground" />}
     </button>
   );
 };
@@ -178,7 +174,7 @@ const ContentIdeasPage = () => {
 
       {!ideas ? (
         /* Form + What We Generate */
-        <section className="section-padding pt-0">
+        <section className="gb-section !pt-0">
           <div className="max-w-6xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
               {/* Form */}
@@ -244,7 +240,7 @@ const ContentIdeasPage = () => {
         </section>
       ) : (
         /* Results */
-        <section className="section-padding pt-0">
+        <section className="gb-section !pt-0">
           <div className="max-w-5xl mx-auto">
             {/* Header */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">

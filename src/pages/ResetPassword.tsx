@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import SEO from '@/components/SEO';
 import logoBranca from '@/assets/logo-getboost-soft-branca.svg';
 
 const ResetPassword = () => {
@@ -43,6 +44,7 @@ const ResetPassword = () => {
   if (!isRecovery) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4 bg-background">
+        <SEO title="Recuperar password" noIndex />
         <div className="w-full max-w-md text-center rounded-2xl overflow-hidden bg-card border border-border p-10">
           <h1 className="text-2xl font-bold text-foreground mb-2">Link inválido</h1>
           <p className="text-muted-foreground">Este link de recuperação é inválido ou expirou.</p>
@@ -56,6 +58,7 @@ const ResetPassword = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-background">
+      <SEO title="Redefinir password" noIndex />
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}

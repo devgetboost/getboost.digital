@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, CalendarDays, Clock, MapPin, Users, Video, Minus, Grid2x2, Circle } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import ConsultantContactForm from '@/components/ConsultantContactForm';
 import { webinars, formatWebinarDate } from '@/data/webinars';
 
@@ -23,6 +24,7 @@ const Webinars = () => {
 
   return (
     <Layout>
+      <ScrollDepth location="webinars" />
       <SEO
         title="Webinars & Workshops — Formação prática em IA e digital | Getboost Digital"
         description="Sessões ao vivo e workshops presenciais sobre IA, automação, SEO e crescimento digital para PMEs. Aprende com quem constrói e sai com resultados accionáveis."
@@ -31,10 +33,10 @@ const Webinars = () => {
       />
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      <section className="gb-surface-page relative overflow-hidden">
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
+          className="absolute inset-0 gb-grid-overlay opacity-[0.05]"
           style={{
             backgroundImage:
               'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
@@ -47,30 +49,23 @@ const Webinars = () => {
           aria-hidden
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
           style={{
-            background: 'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)',
+            background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)',
           }}
         />
-        <motion.div
-          aria-hidden
-          initial={{ y: '-100%' }}
-          animate={{ y: '120%' }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          className="pointer-events-none absolute inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#ff4000]/10 to-transparent"
-        />
 
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-28 md:py-40">
+        <div className="gb-container relative gb-section !pt-10 md:!pt-16">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
+            className="gb-eyebrow text-brand-600"
             style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
             Webinars · Workshops · Ao vivo · PT
           </motion.div>
 
-          <h1 className="mt-8 font-black leading-[0.92] tracking-tight text-[clamp(2.75rem,8vw,7rem)]">
+          <h1 className="gb-text-display mt-5 text-ink-primary">
             {manifestoLines.map((line, i) => (
               <motion.span
                 key={line}
@@ -102,7 +97,7 @@ const Webinars = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-white/75"
+            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-ink-secondary"
           >
             Sessões práticas — não são keynotes de palco. Cada webinar termina com passos concretos
             para segunda-feira de manhã. Cada workshop sai com algo a funcionar no teu ambiente.
@@ -116,8 +111,8 @@ const Webinars = () => {
           >
             <a
               href="#agenda"
-              className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: '#ffb494' }}
+              className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-ink-primary"
+              style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
             >
@@ -126,7 +121,7 @@ const Webinars = () => {
             </a>
             <Link
               to="/academy/formacao-empresas"
-              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-white/60 transition-colors hover:text-white"
+              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-ink-secondary transition-colors hover:text-ink-primary"
             >
               <Users className="h-4 w-4" style={{ color: ACCENT }} />
               Sessão privada para a tua equipa
@@ -137,7 +132,7 @@ const Webinars = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1.1 }}
-            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 border-t border-white/10 pt-8"
+            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 border-t border-black/10 pt-8"
           >
             {[
               { k: '100%', v: 'Prático, sem slides teóricos' },
@@ -149,7 +144,7 @@ const Webinars = () => {
                 <div className="font-mono text-3xl md:text-4xl font-bold" style={{ color: ACCENT }}>
                   {s.k}
                 </div>
-                <div className="mt-1 text-xs uppercase tracking-widest text-white/50">{s.v}</div>
+                <div className="mt-1 text-xs uppercase tracking-widest text-ink-tertiary">{s.v}</div>
               </div>
             ))}
           </motion.div>
@@ -157,9 +152,9 @@ const Webinars = () => {
       </section>
 
       {/* AGENDA — accordion list of upcoming sessions */}
-      <section id="agenda" className="bg-[#0a0603] text-white py-24 md:py-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="flex items-end justify-between border-b border-white/10 pb-8 mb-4">
+      <section id="agenda" className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <div className="flex items-end justify-between border-b border-black/10 pb-8 mb-4">
             <div>
               <div
                 className="font-mono text-[11px] uppercase tracking-[0.28em]"
@@ -177,11 +172,11 @@ const Webinars = () => {
             {upcoming.map((w, i) => {
               const isOpen = openIndex === i;
               return (
-                <div key={w.slug} className="border-b border-white/10">
+                <div key={w.slug} className="border-b border-black/10">
                   <button
                     type="button"
                     onClick={() => setOpenIndex(isOpen ? -1 : i)}
-                    className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 py-10 md:py-14 text-left transition-colors hover:bg-white/[0.02]"
+                    className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 py-10 md:py-14 text-left transition-colors hover:bg-black/[0.02]"
                   >
                     <div>
                       <div className="flex items-start gap-5">
@@ -203,7 +198,7 @@ const Webinars = () => {
                         {w.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="rounded-full border border-white/25 px-4 py-1.5 text-xs md:text-sm text-white/80"
+                            className="rounded-full border border-black/25 px-4 py-1.5 text-xs md:text-sm text-ink-secondary"
                           >
                             {tag}
                           </span>
@@ -236,10 +231,10 @@ const Webinars = () => {
                             transition={{ duration: 0.35 }}
                             className="overflow-hidden"
                           >
-                            <p className="text-sm md:text-base leading-relaxed text-white/70">
+                            <p className="text-sm md:text-base leading-relaxed text-ink-secondary">
                               {w.tagline}
                             </p>
-                            <dl className="mt-6 grid grid-cols-2 gap-4 text-xs md:text-sm text-white/70">
+                            <dl className="mt-6 grid grid-cols-2 gap-4 text-xs md:text-sm text-ink-secondary">
                               <div className="flex items-start gap-2">
                                 <CalendarDays className="h-4 w-4 mt-0.5" style={{ color: ACCENT }} />
                                 <span>{formatWebinarDate(w.date)}</span>
@@ -279,7 +274,7 @@ const Webinars = () => {
       </section>
 
       {/* CTA FINAL */}
-      <section className="bg-black text-white py-28 md:py-40">
+      <section className="gb-surface-page gb-section">
         <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -302,7 +297,7 @@ const Webinars = () => {
             <button
               type="button"
               onClick={() => setContactOpen((v) => !v)}
-              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-white"
+              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-ink-primary"
               style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}

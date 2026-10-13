@@ -1,69 +1,53 @@
-import { useState } from 'react';
+import { useState, useRef, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Compass, Grid2x2, Minus, Circle, Sparkles } from 'lucide-react';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { ArrowRight, Check, X, Boxes } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
+import { SectionHeader } from '@/components/ui/section-header';
+import { Button } from '@/components/ui/button';
+import { MiniFlow } from '@/components/ui/mini-flow';
+import { CountUp } from '@/components/ui/count-up';
 import ConsultantContactForm from '@/components/ConsultantContactForm';
+import { analytics } from '@/lib/analytics';
+import { PRODUCTS, SAAS_PRODUCTS, PLATFORM_PRODUCTS } from '@/data/products';
+import { METRICS } from '@/data/brandRegistry';
+import { SOLUCOES_SUBMENU } from '@/data/solucoesSubmenu';
+import { MARKET_CODES } from '@/lib/markets';
 
 const ACCENT = '#ff4000';
 
-const manifestoLines = ['Nascemos para fazer.', 'Ficamos para escalar.'];
-
-type Pillar = {
-  eyebrow: string;
-  title: string;
-  tags: string[];
-  body: string;
-};
-
-const pillars: Pillar[] = [
-  {
-    eyebrow: 'Origem',
-    title: 'De consultores a operadores',
-    tags: ['2019', 'Figueira da Foz', 'Bootstrap', 'Fundadores Técnicos'],
-    body: 'Começámos a Getboost porque cansámo-nos de ver empresas a pagar por apresentações em PowerPoint sem execução por trás. Fundada por engenheiros e estrategas, a Getboost nasceu como resposta directa a esse vazio — uma casa que pensa, constrói e opera no mesmo turno.',
-  },
-  {
-    eyebrow: 'Missão',
-    title: 'Democratizar tecnologia de topo',
-    tags: ['PMEs', 'Acesso', 'IA aplicada', 'Software à medida'],
-    body: 'Levar às PMEs portuguesas as mesmas ferramentas, práticas e inteligência que grandes tecnológicas usam há uma década. Software próprio, agentes de IA, automação de operações — sem preços de agência internacional, sem barreiras técnicas.',
-  },
-  {
-    eyebrow: 'Visão',
-    title: 'Portugal, hub técnico do sul da Europa',
-    tags: ['Talento local', 'Produtos globais', 'Investimento em I&D', 'Long-term'],
-    body: 'Acreditamos que Portugal tem tudo para se tornar um pólo de produtos digitais de referência. Trabalhamos todos os dias para provar isso — construindo produtos próprios que competem lá fora e ajudando clientes locais a fazer o mesmo.',
-  },
-  {
-    eyebrow: 'Valores',
-    title: 'Fazer bem, dizer o que se faz',
-    tags: ['Transparência', 'Craft', 'Responsabilidade', 'Ambição saudável'],
-    body: 'Falamos claro sobre prazos, custos, riscos e resultados. Assumimos os erros que fazemos, celebramos as vitórias sem exageros e recusamos projectos onde não conseguimos gerar valor real. Preferimos perder um cliente do que enganá-lo.',
-  },
-  {
-    eyebrow: 'Método',
-    title: 'Discovery curto, entrega frequente',
-    tags: ['Sprints', 'Feedback loops', 'Data-informed', 'Iteração'],
-    body: 'Trabalhamos em ciclos curtos, com entregas visíveis a cada duas semanas. Cada decisão passa por dados, cada hipótese é validada em produção, cada projecto termina com métricas — não com um powerpoint final.',
-  },
-  {
-    eyebrow: 'Compromisso',
-    title: 'Parceiros, não fornecedores',
-    tags: ['Relação longa', 'Ownership', 'Suporte contínuo', 'Sem lock-in'],
-    body: 'Não desaparecemos no dia do go-live. Mantemos ligação directa com os clientes muito depois da entrega, evoluímos com eles e não usamos técnicas de retenção artificial. Se saíres, sais com todo o código, todos os dados, toda a documentação.',
-  },
+/** R19.9 — the four pillars as one company (spans only, no links). */
+const pillarChain = [
+  { id: 'ai', name: 'IA' },
+  { id: 'automation', name: 'Automação' },
+  { id: 'software', name: 'Software' },
+  { id: 'growth', name: 'Growth' },
 ];
 
+/**
+ * R19.9 — Institutional page (canonical /sobre-nos).
+ * Company voice throughout: technology, product and operation — never
+ * personal narrative. SEO block preserved byte-identical; the consultant
+ * conversion modal is preserved with its original configuration.
+ */
 const SobreNos = () => {
   const { i18n } = useTranslation();
-  const [openIndex, setOpenIndex] = useState<number>(0);
   const [contactOpen, setContactOpen] = useState(false);
+  const reduceMotion = useReducedMotion() ?? false;
+
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const clusterY = useTransform(scrollYProgress, [0, 1], [0, 32]);
+
+  const bookingHref = i18n.language === 'pt' ? '/booking' : `/${i18n.language}/booking`;
+  const contactHref = i18n.language === 'pt' ? '/contact' : `/${i18n.language}/contact`;
 
   return (
     <Layout>
+    <ScrollDepth location="about" />
       <SEO
         title="Sobre Nós — Quem é a Getboost Digital"
         description="Somos uma casa técnica portuguesa que pensa, constrói e opera. Conhece a origem, missão, valores e método da Getboost Digital."
@@ -71,258 +55,360 @@ const SobreNos = () => {
         lang={i18n.language as 'pt' | 'en' | 'es'}
       />
 
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      {/* ==================================================== 01 HERO */}
+      <section ref={heroRef} className="gb-surface-page relative overflow-hidden">
+        <div aria-hidden className="gb-grid-overlay" />
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
-            backgroundSize: '56px 56px',
-            maskImage: 'radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%)',
-            WebkitMaskImage: 'radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%)',
-          }}
+          className="pointer-events-none absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full blur-3xl"
+          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.08) 0%, rgba(255,255,255,0) 65%)' }}
         />
-        <div
-          aria-hidden
-          className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
-          style={{
-            background: 'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)',
-          }}
-        />
-        <motion.div
-          aria-hidden
-          initial={{ y: '-100%' }}
-          animate={{ y: '120%' }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          className="pointer-events-none absolute inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#ff4000]/10 to-transparent"
-        />
+        <div className="gb-container relative gb-section !pt-10 md:!pt-16">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            <div>
+              <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
+                <span className="gb-eyebrow text-brand-600">Sobre Nós · Getboost Digital · Desde 2019</span>
+              </motion.div>
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="gb-text-display mt-5 text-ink-primary"
+              >
+                Construímos tecnologia para ajudar empresas a{' '}
+                <span className="text-brand-600">crescer</span>.
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="gb-text-body mt-6 max-w-xl text-ink-secondary"
+              >
+                A Getboost combina inteligência artificial, automação, software
+                e crescimento para criar sistemas digitais preparados para escalar.
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-10 flex flex-wrap items-center gap-4"
+              >
+                <Button asChild size="lg">
+                  <Link to={i18n.language === 'pt' ? '/solucoes' : `/${i18n.language}/solucoes`} onClick={() => analytics.trackClick('sobre_nos', 'sobre_solutions', 'consideration')}>
+                    Conhecer Soluções
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="outline">
+                  <Link to={i18n.language === 'pt' ? '/equipa' : `/${i18n.language}/equipa`} onClick={() => analytics.trackClick('sobre_nos', 'sobre_team', 'consideration')}>
+                    Falar com a Equipa
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </motion.div>
+            </div>
 
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-28 md:py-40">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
-            style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
-          >
-            <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
-            Sobre Nós · Getboost Digital · Desde 2019
-          </motion.div>
-
-          <h1 className="mt-8 font-black leading-[0.92] tracking-tight text-[clamp(2.75rem,8vw,7rem)]">
-            {manifestoLines.map((line, i) => (
-              <motion.span
-                key={line}
+            {/* Hero visual: the company as one ecosystem (illustrative). */}
+            <motion.div style={{ y: reduceMotion ? 0 : clusterY }} className="relative">
+              <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.15 + i * 0.12 }}
-                className="block"
+                transition={{ delay: 0.35, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               >
-                {i === manifestoLines.length - 1 ? (
-                  <span style={{ color: ACCENT, textShadow: '0 0 40px rgba(255,64,0,0.4)' }}>
-                    {line}
-                  </span>
-                ) : (
-                  line
-                )}
-              </motion.span>
-            ))}
-          </h1>
-
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="mt-10 h-px w-40 origin-left"
-            style={{ background: `${ACCENT}b3` }}
-          />
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-white/75"
-          >
-            Somos uma casa técnica que combina <em className="not-italic text-white">engenharia</em>,
-            <em className="not-italic text-white"> design</em> e <em className="not-italic text-white">estratégia</em>{' '}
-            para construir produtos digitais que geram receita — não impressões. Trabalhamos com
-            PMEs, startups e operadores que preferem métricas a promessas.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.9 }}
-            className="mt-12 flex flex-wrap items-center gap-4"
-          >
-            <Link
-              to="/contact"
-              className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: '#ffb494' }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-            >
-              Falar com a Getboost
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-            <Link
-              to="/equipa"
-              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-white/60 transition-colors hover:text-white"
-            >
-              <Sparkles className="h-4 w-4" style={{ color: ACCENT }} />
-              Conhecer a equipa
-            </Link>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 1.1 }}
-            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 border-t border-white/10 pt-8"
-          >
-            {[
-              { k: '2019', v: 'Ano de fundação' },
-              { k: '6+', v: 'Produtos próprios' },
-              { k: '50+', v: 'Projectos entregues' },
-              { k: '100%', v: 'Bootstrap · Independente' },
-            ].map((s) => (
-              <div key={s.k}>
-                <div className="font-mono text-3xl md:text-4xl font-bold" style={{ color: ACCENT }}>
-                  {s.k}
-                </div>
-                <div className="mt-1 text-xs uppercase tracking-widest text-white/50">{s.v}</div>
-              </div>
-            ))}
-          </motion.div>
+                <motion.div
+                  animate={reduceMotion ? undefined : { y: [0, -8, 0] }}
+                  transition={reduceMotion ? undefined : { duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                >
+                  <div className="gb-card !p-6 !shadow-lg">
+                    <p className="gb-eyebrow text-ink-tertiary">Uma empresa, um ecossistema</p>
+                    <MiniFlow
+                      steps={['IA', 'Automação', 'Software', 'Growth']}
+                      tint="var(--gb-brand-50)"
+                      strong="var(--gb-brand-600)"
+                    />
+                    <div className="mt-5 grid grid-cols-2 gap-2 border-t border-black/[0.06] pt-4 text-center">
+                      {[
+                        { k: '2019', v: 'a construir' },
+                        { k: `${SAAS_PRODUCTS.length}`, v: 'produtos próprios' },
+                      ].map((stat) => (
+                        <div key={stat.v} className="rounded-xl bg-black/[0.03] px-2 py-3">
+                          <div className="gb-text-h3 text-brand-600">{stat.k}</div>
+                          <div className="text-[11px] font-medium text-ink-tertiary">{stat.v}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+        <div className="gb-container pb-16">
+          <div className="gb-hairline-accent" />
         </div>
       </section>
 
-      {/* PILLARS ACCORDION */}
-      <section className="bg-[#0a0603] text-white py-24 md:py-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="mb-16 flex items-center gap-4">
-            <Compass className="h-5 w-5" style={{ color: ACCENT }} />
-            <span className="font-mono text-xs uppercase tracking-[0.28em] text-white/60">
-              O que nos define
-            </span>
+      {/* ==================================================== 01B AUTORIDADE */}
+      <section className="gb-surface-subtle gb-section !py-14">
+        <div className="gb-container">
+          <div className="grid grid-cols-2 gap-6 text-center md:grid-cols-4">
+            {[
+              { k: METRICS.yearsExperience.value, v: 'anos de engenharia' },
+              { k: METRICS.projectsDelivered.value, v: 'projetos entregues' },
+              { k: `${SAAS_PRODUCTS.length}`, v: 'produtos próprios em operação' },
+              { k: '2019', v: 'a construir, sem parar' },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.v}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className="gb-text-h2 text-brand-600"><CountUp value={stat.k} /></div>
+                <div className="gb-text-small mt-1 text-ink-secondary">{stat.v}</div>
+              </motion.div>
+            ))}
           </div>
-          <div className="border-t border-white/10">
-            {pillars.map((f, i) => {
-              const isOpen = openIndex === i;
-              return (
-                <div key={f.title} className="border-b border-white/10">
+        </div>
+      </section>
+
+      {/* ==================================================== 02 EMPRESA HOJE */}
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="A Getboost hoje"
+            title="Uma empresa de tecnologia, não uma agência"
+            description="Quatro capacidades técnicas e um ecossistema de produtos próprios — a mesma equipa pensa, constrói e opera."
+          />
+          <Reveal i={0}>
+            <div className="gb-card mt-12">
+              <div className="flex flex-col items-stretch justify-center gap-1.5 sm:flex-row sm:flex-wrap sm:items-center">
+                {pillarChain.map((pillar, pi) => (
+                  <Fragment key={pillar.id}>
+                    {pi > 0 && (
+                      <span aria-hidden="true" className="gb-flow-connector" style={{ ['--gb-flow-color' as string]: 'var(--gb-brand-500)' }} />
+                    )}
+                    <span
+                      className="inline-flex items-center justify-center gap-2 rounded-full border px-4 py-2 text-[13px] font-semibold"
+                      style={{ background: `var(--gb-${pillar.id}-tint)`, borderColor: `var(--gb-${pillar.id}-border)`, color: `var(--gb-${pillar.id}-strong)` }}
+                    >
+                      <span aria-hidden="true" className="h-2 w-2 rounded-full" style={{ background: `var(--gb-${pillar.id}-base)` }} />
+                      {pillar.name}
+                    </span>
+                  </Fragment>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+          <div className="mt-6 grid grid-cols-2 gap-6 lg:grid-cols-4">
+            {[
+              { k: '2019', v: 'fundação', countable: false },
+              { k: `${SAAS_PRODUCTS.length}`, v: 'produtos próprios', countable: true },
+              { k: `${SOLUCOES_SUBMENU.length}`, v: 'serviços especializados', countable: true },
+              { k: `${MARKET_CODES.length}`, v: 'mercados', countable: true },
+            ].map((stat, i) => (
+              <Reveal key={stat.v} i={i}>
+                <div className="gb-card gb-card-lift h-full text-center">
+                  <div className="gb-text-h2 text-brand-600">
+                    {stat.countable ? <CountUp value={stat.k} /> : stat.k}
+                  </div>
+                  <p className="gb-text-small mt-2 text-ink-secondary">{stat.v}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ==================================================== 03 CONSTRUÍMOS */}
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="O que construímos"
+            title="Software nosso, a correr em produção"
+            description="Produtos SaaS e plataformas desenvolvidas e operadas pela Getboost."
+          />
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {SAAS_PRODUCTS.filter((p) => p.to && p.tagline).map((product, i) => (
+              <Reveal key={product.slug} i={i % 3}>
+                <Link to={product.to as string} className="group block h-full">
+                  <div className="gb-surface-card gb-card-lift h-full">
+                    <span aria-hidden className="block h-1 w-10 rounded-full" style={{ background: product.accent }} />
+                    <h3 className="gb-text-h3 mt-4 !text-xl text-ink-primary">{product.name}</h3>
+                    <p className="gb-text-small mt-2 font-medium text-ink-secondary">{product.tagline}</p>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+          <div className="mt-6 flex flex-wrap items-center gap-2">
+            <span className="gb-eyebrow text-ink-tertiary">Plataformas:</span>
+            {PLATFORM_PRODUCTS.map((product) => (
+              <span key={product.slug} className="gb-chip">
+                <span aria-hidden="true" className="h-2 w-2 rounded-full" style={{ background: product.accent }} />
+                {product.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ==================================================== 04 MÉTODO */}
+      <section className="gb-surface-subtle gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Como trabalhamos"
+            title="Do diagnóstico à operação contínua"
+            description="Um método fechado: cada fase tem dono, prazo e critério de saída."
+          />
+          <Reveal i={0}>
+            <div className="gb-card mt-12">
+              <MiniFlow
+                steps={['Diagnóstico', 'Estratégia', 'Implementação', 'Operação', 'Escala']}
+                tint="var(--gb-brand-50)"
+                strong="var(--gb-brand-600)"
+              />
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ==================================================== 05 ABORDAGEM */}
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Abordagem"
+            title="Ecossistemas, não projetos isolados"
+            description="A diferença entre entregar e acompanhar."
+          />
+          <div className="mx-auto mt-12 grid max-w-4xl gap-4 md:grid-cols-2">
+            <Reveal i={0}>
+              <div className="rounded-2xl border border-black/[0.06] bg-white p-6 opacity-80 md:p-8">
+                <h3 className="gb-text-small font-bold uppercase tracking-[0.14em] text-ink-tertiary">Projetos isolados</h3>
+                <MiniFlow
+                  steps={['Entrega', 'Fim']}
+                  tint="var(--gb-canvas-subtle)"
+                  strong="var(--gb-ink-tertiary)"
+                />
+              </div>
+            </Reveal>
+            <Reveal i={1}>
+              <div className="rounded-2xl border border-[#ff4000]/25 bg-white p-6 shadow-[0_18px_44px_-20px_rgba(255,64,0,0.45)] md:p-8">
+                <h3 className="gb-text-small font-bold uppercase tracking-[0.14em] text-brand-600">Ecossistemas digitais</h3>
+                <MiniFlow
+                  steps={['Construção', 'Melhoria contínua', 'Escalabilidade']}
+                  tint="var(--gb-brand-50)"
+                  strong="var(--gb-brand-600)"
+                />
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ==================================================== 06 PROVA */}
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Prova"
+            title="Execução verificável"
+            description="Portefólio, produtos e casos — tudo consultável, nada por dizer."
+          />
+          <div className="mt-12 grid gap-4 sm:grid-cols-3">
+            {[
+              { to: '/portfolio', title: 'Portefólio', desc: 'Trabalhos selecionados em produção' },
+              { to: '/produtos', title: 'Produtos', desc: 'Software próprio em operação' },
+              { to: '/casos-de-sucesso', title: 'Casos de sucesso', desc: 'Resultados com contexto' },
+            ].map((proof, i) => (
+              <Reveal key={proof.to} i={i}>
+                <Link
+                  to={i18n.language === 'pt' ? proof.to : `/${i18n.language}${proof.to}`}
+                  className="group block h-full"
+                  onClick={() => analytics.trackClick('sobre_nos', 'sobre_proof', 'consideration')}
+                >
+                  <div className="gb-surface-card gb-card-lift h-full">
+                    <h3 className="gb-text-h3 !text-xl text-ink-primary">{proof.title}</h3>
+                    <p className="gb-text-small mt-2 text-ink-secondary">{proof.desc}</p>
+                    <span className="gb-link-more mt-4 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-brand-600">
+                      Explorar <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ==================================================== 07 VISÃO */}
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Visão"
+            title="PMEs a operar com sistemas de nível mundial"
+            description="Uma casa técnica portuguesa que pensa, constrói e opera — e prova todos os dias que produto português compete lá fora."
+          />
+          <Reveal i={0}>
+            <div className="gb-card mt-12">
+              <p className="gb-eyebrow text-ink-tertiary">Onde investimos o futuro</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {['IA aplicada', 'Automação', 'Produtos digitais', 'SaaS', 'Ecossistemas'].map((focus) => (
+                  <span key={focus} className="gb-chip">
+                    <Check className="h-3.5 w-3.5 text-brand-600" />
+                    {focus}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ==================================================== 08 FINAL CTA */}
+      <section className="gb-surface-page gb-section !pt-0">
+        <div className="gb-container">
+          <Reveal i={0}>
+            <div className="gb-cta-band relative overflow-hidden border border-white/10 text-center">
+              <div className="relative">
+                <h2 className="font-black leading-[0.98] tracking-tight text-[clamp(2rem,5vw,4rem)] text-ink-inverse">
+                  Pronto para construir a próxima geração da tua{' '}
+                  <span style={{ color: '#ff4000' }}>operação digital</span>?
+                </h2>
+                <p className="gb-text-body mx-auto mt-6 max-w-2xl text-white/70">
+                  Fala com a equipa — voltamos com um plano concreto em menos
+                  de 48 horas.
+                </p>
+                <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+                  <Button asChild size="lg">
+                    <Link to={bookingHref} onClick={() => analytics.trackClick('sobre_nos', 'sobre_booking', 'consideration')}>
+                      Agendar Diagnóstico
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button asChild size="lg" variant="outline" className="border-white/40 !text-white hover:!bg-white hover:!text-ink-primary">
+                    <Link to={contactHref} onClick={() => analytics.trackClick('sobre_nos', 'sobre_contact', 'consideration')}>
+                      Contactar Equipa
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+                <div className="mt-8">
                   <button
                     type="button"
-                    onClick={() => setOpenIndex(isOpen ? -1 : i)}
-                    className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 py-10 md:py-14 text-left transition-colors hover:bg-white/[0.02]"
+                    onClick={() => setContactOpen((v) => !v)}
+                    className="inline-flex items-center gap-2 text-sm font-medium text-white/60 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
                   >
-                    <div>
-                      <div className="flex items-start gap-5">
-                        <span className="mt-3 shrink-0" style={{ color: isOpen ? ACCENT : 'rgba(255,255,255,0.5)' }}>
-                          {isOpen ? <Circle className="h-4 w-4 fill-current" /> : <Grid2x2 className="h-5 w-5" />}
-                        </span>
-                        <h3 className="text-3xl md:text-5xl font-bold leading-[1.05] tracking-tight">
-                          {f.title}
-                        </h3>
-                      </div>
-                      <div className="mt-8 ml-0 md:ml-10 flex flex-wrap gap-3">
-                        {f.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="rounded-full border border-white/25 px-4 py-1.5 text-xs md:text-sm text-white/80"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col">
-                      <div className="flex items-start justify-between gap-6">
-                        <span
-                          className="font-mono text-[11px] md:text-xs uppercase tracking-[0.22em]"
-                          style={{ color: isOpen ? ACCENT : 'rgba(255,255,255,0.6)' }}
-                        >
-                          {f.eyebrow}
-                        </span>
-                        <Minus
-                          className="h-6 w-6 shrink-0 transition-transform"
-                          style={{
-                            color: isOpen ? ACCENT : 'rgba(255,255,255,0.5)',
-                            transform: isOpen ? 'rotate(0deg)' : 'rotate(90deg)',
-                          }}
-                        />
-                      </div>
-                      <AnimatePresence initial={false}>
-                        {isOpen && (
-                          <motion.p
-                            initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                            animate={{ opacity: 1, height: 'auto', marginTop: 24 }}
-                            exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                            transition={{ duration: 0.35 }}
-                            className="overflow-hidden text-sm md:text-base leading-relaxed text-white/70"
-                          >
-                            {f.body}
-                          </motion.p>
-                        )}
-                      </AnimatePresence>
-                    </div>
+                    {contactOpen ? 'Fechar formulário' : 'ou escreve-nos aqui'}
+                    <ArrowRight className="h-4 w-4" />
                   </button>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA FINAL */}
-      <section className="bg-black text-white py-28 md:py-40">
-        <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="font-black leading-[0.95] tracking-tight text-[clamp(2.25rem,7vw,6rem)]"
-          >
-            Adoraria conhecer o teu <span style={{ color: ACCENT }}>projecto</span> e{' '}
-            <span style={{ color: ACCENT }}>trabalhar contigo</span>.
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="mt-8 max-w-2xl mx-auto text-white/70 text-lg"
-          >
-            Vamos criar algo extraordinário.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-14"
-          >
-            <button
-              type="button"
-              onClick={() => setContactOpen((v) => !v)}
-              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: ACCENT }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-            >
-              {contactOpen ? 'Fechar formulário' : 'Vamos conversar'}
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </motion.div>
-
+              </div>
+            </div>
+          </Reveal>
           <ConsultantContactForm
             open={contactOpen}
+            onClose={() => setContactOpen(false)}
             service={{
               slug: 'sobre-nos',
               name: 'Getboost Digital',

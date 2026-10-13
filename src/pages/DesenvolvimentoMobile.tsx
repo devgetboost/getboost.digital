@@ -1,17 +1,35 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, Grid2x2, Minus, Circle } from 'lucide-react';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import {
+  ArrowRight,
+  Zap,
+  Check,
+  X,
+  Smartphone,
+  Rocket,
+  ShieldCheck,
+  Layers,
+  Bell,
+  Database,
+} from 'lucide-react';
 import Layout from '@/components/Layout';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import SEO from '@/components/SEO';
+import { SectionHeader } from '@/components/ui/section-header';
+import { Button } from '@/components/ui/button';
+import { MiniFlow } from '@/components/ui/mini-flow';
+import { CountUp } from '@/components/ui/count-up';
 import CommercialAuditModal from '@/components/CommercialAuditModal';
 import ConsultantContactForm from '@/components/ConsultantContactForm';
+import { analytics } from '@/lib/analytics';
+import { PILLARS } from '@/components/pillars/pillarData';
+import { PRODUCTS } from '@/data/products';
 import type { StoredAudit } from '@/lib/auditHistory';
+import { Reveal } from '@/components/ui/reveal';
 
-const ACCENT = '#ff4000';
-
-const manifestoLines = ['A tua marca', 'cabe no bolso deles.'];
+const SOFTWARE = PILLARS.software;
 
 type Feature = { eyebrow: string; title: string; tags: string[]; body: string };
 
@@ -48,15 +66,39 @@ const features: Feature[] = [
   },
 ];
 
+const capabilityIcons = [Smartphone, Rocket, Layers, Bell, ShieldCheck, Database];
+
+const timeline = [
+  { step: '01', title: 'Descoberta' },
+  { step: '02', title: 'Protótipo' },
+  { step: '03', title: 'UX/UI' },
+  { step: '04', title: 'Desenvolvimento' },
+  { step: '05', title: 'Testes & QA' },
+  { step: '06', title: 'Store + OTA' },
+];
+
+/**
+ * R19.6 — Mobile premium page on the frozen design system.
+ * SEO props preserved byte-identical; routes, schema and tracking untouched.
+ */
 const DesenvolvimentoMobile = () => {
   const { i18n } = useTranslation();
-  const [openIndex, setOpenIndex] = useState<number>(0);
   const [auditOpen, setAuditOpen] = useState(false);
   const [preloadedAudit, setPreloadedAudit] = useState<StoredAudit | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
+  const reduceMotion = useReducedMotion() ?? false;
+
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const clusterY = useTransform(scrollYProgress, [0, 1], [0, 32]);
+
+  const bookingHref = i18n.language === 'pt' ? '/booking' : `/${i18n.language}/booking`;
+  const contactHref = i18n.language === 'pt' ? '/contact' : `/${i18n.language}/contact`;
+  const relatedProducts = PRODUCTS.filter((p) => SOFTWARE.products.includes(p.slug));
 
   return (
     <Layout>
+      <ScrollDepth location="mobile" />
       <SEO
         title="Desenvolvimento Mobile — Apps iOS e Android de Alta Performance | Getboost Digital"
         description="Apps nativas e cross-platform (React Native, Swift, Kotlin) desenhadas para retenção, performance e integração total com o teu negócio."
@@ -64,257 +106,283 @@ const DesenvolvimentoMobile = () => {
         lang={i18n.language as 'pt' | 'en' | 'es'}
       />
 
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      {/* ==================================================== 01 HERO */}
+      <section ref={heroRef} className="gb-surface-page relative overflow-hidden">
+        <div aria-hidden className="gb-grid-overlay" />
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
-            backgroundSize: '56px 56px',
-            maskImage: 'radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%)',
-            WebkitMaskImage: 'radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%)',
-          }}
+          className="pointer-events-none absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full blur-3xl"
+          style={{ background: 'radial-gradient(circle, rgba(37,99,235,0.10) 0%, rgba(255,255,255,0) 65%)' }}
         />
-        <div
-          aria-hidden
-          className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)' }}
-        />
-        <motion.div
-          aria-hidden
-          initial={{ y: '-100%' }}
-          animate={{ y: '120%' }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          className="pointer-events-none absolute inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#ff4000]/10 to-transparent"
-        />
+        <div className="gb-container relative gb-section !pt-10 md:!pt-16">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            <div>
+              <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
+                <span className="gb-eyebrow text-brand-600">Mobile · iOS · Android · React Native</span>
+              </motion.div>
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="gb-text-display mt-5 text-ink-primary"
+              >
+                A tua marca <span style={{ color: 'var(--gb-software-strong)' }}>cabe no bolso</span> deles.
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="gb-text-body mt-6 max-w-xl text-ink-secondary"
+              >
+                Uma app não é um site com moldura. É um produto que vive no bolso do teu cliente, notifica, cobra e fideliza. Desenhamos e construímos apps iOS e Android que abrem depressa, funcionam offline e crescem com o teu negócio.
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-10 flex flex-wrap items-center gap-4"
+              >
+                <Button asChild size="lg">
+                  <Link to={bookingHref} onClick={() => analytics.trackClick('mobile_hero', 'mobile_booking', 'consideration')}>
+                    Agendar Diagnóstico
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="outline">
+                  <Link to={contactHref} onClick={() => analytics.trackClick('mobile_hero', 'mobile_contact', 'consideration')}>
+                    Pedir Proposta
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-8 flex flex-wrap gap-2.5"
+              >
+                {['iOS + Android', 'React Native', 'Offline-first', 'Push', 'OTA'].map((item) => (
+                  <span key={item} className="gb-chip">
+                    <Check className="h-3.5 w-3.5 text-brand-600" />
+                    {item}
+                  </span>
+                ))}
+              </motion.div>
+            </div>
 
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-28 md:py-40">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
-            style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
-          >
-            <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
-            iOS · Android · React Native · Expo
-          </motion.div>
-
-          <h1 className="mt-8 font-black leading-[0.92] tracking-tight text-[clamp(2.75rem,8vw,7rem)]">
-            {manifestoLines.map((line, i) => (
-              <motion.span
-                key={line}
+            <motion.div style={{ y: reduceMotion ? 0 : clusterY }} className="relative">
+              <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.15 + i * 0.12 }}
-                className="block"
+                transition={{ delay: 0.35, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               >
-                {i === manifestoLines.length - 1 ? (
-                  <span style={{ color: ACCENT, textShadow: '0 0 40px rgba(255,64,0,0.4)' }}>{line}</span>
-                ) : (
-                  line
-                )}
-              </motion.span>
-            ))}
-          </h1>
-
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="mt-10 h-px w-40 origin-left"
-            style={{ background: `${ACCENT}b3` }}
-          />
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-white/75"
-          >
-            Uma app não é um site com moldura. É um <em className="not-italic text-white">produto</em>{' '}
-            que vive no bolso do teu cliente, notifica, cobra e fideliza. Desenhamos e construímos
-            apps iOS e Android que abrem depressa, funcionam offline e crescem com o teu negócio.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.9 }}
-            className="mt-12 flex flex-wrap items-center gap-4"
-          >
-            <Link
-              to="/contact"
-              className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: '#ffb494' }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-            >
-              Pedir Proposta
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-            <button
-              type="button"
-              onClick={() => { setPreloadedAudit(null); setAuditOpen(true); }}
-              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-white/60 transition-colors hover:text-white"
-            >
-              <Zap className="h-4 w-4" style={{ color: ACCENT }} />
-              Auditoria de produto 7 min
-            </button>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 1.1 }}
-            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 border-t border-white/10 pt-8"
-          >
-            {[
-              { k: 'iOS + Android', v: 'Uma base, duas stores' },
-              { k: '<2s', v: 'Cold start em dispositivos reais' },
-              { k: '>99.5%', v: 'Sessões crash-free' },
-              { k: 'OTA', v: 'Actualizações sem app review' },
-            ].map((s) => (
-              <div key={s.k}>
-                <div className="font-mono text-3xl md:text-4xl font-bold" style={{ color: ACCENT }}>
-                  {s.k}
-                </div>
-                <div className="mt-1 text-xs uppercase tracking-widest text-white/50">{s.v}</div>
-              </div>
-            ))}
-          </motion.div>
+                <motion.div
+                  animate={reduceMotion ? undefined : { y: [0, -8, 0] }}
+                  transition={reduceMotion ? undefined : { duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                >
+                  <div className="gb-card !p-6 !shadow-lg">
+                    <div className="flex items-center justify-between">
+                      <span className="gb-eyebrow text-ink-tertiary">App em produção</span>
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-success-bg px-2.5 py-1 text-[11px] font-semibold text-success">
+                        <span className="relative flex h-1.5 w-1.5">
+                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+                          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
+                        </span>
+                        Live
+                      </span>
+                    </div>
+                    <MiniFlow
+                      steps={['Ideia', 'Protótipo', 'App', 'Store', 'Push', 'Retenção']}
+                      tint="var(--gb-software-tint)"
+                      strong="var(--gb-software-strong)"
+                    />
+                    <div className="mt-5 grid grid-cols-3 gap-2 border-t border-black/[0.06] pt-4 text-center">
+                      {[
+                        { v: 'iOS + Android' },
+                        { v: 'Cold start < 2s' },
+                        { v: 'Crash-free > 99.5%' },
+                      ].map((stat) => (
+                        <div key={stat.v} className="rounded-xl bg-black/[0.03] px-2 py-3">
+                          <div className="text-[11px] font-semibold text-ink-primary">{stat.v}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+        <div className="gb-container pb-16">
+          <div className="gb-hairline-accent" />
         </div>
       </section>
 
-      <section className="bg-[#0a0603] text-white py-24 md:py-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="border-t border-white/10">
-            {features.map((f, i) => {
-              const isOpen = openIndex === i;
+      {/* ==================================================== 02 CAPACIDADES */}
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Capacidades"
+            title="Do problema ao produto, sem atalhos"
+            description="Cinco frentes que combinamos conforme o contexto — nunca pacotes fechados."
+          />
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((feature, i) => {
+              const Icon = capabilityIcons[i % capabilityIcons.length];
               return (
-                <div key={f.title} className="border-b border-white/10">
-                  <button
-                    type="button"
-                    onClick={() => setOpenIndex(isOpen ? -1 : i)}
-                    className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 py-10 md:py-14 text-left transition-colors hover:bg-white/[0.02]"
-                  >
-                    <div>
-                      <div className="flex items-start gap-5">
-                        <span className="mt-3 shrink-0" style={{ color: isOpen ? ACCENT : 'rgba(255,255,255,0.5)' }}>
-                          {isOpen ? <Circle className="h-4 w-4 fill-current" /> : <Grid2x2 className="h-5 w-5" />}
-                        </span>
-                        <h3 className="text-3xl md:text-5xl font-bold leading-[1.05] tracking-tight">
-                          {f.title}
-                        </h3>
-                      </div>
-                      <div className="mt-8 ml-0 md:ml-10 flex flex-wrap gap-3">
-                        {f.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="rounded-full border border-white/25 px-4 py-1.5 text-xs md:text-sm text-white/80"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
+                <Reveal key={feature.title} i={i % 3}>
+                  <div className="gb-card gb-card-lift h-full !p-6">
+                    <span
+                      className="gb-icon-chip"
+                      style={{ ['--gb-chip-bg' as string]: 'var(--gb-software-tint)', ['--gb-chip-fg' as string]: 'var(--gb-software-strong)' }}
+                    >
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <p className="gb-eyebrow mt-5" style={{ color: 'var(--gb-software-strong)' }}>{feature.eyebrow}</p>
+                    <h3 className="gb-text-h3 mt-2 !text-xl text-ink-primary">{feature.title}</h3>
+                    <p className="gb-text-small mt-2 text-ink-secondary">{feature.body}</p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {feature.tags.map((tag) => (
+                        <span key={tag} className="gb-chip">{tag}</span>
+                      ))}
                     </div>
-
-                    <div className="flex flex-col">
-                      <div className="flex items-start justify-between gap-6">
-                        <span
-                          className="font-mono text-[11px] md:text-xs uppercase tracking-[0.22em]"
-                          style={{ color: isOpen ? ACCENT : 'rgba(255,255,255,0.6)' }}
-                        >
-                          {f.eyebrow}
-                        </span>
-                        <Minus
-                          className="h-6 w-6 shrink-0 transition-transform"
-                          style={{
-                            color: isOpen ? ACCENT : 'rgba(255,255,255,0.5)',
-                            transform: isOpen ? 'rotate(0deg)' : 'rotate(90deg)',
-                          }}
-                        />
-                      </div>
-                      <AnimatePresence initial={false}>
-                        {isOpen && (
-                          <motion.p
-                            initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                            animate={{ opacity: 1, height: 'auto', marginTop: 24 }}
-                            exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                            transition={{ duration: 0.35 }}
-                            className="overflow-hidden text-sm md:text-base leading-relaxed text-white/70"
-                          >
-                            {f.body}
-                          </motion.p>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </button>
-                </div>
+                  </div>
+                </Reveal>
               );
             })}
           </div>
         </div>
       </section>
 
-      <section className="bg-black text-white py-28 md:py-40">
-        <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="font-black leading-[0.95] tracking-tight text-[clamp(2.25rem,7vw,6rem)]"
-          >
-            Vamos colocar a tua marca{' '}
-            <span style={{ color: ACCENT }}>no ecrã inicial</span> deles?
-          </motion.h2>
-
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-14"
-          >
-            <button
-              type="button"
-              onClick={() => setContactOpen((v) => !v)}
-              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: ACCENT }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-            >
-              {contactOpen ? 'Fechar formulário' : 'Falar com um consultor'}
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </motion.div>
-
-          <ConsultantContactForm
-            open={contactOpen}
-            service={{
-              slug: 'desenvolvimento-mobile',
-              name: 'Desenvolvimento Mobile',
-              accent: ACCENT,
-              eyebrow: 'Briefing · Desenvolvimento Mobile',
-              headline: 'Vamos desenhar a tua próxima app.',
-              subhead: 'Diz-nos o objectivo da app, público-alvo e integrações necessárias. Devolvemos proposta técnica, arquitectura e cronograma.',
-              goalOptions: [
-                'Lançar app nova (MVP)',
-                'Rebuild de app existente',
-                'Publicar em iOS e Android em paralelo',
-                'Integrar com CRM/ERP ou backend próprio',
-                'Ainda a explorar',
-              ],
-              messagePlaceholder: 'Público-alvo, funcionalidades-chave, integrações (pagamentos, push, mapas, hardware)…',
-            }}
+      {/* ==================================================== 03 PROCESSO */}
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Implementação"
+            title="Da descoberta à store, com marcos claros"
+            description="Um processo fechado: cada fase tem dono, prazo e critério de saída."
           />
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+            {timeline.map((t, i) => (
+              <Reveal key={t.step} i={i % 3}>
+                <div className="gb-card gb-card-lift h-full !p-6">
+                  <div className="font-mono text-sm tracking-[0.22em]" style={{ color: 'var(--gb-software-strong)' }}>{t.step}</div>
+                  <h3 className="gb-text-h3 mt-4 !text-xl text-ink-primary">{t.title}</h3>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ==================================================== 04 PROVA */}
+      <section className="gb-surface-subtle gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Prova"
+            title="Apps nossas, a correr em produção"
+            description="Os produtos que desenhámos, construímos e operamos — todos os dias."
+          />
+          <div className="mt-12 grid gap-4 sm:grid-cols-2">
+            {relatedProducts.map((product, i) => (
+              <Reveal key={product.slug} i={i}>
+                <Link to={product.to as string} className="group block h-full" onClick={() => analytics.trackProduct(product.slug, 'click', 'mobile_proof')}>
+                  <div className="gb-surface-card gb-card-lift h-full">
+                    <span aria-hidden className="block h-1 w-10 rounded-full" style={{ background: product.accent }} />
+                    <h3 className="gb-text-h3 mt-4 text-ink-primary">{product.name}</h3>
+                    <p className="gb-text-small mt-2 font-medium text-ink-secondary">{product.tagline}</p>
+                    <span className="gb-link-more mt-5 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-brand-600">
+                      Conhecer <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Button asChild variant="ghost">
+              <Link to={i18n.language === 'pt' ? '/portfolio' : `/${i18n.language}/portfolio`}>
+                Ver portefólio <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild variant="ghost">
+              <Link to={i18n.language === 'pt' ? '/produtos' : `/${i18n.language}/produtos`}>
+                Ver todos os produtos <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ==================================================== 05 FINAL CTA */}
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <Reveal i={0}>
+            <div className="gb-cta-band relative overflow-hidden border border-white/10 text-center">
+              <motion.div
+                aria-hidden
+                className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+                style={{ background: 'radial-gradient(ellipse, rgba(37,99,235,0.25) 0%, rgba(0,0,0,0) 65%)' }}
+                animate={reduceMotion ? undefined : { x: ['-50%', '-46%', '-50%'], opacity: [0.7, 1, 0.7] }}
+                transition={reduceMotion ? undefined : { duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+              />
+              <div className="relative">
+                <h2 className="font-black leading-[0.98] tracking-tight text-[clamp(2rem,5vw,4rem)] text-ink-inverse">
+                  Vamos colocar a tua marca <span style={{ color: '#ff4000' }}>no ecrã inicial</span> deles?
+                </h2>
+                <p className="gb-text-body mx-auto mt-6 max-w-2xl text-white/70">
+                  Diz-nos o objectivo da app, público-alvo e integrações necessárias. Devolvemos proposta técnica, arquitectura e cronograma.
+                </p>
+                <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+                  <Button size="lg" onClick={() => setContactOpen((v) => !v)}>
+                    {contactOpen ? 'Fechar formulário' : 'Falar com um consultor'}
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                  <Button asChild size="lg" variant="outline" className="border-white/40 !text-white hover:!bg-white hover:!text-ink-primary">
+                    <Link to={bookingHref} onClick={() => analytics.trackClick('mobile_cta', 'mobile_booking', 'consideration')}>
+                      Agendar Diagnóstico
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setPreloadedAudit(null); setAuditOpen(true); }}
+                  className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-white/60 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+                >
+                  <Zap className="h-4 w-4" />
+                  ou faz a auditoria de produto de 7 min
+                </button>
+                <div className="mx-auto mt-10 max-w-3xl text-left">
+                  <ConsultantContactForm
+                    open={contactOpen}
+                    service={{
+                      slug: 'desenvolvimento-mobile',
+                      name: 'Desenvolvimento Mobile',
+                      accent: '#ff4000',
+                      eyebrow: 'Briefing · Desenvolvimento Mobile',
+                      headline: 'Vamos desenhar a tua próxima app.',
+                      subhead: 'Diz-nos o objectivo da app, público-alvo e integrações necessárias. Devolvemos proposta técnica, arquitectura e cronograma.',
+                      goalOptions: [
+                        'Lançar app nova (MVP)',
+                        'Rebuild de app existente',
+                        'Publicar em iOS e Android em paralelo',
+                        'Integrar com CRM/ERP ou backend próprio',
+                        'Ainda a explorar',
+                      ],
+                      messagePlaceholder: 'Público-alvo, funcionalidades-chave, integrações (pagamentos, push, mapas, hardware)…',
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
 
       <CommercialAuditModal
         open={auditOpen}
+        trackingSource="mobile"
         onClose={() => { setAuditOpen(false); setPreloadedAudit(null); }}
         preloaded={preloadedAudit}
       />

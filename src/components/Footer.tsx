@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 import { Instagram, Linkedin, Twitter, ArrowRight, Loader2, Check, Phone, Mail, MapPin, Globe } from 'lucide-react';
 import { analytics } from '@/lib/analytics';
 import { Button } from '@/components/ui/button';
@@ -114,7 +115,14 @@ const Footer = () => {
       />
       <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-16">
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12">
+        {/* R18.7 — footer blocks share the global reveal (fade-up, once). */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12"
+        >
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link to={i18n.language === 'pt' ? '/' : `/${i18n.language}`} className="flex items-center gap-2">
@@ -199,7 +207,7 @@ const Footer = () => {
                   type="submit"
                   aria-label={t('footer.subscribe')}
                   disabled={loading || success}
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-[#ff4000] text-white flex items-center justify-center shadow-[0_6px_20px_-6px_rgba(255,64,0,0.7)] transition-all hover:scale-105 hover:bg-[#ff5a1f] disabled:opacity-60 disabled:hover:scale-100"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-[#ff4000] text-white flex items-center justify-center shadow-[0_6px_20px_-6px_rgba(255,64,0,0.7)] transition-all hover:scale-105 hover:bg-brand-600 disabled:opacity-60 disabled:hover:scale-100"
                 >
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : success ? <Check className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
                 </button>
@@ -217,21 +225,29 @@ const Footer = () => {
               </label>
             </form>
           </div>
-        </div>
+        </motion.div>
 
         {/* Products strip — the footer is the complete IA map */}
         <div className="border-t border-white/10 mt-12 pt-8">
           <h4 className="font-semibold text-sm mb-4 text-foreground">Produtos</h4>
           <nav className="flex flex-wrap gap-x-6 gap-y-2" aria-label="Footer products">
-            {PRODUCTS.map((product) => (
-              <Link
-                key={product.slug}
-                to={i18n.language === 'pt' ? product.to : `/${i18n.language}${product.to}`}
-                className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all"
-              >
-                {product.name}
-              </Link>
-            ))}
+            {PRODUCTS.map((product) =>
+              product.to ? (
+                <Link
+                  key={product.slug}
+                  to={i18n.language === 'pt' ? product.to : `/${i18n.language}${product.to}`}
+                  onClick={() => analytics.trackProduct(product.slug, 'click', 'footer_products')}
+                  className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all"
+                >
+                  {product.name}
+                </Link>
+              ) : (
+                /* Institutional entry: representation only, never a link. */
+                <span key={product.slug} className="w-fit relative text-sm text-muted-foreground">
+                  {product.name}
+                </span>
+              ),
+            )}
           </nav>
         </div>
 
@@ -241,12 +257,12 @@ const Footer = () => {
             <h4 className="font-semibold text-sm tracking-widest text-foreground uppercase mb-4">{t('footer.contactTitle')}</h4>
             <p className="text-sm text-foreground font-semibold mb-0.5">
               <Phone className="inline h-3.5 w-3.5 mr-1.5 -mt-0.5" />
-              T : <a href={`tel:${CONTACT.phone.e164}`} className="hover:text-primary transition-colors">{CONTACT.phone.display}</a>
+              T : <a href={`tel:${CONTACT.phone.e164}`} onClick={() => analytics.trackOutbound('phone', 'footer')} className="hover:text-primary transition-colors">{CONTACT.phone.display}</a>
             </p>
             <p className="text-xs text-muted-foreground mb-3 ml-5">{t('footer.mobileNote')}</p>
             <p className="text-sm text-foreground font-semibold">
               <Mail className="inline h-3.5 w-3.5 mr-1.5 -mt-0.5" />
-              E : <a href={`mailto:${CONTACT.email}`} className="hover:text-primary transition-colors">{CONTACT.email}</a>
+              E : <a href={`mailto:${CONTACT.email}`} onClick={() => analytics.trackOutbound('email', 'footer')} className="hover:text-primary transition-colors">{CONTACT.email}</a>
             </p>
           </div>
           <div>

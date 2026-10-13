@@ -13,7 +13,7 @@ import { toast } from 'sonner';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 const statusLabels: Record<string, string> = { open: 'Aberto', in_progress: 'Em Curso', resolved: 'Resolvido', closed: 'Fechado' };
-const statusColors: Record<string, string> = { open: 'bg-blue-500/10 text-blue-600', in_progress: 'bg-amber-500/10 text-amber-600', resolved: 'bg-emerald-500/10 text-emerald-600', closed: 'bg-muted text-muted-foreground' };
+const statusColors: Record<string, string> = { open: 'bg-blue-500/10 text-blue-600', in_progress: 'bg-amber-500/10 text-amber-600', resolved: 'bg-emerald-500/10 text-success', closed: 'bg-muted text-muted-foreground' };
 const priorityLabels: Record<string, string> = { low: 'Baixa', medium: 'Média', high: 'Alta', urgent: 'Urgente' };
 
 const ClientSupport = () => {

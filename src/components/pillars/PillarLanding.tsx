@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Zap } from 'lucide-react';
+import { analytics } from '@/lib/analytics';
 import { SectionHeader } from '@/components/ui/section-header';
 import { Button } from '@/components/ui/button';
 import CommercialAuditModal from '@/components/CommercialAuditModal';
@@ -172,7 +173,7 @@ export const PillarLanding = ({ pillar }: { pillar: Pillar }) => {
           />
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {relatedProducts.map((product) => (
-              <Link key={product.slug} to={product.to} className="group block h-full">
+              <Link key={product.slug} to={product.to as string} className="group block h-full" onClick={() => analytics.trackProduct(product.slug, 'click', `pillar_${pillar.id}_proof`)}>
                 <div className="gb-surface-card h-full transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-card-hover">
                   <span aria-hidden className="block h-1 w-10 rounded-full" style={{ background: product.accent }} />
                   <h3 className="gb-text-h3 mt-4 text-ink-primary">{product.name}</h3>

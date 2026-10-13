@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import SEO from "@/components/SEO";
+import { analytics } from '@/lib/analytics';
 import { Button } from "@/components/ui/button";
 import { Home, ArrowLeft, Search, Ghost } from "lucide-react";
 import { motion } from "framer-motion";
@@ -105,7 +106,7 @@ const NotFound = () => {
             <Link to="/about" className="flex flex-col items-center p-3 rounded-xl hover:bg-accent transition-colors group">
               <span className="text-sm font-medium text-foreground group-hover:text-primary">Sobre</span>
             </Link>
-            <Link to="/contact" className="flex flex-col items-center p-3 rounded-xl hover:bg-accent transition-colors group">
+            <Link to="/contact" className="flex flex-col items-center p-3 rounded-xl hover:bg-accent transition-colors group" onClick={() => analytics.trackClick('notfound_hero', 'notfound_contact', 'consideration')}>
               <span className="text-sm font-medium text-foreground group-hover:text-primary">Contacto</span>
             </Link>
           </div>

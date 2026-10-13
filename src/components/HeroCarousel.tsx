@@ -73,7 +73,7 @@ export default function HeroCarousel({ fallback, checks, autoPlayMs = 6000 }: Pr
             src={slide.image_url}
             alt={slide.title}
             className="w-full h-full object-cover"
-            fetchPriority="high"
+            fetchpriority="high"
             decoding="async"
           />
           <div className="absolute inset-0 bg-black/30" />
@@ -135,7 +135,7 @@ export default function HeroCarousel({ fallback, checks, autoPlayMs = 6000 }: Pr
                 to={slide.cta_primary_href}
                 data-cta="hero_slide_primary"
                 className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-base font-medium transition-all"
-                style={{ background: '#f5f3ef', color: '#1a0a00' }}
+                style={{ background: 'var(--gb-canvas-section)', color: 'var(--gb-ink-primary)' }}
               >
                 {slide.cta_primary_label}
                 <ArrowRight className="h-4 w-4" />

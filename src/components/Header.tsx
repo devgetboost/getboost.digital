@@ -3,34 +3,26 @@ import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { analytics } from '@/lib/analytics';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronDown, Share2, Globe, Code2, MapPin, Megaphone, Lightbulb, Plane, Sparkles, ArrowRight, Palette, PenTool, Search, Target, LayoutTemplate, ClipboardCheck, Smartphone, Cloud, Database, Layers, Shield, Rocket, Bot, MessageSquare, Headphones, Workflow, FileSearch, BarChart3, Brain, GitBranch, Newspaper, BookOpen, LineChart, Mic, Trophy, CalendarDays, Radar, Gauge, GraduationCap, Video, TrendingUp, HelpCircle, QrCode, CreditCard, LayoutGrid, CalendarCheck, Receipt, MessageCircle, Camera, Mail, Users } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Menu, X, ChevronDown, Share2, Globe, Code2, MapPin, Megaphone, ArrowRight, Palette, PenTool, Search, Target, LayoutTemplate, Smartphone, Cloud, Database, Layers, Rocket, Bot, MessageSquare, Workflow, TrendingUp, GitBranch, Newspaper, BookOpen, LineChart, Mic, GraduationCap, Video, Gauge, Sparkles, Camera, Mail, Users, Trophy, Building2, Briefcase } from 'lucide-react';
 import { useContentEntries } from '@/hooks/useContent';
 import { mediaUrl } from '@/lib/contentApi';
-import logoNunoCruz from '@/assets/logo-getboost-soft-branca.svg';
-import iconNunoCruz from '@/assets/logo-getboost-soft-branca.svg';
+import logoGetboost from '@/assets/logo-getboost-soft.svg';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { SOLUCOES_SUBMENU_MAP } from '@/data/solucoesSubmenu';
-import qookLogoAsset from '@/assets/qook/logo.svg.asset.json';
-import qookMockupAsset from '@/assets/qook/saas.png.asset.json';
-import motivaeLogo from '@/assets/logos/logo-motivae.svg';
-import hostifyLogo from '@/assets/logos/logo-hostify.svg';
-import hostifyMockupAsset from '@/assets/hostify/mockup.png.asset.json';
-import piktoLogo from '@/assets/logos/logo-pikto.svg';
-import prosafeLogo from '@/assets/logos/logo-prosafe360.svg';
+import { PRODUCTS } from '@/data/products';
 
+const BRAND = '#ff4000';
 
 type ServiceLink = { slug: string; title: string; desc: string; Icon: React.ComponentType<{ className?: string }>; to?: string };
 
 /**
- * Wave 3B — the four strategic pillars (GETBOOST_2027_DESIGN_FREEZE_V1).
- * All 20 canonical /solucoes/* slugs are preserved, regrouped under the
- * pillar IA; items without an explicit `to` resolve through
- * SOLUCOES_SUBMENU_MAP (which holds each slug's canonical destination).
+ * R18.5 — premium light navigation. Four pillar groups; every item
+ * resolves through SOLUCOES_SUBMENU_MAP to its canonical destination.
+ * All 20 canonical /solucoes/* slugs stay reachable (CI-guarded).
  */
 const serviceGroups: { title: string; items: ServiceLink[] }[] = [
   {
-    title: 'IA',
+    title: 'AI',
     items: [
       { slug: 'agentes-ia', title: 'Agentes de IA', desc: 'Operadores digitais 24/7', Icon: Bot, to: '/agentes-ia' },
       { slug: 'bots-whatsapp-ia', title: 'WhatsApp & Conversational AI', desc: 'Atendimento 24/7', Icon: MessageSquare },
@@ -38,7 +30,7 @@ const serviceGroups: { title: string; items: ServiceLink[] }[] = [
     ],
   },
   {
-    title: 'Automação',
+    title: 'Automation',
     items: [
       { slug: 'integracoes-erp-crm', title: 'Integrações ERP/CRM', desc: 'Sistemas conectados', Icon: Workflow },
       { slug: 'funis-vendas', title: 'Funis de Vendas', desc: 'Jornada otimizada para conversão', Icon: GitBranch },
@@ -71,17 +63,6 @@ const serviceGroups: { title: string; items: ServiceLink[] }[] = [
   },
 ];
 
-/** Wave 3B — Work: delivery proof (portfolio + case studies). */
-const workGroups: { title: string; items: ServiceLink[] }[] = [
-  {
-    title: 'Prova de entrega',
-    items: [
-      { slug: 'portfolio', title: 'Portefólio', desc: 'Projectos selecionados', Icon: LayoutTemplate, to: '/portfolio' },
-      { slug: 'casos-de-sucesso', title: 'Casos de Sucesso', desc: 'PMEs que escalaram com tecnologia e IA', Icon: Trophy, to: '/casos-de-sucesso' },
-    ],
-  },
-];
-
 const resourceGroups: { title: string; items: ServiceLink[] }[] = [
   {
     title: 'Materiais',
@@ -94,8 +75,8 @@ const resourceGroups: { title: string; items: ServiceLink[] }[] = [
   {
     title: 'Ferramentas Gratuitas',
     items: [
-      { slug: 'calendario-conteudo', title: 'Calendário de Conteúdo', desc: 'Planeia a tua comunicação digital com eficiência.', Icon: CalendarDays, to: '/tools/content-ideas' },
-      { slug: 'analise-seo', title: 'Análise SEO', desc: 'Auditoria técnica, on-page, performance e segurança do teu site.', Icon: Radar, to: '/tools/seo-analyzer' },
+      { slug: 'calendario-conteudo', title: 'Calendário de Conteúdo', desc: 'Planeia a tua comunicação digital com eficiência.', Icon: MapPin, to: '/tools/content-ideas' },
+      { slug: 'analise-seo', title: 'Análise SEO', desc: 'Auditoria técnica, on-page, performance e segurança do teu site.', Icon: Search, to: '/tools/seo-analyzer' },
       { slug: 'auditoria-digital-360', title: 'Auditoria Digital 360º', desc: 'Diagnóstico completo de website, SEO, tracking, conversão e IA.', Icon: Gauge, to: '/tools/digital-audit' },
       { slug: 'simulador-automacao', title: 'Simulador de Serviços Digitais', desc: 'Identifica processos que podem ser automatizados com IA.', Icon: Sparkles, to: '/simulador' },
     ],
@@ -106,151 +87,70 @@ const resourceGroups: { title: string; items: ServiceLink[] }[] = [
       { slug: 'academy', title: 'Getboost Academy', desc: 'Cursos e aulas sobre marketing, software e IA.', Icon: GraduationCap, to: '/academy' },
       { slug: 'formacao-empresas', title: 'Formação In-Company', desc: 'Programas à medida para equipas, com diagnóstico gratuito.', Icon: Users, to: '/academy/formacao-empresas' },
       { slug: 'webinars', title: 'Webinars & Workshops', desc: 'Sessões práticas com especialistas.', Icon: Video, to: '/webinars' },
-      
-      
     ],
   },
 ];
 
-type BenefitItem = { Icon: React.ComponentType<{ className?: string }>; text: string };
-
-type ProductInfo = {
-  slug: string;
-  name: string;
-  tagline: string;
-  subtitle?: string;
-  benefits: string[];
-  benefitItems?: BenefitItem[];
-  gradient: string;
-  to: string;
-  demoHref: string;
-  bgColor?: string;
-  logoImg?: string;
-  mockupImg?: string;
-  ctaPrimary?: string;
-  ctaSecondary?: string;
-  microcopy?: string;
-};
-
-const productInfo: Record<string, ProductInfo> = {
-  qook: {
-    slug: 'qook',
-    name: 'Qook',
-    tagline: 'O Qook é o sistema que simplifica a gestão do teu restaurante. Reservas online, menus digitais e controlo total da sala, tudo num só lugar.',
-    subtitle: 'Transforma o teu restaurante com tecnologia inteligente e atendimento automatizado.',
-    benefits: [],
-    benefitItems: [],
-    gradient: 'from-orange-500 via-amber-500 to-yellow-400',
-    to: '/qook',
-    demoHref: '/demo?produto=qook',
-    bgColor: '#FF1C00',
-    logoImg: qookLogoAsset.url,
-    mockupImg: qookMockupAsset.url,
-    ctaPrimary: 'Experimentar grátis',
-    ctaSecondary: 'Descobre o Qook',
-    microcopy: 'Sem cartão · Setup em minutos · Suporte dedicado',
-  },
-
-
-  motivae: {
-    slug: 'motivae',
-    name: 'Motivae',
-    tagline: 'App de motivação com IA que acompanha equipas e aumenta produtividade.',
-    benefits: [],
-    gradient: 'from-fuchsia-600 via-purple-600 to-indigo-600',
-    to: '/motivae',
-    demoHref: '/demo?produto=motivae',
-    bgColor: '#F6137E',
-    logoImg: motivaeLogo,
-    ctaPrimary: 'Experimentar grátis',
-  },
-  hostify: {
-    slug: 'hostify',
-    name: 'Hostify PMS',
-    tagline: 'O Hostify é o PMS completo para alojamento local e boutique hotels. Gere reservas, canais, tarifários e operações num só lugar, com automação e relatórios em tempo real.',
-    benefits: [],
-    gradient: 'from-sky-500 via-cyan-500 to-teal-400',
-    to: '/hostify',
-    demoHref: '/demo?produto=hostify',
-    bgColor: '#03A63C',
-    logoImg: hostifyLogo,
-    mockupImg: hostifyMockupAsset.url,
-    ctaPrimary: 'Experimentar grátis',
-  },
-  pikto: {
-    slug: 'pikto',
-    name: 'Pikto',
-    tagline: 'Geração de imagens e conteúdo visual com IA para marcas.',
-    benefits: [],
-    gradient: 'from-pink-500 via-rose-500 to-orange-400',
-    to: '/pikto',
-    demoHref: '/demo?produto=pikto',
-    bgColor: '#056CF2',
-    logoImg: piktoLogo,
-    ctaPrimary: 'Experimentar grátis',
-  },
-  trackfy: {
-    slug: 'trackfy',
-    name: 'Trackfy',
-    tagline: 'Tracking, analytics e atribuição de campanhas num só painel.',
-    benefits: [],
-    gradient: 'from-emerald-500 via-teal-500 to-cyan-500',
-    to: '/trackfy',
-    demoHref: '/demo?produto=trackfy',
-    bgColor: '#003264',
-    ctaPrimary: 'Experimentar grátis',
-  },
-  prosafe360: {
-    slug: 'prosafe360',
-    name: 'ProSafe360',
-    tagline: 'Plataforma de segurança e saúde no trabalho para PMEs.',
-    benefits: [],
-    gradient: 'from-red-600 via-orange-600 to-amber-500',
-    to: '/prosafe360',
-    demoHref: '/demo?produto=prosafe360',
-    bgColor: '#4A99F9',
-    logoImg: prosafeLogo,
-    ctaPrimary: 'Experimentar grátis',
-  },
-};
-
-const productGroups: { title: string; items: ServiceLink[] }[] = [
-  {
-    title: 'Produtos Getboost',
-    items: [
-      { slug: 'qook', title: 'Qook', desc: 'Plataforma para restaurantes', Icon: Rocket, to: '/qook' },
-      { slug: 'motivae', title: 'Motivae', desc: 'App de motivação com IA', Icon: Sparkles, to: '/motivae' },
-      { slug: 'hostify', title: 'Hostify PMS', desc: 'Gestão hoteleira', Icon: Cloud, to: '/hostify' },
-      { slug: 'pikto', title: 'Pikto', desc: 'Geração visual com IA', Icon: Palette, to: '/pikto' },
-      { slug: 'trackfy', title: 'Trackfy', desc: 'Tracking e analytics', Icon: LineChart, to: '/trackfy' },
-      { slug: 'prosafe360', title: 'ProSafe360', desc: 'Segurança no trabalho', Icon: Shield, to: '/prosafe360' },
-    ],
-  },
+/** R18.5 — Empresa dropdown (Sobre Nós, Equipa, Portfólio, Carreiras). */
+const companyItems: ServiceLink[] = [
+  { slug: 'sobre-nos', title: 'Sobre Nós', desc: 'A empresa por trás da tecnologia', Icon: Building2, to: '/sobre-nos' },
+  { slug: 'equipa', title: 'Equipa', desc: 'Quem constrói os teus sistemas', Icon: Users, to: '/equipa' },
+  { slug: 'portfolio', title: 'Portfólio', desc: 'Projectos que já correm em produção', Icon: Trophy, to: '/portfolio' },
+  { slug: 'carreira', title: 'Carreiras', desc: 'Vem construir connosco', Icon: Briefcase, to: '/carreira' },
 ];
 
 type BlogPreview = { id: string; slug: string; title: string; image: string | null; category: string | null };
 
+type MegaKey = 'services' | 'products' | 'resources' | 'company';
 
-
+const panelMotion = {
+  initial: { opacity: 0, y: -10 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -10 },
+  transition: { duration: 0.22, ease: 'easeOut' as const },
+};
 
 const Header = () => {
   const { t, i18n } = useTranslation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [openMenu, setOpenMenu] = useState<null | 'services' | 'products' | 'resources'>(null);
-  const [mobileMenu, setMobileMenu] = useState<null | 'services' | 'products' | 'resources'>(null);
+  const [openMenu, setOpenMenu] = useState<null | MegaKey>(null);
+  const [mobileMenu, setMobileMenu] = useState<null | MegaKey>(null);
   const [latestPosts, setLatestPosts] = useState<BlogPreview[]>([]);
   const [slideIdx, setSlideIdx] = useState(0);
-  const [hoveredProduct, setHoveredProduct] = useState<string>('qook');
   const location = useLocation();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40);
+    const handleScroll = () => setScrolled(window.scrollY > 24);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // R1C6: the mega-menu "latest posts" carousel reads published content entries
+  // Close menus on navigation and unlock body scroll.
+  useEffect(() => {
+    setOpenMenu(null);
+    setMobileOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileOpen]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpenMenu(null);
+        setMobileOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  // R1C6: the mega-menu "latest posts" card reads published content entries
   // through the centralized content layer instead of querying a legacy table.
   const { data: latestEntries } = useContentEntries({ contentType: 'insight', limit: 3 });
   useEffect(() => {
@@ -274,506 +174,546 @@ const Header = () => {
 
   const localize = (path: string) => (i18n.language === 'pt' ? path : `/${i18n.language}${path === '/' ? '' : path}`);
 
-  const navItems: { path: string; label: string; mega?: 'services' | 'products' | 'resources' | 'work' }[] = [
+  const navItems: { path: string; label: string; mega?: MegaKey }[] = [
     { path: '/solucoes', label: t('nav.services'), mega: 'services' },
-    { path: '/work', label: t('nav.work', 'Trabalhos'), mega: 'work' },
     { path: '/produtos', label: t('nav.products', 'Produtos'), mega: 'products' },
-    { path: '/insights', label: t('nav.insights', 'Insights'), mega: 'resources' },
-    { path: '/contact', label: t('nav.contact', 'Contacto') },
+    { path: '/insights', label: t('nav.resources'), mega: 'resources' },
+    { path: '/sobre-nos', label: t('nav.company', 'Empresa'), mega: 'company' },
   ];
 
+  const bookingHref = i18n.language === 'pt' ? '/booking' : `/${i18n.language}/booking`;
 
+  const serviceHref = (slug: string, to?: string) =>
+    localize(to ?? (SOLUCOES_SUBMENU_MAP[slug]?.href ?? `/solucoes/${slug}`));
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50" role="banner">
-      {/* Main Nav */}
-      <div
-        className={`bg-[#0a0603] border-b border-white/10 transition-shadow duration-300 ${scrolled ? 'shadow-[0_10px_30px_-15px_rgba(0,0,0,0.6)]' : ''}`}
-        onMouseLeave={() => setOpenMenu(null)}
-      >
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="flex items-center justify-between" style={{ paddingTop: '10px', paddingBottom: '10px' }}>
-            <Link to={i18n.language === 'pt' ? '/' : `/${i18n.language}`} className="flex items-center gap-2">
-              <img src={logoNunoCruz} alt="Getboost Digital" className="h-9 w-auto my-2 hidden lg:block object-contain" />
-              <img src={iconNunoCruz} alt="Getboost Digital" className="h-7 w-auto my-2 block lg:hidden object-contain" />
+    <header
+      className={`sticky top-0 z-50 border-b bg-white/85 backdrop-blur-[20px] transition-all duration-300 ${
+        scrolled ? 'h-[68px] border-black/[0.07] shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)]' : 'h-20 border-black/[0.05]'
+      }`}
+      role="banner"
+      onMouseLeave={() => setOpenMenu(null)}
+    >
+      <div className="mx-auto grid h-full max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-6 md:px-12">
+        {/* Left — logo */}
+        <Link
+          to={i18n.language === 'pt' ? '/' : `/${i18n.language}`}
+          className="flex w-fit items-center justify-self-start rounded-md transition-opacity duration-200 hover:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+          aria-label="Getboost Digital — início"
+        >
+          <img src={logoGetboost} alt="Getboost Digital" className="hidden h-9 w-auto object-contain lg:block" />
+          <img src={logoGetboost} alt="Getboost Digital" className="block h-7 w-auto object-contain lg:hidden" />
+        </Link>
 
-            </Link>
-
-            {/* Desktop Nav - Only for LG screens now */}
-            <nav className="hidden lg:flex items-center gap-8" aria-label="Main navigation">
-              {navItems.map((item) => {
-                const localizedPath = localize(item.path);
-                const active = location.pathname === item.path || location.pathname === localizedPath;
-                const isOpen = item.mega ? openMenu === item.mega : false;
-
-                if (item.mega) {
-                  return (
-                    <div
-                      key={item.path}
-                      className="relative"
-                      onMouseEnter={() => setOpenMenu(item.mega!)}
-                    >
-                      <Link
-                        to={localizedPath}
-                        className={`relative flex items-center gap-1 font-mono text-[12px] uppercase tracking-[0.18em] transition-colors group ${active || isOpen ? 'text-[#ff4000]' : 'text-white/75 hover:text-white'}`}
-                      >
-                        {item.label}
-                        <ChevronDown className={`h-3.5 w-3.5 transition-transform ${isOpen ? 'rotate-180 text-[#ff4000]' : ''}`} />
-                        <span className={`absolute left-0 -bottom-1.5 h-[2px] bg-[#ff4000] transition-all duration-300 ${active || isOpen ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-                      </Link>
-                    </div>
-                  );
-                }
-
-                return (
-                  <Link
-                    key={item.path}
-                    to={localizedPath}
-                    className={`relative font-mono text-[12px] uppercase tracking-[0.18em] transition-colors group ${active ? 'text-[#ff4000]' : 'text-white/75 hover:text-white'}`}
-                  >
-                    {item.label}
-                    <span className={`absolute left-0 -bottom-1.5 h-[2px] bg-[#ff4000] transition-all duration-300 ${active ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-                  </Link>
-                );
-              })}
-            </nav>
-
-            {/* Buttons - visible on Desktop and Tablet (lg and md) */}
-            <div className="hidden md:flex items-center gap-3">
-              <Link
-                to="/login"
-                onClick={() => analytics.trackClick('navigation', 'header_login', 'awareness')}
-                className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/70 hover:text-white transition-colors px-3 py-2"
+        {/* Center — primary nav */}
+        <nav className="hidden items-center gap-9 lg:flex" aria-label="Main navigation">
+          {navItems.map((item) => {
+            const localizedPath = localize(item.path);
+            const active = location.pathname === item.path || location.pathname === localizedPath;
+            const isOpen = item.mega ? openMenu === item.mega : false;
+            return (
+              <div
+                key={item.path}
+                className="relative"
+                onMouseEnter={() => item.mega && setOpenMenu(item.mega)}
               >
-                {t('nav.clientArea', 'Login')}
-              </Link>
-              <Link
-                to={i18n.language === 'pt' ? '/booking' : `/${i18n.language}/booking`}
-                onClick={() => analytics.trackClick('navigation', 'header_booking', 'consideration')}
-                className="group inline-flex items-center gap-2 border-2 border-[#ff4000] px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-[#ff4000] hover:bg-[#ff4000] hover:text-white transition-all"
-              >
-                {t('nav.booking')}
-                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-              </Link>
-              <LanguageSwitcher variant="minimal" />
-            </div>
+                <Link
+                  to={localizedPath}
+                  onClick={() => item.mega && setOpenMenu(openMenu === item.mega ? null : item.mega)}
+                  aria-expanded={item.mega ? isOpen : undefined}
+                  aria-haspopup={item.mega ? 'true' : undefined}
+                  className={`group relative flex items-center gap-1.5 py-2 text-[15px] font-medium tracking-[-0.01em] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50 ${
+                    active || isOpen ? 'text-[#ff4000]' : 'text-ink-primary hover:text-black'
+                  }`}
+                >
+                  {item.label}
+                  {item.mega && (
+                    <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                  )}
+                  <span
+                    className={`absolute inset-x-0 -bottom-0.5 h-[2px] origin-left rounded-full bg-[#ff4000] transition-transform duration-200 ${
+                      active || isOpen ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                    }`}
+                  />
+                </Link>
+              </div>
+            );
+          })}
+        </nav>
 
-
-            {/* Toggle - visible on Mobile and Tablet (below lg) */}
-            <div className="lg:hidden flex items-center gap-1">
-              <span className="md:hidden"><LanguageSwitcher variant="minimal" /></span>
-              <button
-                className="text-white p-2"
-                onClick={() => setMobileOpen(!mobileOpen)}
-                aria-label="Toggle menu"
-              >
-                {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </button>
-            </div>
-          </div>
+        {/* Right — utility */}
+        <div className="hidden items-center justify-self-end gap-2 md:flex">
+          <Link
+            to="/login"
+            onClick={() => analytics.trackClick('navigation', 'header_login', 'awareness')}
+            className="rounded-lg px-4 py-2.5 text-sm font-medium text-ink-secondary transition-colors duration-200 hover:bg-black/[0.04] hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+          >
+            {t('nav.clientArea', 'Login')}
+          </Link>
+          <Link
+            to={bookingHref}
+            onClick={() => analytics.trackClick('navigation', 'header_booking', 'consideration')}
+            className="group inline-flex items-center gap-2 rounded-xl bg-[#ff4000] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(255,64,0,0.6)] transition-all duration-200 hover:-translate-y-px hover:bg-brand-700 hover:shadow-[0_12px_24px_-8px_rgba(255,64,0,0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/60 focus-visible:ring-offset-2"
+          >
+            Agendar Diagnóstico
+            <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+          </Link>
+          <LanguageSwitcher variant="minimal" />
         </div>
 
-        {/* Full-width Mega Menu (Services or Resources) */}
-        <AnimatePresence>
-          {openMenu && (
-            <motion.div
-              key={openMenu}
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.18, ease: 'easeOut' }}
-              className="hidden lg:block absolute left-0 right-0 top-full w-full bg-[#0a0603] border-t border-white/10 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.8)]"
-              onMouseEnter={() => setOpenMenu(openMenu)}
-              onMouseLeave={() => setOpenMenu(null)}
-            >
-              {/* subtle orange grid overlay */}
-              <div
-                aria-hidden
-                className="absolute inset-0 pointer-events-none opacity-[0.05]"
-                style={{
-                  backgroundImage:
-                    'linear-gradient(#ff4000 1px, transparent 1px), linear-gradient(90deg, #ff4000 1px, transparent 1px)',
-                  backgroundSize: '48px 48px',
-                }}
-              />
-              <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-12">
-                <div className="grid grid-cols-12 gap-10">
-                  {(openMenu === 'services' ? serviceGroups : openMenu === 'products' ? productGroups : openMenu === 'work' ? workGroups : resourceGroups).map((group) => (
-                    <div key={group.title} className={openMenu === 'services' ? 'col-span-2' : 'col-span-3'}>
-                      <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#ff4000] mb-5 pb-3 border-b border-white/10">
-                        {group.title}
+        {/* Mobile toggle */}
+        <div className="flex items-center justify-self-end gap-1 lg:hidden">
+          <span className="md:hidden"><LanguageSwitcher variant="minimal" /></span>
+          <button
+            className="rounded-lg p-2 text-ink-primary transition-colors hover:bg-black/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? 'Fechar menu' : 'Abrir menu'}
+            aria-expanded={mobileOpen}
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Desktop mega panels */}
+      <AnimatePresence>
+        {openMenu && (
+          <motion.div
+            key={openMenu}
+            {...panelMotion}
+            className="absolute inset-x-0 top-full hidden lg:block"
+            onMouseEnter={() => setOpenMenu(openMenu)}
+            onMouseLeave={() => setOpenMenu(null)}
+          >
+            <div className="border-b border-black/[0.06] bg-white/95 shadow-premium backdrop-blur-[20px]">
+              <div className="mx-auto max-w-7xl px-6 py-10 md:px-12">
+                {openMenu === 'services' && (
+                  <div className="grid grid-cols-12 gap-10">
+                    {serviceGroups.map((group) => (
+                      <div key={group.title} className="col-span-2">
+                        <div className="mb-4 border-b border-black/[0.06] pb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#ff4000]">
+                          {group.title}
+                        </div>
+                        <ul className="flex flex-col gap-1">
+                          {group.items.map(({ slug, title, desc, Icon, to }) => (
+                            <li key={slug}>
+                              <Link
+                                to={serviceHref(slug, to)}
+                                onClick={() => setOpenMenu(null)}
+                                className="group flex items-start gap-3 rounded-xl px-3 py-2.5 transition-colors duration-150 hover:bg-black/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+                              >
+                                <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff4000]/[0.08] text-[#ff4000] transition-colors duration-150 group-hover:bg-[#ff4000] group-hover:text-white">
+                                  <Icon className="h-4 w-4" />
+                                </span>
+                                <span>
+                                  <span className="block text-sm font-medium text-ink-primary">{title}</span>
+                                  <span className="block text-xs leading-snug text-ink-secondary">{desc}</span>
+                                </span>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                      <ul className="flex flex-col gap-3.5">
-                        {group.items.map(({ slug, title, to }) => (
-                          <li key={slug}>
-                            <Link
-                              to={localize(to ?? (openMenu === 'services' ? (SOLUCOES_SUBMENU_MAP[slug]?.href ?? `/solucoes/${slug}`) : `/resources#${slug}`))}
-                              onClick={() => setOpenMenu(null)}
-                              onMouseEnter={() => { if (openMenu === 'products' && productInfo[slug]) setHoveredProduct(slug); }}
-                              className="relative inline-flex items-center gap-2 text-[14px] text-white/75 hover:text-white transition-colors group/link"
-                            >
-                              <span className="h-px w-0 bg-[#ff4000] transition-all duration-300 group-hover/link:w-4" />
-                              {title}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-
-                  {/* Right-side card */}
-                  <div className={openMenu === 'products' ? 'col-span-9' : openMenu === 'services' ? 'col-span-4' : 'col-span-3'}>
-                    {openMenu === 'products' ? (
-                      (() => {
-                        const p = productInfo[hoveredProduct] ?? productInfo.qook;
-                        return (
-                          <motion.div
-                            key={p.slug}
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.25 }}
-                            className={`relative h-full ${p.bgColor ? '' : `bg-gradient-to-br ${p.gradient}`}`}
-                            style={p.bgColor ? { backgroundColor: p.bgColor } : undefined}
-                          >
-                            {/* Grid overlay (same as ProductsShowcase) */}
-                            {p.bgColor && (
-                              <div
-                                aria-hidden
-                                className="pointer-events-none absolute inset-0 opacity-[0.18]"
-                                style={{
-                                  backgroundImage:
-                                    'linear-gradient(rgba(255,255,255,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.35) 1px, transparent 1px)',
-                                  backgroundSize: '80px 80px',
-                                }}
-                              />
-                            )}
-                            <div className="relative grid grid-cols-[1fr_1.1fr] gap-6 pt-10 px-8 pb-10 h-full items-center">
-                              {/* Left: content + benefits */}
-                              <div className="flex flex-col text-white">
-                                {p.logoImg ? (
-                                  <img
-                                    src={p.logoImg}
-                                    alt={p.name}
-                                    className="h-[3.4rem] w-auto object-contain object-left brightness-0 invert"
-                                  />
-                                ) : (
-                                  <h4 className="text-4xl font-extrabold leading-tight">
-                                    {p.name}
-                                  </h4>
-                                )}
-                                <p className="mt-5 text-base text-white leading-relaxed max-w-[42ch]">
-                                  {p.tagline}
-                                </p>
-                                {p.subtitle && (
-                                  <p className="mt-2 text-[12px] italic text-white/85 leading-snug max-w-[36ch]">
-                                    {p.subtitle}
-                                  </p>
-                                )}
-
-                                <div className="mt-5">
-                                  <Link
-                                    to={localize(p.demoHref)}
-                                    onClick={() => setOpenMenu(null)}
-                                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-gray-900 shadow-lg hover:shadow-xl hover:scale-[1.03] transition-all duration-200"
-                                  >
-                                    {p.ctaPrimary ?? 'Pedir demo grátis'} <ArrowRight className="h-4 w-4" />
-                                  </Link>
-                                </div>
-
-                                {p.benefitItems && p.benefitItems.length > 0 && (
-                                  <ul className="mt-5 flex flex-col gap-1.5">
-                                    {p.benefitItems.map((b) => (
-                                      <li key={b.text} className="flex items-start gap-2 text-[12.5px] text-white leading-snug">
-                                        <b.Icon className="h-3.5 w-3.5 mt-0.5 shrink-0 text-white" />
-                                        <span>{b.text}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                )}
-                                {(!p.benefitItems && p.benefits.length > 0) && (
-                                  <ul className="mt-5 flex flex-col gap-1.5 text-white">
-                                    {p.benefits.map((b) => (
-                                      <li key={b} className="flex items-start gap-2 text-[12.5px]">
-                                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-white shrink-0" />
-                                        {b}
-                                      </li>
-                                    ))}
-                                  </ul>
-                                )}
-                              </div>
-
-                              {/* Right: mockup */}
-                              <div className="flex items-center justify-end h-full pr-2">
-                                {p.mockupImg ? (
-                                  <img
-                                    src={p.mockupImg}
-                                    alt={`${p.name} mockup`}
-                                    className="w-full h-auto max-h-[360px] object-contain object-right block"
-                                  />
-                                ) : null}
-                              </div>
-
-
-                            </div>
-
-
-
-                          </motion.div>
-                        );
-                      })()
-                    ) : openMenu === 'services' ? (
+                    ))}
+                    <div className="col-span-4">
                       <Link
                         to={localize('/booking')}
                         onClick={() => setOpenMenu(null)}
-                        className="block group"
+                        className="gb-gradient-brand group flex h-full min-h-[220px] flex-col justify-between rounded-2xl p-7 text-white transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/60"
                       >
-                        <div className="relative aspect-[4/5] overflow-hidden bg-[#ff4000] border border-white/10">
-                          <div
-                            aria-hidden
-                            className="absolute inset-0 opacity-[0.15] pointer-events-none"
-                            style={{
-                              backgroundImage:
-                                'linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)',
-                              backgroundSize: '32px 32px',
-                            }}
-                          />
-                          <div className="absolute inset-0 flex flex-col justify-between p-6">
-                            <div className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-white/90">
-                              Boost<span className="font-light italic">by</span>Getboost
-                            </div>
-                            <div>
-                              <h4 className="text-white text-2xl font-black leading-[1.05] tracking-tight">
-                                Marcar reunião com<br />especialista
-                              </h4>
-                              <p className="mt-3 font-mono text-[11px] uppercase tracking-widest text-white/80">
-                                30 min · Online · 0€
-                              </p>
-                              <span className="mt-5 inline-flex items-center gap-2 border-t border-white/40 pt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-white">
-                                Agendar agora <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                              </span>
-                            </div>
-                          </div>
+                        <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/80">
+                          Diagnóstico gratuito
+                        </div>
+                        <div>
+                          <h4 className="text-2xl font-bold leading-tight tracking-tight">
+                            Descobre o que está a travar o teu crescimento
+                          </h4>
+                          <p className="mt-2 text-sm text-white/80">30 min · Online · 0€</p>
+                          <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold">
+                            Agendar agora <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+                          </span>
                         </div>
                       </Link>
-                    ) : openMenu === 'work' ? (
-                      <Link
-                        to="/casos-de-sucesso"
-                        onClick={() => setOpenMenu(null)}
-                        className="block group"
-                      >
-                        <div className="relative aspect-[4/5] overflow-hidden bg-[#0c0a09] border border-white/10">
-                          <div
-                            aria-hidden
-                            className="absolute inset-0 opacity-[0.15] pointer-events-none"
-                            style={{
-                              backgroundImage:
-                                'linear-gradient(#ff4000 1px, transparent 1px), linear-gradient(90deg, #ff4000 1px, transparent 1px)',
-                              backgroundSize: '32px 32px',
-                            }}
-                          />
-                          <div className="absolute inset-0 flex flex-col justify-between p-6">
-                            <div className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#ff4000]">
-                              Prova<span className="font-light italic">real</span>
-                            </div>
-                            <div>
-                              <h4 className="text-white text-2xl font-black leading-[1.05] tracking-tight">
-                                Projectos que<br />já correm em produção
-                              </h4>
-                              <p className="mt-3 font-mono text-[11px] uppercase tracking-widest text-white/80">
-                                Portefólio · Casos de sucesso
-                              </p>
-                              <span className="mt-5 inline-flex items-center gap-2 border-t border-white/40 pt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-white">
-                                Ver casos <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </Link>
-                    ) : (
-                      <div className="relative aspect-[4/5] overflow-hidden bg-black border border-white/10">
-                        <AnimatePresence mode="wait">
-                          {latestPosts.length > 0 ? (
-                            (() => {
-                              const post = latestPosts[slideIdx % latestPosts.length];
-                              return (
-                                <motion.div
-                                  key={post.id}
-                                  initial={{ opacity: 0 }}
-                                  animate={{ opacity: 1 }}
-                                  exit={{ opacity: 0 }}
-                                  transition={{ duration: 0.4 }}
-                                  className="absolute inset-0"
-                                >
-                                  <Link
-                                    to={localize(`/blog/${post.slug}`)}
-                                    onClick={() => setOpenMenu(null)}
-                                    className="block absolute inset-0 group"
-                                  >
-                                    {post.image && (
-                                      <img src={post.image} alt={post.title} className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
-                                    )}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
-                                    <div className="absolute inset-0 flex flex-col justify-between p-6">
-                                      <div className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#ff4000]">
-                                        Últimos do Blog
-                                      </div>
-                                      <div>
-                                        {post.category && (
-                                          <span className="inline-block font-mono text-[10px] uppercase tracking-widest text-white/60 mb-2">
-                                            {post.category}
-                                          </span>
-                                        )}
-                                        <h4 className="text-white text-lg font-black leading-tight line-clamp-3 tracking-tight">
-                                          {post.title}
-                                        </h4>
-                                        <span className="mt-4 inline-flex items-center gap-2 border-t border-white/40 pt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-white">
-                                          Ler artigo <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </Link>
-                                </motion.div>
-                              );
-                            })()
-                          ) : (
-                            <div className="absolute inset-0 flex items-center justify-center text-white/50 text-sm">
-                              Sem artigos
-                            </div>
-                          )}
-                        </AnimatePresence>
-                        {latestPosts.length > 1 && (
-                          <div className="absolute bottom-3 right-3 flex gap-1.5 z-10">
-                            {latestPosts.map((_, i) => (
-                              <button
-                                key={i}
-                                onClick={() => setSlideIdx(i)}
-                                aria-label={`Ir para artigo ${i + 1}`}
-                                className={`h-1.5 rounded-full transition-all ${i === slideIdx % latestPosts.length ? 'w-5 bg-white' : 'w-1.5 bg-white/50'}`}
-                              />
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
+                    </div>
                   </div>
+                )}
 
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-
-      {/* Mobile/Tablet Menu */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-[#0a0603] border-t border-white/10 overflow-hidden"
-          >
-            <nav className="flex flex-col p-6 gap-5" aria-label="Mobile navigation">
-              {navItems.map((item) => {
-                const localizedPath = localize(item.path);
-                const active = location.pathname === item.path || location.pathname === localizedPath;
-
-                if (item.mega) {
-                  const groups = item.mega === 'services' ? serviceGroups : item.mega === 'products' ? productGroups : item.mega === 'work' ? workGroups : resourceGroups;
-                  const basePath = item.mega === 'services' ? '/solucoes' : item.mega === 'products' ? '/produtos' : item.mega === 'work' ? '/work' : '/insights';
-                  const isOpen = mobileMenu === item.mega;
-                  return (
-                    <div key={item.path} className="flex flex-col border-b border-white/10 pb-4">
-                      <button
-                        type="button"
-                        onClick={() => setMobileMenu(isOpen ? null : item.mega!)}
-                        className={`flex items-center justify-between font-mono text-[12px] uppercase tracking-[0.2em] transition-colors ${active || isOpen ? 'text-[#ff4000]' : 'text-white/80'}`}
+                {openMenu === 'products' && (
+                  <div>
+                    <div className="mb-6 flex items-end justify-between">
+                      <div>
+                        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#ff4000]">Produtos Getboost</div>
+                        <h4 className="mt-1 text-xl font-bold tracking-tight text-ink-primary">Software que operamos todos os dias</h4>
+                      </div>
+                      <Link
+                        to={localize('/produtos')}
+                        onClick={() => setOpenMenu(null)}
+                        className="inline-flex items-center gap-1.5 text-sm font-medium text-[#ff4000] transition-colors hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
                       >
-                        <span>{item.label}</span>
-                        <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-                      </button>
-                      <AnimatePresence>
-                        {isOpen && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="overflow-hidden"
-                          >
-                            <div className="pt-4 pl-1 flex flex-col gap-5">
-                              {groups.map((group) => (
-                                <div key={group.title}>
-                                  <div className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#ff4000] mb-3">
-                                    {group.title}
-                                  </div>
-                                  <div className="flex flex-col gap-2.5">
-                                    {group.items.map(({ slug, title, Icon, to }) => (
-                                      <Link
-                                        key={slug}
-                                        to={localize(to ?? (item.mega === 'services' ? (SOLUCOES_SUBMENU_MAP[slug]?.href ?? `/solucoes/${slug}`) : `${basePath}#${slug}`))}
-                                        onClick={() => { setMobileOpen(false); setMobileMenu(null); }}
-                                        className="flex items-center gap-3 text-[14px] text-white/75 hover:text-white"
-                                      >
-                                        <span className="w-7 h-7 border border-white/15 text-[#ff4000] flex items-center justify-center">
-                                          <Icon className="h-3.5 w-3.5" />
-                                        </span>
-                                        {title}
-                                      </Link>
-                                    ))}
-                                  </div>
-                                </div>
-                              ))}
+                        Ver todos <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    </div>
+                    <div className="grid grid-cols-3 gap-4">
+                      {PRODUCTS.filter((p) => p.kind === 'saas' && p.to).map((product) => (
+                        <Link
+                          key={product.slug}
+                          to={localize(product.to as string)}
+                          onClick={() => { setOpenMenu(null); analytics.trackProduct(product.slug, 'click', 'header_products'); }}
+                          className="group rounded-2xl border border-black/[0.06] bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-black/[0.1] hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+                        >
+                          <span className="block h-1 w-8 rounded-full" style={{ background: product.accent }} />
+                          <div className="mt-3 text-[15px] font-semibold text-ink-primary">{product.name}</div>
+                          {product.tagline && (
+                            <div className="mt-0.5 text-xs font-medium text-ink-secondary">{product.tagline}</div>
+                          )}
+                          {product.description && (
+                            <div className="mt-2 line-clamp-2 text-[13px] leading-snug text-ink-secondary">{product.description}</div>
+                          )}
+                        </Link>
+                      ))}
+                    </div>
+                    {/* Institutional platforms: representation only, never links. */}
+                    <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-black/[0.06] pt-4">
+                      <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-secondary">Plataformas</span>
+                      {PRODUCTS.filter((p) => p.kind === 'platform').map((product) => (
+                        <span
+                          key={product.slug}
+                          className="inline-flex items-center gap-2 rounded-full border border-black/[0.06] bg-white px-3.5 py-1.5 text-[13px] font-medium text-ink-secondary"
+                        >
+                          <span aria-hidden="true" className="h-2 w-2 rounded-full" style={{ background: product.accent }} />
+                          {product.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {openMenu === 'resources' && (
+                  <div className="grid grid-cols-12 gap-10">
+                    {resourceGroups.map((group) => (
+                      <div key={group.title} className="col-span-3">
+                        <div className="mb-4 border-b border-black/[0.06] pb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#ff4000]">
+                          {group.title}
+                        </div>
+                        <ul className="flex flex-col gap-1">
+                          {group.items.map(({ slug, title, desc, to }) => (
+                            <li key={slug}>
                               <Link
-                                to={localize(basePath)}
-                                onClick={() => { setMobileOpen(false); setMobileMenu(null); }}
-                                className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-[#ff4000] mt-1"
+                                to={localize(to ?? `/resources#${slug}`)}
+                                onClick={() => setOpenMenu(null)}
+                                className="group block rounded-xl px-3 py-2.5 transition-colors duration-150 hover:bg-black/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
                               >
-                                {item.mega === 'services' ? 'Ver todas as soluções' : item.mega === 'work' ? 'Ver todos os trabalhos' : item.mega === 'products' ? 'Ver todos os produtos' : 'Ver todos os insights'} <ArrowRight className="h-4 w-4" />                              </Link>
-                            </div>
-                          </motion.div>
+                                <span className="block text-sm font-medium text-ink-primary">{title}</span>
+                                <span className="block text-xs leading-snug text-ink-secondary">{desc}</span>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                    <div className="col-span-3">
+                      <div className="mb-4 border-b border-black/[0.06] pb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#ff4000]">
+                        Em destaque
+                      </div>
+                      <AnimatePresence mode="wait">
+                        {latestPosts.length > 0 ? (
+                          (() => {
+                            const post = latestPosts[slideIdx % latestPosts.length];
+                            return (
+                              <motion.div
+                                key={post.id}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.25 }}
+                              >
+                                <Link
+                                  to={localize(`/blog/${post.slug}`)}
+                                  onClick={() => setOpenMenu(null)}
+                                  className="group block overflow-hidden rounded-2xl border border-black/[0.06] transition-all duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+                                >
+                                  {post.image && (
+                                    <img src={post.image} alt={post.title} className="h-32 w-full object-cover" />
+                                  )}
+                                  <div className="p-4">
+                                    {post.category && (
+                                      <span className="text-[11px] font-medium uppercase tracking-wider text-ink-secondary">{post.category}</span>
+                                    )}
+                                    <h4 className="mt-1 line-clamp-2 text-sm font-semibold leading-snug text-ink-primary">{post.title}</h4>
+                                    <span className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#ff4000]">
+                                      Ler artigo <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                                    </span>
+                                  </div>
+                                </Link>
+                              </motion.div>
+                            );
+                          })()
+                        ) : (
+                          <div className="flex items-center justify-center rounded-2xl border border-black/[0.06] p-8 text-sm text-ink-secondary">
+                            Sem artigos
+                          </div>
                         )}
                       </AnimatePresence>
                     </div>
-                  );
-                }
+                  </div>
+                )}
 
-
-                return (
-                  <Link
-                    key={item.path}
-                    to={localizedPath}
-                    onClick={() => setMobileOpen(false)}
-                    className={`font-mono text-[12px] uppercase tracking-[0.2em] border-b border-white/10 pb-4 transition-colors ${active ? 'text-[#ff4000]' : 'text-white/80'}`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-              {/* Extra buttons in mobile menu only (below md) since they are in the header for tablet (md) */}
-              <div className="flex flex-col gap-3 mt-2 md:hidden">
-                <Link
-                  to="/login"
-                  onClick={() => setMobileOpen(false)}
-                  className="inline-flex items-center justify-center border border-white/20 px-5 py-3 font-mono text-[11px] uppercase tracking-[0.22em] text-white/85 hover:bg-white/5"
-                >
-                  {t('nav.clientArea', 'Login')}
-                </Link>
-                <Link
-                  to={i18n.language === 'pt' ? '/booking' : `/${i18n.language}/booking`}
-                  onClick={() => setMobileOpen(false)}
-                  className="inline-flex items-center justify-center gap-2 border-2 border-[#ff4000] px-5 py-3 font-mono text-[11px] uppercase tracking-[0.22em] text-[#ff4000] hover:bg-[#ff4000] hover:text-white transition-all"
-                >
-                  {t('nav.booking')} <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-
+                {openMenu === 'company' && (
+                  <div className="mx-auto max-w-xl">
+                    <ul className="flex flex-col gap-1">
+                      {companyItems.map(({ slug, title, desc, Icon, to }) => (
+                        <li key={slug}>
+                          <Link
+                            to={localize(to ?? `/${slug}`)}
+                            onClick={() => setOpenMenu(null)}
+                            className="group flex items-center gap-4 rounded-2xl px-4 py-3.5 transition-colors duration-150 hover:bg-black/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+                          >
+                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#ff4000]/[0.08] text-[#ff4000] transition-colors duration-150 group-hover:bg-[#ff4000] group-hover:text-white">
+                              <Icon className="h-5 w-5" />
+                            </span>
+                            <span>
+                              <span className="block text-[15px] font-medium text-ink-primary">{title}</span>
+                              <span className="block text-[13px] text-ink-secondary">{desc}</span>
+                            </span>
+                            <ArrowRight className="ml-auto h-4 w-4 text-ink-tertiary transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-[#ff4000]" />
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile — fullscreen overlay */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            className="fixed inset-0 z-50 flex flex-col bg-white lg:hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu de navegação"
+          >
+            <div className="flex h-20 shrink-0 items-center justify-between border-b border-black/[0.06] px-6">
+              <Link
+                to={i18n.language === 'pt' ? '/' : `/${i18n.language}`}
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+                aria-label="Getboost Digital — início"
+              >
+                <img src={logoGetboost} alt="Getboost Digital" className="h-7 w-auto object-contain" />
+              </Link>
+              <button
+                className="rounded-lg p-2 text-ink-primary transition-colors hover:bg-black/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+                onClick={() => setMobileOpen(false)}
+                aria-label="Fechar menu"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <nav className="flex-1 overflow-y-auto px-6 py-6" aria-label="Mobile navigation">
+              <MobileSection
+                id="services"
+                label={t('nav.services')}
+                open={mobileMenu === 'services'}
+                onToggle={() => setMobileMenu(mobileMenu === 'services' ? null : 'services')}
+              >
+                <div className="flex flex-col gap-5 pb-2">
+                  {serviceGroups.map((group) => (
+                    <div key={group.title}>
+                      <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#ff4000]">
+                        {group.title}
+                      </div>
+                      <div className="flex flex-col">
+                        {group.items.map(({ slug, title, to }) => (
+                          <Link
+                            key={slug}
+                            to={serviceHref(slug, to)}
+                            onClick={() => setMobileOpen(false)}
+                            className="rounded-lg py-2.5 text-[15px] text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+                          >
+                            {title}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  <Link
+                    to={localize('/solucoes')}
+                    onClick={() => setMobileOpen(false)}
+                    className="inline-flex items-center gap-2 pt-1 text-sm font-semibold text-[#ff4000]"
+                  >
+                    Ver todas as soluções <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </MobileSection>
+
+              <MobileSection
+                id="products"
+                label={t('nav.products', 'Produtos')}
+                open={mobileMenu === 'products'}
+                onToggle={() => setMobileMenu(mobileMenu === 'products' ? null : 'products')}
+              >
+                <div className="flex flex-col pb-2">
+                  {PRODUCTS.filter((p) => p.kind === 'saas' && p.to).map((product) => (
+                    <Link
+                      key={product.slug}
+                      to={localize(product.to as string)}
+                      onClick={() => { setMobileOpen(false); analytics.trackProduct(product.slug, 'click', 'header_products'); }}
+                      className="flex items-center gap-3 rounded-lg py-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+                    >
+                      <span className="h-6 w-1 rounded-full" style={{ background: product.accent }} />
+                      <span>
+                        <span className="block text-[15px] font-medium text-ink-primary">{product.name}</span>
+                        {product.tagline && (
+                          <span className="block text-xs text-ink-secondary">{product.tagline}</span>
+                        )}
+                      </span>
+                    </Link>
+                  ))}
+                  <div className="mt-2 flex flex-wrap items-center gap-2 border-t border-black/[0.06] pt-3">
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-secondary">Plataformas</span>
+                    {PRODUCTS.filter((p) => p.kind === 'platform').map((product) => (
+                      <span key={product.slug} className="inline-flex items-center gap-2 text-sm text-ink-secondary">
+                        <span aria-hidden="true" className="h-2 w-2 rounded-full" style={{ background: product.accent }} />
+                        {product.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </MobileSection>
+
+              <MobileSection
+                id="resources"
+                label={t('nav.resources')}
+                open={mobileMenu === 'resources'}
+                onToggle={() => setMobileMenu(mobileMenu === 'resources' ? null : 'resources')}
+              >
+                <div className="flex flex-col gap-5 pb-2">
+                  {resourceGroups.map((group) => (
+                    <div key={group.title}>
+                      <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#ff4000]">
+                        {group.title}
+                      </div>
+                      <div className="flex flex-col">
+                        {group.items.map(({ slug, title, to }) => (
+                          <Link
+                            key={slug}
+                            to={localize(to ?? '/resources')}
+                            onClick={() => setMobileOpen(false)}
+                            className="rounded-lg py-2.5 text-[15px] text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+                          >
+                            {title}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </MobileSection>
+
+              <MobileSection
+                id="company"
+                label={t('nav.company', 'Empresa')}
+                open={mobileMenu === 'company'}
+                onToggle={() => setMobileMenu(mobileMenu === 'company' ? null : 'company')}
+              >
+                <div className="flex flex-col pb-2">
+                  {companyItems.map(({ slug, title, to }) => (
+                    <Link
+                      key={slug}
+                      to={localize(to ?? `/${slug}`)}
+                      onClick={() => setMobileOpen(false)}
+                      className="rounded-lg py-2.5 text-[15px] text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+                    >
+                      {title}
+                    </Link>
+                  ))}
+                </div>
+              </MobileSection>
+
+              <Link
+                to={localize('/contact')}
+                onClick={() => setMobileOpen(false)}
+                className="mt-2 block border-t border-black/[0.06] py-5 text-[15px] font-medium text-ink-primary"
+              >
+                {t('nav.contact', 'Contacto')}
+              </Link>
             </nav>
+
+            <div className="flex shrink-0 flex-col gap-3 border-t border-black/[0.06] bg-white px-6 py-5">
+              <Link
+                to={bookingHref}
+                onClick={() => {
+                  setMobileOpen(false);
+                  analytics.trackClick('navigation', 'header_booking', 'consideration');
+                }}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#ff4000] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(255,64,0,0.6)] transition-colors hover:bg-brand-700"
+              >
+                Agendar Diagnóstico <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/login"
+                onClick={() => setMobileOpen(false)}
+                className="inline-flex items-center justify-center rounded-xl border border-black/10 px-5 py-3 text-sm font-medium text-ink-secondary transition-colors hover:bg-black/[0.03]"
+              >
+                {t('nav.clientArea', 'Login')}
+              </Link>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
     </header>
   );
 };
+
+const MobileSection = ({
+  id,
+  label,
+  open,
+  onToggle,
+  children,
+}: {
+  id: string;
+  label: string;
+  open: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) => (
+  <div className="border-b border-black/[0.06]">
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-expanded={open}
+      aria-controls={`mobile-section-${id}`}
+      className="flex w-full items-center justify-between py-4 text-left text-base font-medium text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+    >
+      <span>{label}</span>
+      <ChevronDown className={`h-4 w-4 text-ink-secondary transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+    </button>
+    <AnimatePresence initial={false}>
+      {open && (
+        <motion.div
+          id={`mobile-section-${id}`}
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+          className="overflow-hidden"
+        >
+          {children}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </div>
+);
 
 export default Header;

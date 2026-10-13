@@ -266,7 +266,7 @@ function CheckRow({ c }: { c: Check }) {
   const valid = c.persona_ok && c.single_question_ok && c.pt_pt_ok && !c.overridden;
   return (
     <li className="relative">
-      <span className={`absolute -left-[22px] top-1 h-3 w-3 rounded-full ${valid ? "bg-green-500" : "bg-red-500"}`} />
+      <span className={`absolute -left-[22px] top-1 h-3 w-3 rounded-full ${valid ? "bg-green-500" : "bg-error"}`} />
       <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
         {valid ? <ShieldCheck className="h-3 w-3 text-green-600" /> : <ShieldAlert className="h-3 w-3 text-red-600" />}
         <span className="font-medium">Decisão do gate</span>

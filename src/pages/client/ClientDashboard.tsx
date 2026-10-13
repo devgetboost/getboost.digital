@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 
 const statusColors: Record<string, string> = {
   in_progress: 'bg-blue-500/10 text-blue-600',
-  completed: 'bg-emerald-500/10 text-emerald-600',
+  completed: 'bg-emerald-500/10 text-success',
   pending: 'bg-amber-500/10 text-amber-600',
   awaiting_approval: 'bg-purple-500/10 text-purple-600',
 };
@@ -69,7 +69,7 @@ const ClientDashboard = () => {
   const stats = [
     { label: 'Serviços Ativos', value: services.filter(s => s.status !== 'completed').length, icon: Briefcase, color: 'text-blue-600 bg-blue-500/10' },
     { label: 'Pagamentos Pendentes', value: invoices.length, icon: CreditCard, color: 'text-amber-600 bg-amber-500/10' },
-    { label: 'Tickets Abertos', value: tickets.length, icon: LifeBuoy, color: 'text-emerald-600 bg-emerald-500/10' },
+    { label: 'Tickets Abertos', value: tickets.length, icon: LifeBuoy, color: 'text-success bg-emerald-500/10' },
     { label: 'Notificações', value: notifications.length, icon: Bell, color: 'text-purple-600 bg-purple-500/10' },
   ];
 

@@ -747,7 +747,7 @@ export default function AdminInbox() {
             className="relative h-10 w-10 rounded-full hover:bg-[hsl(var(--admin-hover))] flex items-center justify-center"
           >
             <Bell className="h-4 w-4" />
-            {totalUnread > 0 && <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-red-500" />}
+            {totalUnread > 0 && <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-error" />}
           </button>
           <button
             onClick={() => { window.location.href = '/admin/inbox-calendar'; }}
@@ -1092,7 +1092,7 @@ export default function AdminInbox() {
                           <div className="h-1.5 flex-1 rounded-full bg-[hsl(var(--admin-hover))] overflow-hidden">
                             <div
                               className={`h-full transition-all ${
-                                uploadPhase === 'error' ? 'bg-red-500'
+                                uploadPhase === 'error' ? 'bg-error'
                                 : uploadPhase === 'done' ? 'bg-green-500'
                                 : 'bg-[hsl(var(--admin-fg))]'
                               }`}
@@ -1118,7 +1118,7 @@ export default function AdminInbox() {
                   </div>
                 </div>
                 <div className="flex items-center justify-center gap-1.5 mt-3 text-[11px] text-[hsl(var(--admin-fg-muted))]">
-                  <MessageCircle className="h-3 w-3 text-emerald-600" />
+                  <MessageCircle className="h-3 w-3 text-success" />
                   Ligado via WhatsApp
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                 </div>
@@ -1307,7 +1307,7 @@ export default function AdminInbox() {
                             >
                               <span className="h-3 w-3 rounded-full shrink-0" style={{ background: t.color || '#ff4000' }} />
                               <span className="text-[13px] flex-1 truncate">{t.label}</span>
-                              {active && <CheckCheck className="h-3.5 w-3.5 text-emerald-600" />}
+                              {active && <CheckCheck className="h-3.5 w-3.5 text-success" />}
                             </button>
                           );
                         })}

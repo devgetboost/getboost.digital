@@ -1,16 +1,22 @@
-import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { analytics, buildWhatsAppUrl } from '@/lib/analytics';
+import { useState, useEffect, useRef } from 'react';
+import { useLocation, Link } from 'react-router-dom';
+import { analytics, buildWhatsAppUrl, getJourney, getJourneyOrigin } from '@/lib/analytics';
 import { WHATSAPP_MESSAGES, WHATSAPP_PHONE } from '@/lib/whatsappMessages';
 import { CONTACT, FOUNDER } from '@/data/brandRegistry';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { ArrowRight, Zap, Mail, Phone, MessageCircle, MapPin, Clock, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Zap, Mail, Phone, MessageCircle, MapPin, Clock, ShieldCheck, Check } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { MiniFlow } from '@/components/ui/mini-flow';
+import { PRODUCTS } from '@/data/products';
+import { SOLUCOES_SUBMENU } from '@/data/solucoesSubmenu';
+import { MARKET_CODES } from '@/lib/markets';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import { legacySupabase, supabase } from '@/integrations/supabase/client';
 import { captureLead, CommercialWriteError } from '@/lib/commercialApi';
 import { marketForLanguage, localeForLanguage } from '@/lib/commercialMarket';
@@ -18,7 +24,6 @@ import { fetchProducts } from '@/lib/contentApi';
 import { toast } from 'sonner';
 
 const ACCENT = '#ff4000';
-const manifestoLines = ['Uma conversa.', 'Uma decisão clara.'];
 
 const Contact = () => {
   const { t, i18n } = useTranslation();
@@ -30,6 +35,36 @@ const Contact = () => {
     name: '', email: '', phone: '', company: '', website: '',
     service: '', budget: '', timeline: '', message: '',
   });
+  // R20.1 — form lifecycle (start/abandon). success/error keep their
+  // dedicated events; refs only gate lifecycle attribution.
+  const lifecycleStarted = useRef(false);
+  const lifecycleSubmitted = useRef(false);
+
+  useEffect(() => {
+    if (lifecycleStarted.current) return;
+    const interacted =
+      form.name !== '' || form.email !== '' || form.phone !== '' ||
+      form.company !== '' || form.message !== '';
+    if (interacted) {
+      lifecycleStarted.current = true;
+      analytics.trackFormStep('contact', 'start');
+    }
+  }, [form.name, form.email, form.phone, form.company, form.message]);
+
+  useEffect(() => {
+    const onAbandon = () => {
+      if (lifecycleStarted.current && !lifecycleSubmitted.current) {
+        analytics.trackFormStep('contact', 'abandon', { origin: getJourneyOrigin() });
+        lifecycleStarted.current = false; // fire once per page lifecycle
+      }
+    };
+    window.addEventListener('pagehide', onAbandon);
+    return () => {
+      window.removeEventListener('pagehide', onAbandon);
+      onAbandon(); // in-app navigation away (unmount only — stable deps)
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // R1C6: the service dropdown reads published products via the content layer
   // instead of the retired `services` table.
@@ -50,6 +85,8 @@ const Contact = () => {
       return;
     }
     setSubmitting(true);
+    // R20.1 — explicit submit step (success/error keep dedicated events).
+    analytics.trackFormStep('contact', 'submit', { origin: getJourneyOrigin() });
     // R1C5: the browser no longer writes `leads` directly. Retired fields
     // (`service`, `budget`, `timeline`, `website`) are forwarded and preserved
     // under `metadata.legacy` server-side.
@@ -96,7 +133,8 @@ const Contact = () => {
         }
       });
 
-      analytics.trackForm('contact', 'contact_form_success', { path: location.pathname });
+      analytics.trackForm('contact', 'contact_form_success', { path: location.pathname, journey: getJourney(), origin: getJourneyOrigin() });
+      lifecycleSubmitted.current = true; // converted — no abandon afterwards
       setForm({ name: '', email: '', phone: '', company: '', website: '', service: '', budget: '', timeline: '', message: '' });
       setSent(true);
     } catch (submitError) {
@@ -107,11 +145,12 @@ const Contact = () => {
     }
   };
 
-  const inputClass = "w-full bg-transparent border-0 border-b border-white/20 rounded-none h-12 px-0 text-white placeholder:text-white/30 focus-visible:ring-0 focus-visible:border-[#ff4000] transition-colors";
-  const labelClass = "block font-mono text-[10px] uppercase tracking-[0.22em] text-white/50 mb-2";
+  const inputClass = "w-full bg-transparent border-0 border-b border-black/20 rounded-none h-12 px-0 text-ink-primary placeholder:text-ink-tertiary focus-visible:ring-0 focus-visible:border-[#ff4000] transition-colors";
+  const labelClass = "block font-mono text-[10px] uppercase tracking-[0.22em] text-ink-tertiary mb-2";
 
   return (
     <Layout>
+      <ScrollDepth location="contact" />
       <SEO
         title="Contacto — Vamos operar juntos | Getboost Digital"
         description="Fala com a equipa Getboost Digital. Resposta em menos de 24h úteis. WhatsApp, email, telefone ou formulário completo — escolhe o canal."
@@ -119,132 +158,140 @@ const Contact = () => {
         lang={i18n.language as 'pt' | 'en' | 'es'}
       />
 
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      {/* HERO — R19.4 light premium (CTAs + tracking preserved). */}
+      <section className="gb-surface-page relative overflow-hidden">
+        <div aria-hidden className="gb-grid-overlay" />
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
-            backgroundSize: '56px 56px',
-            maskImage: 'radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%)',
-            WebkitMaskImage: 'radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%)',
-          }}
+          className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full blur-3xl"
+          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.08) 0%, rgba(255,255,255,0) 65%)' }}
         />
-        <div
-          aria-hidden
-          className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)' }}
-        />
-        <motion.div
-          aria-hidden
-          initial={{ y: '-100%' }}
-          animate={{ y: '120%' }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          className="pointer-events-none absolute inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#ff4000]/10 to-transparent"
-        />
-
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-24 md:py-32">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
-            style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
-          >
-            <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
-            Contacto · Resposta em &lt; 24h úteis · PT / EN / ES
-          </motion.div>
-
-          <h1 className="mt-8 font-black leading-[0.92] tracking-tight text-[clamp(2.5rem,7.5vw,6.25rem)]">
-            {manifestoLines.map((line, i) => (
-              <motion.span
-                key={line}
-                initial={{ opacity: 0, y: 24 }}
+        <div className="gb-container relative gb-section !pt-10 md:!pt-16">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            <div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.15 + i * 0.12 }}
-                className="block"
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               >
-                {i === manifestoLines.length - 1 ? (
-                  <span style={{ color: ACCENT, textShadow: '0 0 40px rgba(255,64,0,0.4)' }}>{line}</span>
-                ) : (line)}
-              </motion.span>
-            ))}
-          </h1>
+                <span className="gb-eyebrow text-brand-600">Contacto · Resposta em &lt; 24h úteis · PT / EN / ES</span>
+              </motion.div>
 
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="mt-10 h-px w-40 origin-left"
-            style={{ background: `${ACCENT}b3` }}
-          />
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="gb-text-display mt-5 text-ink-primary"
+              >
+                Fala com a equipa certa para o{' '}
+                <span className="text-brand-600">próximo passo</span>.
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="gb-text-body mt-6 max-w-xl text-ink-secondary"
+              >
+                Quer precises de IA, automação, software ou growth, estamos
+                disponíveis para ajudar.
+              </motion.p>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-white/75"
-          >
-            Não vendemos <em className="not-italic text-white">brochuras</em>. Ouvimos o problema, medimos o
-            impacto, propomos o caminho. Se preferires, marca 30 minutos gratuitos — saímos da chamada com um
-            plano concreto, mesmo que não trabalhes connosco.
-          </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-10 flex flex-wrap items-center gap-4"
+              >
+                <Button asChild size="lg">
+                  <a href="/booking">
+                    Marcar 30 min gratuitos
+                    <ArrowRight className="h-4 w-4" />
+                  </a>
+                </Button>
+                <Button asChild size="lg" variant="outline">
+                  <a
+                    href={buildWhatsAppUrl(WHATSAPP_PHONE, WHATSAPP_MESSAGES.generic())}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => analytics.trackWhatsApp('contact_hero', 'generic')}
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    WhatsApp directo
+                  </a>
+                </Button>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-8 flex flex-wrap gap-2.5"
+              >
+                {['IA', 'Automação', 'Software', 'Growth'].map((item) => (
+                  <span key={item} className="gb-chip">
+                    <Check className="h-3.5 w-3.5 text-brand-600" />
+                    {item}
+                  </span>
+                ))}
+              </motion.div>
+            </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.9 }}
-            className="mt-12 flex flex-wrap items-center gap-4"
-          >
-            <a
-              href="/booking"
-              className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: '#ffb494' }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+            {/* Why contact — Questão → Especialista → Solução (illustrative). */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="relative"
             >
-              Marcar 30 min gratuitos
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </a>
-            <a
-              href={buildWhatsAppUrl(WHATSAPP_PHONE, WHATSAPP_MESSAGES.generic())}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => analytics.trackWhatsApp('contact_hero', 'generic')}
-              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-white/60 transition-colors hover:text-white"
-            >
-              <MessageCircle className="h-4 w-4" style={{ color: ACCENT }} />
-              WhatsApp directo
-            </a>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 1.1 }}
-            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 border-t border-white/10 pt-8"
-          >
-            {[
-              { k: '<24h', v: 'Resposta útil' },
-              { k: '30min', v: 'Diagnóstico grátis' },
-              { k: '0€', v: 'Compromisso inicial' },
-              { k: '100%', v: 'Confidencialidade' },
-            ].map((s) => (
-              <div key={s.k}>
-                <div className="font-mono text-3xl md:text-4xl font-bold" style={{ color: ACCENT }}>{s.k}</div>
-                <div className="mt-1 text-xs uppercase tracking-widest text-white/50">{s.v}</div>
+              <div className="gb-card !p-6 !shadow-lg">
+                <p className="gb-eyebrow text-ink-tertiary">Como funciona</p>
+                <MiniFlow
+                  steps={['Questão', 'Especialista', 'Solução']}
+                  tint="var(--gb-brand-50)"
+                  strong="var(--gb-brand-600)"
+                />
+                <div className="mt-5 grid grid-cols-3 gap-2 border-t border-black/[0.06] pt-4 text-center">
+                  {[
+                    { k: '<24h', v: 'resposta útil' },
+                    { k: '30min', v: 'diagnóstico' },
+                    { k: '0€', v: 'compromisso' },
+                  ].map((stat) => (
+                    <div key={stat.v}>
+                      <div className="gb-text-h3 text-brand-600">{stat.k}</div>
+                      <div className="text-[11px] font-medium text-ink-tertiary">{stat.v}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
+            </motion.div>
+          </div>
+        </div>
+        <div className="gb-container pb-16">
+          <div className="gb-hairline-accent" />
+        </div>
+      </section>
+
+      {/* AUTHORITY STRIP — R19.4 (dados reais do sistema, nunca hardcoded). */}
+      <section className="gb-surface-subtle gb-section !py-12">
+        <div className="gb-container">
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+            {[
+              { k: `${PRODUCTS.length}`, v: 'produtos próprios' },
+              { k: `${SOLUCOES_SUBMENU.length}`, v: 'serviços especializados' },
+              { k: `${MARKET_CODES.length}`, v: 'mercados' },
+            ].map((fact) => (
+              <span key={fact.v} className="inline-flex items-center gap-2 text-sm text-ink-secondary">
+                <Check className="h-4 w-4 text-brand-600" aria-hidden="true" />
+                <strong className="font-bold text-ink-primary">{fact.k}</strong> {fact.v}
+              </span>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* CANAIS + FORM */}
-      <section className="bg-[#0a0603] text-white py-24 md:py-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 border-t border-white/10 pt-14">
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 border-t border-black/10 pt-14">
             {/* Canais */}
             <div className="lg:col-span-5 space-y-10">
               <div>
@@ -254,7 +301,7 @@ const Contact = () => {
                 <h2 className="mt-4 text-3xl md:text-4xl font-black leading-tight tracking-tight">
                   Escolhe o teu <span style={{ color: ACCENT }}>ritmo</span>.
                 </h2>
-                <p className="mt-4 text-white/60 leading-relaxed">
+                <p className="mt-4 text-ink-secondary leading-relaxed">
                   Cada canal tem um propósito. Não temos call centers, nem tickets perdidos. Falas com quem opera.
                 </p>
               </div>
@@ -273,8 +320,10 @@ const Contact = () => {
                     rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
                     onClick={() => {
                       if (label === 'WhatsApp') analytics.trackWhatsApp('contact_channels', 'generic');
+                      else if (label === 'Email') analytics.trackOutbound('email', 'contact_channels');
+                      else if (label === 'Telefone') analytics.trackOutbound('phone', 'contact_channels');
                     }}
-                    className="group flex items-start gap-5 border border-white/10 bg-white/[0.02] p-5 transition-all hover:border-[#ff4000]/60 hover:bg-white/[0.04]"
+                    className="group flex items-start gap-5 border border-black/10 bg-black/[0.02] p-5 transition-all hover:border-[#ff4000]/60 hover:bg-black/[0.04]"
                   >
                     <div
                       className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center border transition-colors"
@@ -283,18 +332,18 @@ const Contact = () => {
                       <Icon className="h-4 w-4" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/50">{label}</div>
+                      <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink-tertiary">{label}</div>
                       <div className="mt-1 text-base md:text-lg font-semibold truncate">{value}</div>
-                      <div className="mt-1 text-xs text-white/50">{note}</div>
+                      <div className="mt-1 text-xs text-ink-tertiary">{note}</div>
                     </div>
-                    <ArrowRight className="h-4 w-4 shrink-0 mt-2 text-white/30 transition-all group-hover:text-[#ff4000] group-hover:translate-x-1" />
+                    <ArrowRight className="h-4 w-4 shrink-0 mt-2 text-ink-tertiary transition-all group-hover:text-[#ff4000] group-hover:translate-x-1" />
                   </a>
                 ))}
               </div>
 
               <div className="flex items-start gap-4 border-l-2 pl-5" style={{ borderColor: `${ACCENT}66` }}>
                 <ShieldCheck className="h-5 w-5 mt-0.5 shrink-0" style={{ color: ACCENT }} />
-                <p className="text-sm text-white/60 leading-relaxed">
+                <p className="text-sm text-ink-secondary leading-relaxed">
                   Toda a informação enviada é tratada como confidencial. Assinamos NDA sempre que necessário —
                   basta pedir no formulário.
                 </p>
@@ -303,7 +352,7 @@ const Contact = () => {
 
             {/* Form */}
             <div className="lg:col-span-7">
-              <div className="border border-white/10 bg-white/[0.02] p-6 md:p-10">
+              <div className="border border-black/10 bg-black/[0.02] p-6 md:p-10">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div>
                     <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
@@ -313,7 +362,7 @@ const Contact = () => {
                       Conta-nos sobre o teu projecto.
                     </h3>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-white/50">
+                  <div className="flex items-center gap-2 text-xs text-ink-tertiary">
                     <Clock className="h-3.5 w-3.5" style={{ color: ACCENT }} />
                     Resposta em &lt; 24h
                   </div>
@@ -351,9 +400,9 @@ const Contact = () => {
                     <label className={labelClass}>Serviço de interesse</label>
                     <Select value={form.service} onValueChange={v => setForm(f => ({ ...f, service: v }))}>
                       <SelectTrigger className={inputClass}><SelectValue placeholder="Selecciona um serviço" /></SelectTrigger>
-                      <SelectContent className="bg-[#0a0603] border-white/10 text-white">
+                      <SelectContent className="bg-white border-black/10 text-ink-primary">
                         {services.map(s => (
-                          <SelectItem key={s.key} value={s.key} className="focus:bg-white/10 focus:text-white">
+                          <SelectItem key={s.key} value={s.key} className="focus:bg-black/10 focus:text-ink-primary">
                             {s.headline || s.key}
                           </SelectItem>
                         ))}
@@ -366,12 +415,12 @@ const Contact = () => {
                       <label className={labelClass}>Orçamento mensal</label>
                       <Select value={form.budget} onValueChange={v => setForm(f => ({ ...f, budget: v }))}>
                         <SelectTrigger className={inputClass}><SelectValue placeholder="Seleccionar" /></SelectTrigger>
-                        <SelectContent className="bg-[#0a0603] border-white/10 text-white">
-                          <SelectItem value="500" className="focus:bg-white/10 focus:text-white">Até 500 €</SelectItem>
-                          <SelectItem value="1000" className="focus:bg-white/10 focus:text-white">500 – 1.000 €</SelectItem>
-                          <SelectItem value="2500" className="focus:bg-white/10 focus:text-white">1.000 – 2.500 €</SelectItem>
-                          <SelectItem value="5000" className="focus:bg-white/10 focus:text-white">2.500 – 5.000 €</SelectItem>
-                          <SelectItem value="5000+" className="focus:bg-white/10 focus:text-white">5.000 € +</SelectItem>
+                        <SelectContent className="bg-white border-black/10 text-ink-primary">
+                          <SelectItem value="500" className="focus:bg-black/10 focus:text-ink-primary">Até 500 €</SelectItem>
+                          <SelectItem value="1000" className="focus:bg-black/10 focus:text-ink-primary">500 – 1.000 €</SelectItem>
+                          <SelectItem value="2500" className="focus:bg-black/10 focus:text-ink-primary">1.000 – 2.500 €</SelectItem>
+                          <SelectItem value="5000" className="focus:bg-black/10 focus:text-ink-primary">2.500 – 5.000 €</SelectItem>
+                          <SelectItem value="5000+" className="focus:bg-black/10 focus:text-ink-primary">5.000 € +</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -379,11 +428,11 @@ const Contact = () => {
                       <label className={labelClass}>Quando queres começar?</label>
                       <Select value={form.timeline} onValueChange={v => setForm(f => ({ ...f, timeline: v }))}>
                         <SelectTrigger className={inputClass}><SelectValue placeholder="Seleccionar" /></SelectTrigger>
-                        <SelectContent className="bg-[#0a0603] border-white/10 text-white">
-                          <SelectItem value="imediato" className="focus:bg-white/10 focus:text-white">Imediato</SelectItem>
-                          <SelectItem value="1mes" className="focus:bg-white/10 focus:text-white">Próximo mês</SelectItem>
-                          <SelectItem value="3meses" className="focus:bg-white/10 focus:text-white">3 meses</SelectItem>
-                          <SelectItem value="explorar" className="focus:bg-white/10 focus:text-white">Ainda a explorar</SelectItem>
+                        <SelectContent className="bg-white border-black/10 text-ink-primary">
+                          <SelectItem value="imediato" className="focus:bg-black/10 focus:text-ink-primary">Imediato</SelectItem>
+                          <SelectItem value="1mes" className="focus:bg-black/10 focus:text-ink-primary">Próximo mês</SelectItem>
+                          <SelectItem value="3meses" className="focus:bg-black/10 focus:text-ink-primary">3 meses</SelectItem>
+                          <SelectItem value="explorar" className="focus:bg-black/10 focus:text-ink-primary">Ainda a explorar</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -391,14 +440,14 @@ const Contact = () => {
 
                   <div>
                     <label className={labelClass}>Mensagem *</label>
-                    <Textarea value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} placeholder="Contexto, objectivos, prazos, integrações necessárias…" rows={5} className="w-full bg-transparent border border-white/15 rounded-none text-white placeholder:text-white/30 focus-visible:ring-0 focus-visible:border-[#ff4000] transition-colors" maxLength={2000} required />
+                    <Textarea value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} placeholder="Contexto, objectivos, prazos, integrações necessárias…" rows={5} className="w-full bg-transparent border border-black/15 rounded-none text-ink-primary placeholder:text-ink-tertiary focus-visible:ring-0 focus-visible:border-[#ff4000] transition-colors" maxLength={2000} required />
                   </div>
 
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="group inline-flex items-center gap-3 border-2 px-8 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ borderColor: ACCENT, color: '#ffb494' }}
+                    className="group inline-flex items-center gap-3 border-2 px-8 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-ink-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ borderColor: ACCENT, color: ACCENT }}
                     onMouseEnter={(e) => { if (!submitting) e.currentTarget.style.background = ACCENT; }}
                     onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                   >
@@ -413,7 +462,7 @@ const Contact = () => {
       </section>
 
       {/* CTA FINAL */}
-      <section className="bg-black text-white py-28 md:py-40">
+      <section className="gb-surface-page gb-section">
         <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -424,13 +473,13 @@ const Contact = () => {
           >
             Vamos transformar a tua <span style={{ color: ACCENT }}>operação</span> em resultados mensuráveis.
           </motion.h2>
-          <p className="mt-8 max-w-2xl mx-auto text-white/60 text-lg">
+          <p className="mt-8 max-w-2xl mx-auto text-ink-secondary text-lg">
             Agenda um diagnóstico gratuito e recebe um plano claro para acelerar o teu negócio.
           </p>
           <div className="mt-14 flex flex-wrap justify-center gap-4">
             <a
               href="/booking"
-              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-white"
+              className="inline-flex items-center gap-3 border-2 px-10 py-5 font-mono text-xs uppercase tracking-[0.28em] transition-all hover:!text-ink-primary"
               style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}

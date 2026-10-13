@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Zap, Grid2x2, Minus, Circle } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
+import { analytics } from '@/lib/analytics';
 import CommercialAuditModal from '@/components/CommercialAuditModal';
 import ConsultantContactForm from '@/components/ConsultantContactForm';
 import type { StoredAudit } from '@/lib/auditHistory';
@@ -62,6 +64,7 @@ const Investidores = () => {
 
   return (
     <Layout>
+      <ScrollDepth location="investors" />
       <SEO
         title="Investidores — Portefólio SaaS da Getboost | Oportunidades de Investimento"
         description="Investe num venture studio português com vários SaaS ativos: Qook, Hostify, Motivae, Trackfy, ProSafe360 e Pikto. Tickets desde 3.000€, SAFE ou equity, reporte trimestral e board consultivo."
@@ -70,47 +73,30 @@ const Investidores = () => {
       />
 
       {/* HERO — manifesto */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
-        <div
-          aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
-            backgroundSize: '56px 56px',
-            maskImage: 'radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%)',
-            WebkitMaskImage: 'radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%)',
-          }}
-        />
+      <section className="gb-surface-page relative overflow-hidden">
+                <div aria-hidden className="gb-grid-overlay" />
         <div
           aria-hidden
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
           style={{
             background:
-              'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)',
+              'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)',
           }}
         />
-        <motion.div
-          aria-hidden
-          initial={{ y: '-100%' }}
-          animate={{ y: '120%' }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          className="pointer-events-none absolute inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#ff4000]/10 to-transparent"
-        />
 
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-28 md:py-40">
+        <div className="gb-container relative gb-section !pt-10 md:!pt-16">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
+            className="gb-eyebrow text-brand-600"
             style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
             Venture Studio · SaaS · SAFE · Equity
           </motion.div>
 
-          <h1 className="mt-8 font-black leading-[0.92] tracking-tight text-[clamp(2.75rem,8vw,7rem)]">
+          <h1 className="gb-text-display mt-5 text-ink-primary">
             {manifestoLines.map((line, i) => (
               <motion.span
                 key={line}
@@ -142,9 +128,9 @@ const Investidores = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-white/75"
+            className="gb-text-body mt-6 max-w-xl text-ink-secondary"
           >
-            A Getboost é um <em className="not-italic text-white">venture studio</em> português com
+            A Getboost é um <em className="not-italic text-ink-primary">venture studio</em> português com
             seis produtos SaaS a operar em mercados verticais reais. Investes num portefólio já
             construído, com clientes pagantes e roadmap validado — não numa apresentação em PDF.
           </motion.p>
@@ -159,7 +145,7 @@ const Investidores = () => {
               type="button"
               onClick={() => setContactOpen(true)}
               className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: '#ffb494' }}
+              style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
             >
@@ -168,8 +154,7 @@ const Investidores = () => {
             </button>
             <Link
               to="/booking"
-              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-white/60 transition-colors hover:text-white"
-            >
+              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-ink-secondary transition-colors hover:text-white" onClick={() => analytics.trackClick('investors_hero', 'investors_booking', 'consideration')}>
               <Zap className="h-4 w-4" style={{ color: ACCENT }} />
               Agendar call com fundador
             </Link>
@@ -179,7 +164,7 @@ const Investidores = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1.1 }}
-            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 border-t border-white/10 pt-8"
+            className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 border-t border-black/[0.06] pt-8"
           >
             {[
               { k: '6', v: 'Produtos SaaS ativos' },
@@ -191,7 +176,7 @@ const Investidores = () => {
                 <div className="font-mono text-3xl md:text-4xl font-bold" style={{ color: ACCENT }}>
                   {s.k}
                 </div>
-                <div className="mt-1 text-xs uppercase tracking-widest text-white/50">{s.v}</div>
+                <div className="mt-1 text-xs uppercase tracking-widest text-ink-tertiary">{s.v}</div>
               </div>
             ))}
           </motion.div>
@@ -199,17 +184,17 @@ const Investidores = () => {
       </section>
 
       {/* FEATURE LIST — accordion */}
-      <section className="bg-[#0a0603] text-white py-24 md:py-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="border-t border-white/10">
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <div className="border-t border-black/10">
             {features.map((f, i) => {
               const isOpen = openIndex === i;
               return (
-                <div key={f.title} className="border-b border-white/10">
+                <div key={f.title} className="border-b border-black/10">
                   <button
                     type="button"
                     onClick={() => setOpenIndex(isOpen ? -1 : i)}
-                    className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 py-10 md:py-14 text-left transition-colors hover:bg-white/[0.02]"
+                    className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 py-10 md:py-14 text-left transition-colors hover:bg-black/[0.02]"
                   >
                     <div>
                       <div className="flex items-start gap-5">
@@ -224,7 +209,7 @@ const Investidores = () => {
                         {f.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="rounded-full border border-white/25 px-4 py-1.5 text-xs md:text-sm text-white/80"
+                            className="rounded-full border border-black/25 px-4 py-1.5 text-xs md:text-sm text-ink-secondary"
                           >
                             {tag}
                           </span>
@@ -255,7 +240,7 @@ const Investidores = () => {
                             animate={{ opacity: 1, height: 'auto', marginTop: 24 }}
                             exit={{ opacity: 0, height: 0, marginTop: 0 }}
                             transition={{ duration: 0.35 }}
-                            className="overflow-hidden text-sm md:text-base leading-relaxed text-white/70"
+                            className="overflow-hidden text-sm md:text-base leading-relaxed text-ink-secondary"
                           >
                             {f.body}
                           </motion.p>
@@ -271,7 +256,7 @@ const Investidores = () => {
       </section>
 
       {/* CTA FINAL */}
-      <section className="bg-black text-white py-28 md:py-40">
+      <section className="gb-surface-page gb-section">
         <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}

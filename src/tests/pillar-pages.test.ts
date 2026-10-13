@@ -8,12 +8,13 @@ const root = process.cwd();
 const read = (rel: string) => readFileSync(join(root, rel), "utf-8");
 
 /**
- * Wave 3D — pillar experience guards.
+ * Wave 3D / R19.2 — pillar experience guards.
  *
- * The four strategic pillars render through one shared layout, with
- * token-driven colour identity, canonical services, and products as
- * proof. CI fails on a pillar losing its route, its services, its
- * colour tokens, or its conversion mechanics.
+ * Automation, Software and Growth render through the shared layout;
+ * AI renders its bespoke premium product page (R19.2). All keep
+ * token-driven colour identity, canonical routes and services, and
+ * products as proof. CI fails on a pillar losing its route, its
+ * services, its colour tokens, or its conversion mechanics.
  */
 
 const APP = read("src/App.tsx");
@@ -54,10 +55,11 @@ const appRoutes = [...APP.matchAll(/<Route\s+path="([^"]+)"/g)].map((m) => m[1])
 const redirectOnly = [...APP.matchAll(/<Route\s+path="([^"]+)"\s+element=\{<Navigate/g)].map((m) => m[1]);
 
 describe("Wave 3D — pillar experiences", () => {
-  it("every pillar mounts its shared layout on its canonical route", () => {
+  it("every pillar mounts on its canonical route (all four bespoke premium pages)", () => {
     for (const [id, spec] of Object.entries(PILLAR_ROUTES)) {
       const page = read(spec.page);
-      expect(page, `${spec.page} must render the pillar landing`).toContain("<PillarLanding pillar={PILLARS." + id + "}");
+      // R19.2/R19.5/R19.6/R19.7: bespoke premium product pages.
+      expect(page, `${spec.page} must render its bespoke premium page`).toContain("R19");
       expect(page, `${spec.page} must keep its SEO`).toContain(`canonical="${spec.route}"`);
       expect(APP, `route for ${id}`).toMatch(new RegExp(`path="${spec.route}"\\s+element=\\{<${spec.component}`));
     }

@@ -8,9 +8,9 @@ import { CreditCard, Receipt, RefreshCw, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const subStatusLabels: Record<string, string> = { active: 'Ativa', suspended: 'Suspensa', cancelled: 'Cancelada' };
-const subStatusColors: Record<string, string> = { active: 'bg-emerald-500/10 text-emerald-600', suspended: 'bg-amber-500/10 text-amber-600', cancelled: 'bg-red-500/10 text-red-600' };
+const subStatusColors: Record<string, string> = { active: 'bg-emerald-500/10 text-success', suspended: 'bg-amber-500/10 text-amber-600', cancelled: 'bg-error/10 text-red-600' };
 const invStatusLabels: Record<string, string> = { pending: 'Pendente', paid: 'Pago', overdue: 'Vencido', cancelled: 'Cancelado' };
-const invStatusColors: Record<string, string> = { pending: 'bg-amber-500/10 text-amber-600', paid: 'bg-emerald-500/10 text-emerald-600', overdue: 'bg-red-500/10 text-red-600', cancelled: 'bg-muted text-muted-foreground' };
+const invStatusColors: Record<string, string> = { pending: 'bg-amber-500/10 text-amber-600', paid: 'bg-emerald-500/10 text-success', overdue: 'bg-error/10 text-red-600', cancelled: 'bg-muted text-muted-foreground' };
 
 const ClientFinances = () => {
   const [subscriptions, setSubscriptions] = useState<any[]>([]);

@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
+import { analytics } from '@/lib/analytics';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -40,14 +42,14 @@ const pillarsInfo = [
 ];
 
 const scoreColor = (n: number) =>
-  n >= 80 ? 'text-emerald-400' : n >= 60 ? 'text-yellow-400' : n >= 40 ? 'text-orange-400' : 'text-red-400';
+  n >= 80 ? 'text-success' : n >= 60 ? 'text-warning' : n >= 40 ? 'text-brand-600' : 'text-error';
 
 const ScoreDial = ({ score, size = 160 }: { score: number; size?: number }) => {
   const stroke = 12;
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
   const off = c - (score / 100) * c;
-  const color = score >= 80 ? '#22c55e' : score >= 60 ? '#eab308' : score >= 40 ? ACCENT : '#ef4444';
+  const color = score >= 80 ? 'var(--gb-success)' : score >= 60 ? 'var(--gb-warning)' : score >= 40 ? 'var(--gb-brand-500)' : 'var(--gb-error)';
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90">
@@ -57,7 +59,7 @@ const ScoreDial = ({ score, size = 160 }: { score: number; size?: number }) => {
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-5xl font-black" style={{ color }}>{score}</span>
-        <span className="text-[10px] uppercase tracking-widest text-white/50">/100</span>
+        <span className="text-[10px] uppercase tracking-widest text-ink-tertiary">/100</span>
       </div>
     </div>
   );
@@ -167,6 +169,7 @@ const DigitalAudit = () => {
 
   return (
     <Layout>
+      <ScrollDepth location="digital_audit" />
       <SEO
         title="Auditoria Digital 360º — Website, SEO, Tracking, Conversão & IA | Getboost"
         description="Diagnóstico automático em 5 pilares: Website, SEO, Tracking, Conversão e Visibilidade em IA. Recebe pontuação global e prioridades acionáveis por email."
@@ -174,7 +177,7 @@ const DigitalAudit = () => {
       />
 
       {/* HERO — dark manifesto */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      <section className="gb-surface-page relative overflow-hidden">
         <div aria-hidden className="absolute inset-0 opacity-[0.18]"
           style={{
             backgroundImage: 'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
@@ -183,16 +186,16 @@ const DigitalAudit = () => {
             WebkitMaskImage: 'radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%)',
           }} />
         <div aria-hidden className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)' }} />
+          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)' }} />
         <motion.div aria-hidden
           initial={{ y: '-100%' }} animate={{ y: '120%' }}
           transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
           className="pointer-events-none absolute inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#ff4000]/10 to-transparent" />
 
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-24 md:py-32">
+        <div className="gb-container relative gb-section">
           <motion.div
             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
+            className="gb-eyebrow text-brand-600"
             style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}>
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
             Auditoria Digital 360º · 5 Pilares · IA Ready
@@ -213,13 +216,13 @@ const DigitalAudit = () => {
               <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.8, delay: 0.4 }}
                 className="mt-8 h-px w-40 origin-left" style={{ background: `${ACCENT}b3` }} />
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.6 }}
-                className="mt-8 max-w-xl text-lg leading-relaxed text-white/75">
+                className="mt-8 max-w-xl text-lg leading-relaxed text-ink-secondary">
                 Descobre em segundos porque é que o teu website atrai visitas, mas não gera clientes.
-                Auditoria automática em <strong className="text-white">5 pilares críticos</strong> — Website, SEO, Tracking,
+                Auditoria automática em <strong className="text-ink-primary">5 pilares críticos</strong> — Website, SEO, Tracking,
                 Conversão e Visibilidade em IA. Relatório gratuito no teu email.
               </motion.p>
 
-              <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-6 border-t border-white/10 pt-8">
+              <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-6 border-t border-black/10 pt-8">
                 {[
                   { k: '5', v: 'Pilares analisados' },
                   { k: '<2 min', v: 'Diagnóstico completo' },
@@ -228,7 +231,7 @@ const DigitalAudit = () => {
                 ].map((s) => (
                   <div key={s.k}>
                     <div className="font-mono text-2xl md:text-3xl font-bold" style={{ color: ACCENT }}>{s.k}</div>
-                    <div className="mt-1 text-[11px] uppercase tracking-widest text-white/50">{s.v}</div>
+                    <div className="mt-1 text-[11px] uppercase tracking-widest text-ink-tertiary">{s.v}</div>
                   </div>
                 ))}
               </div>
@@ -246,35 +249,35 @@ const DigitalAudit = () => {
                     <Sparkles className="w-3.5 h-3.5" style={{ color: ACCENT }} /> Pedir auditoria
                   </div>
                   <h2 className="text-2xl font-bold">Recebe o teu diagnóstico.</h2>
-                  <p className="text-sm text-white/60 -mt-2">Confirmamos o teu email e libertamos o motor de análise.</p>
+                  <p className="text-sm text-ink-secondary -mt-2">Confirmamos o teu email e libertamos o motor de análise.</p>
 
                   <div>
-                    <Label htmlFor="url" className="text-white/80">URL do website *</Label>
+                    <Label htmlFor="url" className="text-ink-secondary">URL do website *</Label>
                     <Input id="url" placeholder="exemplo.pt" value={url} onChange={(e) => setUrl(e.target.value)} required
-                      className="bg-white/5 border-white/15 text-white placeholder:text-white/30" />
+                      className="bg-black/5 border-black/15 text-ink-primary placeholder:text-ink-tertiary" />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <Label htmlFor="name" className="text-white/80">Nome</Label>
+                      <Label htmlFor="name" className="text-ink-secondary">Nome</Label>
                       <Input id="name" placeholder="João" value={name} onChange={(e) => setName(e.target.value)}
-                        className="bg-white/5 border-white/15 text-white placeholder:text-white/30" />
+                        className="bg-black/5 border-black/15 text-ink-primary placeholder:text-ink-tertiary" />
                     </div>
                     <div>
-                      <Label htmlFor="company" className="text-white/80">Empresa *</Label>
+                      <Label htmlFor="company" className="text-ink-secondary">Empresa *</Label>
                       <Input id="company" placeholder="Lda." value={company} onChange={(e) => setCompany(e.target.value)} required
-                        className="bg-white/5 border-white/15 text-white placeholder:text-white/30" />
+                        className="bg-black/5 border-black/15 text-ink-primary placeholder:text-ink-tertiary" />
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="email" className="text-white/80">Email *</Label>
+                    <Label htmlFor="email" className="text-ink-secondary">Email *</Label>
                     <Input id="email" type="email" placeholder="voce@empresa.pt" value={email} onChange={(e) => setEmail(e.target.value)} required
-                      className="bg-white/5 border-white/15 text-white placeholder:text-white/30" />
+                      className="bg-black/5 border-black/15 text-ink-primary placeholder:text-ink-tertiary" />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <Label className="text-white/80">Setor</Label>
+                      <Label className="text-ink-secondary">Setor</Label>
                       <Select value={sector} onValueChange={setSector}>
-                        <SelectTrigger className="bg-white/5 border-white/15 text-white"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectTrigger className="bg-black/5 border-black/15 text-ink-primary"><SelectValue placeholder="Selecione" /></SelectTrigger>
                         <SelectContent>
                           {['Serviços', 'E-commerce', 'SaaS', 'Restauração', 'Saúde', 'Educação', 'Indústria', 'Outro'].map((s) => (
                             <SelectItem key={s} value={s}>{s}</SelectItem>
@@ -283,9 +286,9 @@ const DigitalAudit = () => {
                       </Select>
                     </div>
                     <div>
-                      <Label className="text-white/80">Objetivo</Label>
+                      <Label className="text-ink-secondary">Objetivo</Label>
                       <Select value={goal} onValueChange={setGoal}>
-                        <SelectTrigger className="bg-white/5 border-white/15 text-white"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectTrigger className="bg-black/5 border-black/15 text-ink-primary"><SelectValue placeholder="Selecione" /></SelectTrigger>
                         <SelectContent>
                           {['Gerar leads', 'Vender online', 'Aumentar tráfego', 'Melhorar SEO', 'Automatizar', 'Rebrand'].map((s) => (
                             <SelectItem key={s} value={s}>{s}</SelectItem>
@@ -297,13 +300,13 @@ const DigitalAudit = () => {
 
                   <button type="submit" disabled={loading}
                     className="group w-full inline-flex items-center justify-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white disabled:opacity-50"
-                    style={{ borderColor: ACCENT, color: '#ffb494' }}
+                    style={{ borderColor: ACCENT, color: ACCENT }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
                     onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
                     {loading ? 'A enviar…' : 'Enviar-me o link de acesso'}
                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                   </button>
-                  <p className="text-[11px] text-center text-white/50">
+                  <p className="text-[11px] text-center text-ink-tertiary">
                     Recebes um email para confirmar. O link corre a auditoria automaticamente.
                   </p>
                 </form>
@@ -316,12 +319,12 @@ const DigitalAudit = () => {
                     <MailCheck className="w-8 h-8" style={{ color: ACCENT }} />
                   </div>
                   <h2 className="text-2xl font-bold">Verifica o teu email.</h2>
-                  <p className="mt-3 text-white/70 max-w-sm mx-auto">
-                    Enviámos um link para <strong className="text-white">{email}</strong>.
+                  <p className="mt-3 text-ink-secondary max-w-sm mx-auto">
+                    Enviámos um link para <strong className="text-ink-primary">{email}</strong>.
                     Clica no botão do email para confirmar e abrir a auditoria completa.
                   </p>
-                  <p className="mt-6 text-[11px] text-white/40">Não vês o email? Verifica spam/promoções. Link válido 72h.</p>
-                  <button onClick={() => setState('form')} className="mt-6 text-xs font-mono uppercase tracking-widest text-white/60 hover:text-white transition-colors">
+                  <p className="mt-6 text-[11px] text-ink-tertiary">Não vês o email? Verifica spam/promoções. Link válido 72h.</p>
+                  <button onClick={() => setState('form')} className="mt-6 text-xs font-mono uppercase tracking-widest text-ink-secondary hover:text-white transition-colors">
                     ← Voltar ao formulário
                   </button>
                 </div>
@@ -334,7 +337,7 @@ const DigitalAudit = () => {
                     Auditoria em execução
                   </div>
                   <h2 className="mt-3 text-2xl font-bold">A analisar {urlParam || url}</h2>
-                  <p className="mt-2 text-white/60 text-sm">
+                  <p className="mt-2 text-ink-secondary text-sm">
                     Podes deixar esta janela aberta — quando terminar, o relatório abre automaticamente.
                   </p>
 
@@ -362,10 +365,10 @@ const DigitalAudit = () => {
                             )}
                           </div>
                           <div className="pb-2">
-                            <div className={`text-sm font-bold ${isActive ? 'text-white' : isDone ? 'text-white/70' : 'text-white/40'}`}>
+                            <div className={`text-sm font-bold ${isActive ? 'text-ink-primary' : isDone ? 'text-ink-secondary' : 'text-ink-tertiary'}`}>
                               {s.label}
                             </div>
-                            <div className={`text-xs mt-0.5 ${isActive ? 'text-white/70' : 'text-white/40'}`}>
+                            <div className={`text-xs mt-0.5 ${isActive ? 'text-ink-secondary' : 'text-ink-tertiary'}`}>
                               {s.hint}
                             </div>
                           </div>
@@ -374,7 +377,7 @@ const DigitalAudit = () => {
                     })}
                   </ol>
 
-                  <div className="mt-8 h-1 w-full rounded-full bg-white/5 overflow-hidden">
+                  <div className="mt-8 h-1 w-full rounded-full bg-black/5 overflow-hidden">
                     <div className="h-full transition-all duration-700"
                       style={{
                         width: `${((STAGES.findIndex((x) => x.key === stage) + 1) / STAGES.length) * 100}%`,
@@ -387,12 +390,12 @@ const DigitalAudit = () => {
               {state === 'result' && result && (
                 <div className="text-center py-6">
                   <ScoreDial score={result.overallScore} />
-                  <div className="mt-4 text-xs uppercase tracking-widest text-white/50">Pontuação Global</div>
+                  <div className="mt-4 text-xs uppercase tracking-widest text-ink-tertiary">Pontuação Global</div>
                   <div className={`mt-1 text-2xl font-black ${scoreColor(result.overallScore)}`}>{result.rating}</div>
                   <a href={result.url} target="_blank" rel="noreferrer" className="mt-2 inline-block text-sm break-all"
                     style={{ color: ACCENT }}>{result.url}</a>
                   <button onClick={reset}
-                    className="mt-6 inline-flex items-center gap-2 border px-5 py-2.5 text-[11px] font-mono uppercase tracking-[0.24em] text-white/70 hover:text-white transition-colors"
+                    className="mt-6 inline-flex items-center gap-2 border px-5 py-2.5 text-[11px] font-mono uppercase tracking-[0.24em] text-ink-secondary hover:text-white transition-colors"
                     style={{ borderColor: 'rgba(255,255,255,0.2)' }}>
                     <RotateCcw className="w-3.5 h-3.5" /> Nova auditoria
                   </button>
@@ -405,28 +408,28 @@ const DigitalAudit = () => {
 
       {/* RESULT DETAIL (when we have it) */}
       {state === 'result' && result && (
-        <section className="bg-[#0a0603] text-white py-20 md:py-28 border-t border-white/5">
-          <div className="max-w-7xl mx-auto px-6 md:px-12">
+        <section className="gb-surface-section gb-section">
+          <div className="gb-container">
             <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
               {result.pillars.map((p) => {
                 const Icon = PILLAR_ICONS[p.key] || Globe;
                 return (
-                  <div key={p.key} className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+                  <div key={p.key} className="rounded-xl border border-black/10 bg-black/[0.02] p-5">
                     <div className="flex items-center justify-between mb-3">
                       <Icon className="w-5 h-5" style={{ color: ACCENT }} />
-                      <span className="text-[10px] font-mono font-bold uppercase text-white/50">{p.weight}%</span>
+                      <span className="text-[10px] font-mono font-bold uppercase text-ink-tertiary">{p.weight}%</span>
                     </div>
                     <div className="text-sm font-bold">{p.label}</div>
                     <div className={`text-3xl font-black mt-1 ${scoreColor(p.score)}`}>
-                      {p.score}<span className="text-sm text-white/40">/100</span>
+                      {p.score}<span className="text-sm text-ink-tertiary">/100</span>
                     </div>
                     <ul className="mt-4 space-y-1.5 text-xs">
                       {p.checks.slice(0, 5).map((c) => (
                         <li key={c.id} className="flex items-start gap-1.5">
                           {c.pass
-                            ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                            : <XCircle className="w-3.5 h-3.5 text-red-400 flex-shrink-0 mt-0.5" />}
-                          <span className={c.pass ? 'text-white/50' : 'text-white/90'}>{c.label}</span>
+                            ? <CheckCircle2 className="w-3.5 h-3.5 text-success flex-shrink-0 mt-0.5" />
+                            : <XCircle className="w-3.5 h-3.5 text-error flex-shrink-0 mt-0.5" />}
+                          <span className={c.pass ? 'text-ink-tertiary' : 'text-ink-secondary'}>{c.label}</span>
                         </li>
                       ))}
                     </ul>
@@ -444,24 +447,24 @@ const DigitalAudit = () => {
                 <h3 className="mt-2 text-2xl md:text-3xl font-black">As correcções com maior impacto na tua nota.</h3>
                 <div className="mt-8 grid md:grid-cols-2 gap-4">
                   {result.priorities.map((p, i) => (
-                    <div key={i} className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+                    <div key={i} className="rounded-lg border border-black/10 bg-black/[0.03] p-5">
                       <div className="text-[10px] font-mono uppercase tracking-widest font-bold" style={{ color: ACCENT }}>{p.pillar}</div>
                       <div className="text-sm font-bold mt-1">{p.label}</div>
-                      {p.hint && <div className="text-xs text-white/60 mt-1.5">{p.hint}</div>}
+                      {p.hint && <div className="text-xs text-ink-secondary mt-1.5">{p.hint}</div>}
                     </div>
                   ))}
                 </div>
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Link to="/booking"
                     className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all"
-                    style={{ borderColor: ACCENT, color: '#ffb494' }}
+                    style={{ borderColor: ACCENT, color: ACCENT }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
+                    onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')} onClick={() => analytics.trackClick('digital_audit_hero', 'digital_audit_booking', 'consideration')}>
                     Agendar sessão estratégica
                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                   <Link to="/solucoes"
-                    className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-white/60 hover:text-white transition-colors">
+                    className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-ink-secondary hover:text-white transition-colors">
                     Ver serviços
                   </Link>
                 </div>
@@ -473,8 +476,8 @@ const DigitalAudit = () => {
 
       {/* PILLARS EXPLAINED — accordion (only on form/sent) */}
       {state !== 'result' && (
-        <section className="bg-[#0a0603] text-white py-24 md:py-32">
-          <div className="max-w-7xl mx-auto px-6 md:px-12">
+        <section className="gb-surface-section gb-section">
+          <div className="gb-container">
             <div className="max-w-3xl">
               <div className="text-[11px] font-mono uppercase tracking-[0.22em]" style={{ color: '#ffb494' }}>
                 Metodologia · 5 Pilares
@@ -482,19 +485,19 @@ const DigitalAudit = () => {
               <h2 className="mt-4 text-4xl md:text-6xl font-black leading-[1.02] tracking-tight">
                 5 áreas críticas. <span style={{ color: ACCENT }}>Uma única nota.</span>
               </h2>
-              <p className="mt-6 text-white/70 text-lg">
+              <p className="mt-6 text-ink-secondary text-lg">
                 Cada pilar tem peso proporcional ao impacto real na geração de negócio.
                 Somamos, ponderamos e devolvemos uma pontuação /100 accionável.
               </p>
             </div>
 
-            <div className="mt-14 border-t border-white/10">
+            <div className="mt-14 border-t border-black/10">
               {pillarsInfo.map((f, i) => {
                 const isOpen = openIndex === i;
                 return (
-                  <div key={f.title} className="border-b border-white/10">
+                  <div key={f.title} className="border-b border-black/10">
                     <button type="button" onClick={() => setOpenIndex(isOpen ? -1 : i)}
-                      className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 py-10 md:py-14 text-left transition-colors hover:bg-white/[0.02]">
+                      className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 py-10 md:py-14 text-left transition-colors hover:bg-black/[0.02]">
                       <div>
                         <div className="flex items-start gap-5">
                           <span className="mt-3 shrink-0" style={{ color: isOpen ? ACCENT : 'rgba(255,255,255,0.5)' }}>
@@ -504,7 +507,7 @@ const DigitalAudit = () => {
                         </div>
                         <div className="mt-6 ml-0 md:ml-10 flex flex-wrap gap-2.5">
                           {f.tags.map((tag) => (
-                            <span key={tag} className="rounded-full border border-white/25 px-3.5 py-1.5 text-xs text-white/80">
+                            <span key={tag} className="rounded-full border border-black/25 px-3.5 py-1.5 text-xs text-ink-secondary">
                               {tag}
                             </span>
                           ))}
@@ -526,7 +529,7 @@ const DigitalAudit = () => {
                               animate={{ opacity: 1, height: 'auto', marginTop: 20 }}
                               exit={{ opacity: 0, height: 0, marginTop: 0 }}
                               transition={{ duration: 0.35 }}
-                              className="overflow-hidden text-sm md:text-base leading-relaxed text-white/70">
+                              className="overflow-hidden text-sm md:text-base leading-relaxed text-ink-secondary">
                               {f.body}
                             </motion.p>
                           )}
@@ -542,7 +545,7 @@ const DigitalAudit = () => {
       )}
 
       {/* FINAL CTA */}
-      <section className="bg-black text-white py-24 md:py-32">
+      <section className="gb-surface-page gb-section">
         <div className="max-w-5xl mx-auto px-6 md:px-12 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
@@ -551,7 +554,7 @@ const DigitalAudit = () => {
             Descobre o que trava o teu crescimento{' '}
             <span style={{ color: ACCENT }}>agora</span>.
           </motion.h2>
-          <p className="mt-8 text-white/70 max-w-2xl mx-auto">
+          <p className="mt-8 text-ink-secondary max-w-2xl mx-auto">
             Auditoria imediata, relatório no teu email e prioridades ordenadas por impacto.
           </p>
           <button

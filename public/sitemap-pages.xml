@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://getboost.digital/</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital"/>
@@ -12,7 +12,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/solucoes</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/solucoes"/>
@@ -22,7 +22,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/produtos</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/produtos"/>
@@ -32,7 +32,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/work</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/work"/>
@@ -42,7 +42,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/insights</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/insights"/>
@@ -51,18 +51,8 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/insights"/>
   </url>
   <url>
-    <loc>https://getboost.digital/about</loc>
-    <lastmod>2026-10-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/about"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/about"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/about"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/about"/>
-  </url>
-  <url>
     <loc>https://getboost.digital/portfolio</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/portfolio"/>
@@ -72,7 +62,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/blog</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/blog"/>
@@ -82,7 +72,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/resources</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/resources"/>
@@ -92,7 +82,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/contact</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/contact"/>
@@ -102,7 +92,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/booking</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/booking"/>
@@ -112,7 +102,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/investidores</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/investidores"/>
@@ -122,7 +112,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/simulador</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/simulador"/>
@@ -132,7 +122,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/agentes-ia</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/agentes-ia"/>
@@ -142,7 +132,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/crm-sales-intelligence</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/crm-sales-intelligence"/>
@@ -152,7 +142,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/tools/roi-calculator</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/tools/roi-calculator"/>
@@ -162,7 +152,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/tools/seo-analyzer</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/tools/seo-analyzer"/>
@@ -172,7 +162,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/tools/content-ideas</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/tools/content-ideas"/>
@@ -182,7 +172,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/tools/branding-guide</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/tools/branding-guide"/>
@@ -192,7 +182,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/politica-de-privacidade</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/politica-de-privacidade"/>
@@ -202,7 +192,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/politica-de-cookies</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/politica-de-cookies"/>
@@ -212,7 +202,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/agencia-marketing-digital-figueira-da-foz</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/agencia-marketing-digital-figueira-da-foz"/>
@@ -222,7 +212,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/agencia-marketing-digital-coimbra</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/agencia-marketing-digital-coimbra"/>
@@ -232,7 +222,7 @@
   </url>
   <url>
     <loc>https://getboost.digital/agencia-marketing-digital-leiria</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/agencia-marketing-digital-leiria"/>
@@ -242,12 +232,112 @@
   </url>
   <url>
     <loc>https://getboost.digital/agencia-marketing-digital-pombal</loc>
-    <lastmod>2026-10-10</lastmod>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/agencia-marketing-digital-pombal"/>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/agencia-marketing-digital-pombal"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/agencia-marketing-digital-pombal"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/agencia-marketing-digital-pombal"/>
+  </url>
+  <url>
+    <loc>https://getboost.digital/ai-agentes-imobiliario</loc>
+    <lastmod>2026-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/ai-agentes-imobiliario"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/ai-agentes-imobiliario"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/ai-agentes-imobiliario"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/ai-agentes-imobiliario"/>
+  </url>
+  <url>
+    <loc>https://getboost.digital/ai-agentes-clinicas</loc>
+    <lastmod>2026-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/ai-agentes-clinicas"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/ai-agentes-clinicas"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/ai-agentes-clinicas"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/ai-agentes-clinicas"/>
+  </url>
+  <url>
+    <loc>https://getboost.digital/ai-agentes-restauracao</loc>
+    <lastmod>2026-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/ai-agentes-restauracao"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/ai-agentes-restauracao"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/ai-agentes-restauracao"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/ai-agentes-restauracao"/>
+  </url>
+  <url>
+    <loc>https://getboost.digital/automacao-whatsapp</loc>
+    <lastmod>2026-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/automacao-whatsapp"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/automacao-whatsapp"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/automacao-whatsapp"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/automacao-whatsapp"/>
+  </url>
+  <url>
+    <loc>https://getboost.digital/integracao-crm</loc>
+    <lastmod>2026-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/integracao-crm"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/integracao-crm"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/integracao-crm"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/integracao-crm"/>
+  </url>
+  <url>
+    <loc>https://getboost.digital/integracao-erp</loc>
+    <lastmod>2026-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/integracao-erp"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/integracao-erp"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/integracao-erp"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/integracao-erp"/>
+  </url>
+  <url>
+    <loc>https://getboost.digital/desenvolvimento-saas</loc>
+    <lastmod>2026-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/desenvolvimento-saas"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/desenvolvimento-saas"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/desenvolvimento-saas"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/desenvolvimento-saas"/>
+  </url>
+  <url>
+    <loc>https://getboost.digital/software-gestao</loc>
+    <lastmod>2026-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/software-gestao"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/software-gestao"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/software-gestao"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/software-gestao"/>
+  </url>
+  <url>
+    <loc>https://getboost.digital/growth-system</loc>
+    <lastmod>2026-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/growth-system"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/growth-system"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/growth-system"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/growth-system"/>
+  </url>
+  <url>
+    <loc>https://getboost.digital/geracao-leads</loc>
+    <lastmod>2026-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://getboost.digital/geracao-leads"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://getboost.digital/br/geracao-leads"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://getboost.digital/en/geracao-leads"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://getboost.digital/geracao-leads"/>
   </url>
 </urlset>

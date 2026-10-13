@@ -2,10 +2,20 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, Grid2x2, Minus, Circle } from 'lucide-react';
+import { ArrowRight, Zap, Check, Grid2x2, Minus, Circle } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { PILLARS } from '@/components/pillars/pillarData';
+import { PRODUCTS } from '@/data/products';
+import { CountUp } from '@/components/ui/count-up';
+import { MiniFlow } from '@/components/ui/mini-flow';
+import { CaseProofStrip } from '@/components/CaseProofStrip';
+import { Button } from '@/components/ui/button';
+import { SectionHeader } from '@/components/ui/section-header';
+import { ScrollDepth } from '@/components/ScrollDepth';
+import { analytics } from '@/lib/analytics';
 import ConsultantContactForm from '@/components/ConsultantContactForm';
+import { Reveal } from '@/components/ui/reveal';
 
 const ACCENT = '#ff4000';
 
@@ -57,6 +67,8 @@ const features: Feature[] = [
   },
 ];
 
+const AUTOMATION = PILLARS.automation;
+
 const Prosafe360Landing = () => {
   const { i18n } = useTranslation();
   const [openIndex, setOpenIndex] = useState<number>(0);
@@ -64,6 +76,7 @@ const Prosafe360Landing = () => {
 
   return (
     <Layout>
+      <ScrollDepth location="prosafe" />
       <SEO
         title="Prosafe360 — Plataforma SaaS de Segurança e Saúde no Trabalho | Getboost Digital"
         description="Prosafe360 é a plataforma SaaS completa de SST: avaliações, EPI, emergência, auditorias, IA e Painel TV. Reduz riscos, garante conformidade e automatiza rotinas."
@@ -72,47 +85,30 @@ const Prosafe360Landing = () => {
       />
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
-        <div
-          aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
-            backgroundSize: '56px 56px',
-            maskImage: 'radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%)',
-            WebkitMaskImage: 'radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%)',
-          }}
-        />
+      <section className="gb-surface-page relative overflow-hidden">
+        <div aria-hidden className="gb-grid-overlay" />
         <div
           aria-hidden
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
           style={{
             background:
-              'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)',
+              'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)',
           }}
         />
-        <motion.div
-          aria-hidden
-          initial={{ y: '-100%' }}
-          animate={{ y: '120%' }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          className="pointer-events-none absolute inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#ff4000]/10 to-transparent"
-        />
 
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-28 md:py-40">
+        <div className="gb-container relative gb-section !pt-10 md:!pt-16">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
+            className="gb-eyebrow text-brand-600"
             style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
             Prosafe360 · SST · Conformidade · IA
           </motion.div>
 
-          <h1 className="mt-8 font-black leading-[0.92] tracking-tight text-[clamp(2.75rem,8vw,7rem)]">
+          <h1 className="gb-text-display mt-5 text-ink-primary">
             {manifestoLines.map((line, i) => (
               <motion.span
                 key={line}
@@ -144,11 +140,11 @@ const Prosafe360Landing = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-10 max-w-2xl text-lg md:text-xl leading-relaxed text-white/75"
+            className="gb-text-body mt-6 max-w-xl text-ink-secondary"
           >
             O Prosafe360 é a plataforma SaaS que reúne toda a gestão de Segurança e Saúde no
             Trabalho num único ecossistema — avaliações, operação, emergência, conformidade e
-            <em className="not-italic text-white"> IA que transforma dados em prevenção</em>.
+            <em className="not-italic text-ink-primary"> IA que transforma dados em prevenção</em>.
           </motion.p>
 
           <motion.div
@@ -160,17 +156,16 @@ const Prosafe360Landing = () => {
             <Link
               to="/demo?produto=prosafe360"
               className="group inline-flex items-center gap-3 border-2 px-7 py-4 font-mono text-xs uppercase tracking-[0.24em] transition-all hover:!text-white"
-              style={{ borderColor: ACCENT, color: '#ffb494' }}
+              style={{ borderColor: ACCENT, color: ACCENT }}
               onMouseEnter={(e) => (e.currentTarget.style.background = ACCENT)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-            >
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')} onClick={() => analytics.trackClick('prosafe_hero', 'prosafe_demo', 'consideration')}>
               Pedir Demonstração
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <button
               type="button"
               onClick={() => setContactOpen((v) => !v)}
-              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-white/60 transition-colors hover:text-white"
+              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-ink-secondary transition-colors hover:text-ink-primary"
             >
               <Zap className="h-4 w-4" style={{ color: ACCENT }} />
               Falar com um especialista SST
@@ -181,7 +176,7 @@ const Prosafe360Landing = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1.1 }}
-            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 border-t border-white/10 pt-8"
+            className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 border-t border-black/[0.06] pt-8"
           >
             {[
               { k: '1', v: 'Ecossistema para toda a SST' },
@@ -193,7 +188,7 @@ const Prosafe360Landing = () => {
                 <div className="font-mono text-3xl md:text-4xl font-bold" style={{ color: ACCENT }}>
                   {s.k}
                 </div>
-                <div className="mt-1 text-xs uppercase tracking-widest text-white/50">{s.v}</div>
+                <div className="mt-1 text-xs uppercase tracking-widest text-ink-tertiary">{s.v}</div>
               </div>
             ))}
           </motion.div>
@@ -201,24 +196,29 @@ const Prosafe360Landing = () => {
       </section>
 
       {/* FEATURES */}
-      <section className="bg-[#0a0603] text-white py-24 md:py-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="border-t border-white/10">
+      <section className="gb-surface-section gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Capacidades"
+            title="Toda a SST num único ecossistema"
+            description="Abre cada bloco para ver o que está incluído e como se liga ao resto da operação."
+          />
+          <div className="border-t border-black/[0.06]">
             {features.map((f, i) => {
               const isOpen = openIndex === i;
               return (
-                <div key={f.title} className="border-b border-white/10">
+                <div key={f.title} className="border-b border-black/[0.06]">
                   <button
                     type="button"
                     onClick={() => setOpenIndex(isOpen ? -1 : i)}
-                    className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 py-10 md:py-14 text-left transition-colors hover:bg-white/[0.02]"
+                    className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 py-10 md:py-14 text-left transition-colors hover:bg-black/[0.02]"
                   >
                     <div>
                       <div className="flex items-start gap-5">
-                        <span className="mt-3 shrink-0" style={{ color: isOpen ? ACCENT : 'rgba(255,255,255,0.5)' }}>
+                        <span className="mt-3 shrink-0" style={{ color: isOpen ? ACCENT : 'var(--gb-ink-tertiary)' }}>
                           {isOpen ? <Circle className="h-4 w-4 fill-current" /> : <Grid2x2 className="h-5 w-5" />}
                         </span>
-                        <h3 className="text-3xl md:text-5xl font-bold leading-[1.05] tracking-tight">
+                        <h3 className="gb-text-h3 !text-3xl md:!text-4xl text-ink-primary">
                           {f.title}
                         </h3>
                       </div>
@@ -226,7 +226,7 @@ const Prosafe360Landing = () => {
                         {f.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="rounded-full border border-white/25 px-4 py-1.5 text-xs md:text-sm text-white/80"
+                            className="gb-chip"
                           >
                             {tag}
                           </span>
@@ -238,14 +238,14 @@ const Prosafe360Landing = () => {
                       <div className="flex items-start justify-between gap-6">
                         <span
                           className="font-mono text-[11px] md:text-xs uppercase tracking-[0.22em]"
-                          style={{ color: isOpen ? ACCENT : 'rgba(255,255,255,0.6)' }}
+                          style={{ color: isOpen ? ACCENT : 'var(--gb-ink-tertiary)' }}
                         >
                           {f.eyebrow}
                         </span>
                         <Minus
                           className="h-6 w-6 shrink-0 transition-transform"
                           style={{
-                            color: isOpen ? ACCENT : 'rgba(255,255,255,0.5)',
+                            color: isOpen ? ACCENT : 'var(--gb-ink-tertiary)',
                             transform: isOpen ? 'rotate(0deg)' : 'rotate(90deg)',
                           }}
                         />
@@ -257,7 +257,7 @@ const Prosafe360Landing = () => {
                             animate={{ opacity: 1, height: 'auto', marginTop: 24 }}
                             exit={{ opacity: 0, height: 0, marginTop: 0 }}
                             transition={{ duration: 0.35 }}
-                            className="overflow-hidden text-sm md:text-base leading-relaxed text-white/70"
+                            className="overflow-hidden text-sm md:text-base leading-relaxed text-ink-secondary"
                           >
                             {f.body}
                           </motion.p>
@@ -273,7 +273,7 @@ const Prosafe360Landing = () => {
       </section>
 
       {/* VALUE STATEMENT */}
-      <section className="bg-[#0a0603] text-white py-24 border-t border-white/10">
+      <section className="gb-surface-page gb-section !pt-0">
         <div className="max-w-4xl mx-auto px-6 md:px-12 text-center">
           <p className="text-2xl md:text-3xl leading-relaxed text-white/85 font-light">
             Prosafe360 transforma <span style={{ color: ACCENT }}>dados em decisões</span>,{' '}
@@ -285,14 +285,105 @@ const Prosafe360Landing = () => {
       </section>
 
       {/* CTA FINAL */}
-      <section className="bg-black text-white py-28 md:py-40">
-        <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
+            {/* COMO FUNCIONA */}
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Como funciona"
+            title="Da entrada ao resultado, sem fricção"
+            description="Cada etapa alimenta a seguinte — do primeiro contacto à operação em contínuo."
+          />
+          <Reveal i={0}>
+            <div className="gb-card mt-12">
+              <MiniFlow
+                steps={['Avaliações Avançadas', 'Gestão Operacional', 'Emergência & Autoproteção', 'Conformidade Contínua', 'Colaboradores & Comunicação', 'Prosafe360 · IA & Painel TV']}
+                tint="var(--gb-automation-tint)"
+                strong="var(--gb-automation-strong)"
+              />
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* PROVA */}
+      <section className="gb-surface-subtle gb-section">
+        <div className="gb-container">
+          <SectionHeader
+            eyebrow="Prova"
+            title="A mesma engenharia, noutros produtos"
+            description="Construímos e operamos os nossos próprios produtos com o mesmo rigor que aplicamos nos clientes."
+          />
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {AUTOMATION.proof.map((p, i) => (
+              <Reveal key={p.k} i={i}>
+                <div className="gb-surface-card-elevated h-full">
+                  <div className="gb-text-display" style={{ color: 'var(--gb-automation-strong)' }}><CountUp value={p.k} /></div>
+                  <p className="gb-eyebrow mt-2 text-ink-tertiary">Resultado</p>
+                  <p className="gb-text-body mt-3 text-ink-secondary">{p.v}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+          <div className="mt-12 grid gap-4 sm:grid-cols-2">
+            {PRODUCTS.filter((product) => product.slug === 'qook').map((product) => (
+              <Reveal key={product.slug} i={0}>
+                <Link to={product.to as string} className="group block h-full" onClick={() => analytics.trackProduct(product.slug, 'click', 'proof_crosslink')}>
+                  <div className="gb-surface-card gb-card-lift h-full">
+                    <span aria-hidden className="block h-1 w-10 rounded-full" style={{ background: product.accent }} />
+                    <h3 className="gb-text-h3 mt-4 text-ink-primary">{product.name}</h3>
+                    <p className="gb-text-small mt-2 font-medium text-ink-secondary">{product.tagline}</p>
+                    <span className="gb-link-more mt-5 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-brand-600">
+                      Conhecer <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+            {PRODUCTS.filter((product) => product.slug === 'trackfy').map((product) => (
+              <Reveal key={product.slug} i={0}>
+                <Link to={product.to as string} className="group block h-full" onClick={() => analytics.trackProduct(product.slug, 'click', 'proof_crosslink')}>
+                  <div className="gb-surface-card gb-card-lift h-full">
+                    <span aria-hidden className="block h-1 w-10 rounded-full" style={{ background: product.accent }} />
+                    <h3 className="gb-text-h3 mt-4 text-ink-primary">{product.name}</h3>
+                    <p className="gb-text-small mt-2 font-medium text-ink-secondary">{product.tagline}</p>
+                    <span className="gb-link-more mt-5 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-brand-600">
+                      Conhecer <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Button asChild variant="ghost">
+              <Link to="/produtos">
+                Ver todos os produtos <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* 10B CASOS — resultados de clientes (motor partilhado, sem conteúdo inventado) */}
+      <section className="gb-surface-page gb-section">
+        <div className="gb-container">
+          <CaseProofStrip
+            slugs={['prosafe360']}
+            tint="var(--gb-automation-tint)"
+            strong="var(--gb-automation-strong)"
+            trackingLocation="prosafe_cases"
+          />
+        </div>
+      </section>
+
+<section className="gb-surface-page gb-section">
+        <div className="gb-container"><div className="gb-cta-band relative overflow-hidden border border-white/10 text-center"><div className="relative">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="font-black leading-[0.95] tracking-tight text-[clamp(2.25rem,7vw,6rem)]"
+            className="font-black leading-[0.98] tracking-tight text-[clamp(2rem,5vw,4rem)] text-ink-inverse"
           >
             Pronto para elevar a <span style={{ color: ACCENT }}>segurança</span> e a{' '}
             <span style={{ color: ACCENT }}>conformidade</span> da tua operação?
@@ -317,6 +408,8 @@ const Prosafe360Landing = () => {
               <ArrowRight className="h-4 w-4" />
             </button>
           </motion.div>
+            </div>
+          </div>
 
           <ConsultantContactForm
             open={contactOpen}

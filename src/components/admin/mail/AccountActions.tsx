@@ -209,7 +209,7 @@ export function AccountActions({ accountId, email, provider = "gmail", onChanged
               {checks.map((c) => (
                 <div key={c.id} className="flex items-start gap-2.5 rounded-md border p-2.5 text-sm">
                   {c.ok
-                    ? <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
+                    ? <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
                     : <XCircle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />}
                   <div className="min-w-0">
                     <div className="font-medium">{c.label}</div>

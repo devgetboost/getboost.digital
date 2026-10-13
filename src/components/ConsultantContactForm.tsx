@@ -119,7 +119,7 @@ const ConsultantContactForm = ({ open, service }: Props) => {
       analytics.trackForm('consultor', `consultor_${service.slug}_form_success`, {
         slug: service.slug,
         service: service.name,
-        email: form.email.trim(),
+        // R20.1 — analytics payloads never carry PII.
       });
 
       setDone(true);
@@ -191,7 +191,7 @@ const ConsultantContactForm = ({ open, service }: Props) => {
                   </Field>
                   <Field label="Quando querem começar?" error={errors.timeline}>
                     <select value={form.timeline} onChange={(e) => set('timeline', e.target.value)}
-                      className="w-full bg-[#0a0603] border border-white/20 px-4 py-3 text-white outline-none focus:border-white/60">
+                      className="w-full bg-canvas-inverse border border-white/20 px-4 py-3 text-white outline-none focus:border-white/60">
                       <option value="">Seleccionar…</option>
                       {(service.timelineOptions || defaultTimelines).map((o) => (
                         <option key={o} value={o}>{o}</option>
@@ -269,7 +269,7 @@ const Field = ({ label, error, children }: { label: string; error?: string; chil
   <label className="block">
     <span className="block mb-2 text-[11px] font-mono uppercase tracking-widest text-white/60">{label}</span>
     {children}
-    {error && <span className="mt-1 block text-xs text-red-400">{error}</span>}
+    {error && <span className="mt-1 block text-xs text-error">{error}</span>}
   </label>
 );
 

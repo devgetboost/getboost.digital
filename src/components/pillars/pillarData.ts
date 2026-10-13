@@ -173,7 +173,7 @@ export const PILLARS: Record<PillarId, Pillar> = {
       { k: "100%", v: "dos fluxos com logs auditáveis" },
       { k: "0", v: "dados duplicados entre sistemas" },
     ],
-    products: ["qook", "hostify"],
+    products: ["qook", "trackfy"],
     service: {
       slug: "integracoes-erp-crm",
       name: "Automação",
@@ -244,7 +244,7 @@ export const PILLARS: Record<PillarId, Pillar> = {
       { k: "10k+", v: "clientes por tenant sem reescrever" },
       { k: "24/7", v: "monitorização e alertas desde o dia 1" },
     ],
-    products: ["qook", "hostify", "prosafe360"],
+    products: ["qook", "motivae", "pikto"],
     service: {
       slug: "desenvolvimento-software",
       name: "Software",

@@ -59,7 +59,7 @@ const AuditHistoryModal = ({ open, onClose }: Props) => {
             exit={{ opacity: 0, y: 20, scale: 0.98 }}
             transition={{ duration: 0.3 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-2xl my-auto rounded-2xl border border-white/10 bg-[#0a0603] text-white shadow-[0_20px_80px_-20px_rgba(255,64,0,0.5)] overflow-hidden"
+            className="relative w-full max-w-2xl my-auto rounded-2xl border border-white/10 bg-canvas-inverse text-white shadow-[0_20px_80px_-20px_rgba(255,64,0,0.5)] overflow-hidden"
           >
             <div
               aria-hidden
@@ -138,7 +138,7 @@ const AuditHistoryModal = ({ open, onClose }: Props) => {
                             type="button"
                             onClick={() => handleDelete(a.id)}
                             aria-label="Apagar"
-                            className="rounded-full p-2 text-white/40 hover:text-red-400 hover:bg-white/5 transition-colors"
+                            className="rounded-full p-2 text-white/40 hover:text-error hover:bg-white/5 transition-colors"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -150,7 +150,7 @@ const AuditHistoryModal = ({ open, onClose }: Props) => {
                     <button
                       type="button"
                       onClick={handleClear}
-                      className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/40 hover:text-red-400 transition-colors"
+                      className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/40 hover:text-error transition-colors"
                     >
                       Apagar histórico
                     </button>

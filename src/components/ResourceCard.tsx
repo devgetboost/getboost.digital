@@ -9,8 +9,8 @@ export const categoryStyles: Record<
   { bg: string; fg: string; label: string }
 > = {
   guides: { bg: '#ff4000', fg: '#ffffff', label: 'GUIA · GETBOOST' },
-  templates: { bg: '#0a0603', fg: '#ff4000', label: 'TEMPLATE · GETBOOST' },
-  tools: { bg: '#ffb494', fg: '#0a0603', label: 'FERRAMENTA · GETBOOST' },
+  templates: { bg: 'var(--gb-ink-primary)', fg: '#ff4000', label: 'TEMPLATE · GETBOOST' },
+  tools: { bg: '#ffb494', fg: 'var(--gb-ink-primary)', label: 'FERRAMENTA · GETBOOST' },
 };
 
 interface ResourceCardProps {

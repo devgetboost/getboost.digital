@@ -29,6 +29,7 @@ rules, so link equity passes without a JS round-trip.
 | `/solucoes/hostify` | `/hostify` | SAFE_TO_KEEP | product moved above `/solucoes` |
 | `/solucoes/qook` | `/qook` | SAFE_TO_KEEP | product moved above `/solucoes` |
 | `/seguranca-trabalho` | `/prosafe360` | SAFE_TO_KEEP | product renamed |
+| `/about` | `/sobre-nos` | SAFE_TO_KEEP | R19.9 OPÇÃO A: institutional consolidation; host-301 candidate |
 
 ## 2. Legacy `/services/*` prefix (CANONICAL_REPLACEMENT)
 

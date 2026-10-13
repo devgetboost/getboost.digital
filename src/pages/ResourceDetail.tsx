@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import type { Resource } from '@/data/resources';
 import ResourceCard from '@/components/ResourceCard';
 import { Button } from '@/components/ui/button';
@@ -245,6 +246,7 @@ const ResourceDetail = () => {
 
   return (
     <Layout>
+      <ScrollDepth location="resource_detail" />
       <SEO
         title={resource.title}
         description={resource.description}
@@ -252,10 +254,10 @@ const ResourceDetail = () => {
       />
 
       {/* HERO — manifesto */}
-      <section className="relative overflow-hidden bg-[#0a0603] text-white">
+      <section className="gb-surface-page relative overflow-hidden">
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.18]"
+          className="absolute inset-0 gb-grid-overlay opacity-[0.05]"
           style={{
             backgroundImage:
               'linear-gradient(rgba(255,64,0,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,0,0.35) 1px, transparent 1px)',
@@ -269,15 +271,8 @@ const ResourceDetail = () => {
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
           style={{
             background:
-              'radial-gradient(circle, rgba(255,64,0,0.55) 0%, rgba(10,6,3,0) 65%)',
+              'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)',
           }}
-        />
-        <motion.div
-          aria-hidden
-          initial={{ y: '-100%' }}
-          animate={{ y: '120%' }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          className="pointer-events-none absolute inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#ff4000]/10 to-transparent"
         />
 
         <div className="relative max-w-7xl mx-auto px-6 md:px-12 pt-28 md:pt-36 pb-20 md:pb-28">
@@ -285,7 +280,7 @@ const ResourceDetail = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em]"
+            className="gb-eyebrow text-brand-600"
             style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
           >
             <span
@@ -310,7 +305,7 @@ const ResourceDetail = () => {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.35 }}
-                className="mt-6 text-lg md:text-xl text-white/70 leading-relaxed max-w-xl"
+                className="mt-6 text-lg md:text-xl text-ink-secondary leading-relaxed max-w-xl"
               >
                 {subheadline}
               </motion.p>
@@ -331,7 +326,7 @@ const ResourceDetail = () => {
                 </a>
                 <Link
                   to="/resources"
-                  className="text-sm font-mono uppercase tracking-[0.22em] text-white/60 hover:text-white transition-colors"
+                  className="text-sm font-mono uppercase tracking-[0.22em] text-ink-secondary hover:text-ink-primary transition-colors"
                 >
                   ← Todos os recursos
                 </Link>
@@ -352,11 +347,11 @@ const ResourceDetail = () => {
                       loading="lazy"
                       width={40}
                       height={40}
-                      className="w-10 h-10 rounded-full border-2 border-[#0a0603] object-cover"
+                      className="w-10 h-10 rounded-full border-2 border-ink-primary object-cover"
                     />
                   ))}
                 </div>
-                <span className="flex-1 min-w-0 text-xs md:text-sm font-mono uppercase tracking-[0.18em] text-white/60 leading-relaxed">
+                <span className="flex-1 min-w-0 text-xs md:text-sm font-mono uppercase tracking-[0.18em] text-ink-secondary leading-relaxed">
                   {t('resourceDetail.socialProof')}
                 </span>
               </motion.div>
@@ -367,7 +362,7 @@ const ResourceDetail = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.35 }}
-              className="relative rounded-2xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur-sm"
+              className="relative rounded-2xl border border-black/10 bg-black/[0.03] p-8 backdrop-blur-sm"
             >
               <div className="absolute -top-px left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#ff4000]/60 to-transparent" />
               <div className="flex items-center gap-4">
@@ -378,10 +373,10 @@ const ResourceDetail = () => {
                   <Icon className="h-7 w-7" style={{ color: ACCENT }} />
                 </div>
                 <div>
-                  <p className="text-[10px] font-mono uppercase tracking-[0.28em] text-white/50">
+                  <p className="text-[10px] font-mono uppercase tracking-[0.28em] text-ink-tertiary">
                     Ficha do recurso
                   </p>
-                  <p className="mt-1 font-semibold text-white">{resource.title}</p>
+                  <p className="mt-1 font-semibold text-ink-primary">{resource.title}</p>
                 </div>
               </div>
 
@@ -393,15 +388,15 @@ const ResourceDetail = () => {
                   { k: 'Acesso', v: 'Instantâneo' },
                 ].map((row) => (
                   <div key={row.k}>
-                    <dt className="text-[10px] font-mono uppercase tracking-[0.22em] text-white/40">
+                    <dt className="text-[10px] font-mono uppercase tracking-[0.22em] text-ink-tertiary">
                       {row.k}
                     </dt>
-                    <dd className="mt-1 font-medium text-white/90">{row.v}</dd>
+                    <dd className="mt-1 font-medium text-ink-secondary">{row.v}</dd>
                   </div>
                 ))}
               </dl>
 
-              <div className="mt-8 flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.22em] text-white/50">
+              <div className="mt-8 flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.22em] text-ink-tertiary">
                 <span
                   className="h-1.5 w-1.5 rounded-full animate-pulse"
                   style={{ background: ACCENT }}
@@ -414,7 +409,7 @@ const ResourceDetail = () => {
       </section>
 
       {/* BENEFITS + FORM — dark */}
-      <section id="form" className="relative bg-[#0a0603] text-white">
+      <section id="form" className="gb-surface-section gb-section relative">
         <div
           aria-hidden
           className="absolute inset-0 opacity-[0.08]"
@@ -426,7 +421,7 @@ const ResourceDetail = () => {
             WebkitMaskImage: 'linear-gradient(to bottom, black, transparent 90%)',
           }}
         />
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-24 md:py-32">
+        <div className="gb-container relative gb-section">
           <div className="grid lg:grid-cols-[1.1fr,1fr] gap-16 items-start">
             {/* Benefits */}
             <motion.div
@@ -446,7 +441,7 @@ const ResourceDetail = () => {
                   ? t('resourceDetail.whyUseTool')
                   : t('resourceDetail.whyDownload')}
               </h2>
-              <p className="mt-5 text-white/65 leading-relaxed max-w-lg">
+              <p className="mt-5 text-ink-secondary leading-relaxed max-w-lg">
                 {resource.category === 'tools'
                   ? t('resourceDetail.whyUseToolDesc')
                   : t('resourceDetail.whyDownloadDesc')}
@@ -460,7 +455,7 @@ const ResourceDetail = () => {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08, duration: 0.4 }}
-                    className="group flex items-start gap-4 rounded-xl border border-white/10 bg-white/[0.02] p-5 transition-colors hover:border-[#ff4000]/40"
+                    className="group flex items-start gap-4 rounded-xl border border-black/10 bg-black/[0.02] p-5 transition-colors hover:border-[#ff4000]/40"
                   >
                     <div
                       className="mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md"
@@ -468,12 +463,12 @@ const ResourceDetail = () => {
                     >
                       <Check className="h-3.5 w-3.5" style={{ color: ACCENT }} />
                     </div>
-                    <span className="text-white/85 leading-relaxed">{benefit}</span>
+                    <span className="text-ink-secondary leading-relaxed">{benefit}</span>
                   </motion.li>
                 ))}
               </ul>
 
-              <p className="mt-10 text-sm font-mono uppercase tracking-[0.22em] text-white/50">
+              <p className="mt-10 text-sm font-mono uppercase tracking-[0.22em] text-ink-tertiary">
                 {resource.category === 'tools'
                   ? t('resourceDetail.accessFreeToolCta')
                   : t('resourceDetail.downloadFreeCta')}
@@ -488,7 +483,7 @@ const ResourceDetail = () => {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="lg:sticky lg:top-28"
             >
-              <div className="relative rounded-2xl border border-white/10 bg-white/[0.03] p-8 md:p-10 backdrop-blur-sm">
+              <div className="relative rounded-2xl border border-black/10 bg-black/[0.03] p-8 md:p-10 backdrop-blur-sm">
                 <div className="absolute -top-px left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#ff4000]/60 to-transparent" />
 
                 <p
@@ -497,10 +492,10 @@ const ResourceDetail = () => {
                 >
                   / {resource.category === 'tools' ? 'Aceder à ferramenta' : 'Descarregar'}
                 </p>
-                <h3 className="mt-3 text-2xl md:text-3xl font-black tracking-tight text-white">
+                <h3 className="mt-3 text-2xl md:text-3xl font-black tracking-tight text-ink-primary">
                   {t('resourceDetail.formTitle')}
                 </h3>
-                <p className="mt-2 text-sm text-white/60">
+                <p className="mt-2 text-sm text-ink-secondary">
                   {t('resourceDetail.formSubtitle')}
                 </p>
 
@@ -509,8 +504,8 @@ const ResourceDetail = () => {
                     <div
                       className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all ${
                         step >= 1
-                          ? 'text-[#0a0603]'
-                          : 'bg-white/10 text-white/50'
+                          ? 'text-ink-primary'
+                          : 'bg-black/10 text-ink-tertiary'
                       }`}
                       style={step >= 1 ? { background: ACCENT } : {}}
                     >
@@ -522,7 +517,7 @@ const ResourceDetail = () => {
                     />
                     <div
                       className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all ${
-                        step >= 2 ? 'text-[#0a0603]' : 'bg-white/10 text-white/50'
+                        step >= 2 ? 'text-ink-primary' : 'bg-black/10 text-ink-tertiary'
                       }`}
                       style={step >= 2 ? { background: ACCENT } : {}}
                     >
@@ -539,13 +534,13 @@ const ResourceDetail = () => {
                     >
                       <Check className="h-8 w-8" style={{ color: ACCENT }} />
                     </div>
-                    <h4 className="text-xl font-bold text-white">
+                    <h4 className="text-xl font-bold text-ink-primary">
                       {t('resourceDetail.successTitle')}
                     </h4>
-                    <p className="mt-2 text-white/70">{t('resourceDetail.successMsg')}</p>
+                    <p className="mt-2 text-ink-secondary">{t('resourceDetail.successMsg')}</p>
                     <Button
                       asChild
-                      className="mt-6 rounded-full text-white hover:opacity-90"
+                      className="mt-6 rounded-full text-ink-primary hover:opacity-90"
                       style={{ background: ACCENT }}
                     >
                       <Link to="/resources">{t('resourceDetail.viewMoreResources')}</Link>
@@ -554,20 +549,20 @@ const ResourceDetail = () => {
                 ) : step === 1 ? (
                   <div className="mt-8 space-y-5">
                     <div>
-                      <Label className="mb-2 block text-[11px] font-mono uppercase tracking-[0.2em] text-white/60">
+                      <Label className="mb-2 block text-[11px] font-mono uppercase tracking-[0.2em] text-ink-secondary">
                         {t('resourceDetail.labelName')} *
                       </Label>
                       <Input
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder={t('resourceDetail.placeholderName')}
-                        className="h-12 rounded-lg border-white/15 bg-white/[0.04] text-white placeholder:text-white/30 focus-visible:ring-[#ff4000]/40"
+                        className="h-12 rounded-lg border-black/15 bg-black/[0.04] text-ink-primary placeholder:text-ink-tertiary focus-visible:ring-[#ff4000]/40"
                         required
                         maxLength={100}
                       />
                     </div>
                     <div>
-                      <Label className="mb-2 block text-[11px] font-mono uppercase tracking-[0.2em] text-white/60">
+                      <Label className="mb-2 block text-[11px] font-mono uppercase tracking-[0.2em] text-ink-secondary">
                         {t('resourceDetail.labelEmail')} *
                       </Label>
                       <Input
@@ -575,7 +570,7 @@ const ResourceDetail = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder={t('resourceDetail.placeholderEmail')}
-                        className="h-12 rounded-lg border-white/15 bg-white/[0.04] text-white placeholder:text-white/30 focus-visible:ring-[#ff4000]/40"
+                        className="h-12 rounded-lg border-black/15 bg-black/[0.04] text-ink-primary placeholder:text-ink-tertiary focus-visible:ring-[#ff4000]/40"
                         required
                         maxLength={255}
                       />
@@ -583,21 +578,21 @@ const ResourceDetail = () => {
                     <Button
                       type="button"
                       size="lg"
-                      className="mt-2 h-14 w-full rounded-full text-base font-bold uppercase tracking-[0.14em] text-white hover:opacity-90"
+                      className="mt-2 h-14 w-full rounded-full text-base font-bold uppercase tracking-[0.14em] text-ink-primary hover:opacity-90"
                       style={{ background: ACCENT }}
                       onClick={handleNextStep}
                     >
                       {t('resourceDetail.nextStep')}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
-                    <p className="mt-4 text-center text-xs leading-relaxed text-white/40">
+                    <p className="mt-4 text-center text-xs leading-relaxed text-ink-tertiary">
                       {t('resourceDetail.privacyNote')}
                     </p>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="mt-8 space-y-5">
                     <div>
-                      <Label className="mb-2 block text-[11px] font-mono uppercase tracking-[0.2em] text-white/60">
+                      <Label className="mb-2 block text-[11px] font-mono uppercase tracking-[0.2em] text-ink-secondary">
                         {t('resourceDetail.labelPhone')} *
                       </Label>
                       <Input
@@ -605,17 +600,17 @@ const ResourceDetail = () => {
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="+351 912 345 678"
-                        className="h-12 rounded-lg border-white/15 bg-white/[0.04] text-white placeholder:text-white/30 focus-visible:ring-[#ff4000]/40"
+                        className="h-12 rounded-lg border-black/15 bg-black/[0.04] text-ink-primary placeholder:text-ink-tertiary focus-visible:ring-[#ff4000]/40"
                         required
                         maxLength={20}
                       />
                     </div>
                     <div>
-                      <Label className="mb-2 block text-[11px] font-mono uppercase tracking-[0.2em] text-white/60">
+                      <Label className="mb-2 block text-[11px] font-mono uppercase tracking-[0.2em] text-ink-secondary">
                         {t('resourceDetail.labelCargo')} *
                       </Label>
                       <Select value={cargo} onValueChange={setCargo}>
-                        <SelectTrigger className="h-12 rounded-lg border-white/15 bg-white/[0.04] text-white focus:ring-[#ff4000]/40">
+                        <SelectTrigger className="h-12 rounded-lg border-black/15 bg-black/[0.04] text-ink-primary focus:ring-[#ff4000]/40">
                           <SelectValue placeholder={t('resourceDetail.selectPlaceholder')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -629,11 +624,11 @@ const ResourceDetail = () => {
                       </Select>
                     </div>
                     <div>
-                      <Label className="mb-2 block text-[11px] font-mono uppercase tracking-[0.2em] text-white/60">
+                      <Label className="mb-2 block text-[11px] font-mono uppercase tracking-[0.2em] text-ink-secondary">
                         {t('resourceDetail.labelBusinessArea')} *
                       </Label>
                       <Select value={businessArea} onValueChange={setBusinessArea}>
-                        <SelectTrigger className="h-12 rounded-lg border-white/15 bg-white/[0.04] text-white focus:ring-[#ff4000]/40">
+                        <SelectTrigger className="h-12 rounded-lg border-black/15 bg-black/[0.04] text-ink-primary focus:ring-[#ff4000]/40">
                           <SelectValue placeholder={t('resourceDetail.selectPlaceholder')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -647,7 +642,7 @@ const ResourceDetail = () => {
                       </Select>
                     </div>
                     <div>
-                      <Label className="mb-2 block text-[11px] font-mono uppercase tracking-[0.2em] text-white/60">
+                      <Label className="mb-2 block text-[11px] font-mono uppercase tracking-[0.2em] text-ink-secondary">
                         {t('resourceDetail.labelWebsite')}
                       </Label>
                       <Input
@@ -655,7 +650,7 @@ const ResourceDetail = () => {
                         value={website}
                         onChange={(e) => setWebsite(e.target.value)}
                         placeholder="https://www.exemplo.pt"
-                        className="h-12 rounded-lg border-white/15 bg-white/[0.04] text-white placeholder:text-white/30 focus-visible:ring-[#ff4000]/40"
+                        className="h-12 rounded-lg border-black/15 bg-black/[0.04] text-ink-primary placeholder:text-ink-tertiary focus-visible:ring-[#ff4000]/40"
                         maxLength={255}
                       />
                     </div>
@@ -665,7 +660,7 @@ const ResourceDetail = () => {
                         type="button"
                         variant="outline"
                         size="lg"
-                        className="h-14 rounded-full border-white/20 bg-transparent text-sm font-bold uppercase tracking-[0.14em] text-white hover:bg-white/5"
+                        className="h-14 rounded-full border-black/20 bg-transparent text-sm font-bold uppercase tracking-[0.14em] text-ink-primary hover:bg-black/5"
                         onClick={() => setStep(1)}
                       >
                         <ArrowLeft className="mr-2 h-4 w-4" />
@@ -674,7 +669,7 @@ const ResourceDetail = () => {
                       <Button
                         type="submit"
                         size="lg"
-                        className="h-14 flex-1 rounded-full text-sm font-bold uppercase tracking-[0.14em] text-white hover:opacity-90"
+                        className="h-14 flex-1 rounded-full text-sm font-bold uppercase tracking-[0.14em] text-ink-primary hover:opacity-90"
                         style={{ background: ACCENT }}
                         disabled={submitting}
                       >
@@ -691,7 +686,7 @@ const ResourceDetail = () => {
       </section>
 
       {/* RELATED — dark */}
-      <section className="relative overflow-hidden bg-black text-white">
+      <section className="relative overflow-hidden bg-black text-ink-primary">
         <div
           aria-hidden
           className="absolute inset-0 opacity-[0.06]"
@@ -701,7 +696,7 @@ const ResourceDetail = () => {
             backgroundSize: '80px 80px',
           }}
         />
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-24 md:py-32">
+        <div className="gb-container relative gb-section">
           <div className="flex items-end justify-between gap-8 mb-12">
             <div>
               <p
@@ -718,7 +713,7 @@ const ResourceDetail = () => {
             </div>
             <Link
               to="/resources"
-              className="hidden md:inline-flex items-center gap-2 text-sm font-mono uppercase tracking-[0.22em] text-white/60 hover:text-white transition-colors"
+              className="hidden md:inline-flex items-center gap-2 text-sm font-mono uppercase tracking-[0.22em] text-ink-secondary hover:text-ink-primary transition-colors"
             >
               Ver todos <ArrowRight className="h-4 w-4" />
             </Link>

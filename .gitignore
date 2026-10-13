@@ -10,6 +10,14 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+# R21.1B (B9): local environment is never committed. `.env.example` stays
+# tracked as the variable-name contract; the real values come from the
+# deploy platform (docs/environment.md). Publishing `.env` is safe today —
+# it holds only public VITE_* publishable values — but it is one careless
+# secret away from a leak, so it is untracked from RC1 onwards.
+.env
+.env.*
+!.env.example
 *.local
 
 # Editor directories and files
@@ -35,3 +43,4 @@ supabase/.temp/
 *.njsproj
 *.sln
 *.sw?
+reports/

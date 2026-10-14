@@ -152,6 +152,12 @@ export default {
           "active-bar": "hsl(var(--admin-active-bar))",
         },
       },
+      fontFamily: {
+        // R22 — editorial display serif (italic accents) + frozen sans.
+        display: ['"Instrument Serif"', "Georgia", "serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
+        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+      },
       fontSize: {
         // Frozen type scale (Wave 3A) — GETBOOST_2027_DESIGN_FREEZE_V1.
         display: ["3.5rem", { lineHeight: "4rem", letterSpacing: "-0.025em", fontWeight: "900" }],

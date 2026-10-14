@@ -10,6 +10,8 @@ import { ScrollDepth } from '@/components/ScrollDepth';
 import { SectionHeader } from '@/components/ui/section-header';
 import { Button } from '@/components/ui/button';
 import { StandardCTA } from '@/components/StandardCTA';
+import { fadeUp } from '@/components/ui/reveal';
+import { MiniFlow } from '@/components/ui/mini-flow';
 import { useProducts } from '@/hooks/useContent';
 import { mediaUrl } from '@/lib/contentApi';
 import { PRODUCTS } from '@/data/products';
@@ -60,10 +62,45 @@ const saasProducts = [
   },
 ];
 
+/**
+ * R22 review-gate fix: the submenu registry is a flat item list
+ * ({slug, title, group, href?}) but this section rendered it as grouped
+ * areas ({id, title, icon, items}) — every visit crashed on
+ * `group.items.map`. Areas are now derived from the registry's own `group`
+ * field; the Automação & IA card links the three shipped pillar routes.
+ */
+const AREA_META = [
+  { group: 'Marketing & Growth', id: 'area-marketing', pillar: 'growth', Icon: Megaphone },
+  { group: 'Software Engineering', id: 'area-software', pillar: 'software', Icon: Code2 },
+  {
+    group: 'Automação & IA',
+    id: 'area-automation',
+    pillar: 'automation',
+    Icon: Bot,
+    items: [
+      { slug: 'agentes-ia', label: 'Agentes IA', to: '/agentes-ia' },
+      { slug: 'integracoes-erp-crm', label: 'Integrações ERP/CRM', to: '/solucoes/integracoes-erp-crm' },
+      { slug: 'bots-whatsapp-ia', label: 'Bots WhatsApp IA', to: '/solucoes/bots-whatsapp-ia' },
+    ],
+  },
+] as const;
+
 const Services = () => {
   const { t, i18n } = useTranslation();
   const location = useLocation();
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
+  const localize = (to: string) => (i18n.language === 'pt' ? to : `/${i18n.language}${to}`);
+  const areas = AREA_META.map((area) => ({
+    ...area,
+    items:
+      'items' in area && area.items
+        ? area.items.map((item) => ({ ...item, to: localize(item.to) }))
+        : SOLUCOES_SUBMENU.filter((entry) => entry.group === area.group).map((entry) => ({
+            slug: entry.slug,
+            label: entry.title,
+            to: localize(entry.href ?? `/solucoes/${entry.slug}`),
+          })),
+  }));
 
   useEffect(() => {
     const hash = location.hash.replace('#', '');
@@ -217,18 +254,18 @@ const Services = () => {
             description="Marketing, Engenharia de Software e IA aplicada — combinados para escalar o teu negócio."
           />
           <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {SOLUCOES_SUBMENU.map((group, i) => (
-              <Reveal key={group.title} i={i}>
+            {areas.map((area, i) => (
+              <Reveal key={area.id} i={i}>
                 <div className="gb-surface-card gb-card-lift h-full">
                   <span
                     className="gb-icon-chip"
-                    style={{ '--gb-chip-bg': `var(--gb-${group.id === 'area-marketing' ? 'growth' : group.id === 'area-software' ? 'software' : 'automation'}-tint)`, '--gb-chip-fg': `var(--gb-${group.id === 'area-marketing' ? 'growth' : group.id === 'area-software' ? 'software' : 'automation'}-strong)` }}
+                    style={{ '--gb-chip-bg': `var(--gb-${area.pillar}-tint)`, '--gb-chip-fg': `var(--gb-${area.pillar}-strong)` } as React.CSSProperties}
                   >
-                    <group.icon className="h-5 w-5" />
+                    <area.Icon className="h-5 w-5" />
                   </span>
-                  <h3 className="gb-text-h3 mt-4 !text-xl text-ink-primary">{group.title}</h3>
+                  <h3 className="gb-text-h3 mt-4 !text-xl text-ink-primary">{area.group}</h3>
                   <ul className="mt-4 flex flex-col gap-2">
-                    {group.items.map((item) => (
+                    {area.items.map((item) => (
                       <Link key={item.slug} to={item.to} className="group block rounded-xl border border-black/[0.06] bg-white p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg md:py-8">
                         <span className="flex items-center gap-2 text-sm font-medium text-ink-primary">
                           <Check className="h-4 w-4 text-brand-600" />
@@ -283,17 +320,17 @@ const Services = () => {
       <section className="gb-surface-page gb-section">
         <div className="gb-container">
           <Tabs defaultValue="custom" className="w-full">
-            <TabsList className="w-full max-w-2xl mx-auto mb-12 h-auto bg-transparent p-0 gap-4 flex justify-center">
+            <TabsList className="w-full max-w-2xl mx-auto mb-12 h-auto bg-transparent p-0 gap-4 flex flex-col sm:flex-row justify-center">
               <TabsTrigger
                 value="custom"
-                className="px-8 py-4 rounded-2xl text-base font-semibold bg-card border border-border/60 shadow-sm hover:shadow-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:border-primary data-[state=inactive]:text-muted-foreground transition-all duration-300 gap-2.5"
+                className="w-full sm:w-auto justify-center px-8 py-4 rounded-2xl text-base font-semibold bg-card border border-border/60 shadow-sm hover:shadow-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:border-primary data-[state=inactive]:text-muted-foreground transition-all duration-300 gap-2.5"
               >
                 <Wrench className="h-5 w-5" />
                 {t('servicesPage.tabCustom')}
               </TabsTrigger>
               <TabsTrigger
                 value="saas"
-                className="px-8 py-4 rounded-2xl text-base font-semibold bg-card border border-border/60 shadow-sm hover:shadow-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:border-primary data-[state=inactive]:text-muted-foreground transition-all duration-300 gap-2.5"
+                className="w-full sm:w-auto justify-center px-8 py-4 rounded-2xl text-base font-semibold bg-card border border-border/60 shadow-sm hover:shadow-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:border-primary data-[state=inactive]:text-muted-foreground transition-all duration-300 gap-2.5"
               >
                 <Rocket className="h-5 w-5" />
                 {t('servicesPage.tabSaas')}

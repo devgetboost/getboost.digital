@@ -196,7 +196,7 @@ const DigitalAudit = () => {
           <motion.div
             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
             className="gb-eyebrow text-brand-600"
-            style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}>
+            style={{ borderColor: `${ACCENT}66` }}>
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
             Auditoria Digital 360º · 5 Pilares · IA Ready
           </motion.div>
@@ -479,7 +479,7 @@ const DigitalAudit = () => {
         <section className="gb-surface-section gb-section">
           <div className="gb-container">
             <div className="max-w-3xl">
-              <div className="text-[11px] font-mono uppercase tracking-[0.22em]" style={{ color: '#ffb494' }}>
+              <div className="text-[11px] font-mono uppercase tracking-[0.22em] text-brand-600">
                 Metodologia · 5 Pilares
               </div>
               <h2 className="mt-4 text-4xl md:text-6xl font-black leading-[1.02] tracking-tight">

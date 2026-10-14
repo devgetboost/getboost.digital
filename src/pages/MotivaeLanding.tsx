@@ -9,6 +9,7 @@ import {
   Brain,
   Heart,
   Sparkles,
+  ShieldCheck,
 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import { ScrollDepth } from '@/components/ScrollDepth';
@@ -120,11 +121,11 @@ const MotivaeLanding = () => {
 
       {/* ==================================================== 01 HERO */}
       <section ref={heroRef} className="gb-surface-page relative overflow-hidden">
-        <div aria-hidden className="gb-grid-overlay" />
+        
         <div
           aria-hidden
           className="pointer-events-none absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full blur-3xl"
-          style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.10) 0%, rgba(255,255,255,0) 65%)' }}
+          style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.10) 0%, rgba(250,247,241,0) 65%)' }}
         />
         <div className="gb-container relative gb-section !pt-10 md:!pt-16">
           <div className="grid items-center gap-12 lg:grid-cols-2">
@@ -136,10 +137,10 @@ const MotivaeLanding = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="gb-text-display mt-5 text-ink-primary"
+                className="ed-display mt-6 text-ink-primary text-[clamp(2.75rem,7vw,6.5rem)]"
               >
                 {manifestoLines[0]}{' '}
-                <span style={{ color: 'var(--gb-ai-strong)' }}>{manifestoLines[1]}</span>
+                <em style={{ color: 'var(--gb-ai-strong)' }}>{manifestoLines[1]}</em>
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 30 }}

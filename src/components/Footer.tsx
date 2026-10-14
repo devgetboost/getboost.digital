@@ -19,7 +19,7 @@ import { rememberMarket } from '@/components/LanguageManager';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import logoNunoCruz from '@/assets/logo-getboost-soft-branca.svg';
+import logoNunoCruz from '@/assets/logo-getboost-soft.svg';
 import { CONTACT } from '@/data/brandRegistry';
 import { PRODUCTS } from '@/data/products';
 
@@ -91,7 +91,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative overflow-hidden bg-[hsl(0,0%,5%)] text-white [&_.text-foreground]:text-white [&_.text-muted-foreground]:text-white/60" role="contentinfo">
+    <footer className="relative overflow-hidden border-t border-ink-primary/10 bg-canvas-section text-ink-primary" role="contentinfo">
       {/* Ambient grid */}
       <div
         aria-hidden
@@ -110,10 +110,45 @@ const Footer = () => {
         className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full blur-3xl opacity-40"
         style={{
           background:
-            'radial-gradient(circle, rgba(255,64,0,0.45) 0%, rgba(0,0,0,0) 65%)',
+            'radial-gradient(circle, rgba(255,64,0,0.22) 0%, rgba(0,0,0,0) 65%)',
         }}
       />
       <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-16">
+
+        {/* R22 — editorial footer CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-16"
+        >
+          <p className="ed-kicker text-ink-secondary">
+            <span className="ed-kicker-num">(05)</span>
+            <span>{t('footer.contactTitle')}</span>
+          </p>
+          <h2 className="ed-display mt-6 max-w-5xl text-ink-primary text-[clamp(2.5rem,6vw,5.5rem)]">
+            {t('footer.bigCtaTitle', 'Pronto para acelerar o teu')} <em>{t('footer.bigCtaAccent', 'negócio?')}</em>
+          </h2>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Button asChild size="lg" className="rounded-full">
+              <Link
+                to={i18n.language === 'pt' ? '/booking' : `/${i18n.language}/booking`}
+                onClick={() => analytics.trackClick('footer', 'footer_cta_booking', 'conversion')}
+              >
+                {t('footer.bigCtaBook', 'Agendar diagnóstico')} <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="rounded-full">
+              <Link
+                to={i18n.language === 'pt' ? '/contact' : `/${i18n.language}/contact`}
+                onClick={() => analytics.trackClick('footer', 'footer_cta_contact', 'consideration')}
+              >
+                {t('footer.bigCtaContact', 'Falar connosco')}
+              </Link>
+            </Button>
+          </div>
+        </motion.div>
 
         {/* R18.7 — footer blocks share the global reveal (fade-up, once). */}
         <motion.div
@@ -126,7 +161,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link to={i18n.language === 'pt' ? '/' : `/${i18n.language}`} className="flex items-center gap-2">
-              <img src={logoNunoCruz} alt="Getboost Digital" className="h-14 w-auto" />
+              <img src={logoNunoCruz} alt="Getboost Digital" width={2107} height={852} className="h-14 w-auto" />
             </Link>
             <p className="mt-4 text-muted-foreground text-sm max-w-sm leading-relaxed whitespace-pre-line">
               {t('footer.brandDescFull')}{'\n\n'}
@@ -149,7 +184,7 @@ const Footer = () => {
           {/* Wave 3B — footer IA mirrors the primary navigation. COMPANY is
               footer-only (removed from the primary nav in Wave 3B). */}
           <div>
-            <h4 className="font-semibold text-sm mb-4 text-foreground">Empresa</h4>
+            <h3 className="font-semibold text-sm mb-4 text-foreground">Empresa</h3>
             <nav className="flex flex-col gap-3" aria-label="Footer company">
               <Link to={i18n.language === 'pt' ? '/sobre-nos' : `/${i18n.language}/sobre-nos`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">Sobre Nós</Link>
               <Link to={i18n.language === 'pt' ? '/equipa' : `/${i18n.language}/equipa`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">Equipa</Link>
@@ -158,7 +193,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold text-sm mb-4 text-foreground">Trabalho</h4>
+            <h3 className="font-semibold text-sm mb-4 text-foreground">Trabalho</h3>
             <nav className="flex flex-col gap-3" aria-label="Footer work">
               <Link to={i18n.language === 'pt' ? '/portfolio' : `/${i18n.language}/portfolio`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">{t('nav.portfolio')}</Link>
               <Link to={i18n.language === 'pt' ? '/casos-de-sucesso' : `/${i18n.language}/casos-de-sucesso`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">Casos de Sucesso</Link>
@@ -166,7 +201,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold text-sm mb-4 text-foreground">Insights</h4>
+            <h3 className="font-semibold text-sm mb-4 text-foreground">Insights</h3>
             <nav className="flex flex-col gap-3" aria-label="Footer insights">
               <Link to={i18n.language === 'pt' ? '/blog' : `/${i18n.language}/blog`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">{t('nav.blog')}</Link>
               <Link to={i18n.language === 'pt' ? '/resources' : `/${i18n.language}/resources`} className="w-fit relative text-sm text-muted-foreground hover:text-primary transition-colors after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-0 hover:after:w-full after:bg-primary after:transition-all">Recursos</Link>
@@ -178,7 +213,7 @@ const Footer = () => {
 
           {/* Newsletter */}
           <div>
-            <h4 className="font-semibold text-sm mb-2 text-foreground">{t('footer.newsletter')}</h4>
+            <h3 className="font-semibold text-sm mb-2 text-foreground">{t('footer.newsletter')}</h3>
             <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
               {t('footer.newsletterDesc')}
             </p>
@@ -188,7 +223,7 @@ const Footer = () => {
                 placeholder={t('footer.namePlaceholder')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="h-12 rounded-full bg-white/5 border border-white/15 text-white placeholder:text-white/40 text-sm px-5 backdrop-blur-sm transition-all focus:bg-white/10 focus:border-[#ff4000]/60 focus-visible:ring-2 focus-visible:ring-[#ff4000]/30 focus-visible:ring-offset-0"
+                className="h-12 rounded-full border border-ink-primary/15 bg-white text-ink-primary placeholder:text-ink-tertiary text-sm px-5 transition-all focus:border-[#ff4000]/60 focus-visible:ring-2 focus-visible:ring-[#ff4000]/30 focus-visible:ring-offset-0"
                 maxLength={100}
                 disabled={loading}
               />
@@ -198,7 +233,7 @@ const Footer = () => {
                   placeholder={t('footer.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-12 rounded-full bg-white/5 border border-white/15 text-white placeholder:text-white/40 text-sm pl-5 pr-14 backdrop-blur-sm transition-all focus:bg-white/10 focus:border-[#ff4000]/60 focus-visible:ring-2 focus-visible:ring-[#ff4000]/30 focus-visible:ring-offset-0"
+                  className="h-12 rounded-full border border-ink-primary/15 bg-white text-ink-primary placeholder:text-ink-tertiary text-sm pl-5 pr-14 transition-all focus:border-[#ff4000]/60 focus-visible:ring-2 focus-visible:ring-[#ff4000]/30 focus-visible:ring-offset-0"
                   maxLength={255}
                   disabled={loading}
                   required
@@ -217,9 +252,9 @@ const Footer = () => {
                   checked={consent}
                   onCheckedChange={(checked) => setConsent(checked === true)}
                   disabled={loading}
-                  className="mt-0.5 shrink-0 rounded-[4px] border-white/30 data-[state=checked]:bg-[#ff4000] data-[state=checked]:border-[#ff4000] data-[state=checked]:text-white"
+                  className="mt-0.5 shrink-0 rounded-[4px] border-ink-primary/30 data-[state=checked]:bg-[#ff4000] data-[state=checked]:border-[#ff4000] data-[state=checked]:text-white"
                 />
-                <span className="text-[10px] leading-snug text-white/50 group-hover:text-white/80 transition-colors">
+                <span className="text-[10px] leading-snug text-ink-tertiary group-hover:text-ink-secondary transition-colors">
                   {t('footer.consent')}
                 </span>
               </label>
@@ -228,8 +263,8 @@ const Footer = () => {
         </motion.div>
 
         {/* Products strip — the footer is the complete IA map */}
-        <div className="border-t border-white/10 mt-12 pt-8">
-          <h4 className="font-semibold text-sm mb-4 text-foreground">Produtos</h4>
+        <div className="border-t border-ink-primary/10 mt-12 pt-8">
+          <h3 className="font-semibold text-sm mb-4 text-foreground">Produtos</h3>
           <nav className="flex flex-wrap gap-x-6 gap-y-2" aria-label="Footer products">
             {PRODUCTS.map((product) =>
               product.to ? (
@@ -252,9 +287,9 @@ const Footer = () => {
         </div>
 
         {/* Contact & Address Block */}
-        <div className="border-t border-white/10 mt-12 pt-10 grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div className="border-t border-ink-primary/10 mt-12 pt-10 grid grid-cols-1 md:grid-cols-2 gap-10">
           <div>
-            <h4 className="font-semibold text-sm tracking-widest text-foreground uppercase mb-4">{t('footer.contactTitle')}</h4>
+            <h3 className="font-semibold text-sm tracking-widest text-foreground uppercase mb-4">{t('footer.contactTitle')}</h3>
             <p className="text-sm text-foreground font-semibold mb-0.5">
               <Phone className="inline h-3.5 w-3.5 mr-1.5 -mt-0.5" />
               T : <a href={`tel:${CONTACT.phone.e164}`} onClick={() => analytics.trackOutbound('phone', 'footer')} className="hover:text-primary transition-colors">{CONTACT.phone.display}</a>
@@ -266,7 +301,7 @@ const Footer = () => {
             </p>
           </div>
           <div>
-            <h4 className="font-semibold text-sm tracking-widest text-foreground uppercase mb-4">{t('footer.addressTitle')}</h4>
+            <h3 className="font-semibold text-sm tracking-widest text-foreground uppercase mb-4">{t('footer.addressTitle')}</h3>
             <p className="text-sm text-foreground leading-relaxed">
               <MapPin className="inline h-3.5 w-3.5 mr-1.5 -mt-0.5" />
               {CONTACT.address.street}<br />
@@ -275,7 +310,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-white/10 mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="border-t border-ink-primary/10 mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} Getboost Digital. {t('footer.rights')}
           </p>

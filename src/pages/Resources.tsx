@@ -74,11 +74,11 @@ const Resources = () => {
 
       {/* HERO — manifesto */}
       <section className="gb-surface-page relative overflow-hidden">
-                <div aria-hidden className="gb-grid-overlay" />
+                
         <div
           aria-hidden
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)' }}
+          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(250,247,241,0) 65%)' }}
         />
 
         <div className="gb-container relative gb-section">
@@ -93,7 +93,7 @@ const Resources = () => {
             {t('resources.heroBadge')} · Guias · Templates · Ferramentas
           </motion.div>
 
-          <h1 className="gb-text-display mt-5 text-ink-primary">
+          <h1 className="ed-display mt-6 text-ink-primary text-[clamp(2.75rem,7vw,6.5rem)]">
             <motion.span
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
@@ -102,15 +102,7 @@ const Resources = () => {
             >
               {t('resources.heroTitle')}
             </motion.span>
-            <motion.span
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.27 }}
-              className="block"
-              style={{ color: ACCENT, textShadow: '0 0 40px rgba(255,64,0,0.4)' }}
-            >
-              {t('resources.heroHighlight')}
-            </motion.span>
+            <em>{t('resources.heroHighlight')}</em>
           </h1>
 
           <motion.div

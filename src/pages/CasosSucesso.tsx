@@ -76,7 +76,7 @@ const CasosSucesso = () => {
 
       {/* ==================================================== 01 HERO */}
       <section className="gb-surface-page relative overflow-hidden">
-        <div aria-hidden className="gb-grid-overlay" />
+        
         <div className="gb-container relative gb-section !pt-10 md:!pt-16">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
             <span className="gb-eyebrow text-brand-600">Casos de sucesso · SaaS · PMEs · Growth</span>
@@ -85,9 +85,9 @@ const CasosSucesso = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="gb-text-display mt-5 max-w-4xl text-ink-primary"
+            className="ed-display mt-6 max-w-5xl text-ink-primary text-[clamp(2.75rem,7vw,6.5rem)]"
           >
-            Resultados reais. <span className="text-brand-600">Clientes que escalaram.</span>
+            Resultados reais. <em>Clientes que escalaram.</em>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 30 }}

@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import { pt, es, enGB } from 'date-fns/locale';
 import {
   CalendarIcon, Clock, Check, ArrowLeft, ArrowRight, Video,
-  ChevronRight, Globe, User, Mail, Phone, Building2, Zap,
+  ChevronRight, Globe, User, Mail, Phone, Building2, Zap, ShieldCheck, Clock3,
 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';

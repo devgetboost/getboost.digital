@@ -223,7 +223,7 @@ const DigitalAuditResults = () => {
             WebkitMaskImage: 'radial-gradient(ellipse at 50% 30%, black 20%, transparent 70%)',
           }} />
         <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-20 md:py-28">
-          <div className="text-[11px] font-mono uppercase tracking-[0.22em]" style={{ color: '#ffb494' }}>
+          <div className="text-[11px] font-mono uppercase tracking-[0.22em] text-brand-600">
             Relatório · Auditoria Digital 360º
           </div>
           <div className="mt-6 grid lg:grid-cols-[1fr_auto] gap-12 items-center">

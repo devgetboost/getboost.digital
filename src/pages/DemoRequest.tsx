@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Clock, ShieldCheck, Sparkles } from 'lucide-react';
 import { z } from 'zod';
 import Layout from '@/components/Layout';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import { FOUNDER } from '@/data/brandRegistry';
 import SEO, { SITE_URL } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
@@ -551,7 +552,7 @@ export default function DemoRequest() {
           <div className="relative max-w-2xl mx-auto px-6 py-24 text-center">
             <div
               className="inline-flex items-center gap-3 rounded-full border px-4 py-1.5 text-[11px] font-mono uppercase tracking-[0.22em] mb-6"
-              style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
+              style={{ borderColor: `${ACCENT}66` }}
             >
               <span className="h-1.5 w-1.5 rounded-full" style={{ background: ACCENT }} />
               Erro 404 · Produto
@@ -656,7 +657,7 @@ export default function DemoRequest() {
             ) : (
               <Link
                 to={product.backHref}
-                className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.22em] text-ink-secondary hover:text-[#ffb494] transition-colors mb-8"
+                className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.22em] text-ink-secondary hover:text-brand-600 transition-colors mb-8"
               >
                 {t.back} {product.name}
               </Link>
@@ -664,7 +665,7 @@ export default function DemoRequest() {
 
             <div
               className="gb-eyebrow text-brand-600"
-              style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
+              style={{ borderColor: `${ACCENT}66` }}
             >
               <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
               {product.eyebrow}
@@ -699,7 +700,7 @@ export default function DemoRequest() {
               <ol className="space-y-3">
                 {product.agenda.map((item) => (
                   <li key={item.time} className="group flex gap-4 rounded-2xl border border-black/10 bg-black/[0.03] p-4 hover:border-[#ff4000]/40 transition-colors">
-                    <div className="font-mono text-xs text-[#ffb494] w-14 pt-0.5 shrink-0">{item.time}</div>
+                    <div className="font-mono text-xs text-brand-600 w-14 pt-0.5 shrink-0">{item.time}</div>
                     <div>
                       <div className="text-sm font-semibold text-ink-primary">{item.title}</div>
                       <div className="mt-1 text-sm text-ink-secondary leading-relaxed">{item.detail}</div>
@@ -822,7 +823,7 @@ export default function DemoRequest() {
 
               <p className="text-[11px] text-ink-tertiary leading-relaxed">
                 {t.termsBefore}{' '}
-                <Link to="/politica-privacidade" className="text-[#ffb494] underline underline-offset-2 hover:text-white">
+                <Link to="/politica-privacidade" className="text-brand-600 underline underline-offset-2 hover:text-brand-700">
                   {t.termsLink}
                 </Link>.
               </p>

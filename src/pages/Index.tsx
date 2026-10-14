@@ -42,17 +42,18 @@ import logoQook from '@/assets/logos/logo-qook.svg';
 import logoAgrifly from '@/assets/logos/logo-agrifly.svg';
 import logoKasccab from '@/assets/logos/logo-kasccab.svg';
 import { Reveal } from '@/components/ui/reveal';
+import { Marquee } from '@/components/editorial';
 
 const ACCENT = '#ff4000';
 
 // R19.8 — marquee shows current catalog products + client brands only.
 // Superseded product logos (Hostify, ProSafe360) removed with the catalog.
 const clientLogos = [
-  { name: 'Pikto', src: logoPikto },
-  { name: 'Motivae', src: logoMotivae },
-  { name: 'Qook', src: logoQook },
-  { name: 'Agrifly', src: logoAgrifly },
-  { name: 'Kasccab', src: logoKasccab },
+  { name: 'Pikto', src: logoPikto, width: 2478, height: 1511 },
+  { name: 'Motivae', src: logoMotivae, width: 1028, height: 352 },
+  { name: 'Qook', src: logoQook, width: 423, height: 160 },
+  { name: 'Agrifly', src: logoAgrifly, width: 2383, height: 795 },
+  { name: 'Kasccab', src: logoKasccab, width: 1040, height: 266 },
 ];
 
 /**
@@ -211,34 +212,28 @@ const Index = () => {
 
       {/* ==================================================== 01 HERO */}
       <section ref={heroRef} className="gb-surface-page relative overflow-hidden">
-        <div aria-hidden className="gb-grid-overlay" />
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full blur-3xl"
-          style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.10) 0%, rgba(255,255,255,0) 65%)' }}
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -left-40 top-1/3 h-[480px] w-[480px] rounded-full blur-3xl"
-          style={{ background: 'radial-gradient(circle, rgba(13,148,136,0.08) 0%, rgba(255,255,255,0) 65%)' }}
+          className="pointer-events-none absolute -right-48 -top-48 h-[640px] w-[640px] rounded-full blur-3xl opacity-50"
+          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.12) 0%, rgba(255,255,255,0) 65%)' }}
         />
         <div className="gb-container relative gb-section !pt-10 md:!pt-16">
           <div className="grid items-center gap-12 lg:grid-cols-2">
             {/* Left — headline, sub, CTAs, trust */}
             <div>
               <motion.div initial="hidden" animate="show" variants={heroItem} custom={0}>
-                <span className="gb-eyebrow text-brand-600">Software, IA &amp; Automação para PMEs</span>
+                <span className="ed-kicker text-ink-secondary"><span className="ed-kicker-num">(01)</span><span className="gb-eyebrow">Software, IA &amp; Automação para PMEs</span></span>
               </motion.div>
               <motion.h1
                 initial="hidden"
                 animate="show"
                 variants={heroItem}
                 custom={1}
-                className="gb-text-display mt-5 text-ink-primary"
+                className="ed-display mt-6 text-ink-primary text-[clamp(3rem,7.5vw,7rem)]"
               >
-                IA. Software. Automação.
+                IA. Software.
                 <br />
-                Tudo ligado para gerar <span className="text-brand-600">crescimento</span>.
+                Automação que gera <em>crescimento</em>.
               </motion.h1>
               <motion.p
                 initial="hidden"
@@ -495,6 +490,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* R22 — marquee editorial entre hero e prova */}
+      <Marquee items={['AI Agents', 'Software à medida', 'Automação', 'Growth', 'Qook', 'Motivae', 'Pikto', 'Trackfy']} />
+
       {/* ================================================= 02 PROOF BAR */}
       <section className="gb-surface-subtle gb-section !py-14">
         <div className="gb-container">
@@ -505,6 +503,8 @@ const Index = () => {
                 key={logo.name}
                 src={logo.src}
                 alt={logo.name}
+                width={logo.width}
+                height={logo.height}
                 className="h-9 w-auto object-contain opacity-50 transition-opacity hover:opacity-100 md:h-11"
                 style={{ filter: 'brightness(0) saturate(100%) invert(36%) sepia(8%) saturate(1063%) hue-rotate(314deg) brightness(94%) contrast(87%)' }}
                 loading="lazy"

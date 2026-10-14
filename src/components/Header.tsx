@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { analytics } from '@/lib/analytics';
 import { motion, AnimatePresence } from 'framer-motion';
+import { createPortal } from 'react-dom';
 import { Menu, X, ChevronDown, Share2, Globe, Code2, MapPin, Megaphone, ArrowRight, Palette, PenTool, Search, Target, LayoutTemplate, Smartphone, Cloud, Database, Layers, Rocket, Bot, MessageSquare, Workflow, TrendingUp, GitBranch, Newspaper, BookOpen, LineChart, Mic, GraduationCap, Video, Gauge, Sparkles, Camera, Mail, Users, Trophy, Building2, Briefcase } from 'lucide-react';
 import { useContentEntries } from '@/hooks/useContent';
 import { mediaUrl } from '@/lib/contentApi';
@@ -103,6 +104,41 @@ type BlogPreview = { id: string; slug: string; title: string; image: string | nu
 
 type MegaKey = 'services' | 'products' | 'resources' | 'company';
 
+/**
+ * R22 mega-menu refinement — the single link row for dropdown columns.
+ * Reading order: icon → title (semibold, max 2 lines, reserved height so
+ * rows align) → description (one line, ellipsis). No two rows compete.
+ */
+const MenuLink = ({
+  to,
+  title,
+  desc,
+  Icon,
+  onNavigate,
+}: {
+  to: string;
+  title: string;
+  desc: string;
+  Icon?: React.ComponentType<{ className?: string }>;
+  onNavigate: () => void;
+}) => (
+  <Link
+    to={to}
+    onClick={onNavigate}
+    className="group flex items-start gap-2.5 rounded-xl px-2.5 py-2 transition-colors duration-150 hover:bg-black/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+  >
+    {Icon && (
+      <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#ff4000]/[0.08] text-[#ff4000] transition-colors duration-150 group-hover:bg-[#ff4000] group-hover:text-white">
+        <Icon className="h-3.5 w-3.5" />
+      </span>
+    )}
+    <span className="min-w-0">
+      <span title={title} className="block min-h-[2.75em] text-[13px] font-semibold leading-snug text-ink-primary line-clamp-2">{title}</span>
+      <span title={desc} className="block truncate text-xs text-ink-secondary">{desc}</span>
+    </span>
+  </Link>
+);
+
 const panelMotion = {
   initial: { opacity: 0, y: -10 },
   animate: { opacity: 1, y: 0 },
@@ -117,7 +153,6 @@ const Header = () => {
   const [openMenu, setOpenMenu] = useState<null | MegaKey>(null);
   const [mobileMenu, setMobileMenu] = useState<null | MegaKey>(null);
   const [latestPosts, setLatestPosts] = useState<BlogPreview[]>([]);
-  const [slideIdx, setSlideIdx] = useState(0);
   const location = useLocation();
 
   useEffect(() => {
@@ -166,11 +201,6 @@ const Header = () => {
     );
   }, [latestEntries]);
 
-  useEffect(() => {
-    if (openMenu !== 'resources' || latestPosts.length < 2) return;
-    const id = setInterval(() => setSlideIdx((i) => (i + 1) % latestPosts.length), 3500);
-    return () => clearInterval(id);
-  }, [openMenu, latestPosts.length]);
 
   const localize = (path: string) => (i18n.language === 'pt' ? path : `/${i18n.language}${path === '/' ? '' : path}`);
 
@@ -188,12 +218,26 @@ const Header = () => {
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b bg-white/85 backdrop-blur-[20px] transition-all duration-300 ${
+      className={`sticky top-0 z-50 border-b border-ink-primary/10 bg-canvas-base/85 backdrop-blur-[20px] transition-all duration-300 ${
         scrolled ? 'h-[68px] border-black/[0.07] shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)]' : 'h-20 border-black/[0.05]'
       }`}
       role="banner"
       onMouseLeave={() => setOpenMenu(null)}
     >
+      {/* R22 mega-menu refinement: paper scrim under the panel so the open
+          menu never collides with hero display type. Portalled (the sticky
+          header's backdrop-filter would contain a fixed child). */}
+      {typeof document !== 'undefined' && openMenu && createPortal(
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          onClick={() => setOpenMenu(null)}
+          aria-hidden
+          className="fixed inset-0 z-40 bg-[#faf7f1]/70 backdrop-blur-[3px]"
+        />,
+        document.body,
+      )}
       <div className="mx-auto grid h-full max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-6 md:px-12">
         {/* Left — logo */}
         <Link
@@ -201,13 +245,13 @@ const Header = () => {
           className="flex w-fit items-center justify-self-start rounded-md transition-opacity duration-200 hover:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
           aria-label="Getboost Digital — início"
         >
-          <img src={logoGetboost} alt="Getboost Digital" className="hidden h-9 w-auto object-contain lg:block" />
-          <img src={logoGetboost} alt="Getboost Digital" className="block h-7 w-auto object-contain lg:hidden" />
+          <img src={logoGetboost} alt="Getboost Digital" width={2107} height={852} className="hidden h-9 w-auto object-contain lg:block" />
+          <img src={logoGetboost} alt="Getboost Digital" width={2107} height={852} className="block h-7 w-auto object-contain lg:hidden" />
         </Link>
 
         {/* Center — primary nav */}
         <nav className="hidden items-center gap-9 lg:flex" aria-label="Main navigation">
-          {navItems.map((item) => {
+          {navItems.map((item, idx) => {
             const localizedPath = localize(item.path);
             const active = location.pathname === item.path || location.pathname === localizedPath;
             const isOpen = item.mega ? openMenu === item.mega : false;
@@ -226,7 +270,7 @@ const Header = () => {
                     active || isOpen ? 'text-[#ff4000]' : 'text-ink-primary hover:text-black'
                   }`}
                 >
-                  {item.label}
+                  <span aria-hidden className="font-mono text-[10px] tracking-[0.14em] text-ink-tertiary">{String(idx + 1).padStart(2, "0")}</span>{item.label}
                   {item.mega && (
                     <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
                   )}
@@ -253,7 +297,7 @@ const Header = () => {
           <Link
             to={bookingHref}
             onClick={() => analytics.trackClick('navigation', 'header_booking', 'consideration')}
-            className="group inline-flex items-center gap-2 rounded-xl bg-[#ff4000] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(255,64,0,0.6)] transition-all duration-200 hover:-translate-y-px hover:bg-brand-700 hover:shadow-[0_12px_24px_-8px_rgba(255,64,0,0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/60 focus-visible:ring-offset-2"
+            className="group inline-flex items-center gap-2 rounded-full bg-[#ff4000] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(255,64,0,0.6)] transition-all duration-200 hover:-translate-y-px hover:bg-brand-700 hover:shadow-[0_12px_24px_-8px_rgba(255,64,0,0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/60 focus-visible:ring-offset-2"
           >
             Agendar Diagnóstico
             <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -285,56 +329,58 @@ const Header = () => {
             onMouseEnter={() => setOpenMenu(openMenu)}
             onMouseLeave={() => setOpenMenu(null)}
           >
-            <div className="border-b border-black/[0.06] bg-white/95 shadow-premium backdrop-blur-[20px]">
+            <div className="max-h-[calc(100dvh-5rem)] overflow-y-auto border-b border-ink-primary/10 bg-canvas-base shadow-premium">
               <div className="mx-auto max-w-7xl px-6 py-10 md:px-12">
                 {openMenu === 'services' && (
-                  <div className="grid grid-cols-12 gap-10">
-                    {serviceGroups.map((group) => (
-                      <div key={group.title} className="col-span-2">
-                        <div className="mb-4 border-b border-black/[0.06] pb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#ff4000]">
-                          {group.title}
+                  <div>
+                    <div className="grid grid-cols-12 gap-x-8">
+                      {serviceGroups.filter((group) => group.title !== 'Growth').map((group) => (
+                        <div key={group.title} className="col-span-4 xl:col-span-2">
+                          <div className="mb-2 border-b border-black/[0.06] pb-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#ff4000]">
+                            {group.title}
+                          </div>
+                          <ul className="flex flex-col">
+                            {group.items.map(({ slug, title, desc, Icon, to }) => (
+                              <li key={slug}>
+                                <MenuLink to={serviceHref(slug, to)} title={title} desc={desc} Icon={Icon} onNavigate={() => setOpenMenu(null)} />
+                              </li>
+                            ))}
+                          </ul>
                         </div>
-                        <ul className="flex flex-col gap-1">
-                          {group.items.map(({ slug, title, desc, Icon, to }) => (
+                      ))}
+                      <div className="col-span-12 mt-6 xl:col-span-6 xl:mt-0">
+                        <div className="mb-2 border-b border-black/[0.06] pb-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#ff4000]">
+                          Growth
+                        </div>
+                        <ul className="grid grid-cols-2 gap-x-6 xl:grid-cols-2">
+                          {(serviceGroups.find((group) => group.title === 'Growth')?.items ?? []).map(({ slug, title, desc, Icon, to }) => (
                             <li key={slug}>
-                              <Link
-                                to={serviceHref(slug, to)}
-                                onClick={() => setOpenMenu(null)}
-                                className="group flex items-start gap-3 rounded-xl px-3 py-2.5 transition-colors duration-150 hover:bg-black/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
-                              >
-                                <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff4000]/[0.08] text-[#ff4000] transition-colors duration-150 group-hover:bg-[#ff4000] group-hover:text-white">
-                                  <Icon className="h-4 w-4" />
-                                </span>
-                                <span>
-                                  <span className="block text-sm font-medium text-ink-primary">{title}</span>
-                                  <span className="block text-xs leading-snug text-ink-secondary">{desc}</span>
-                                </span>
-                              </Link>
+                              <MenuLink to={serviceHref(slug, to)} title={title} desc={desc} Icon={Icon} onNavigate={() => setOpenMenu(null)} />
                             </li>
                           ))}
                         </ul>
                       </div>
-                    ))}
-                    <div className="col-span-4">
-                      <Link
-                        to={localize('/booking')}
-                        onClick={() => setOpenMenu(null)}
-                        className="gb-gradient-brand group flex h-full min-h-[220px] flex-col justify-between rounded-2xl p-7 text-white transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/60"
-                      >
-                        <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/80">
-                          Diagnóstico gratuito
-                        </div>
-                        <div>
-                          <h4 className="text-2xl font-bold leading-tight tracking-tight">
-                            Descobre o que está a travar o teu crescimento
-                          </h4>
-                          <p className="mt-2 text-sm text-white/80">30 min · Online · 0€</p>
-                          <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold">
-                            Agendar agora <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-                          </span>
-                        </div>
-                      </Link>
                     </div>
+                    {/* Slim conversion strip: the booking CTA keeps its hierarchy
+                        without the tall card dominating the panel. */}
+                    <Link
+                      to={localize('/booking')}
+                      onClick={() => setOpenMenu(null)}
+                      className="group mt-6 flex flex-wrap items-center justify-between gap-x-8 gap-y-3 rounded-2xl border border-black/[0.06] bg-white px-7 py-4 transition-all duration-200 hover:-translate-y-px hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/60"
+                    >
+                      <span>
+                        <span className="block text-[11px] font-semibold uppercase tracking-[0.2em] text-[#ff4000]">
+                          Diagnóstico gratuito
+                        </span>
+                        <span className="mt-1 block text-lg font-bold tracking-tight text-ink-primary">
+                          Descobre o que está a travar o teu crescimento{' '}
+                          <span className="font-normal text-ink-secondary">· 30 min · Online · 0€</span>
+                        </span>
+                      </span>
+                      <span className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#ff4000] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(255,64,0,0.6)] transition-all duration-200 group-hover:bg-brand-700">
+                        Agendar agora <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                      </span>
+                    </Link>
                   </div>
                 )}
 
@@ -353,7 +399,7 @@ const Header = () => {
                         Ver todos <ArrowRight className="h-4 w-4" />
                       </Link>
                     </div>
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
                       {PRODUCTS.filter((p) => p.kind === 'saas' && p.to).map((product) => (
                         <Link
                           key={product.slug}
@@ -362,12 +408,15 @@ const Header = () => {
                           className="group rounded-2xl border border-black/[0.06] bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-black/[0.1] hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
                         >
                           <span className="block h-1 w-8 rounded-full" style={{ background: product.accent }} />
-                          <div className="mt-3 text-[15px] font-semibold text-ink-primary">{product.name}</div>
+                          <div className="mt-3 flex items-center justify-between gap-2">
+                            <span className="text-[15px] font-semibold text-ink-primary">{product.name}</span>
+                            <ArrowRight className="h-4 w-4 shrink-0 text-[#ff4000] opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100" />
+                          </div>
                           {product.tagline && (
-                            <div className="mt-0.5 text-xs font-medium text-ink-secondary">{product.tagline}</div>
+                            <div className="mt-0.5 line-clamp-1 text-xs font-medium text-ink-secondary">{product.tagline}</div>
                           )}
                           {product.description && (
-                            <div className="mt-2 line-clamp-2 text-[13px] leading-snug text-ink-secondary">{product.description}</div>
+                            <div className="mt-2 line-clamp-2 min-h-[2.6em] text-[13px] leading-snug text-ink-secondary">{product.description}</div>
                           )}
                         </Link>
                       ))}
@@ -392,20 +441,13 @@ const Header = () => {
                   <div className="grid grid-cols-12 gap-10">
                     {resourceGroups.map((group) => (
                       <div key={group.title} className="col-span-3">
-                        <div className="mb-4 border-b border-black/[0.06] pb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#ff4000]">
+                        <div className="mb-2 border-b border-black/[0.06] pb-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#ff4000]">
                           {group.title}
                         </div>
-                        <ul className="flex flex-col gap-1">
-                          {group.items.map(({ slug, title, desc, to }) => (
+                        <ul className="flex flex-col">
+                          {group.items.map(({ slug, title, desc, Icon, to }) => (
                             <li key={slug}>
-                              <Link
-                                to={localize(to ?? `/resources#${slug}`)}
-                                onClick={() => setOpenMenu(null)}
-                                className="group block rounded-xl px-3 py-2.5 transition-colors duration-150 hover:bg-black/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
-                              >
-                                <span className="block text-sm font-medium text-ink-primary">{title}</span>
-                                <span className="block text-xs leading-snug text-ink-secondary">{desc}</span>
-                              </Link>
+                              <MenuLink to={localize(to ?? `/resources#${slug}`)} title={title} desc={desc} Icon={Icon} onNavigate={() => setOpenMenu(null)} />
                             </li>
                           ))}
                         </ul>
@@ -415,45 +457,35 @@ const Header = () => {
                       <div className="mb-4 border-b border-black/[0.06] pb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#ff4000]">
                         Em destaque
                       </div>
-                      <AnimatePresence mode="wait">
-                        {latestPosts.length > 0 ? (
-                          (() => {
-                            const post = latestPosts[slideIdx % latestPosts.length];
-                            return (
-                              <motion.div
-                                key={post.id}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.25 }}
-                              >
-                                <Link
-                                  to={localize(`/blog/${post.slug}`)}
-                                  onClick={() => setOpenMenu(null)}
-                                  className="group block overflow-hidden rounded-2xl border border-black/[0.06] transition-all duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
-                                >
-                                  {post.image && (
-                                    <img src={post.image} alt={post.title} className="h-32 w-full object-cover" />
-                                  )}
-                                  <div className="p-4">
-                                    {post.category && (
-                                      <span className="text-[11px] font-medium uppercase tracking-wider text-ink-secondary">{post.category}</span>
-                                    )}
-                                    <h4 className="mt-1 line-clamp-2 text-sm font-semibold leading-snug text-ink-primary">{post.title}</h4>
-                                    <span className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#ff4000]">
-                                      Ler artigo <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
-                                    </span>
-                                  </div>
-                                </Link>
-                              </motion.div>
-                            );
-                          })()
-                        ) : (
-                          <div className="flex items-center justify-center rounded-2xl border border-black/[0.06] p-8 text-sm text-ink-secondary">
-                            Sem artigos
-                          </div>
-                        )}
-                      </AnimatePresence>
+                      {latestPosts.length > 0 ? (
+                        (() => {
+                          const post = latestPosts[0];
+                          return (
+                            <Link
+                              to={localize(`/blog/${post.slug}`)}
+                              onClick={() => setOpenMenu(null)}
+                              className="group block overflow-hidden rounded-2xl border border-black/[0.06] bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff4000]/50"
+                            >
+                              {post.image && (
+                                <img src={post.image} alt={post.title} loading="lazy" className="h-28 w-full object-cover" />
+                              )}
+                              <div className="p-4">
+                                {post.category && (
+                                  <span className="text-[11px] font-medium uppercase tracking-wider text-ink-secondary">{post.category}</span>
+                                )}
+                                <div className="mt-1 line-clamp-2 min-h-[2.6em] text-sm font-semibold leading-snug text-ink-primary">{post.title}</div>
+                                <span className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#ff4000]">
+                                  Ler artigo <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                                </span>
+                              </div>
+                            </Link>
+                          );
+                        })()
+                      ) : (
+                        <div className="flex items-center justify-center rounded-2xl border border-black/[0.06] bg-white p-8 text-sm text-ink-secondary">
+                          Sem artigos
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -488,15 +520,16 @@ const Header = () => {
         )}
       </AnimatePresence>
 
-      {/* Mobile — fullscreen overlay */}
-      <AnimatePresence>
-        {mobileOpen && (
+      {/* Mobile — fullscreen overlay. Portalled to body: the sticky header's
+          backdrop-filter creates a containing block that collapses fixed
+          descendants to header height (the drawer rendered 79px tall). */}
+      {typeof document !== 'undefined' && mobileOpen && createPortal(
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="fixed inset-0 z-50 flex flex-col bg-white lg:hidden"
+            className="fixed inset-0 z-50 flex flex-col bg-canvas-base lg:hidden"
             role="dialog"
             aria-modal="true"
             aria-label="Menu de navegação"
@@ -668,9 +701,9 @@ const Header = () => {
                 {t('nav.clientArea', 'Login')}
               </Link>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>,
+            document.body,
+          )}
     </header>
   );
 };

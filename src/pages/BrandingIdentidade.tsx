@@ -85,13 +85,13 @@ const BrandingIdentidade = () => {
 
       {/* HERO */}
       <section className="gb-surface-page relative overflow-hidden">
-        <div aria-hidden className="gb-grid-overlay" />
+        
         <div
           aria-hidden
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
           style={{
             background:
-              'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)',
+              'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(250,247,241,0) 65%)',
           }}
         />
 
@@ -101,13 +101,13 @@ const BrandingIdentidade = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="gb-eyebrow text-brand-600"
-            style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
+            style={{ borderColor: `${ACCENT}66` }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
             Identidade · Logótipo · Naming · Brand System
           </motion.div>
 
-          <h1 className="gb-text-display mt-5 text-ink-primary">
+          <h1 className="ed-display mt-6 text-ink-primary text-[clamp(2.75rem,7vw,6.5rem)]">
             {manifestoLines.map((line, i) => (
               <motion.span
                 key={line}
@@ -117,9 +117,10 @@ const BrandingIdentidade = () => {
                 className="block"
               >
                 {i === manifestoLines.length - 1 ? (
-                  <span style={{ color: ACCENT, textShadow: '0 0 40px rgba(255,64,0,0.4)' }}>
-                    {line}
-                  </span>
+                  <em>
+                    {line.endsWith('.') ? line.slice(0, -1) : line}
+                    <span style={{ color: ACCENT }}>.</span>
+                  </em>
                 ) : (
                   line
                 )}
@@ -275,7 +276,7 @@ const BrandingIdentidade = () => {
       {/* PROCESSO */}
       <section className="gb-surface-page gb-section !pt-0">
         <div className="gb-container">
-          <div className="grid md:grid-cols-[1fr_2fr] gap-12 items-start border-t border-white/10 pt-16">
+          <div className="grid md:grid-cols-[1fr_2fr] gap-12 items-start border-t border-ink-primary/10 pt-16">
             <div>
               <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
                 Processo
@@ -283,7 +284,7 @@ const BrandingIdentidade = () => {
               <h2 className="mt-4 text-3xl md:text-5xl font-bold leading-tight">
                 Sprint estruturado em 4 fases.
               </h2>
-              <p className="mt-6 text-white/70 leading-relaxed">
+              <p className="mt-6 text-ink-secondary leading-relaxed">
                 Um método claro para chegar a uma marca com significado e continuidade, sem
                 surpresas nem entregas genéricas.
               </p>
@@ -295,12 +296,12 @@ const BrandingIdentidade = () => {
                 { n: '03', t: 'Design', d: 'Sistema visual, logótipo, tipografia, paleta e aplicações.' },
                 { n: '04', t: 'Rollout', d: 'Manual de normas, templates, activação e handover à equipa.' },
               ].map((s) => (
-                <div key={s.n} className="border border-white/15 p-6 hover:border-white/40 transition-colors">
+                <div key={s.n} className="border border-ink-primary/15 p-6 hover:border-brand-600/50 transition-colors">
                   <div className="flex items-center gap-5">
                     <span className="font-mono text-sm" style={{ color: ACCENT }}>{s.n}</span>
                     <h3 className="text-xl md:text-2xl font-bold">{s.t}</h3>
                   </div>
-                  <p className="mt-3 text-white/65 text-sm md:text-base">{s.d}</p>
+                  <p className="mt-3 text-ink-secondary text-sm md:text-base">{s.d}</p>
                 </div>
               ))}
             </div>
@@ -310,7 +311,7 @@ const BrandingIdentidade = () => {
 
       {/* ENTREGAS */}
       <section className="gb-surface-page gb-section !pt-0">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 border-t border-white/10 pt-16">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 border-t border-ink-primary/10 pt-16">
           <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
             O que entregamos
           </span>
@@ -332,7 +333,7 @@ const BrandingIdentidade = () => {
               'Assets kit (Figma + PNG/SVG)',
               'Manual de normas PDF',
             ].map((item) => (
-              <div key={item} className="border border-white/15 px-5 py-4 text-sm text-white/80 hover:border-[color:var(--accent)] transition-colors"
+              <div key={item} className="border border-ink-primary/15 px-5 py-4 text-sm text-ink-primary hover:border-[color:var(--accent)] transition-colors"
                 style={{ ['--accent' as string]: ACCENT }}>
                 {item}
               </div>

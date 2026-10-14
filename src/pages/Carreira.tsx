@@ -118,7 +118,7 @@ const CarreiraPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="gb-eyebrow text-brand-600"
-            style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
+            style={{ borderColor: `${ACCENT}66` }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
             Carreira · Vagas abertas · Portugal & Remoto

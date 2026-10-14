@@ -76,13 +76,13 @@ const CrmSalesIntelligence = () => {
 
       {/* HERO */}
       <section className="gb-surface-page relative overflow-hidden">
-                <div aria-hidden className="gb-grid-overlay" />
+                
         <div
           aria-hidden
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
           style={{
             background:
-              'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)',
+              'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(250,247,241,0) 65%)',
           }}
         />
 
@@ -92,13 +92,13 @@ const CrmSalesIntelligence = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="gb-eyebrow text-brand-600"
-            style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
+            style={{ borderColor: `${ACCENT}66` }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
             Smart CRM · Sales AI · Predictive · Automation
           </motion.div>
 
-          <h1 className="gb-text-display mt-5 text-ink-primary">
+          <h1 className="ed-display mt-6 text-ink-primary text-[clamp(2.75rem,7vw,6.5rem)]">
             {manifestoLines.map((line, i) => (
               <motion.span
                 key={line}
@@ -108,9 +108,10 @@ const CrmSalesIntelligence = () => {
                 className="block"
               >
                 {i === manifestoLines.length - 1 ? (
-                  <span style={{ color: ACCENT, textShadow: '0 0 40px rgba(255,64,0,0.4)' }}>
-                    {line}
-                  </span>
+                  <em>
+                    {line.endsWith('.') ? line.slice(0, -1) : line}
+                    <span style={{ color: ACCENT }}>.</span>
+                  </em>
                 ) : (
                   line
                 )}
@@ -155,7 +156,7 @@ const CrmSalesIntelligence = () => {
             <button
               type="button"
               onClick={() => setAuditOpen(true)}
-              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-ink-secondary transition-colors hover:text-white"
+              className="inline-flex items-center gap-2 px-2 py-4 font-mono text-xs uppercase tracking-[0.24em] text-ink-secondary transition-colors hover:text-brand-600"
             >
               <Zap className="h-4 w-4" style={{ color: ACCENT }} />
               Auditoria comercial 7 min

@@ -249,6 +249,13 @@ describe("R20.11 — configuration gates (Fases 5, 7, 8)", () => {
     expect(VITE).toContain('"vendor-react"');
     // No catch-all chunk: it would force every lazy route to download the union.
     expect(VITE).not.toContain('"vendor-misc"');
+    // R22 review-gate: react, i18n, radix and floating-ui must co-locate —
+    // splitting mutually-importing families into per-package chunks creates
+    // circular chunk dependencies that crash the production bundle at load.
+    expect(VITE).toContain('"vendor-ui"');
+    expect(VITE).toContain("@radix-ui/");
+    expect(VITE).toContain("@floating-ui/");
+    expect(VITE).toContain("react-i18next");
   });
 
   it("links global CSS from HTML so it is discovered before first paint", () => {

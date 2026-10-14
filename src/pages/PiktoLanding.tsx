@@ -80,13 +80,13 @@ export default function PiktoLanding() {
 
       {/* HERO */}
       <section className="gb-surface-page relative overflow-hidden">
-        <div aria-hidden className="gb-grid-overlay" />
+        
         <div
           aria-hidden
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
           style={{
             background:
-              'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)',
+              'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(250,247,241,0) 65%)',
           }}
         />
 
@@ -96,13 +96,13 @@ export default function PiktoLanding() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="gb-eyebrow text-brand-600"
-            style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
+            style={{ borderColor: `${ACCENT}66` }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
             SaaS · Modular · Multi-tenant · Seguro
           </motion.div>
 
-          <h1 className="gb-text-display mt-5 text-ink-primary">
+          <h1 className="ed-display mt-6 text-ink-primary text-[clamp(2.75rem,7vw,6.5rem)]">
             {manifestoLines.map((line, i) => (
               <motion.span
                 key={line}
@@ -112,9 +112,10 @@ export default function PiktoLanding() {
                 className="block"
               >
                 {i === manifestoLines.length - 1 ? (
-                  <span style={{ color: ACCENT, textShadow: '0 0 40px rgba(255,64,0,0.4)' }}>
-                    {line}
-                  </span>
+                  <em>
+                    {line.endsWith('.') ? line.slice(0, -1) : line}
+                    <span style={{ color: ACCENT }}>.</span>
+                  </em>
                 ) : (
                   line
                 )}

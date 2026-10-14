@@ -79,13 +79,13 @@ const GestaoRedesSociais = () => {
 
       {/* HERO */}
       <section className="gb-surface-page relative overflow-hidden">
-        <div aria-hidden className="gb-grid-overlay" />
+        
         <div
           aria-hidden
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
           style={{
             background:
-              'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)',
+              'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(250,247,241,0) 65%)',
           }}
         />
 
@@ -95,13 +95,13 @@ const GestaoRedesSociais = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="gb-eyebrow text-brand-600"
-            style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
+            style={{ borderColor: `${ACCENT}66` }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
             Estratégia · Conteúdo · Paid · Comunidade
           </motion.div>
 
-          <h1 className="gb-text-display mt-5 text-ink-primary">
+          <h1 className="ed-display mt-6 text-ink-primary text-[clamp(2.75rem,7vw,6.5rem)]">
             {manifestoLines.map((line, i) => (
               <motion.span
                 key={line}
@@ -111,9 +111,10 @@ const GestaoRedesSociais = () => {
                 className="block"
               >
                 {i === manifestoLines.length - 1 ? (
-                  <span style={{ color: ACCENT, textShadow: '0 0 40px rgba(255,64,0,0.4)' }}>
-                    {line}
-                  </span>
+                  <em>
+                    {line.endsWith('.') ? line.slice(0, -1) : line}
+                    <span style={{ color: ACCENT }}>.</span>
+                  </em>
                 ) : (
                   line
                 )}
@@ -267,7 +268,7 @@ const GestaoRedesSociais = () => {
       {/* PLATAFORMAS */}
       <section className="gb-surface-page gb-section !pt-0">
         <div className="gb-container">
-          <div className="grid md:grid-cols-[1fr_2fr] gap-12 items-start border-t border-white/10 pt-16">
+          <div className="grid md:grid-cols-[1fr_2fr] gap-12 items-start border-t border-ink-primary/10 pt-16">
             <div>
               <span
                 className="font-mono text-[11px] uppercase tracking-[0.22em]"
@@ -278,7 +279,7 @@ const GestaoRedesSociais = () => {
               <h2 className="mt-4 text-3xl md:text-5xl font-bold leading-tight">
                 Uma marca, todos os canais.
               </h2>
-              <p className="mt-6 text-white/70 leading-relaxed">
+              <p className="mt-6 text-ink-secondary leading-relaxed">
                 Coordenamos presença em Instagram, TikTok, LinkedIn, Facebook, Pinterest e YouTube
                 Shorts. Cada canal com estratégia própria, mas alinhado numa mesma identidade.
               </p>
@@ -291,7 +292,7 @@ const GestaoRedesSociais = () => {
               ].map((p) => (
                 <div
                   key={p}
-                  className="border border-white/15 px-5 py-4 text-sm font-mono uppercase tracking-widest text-white/80 hover:border-[color:var(--accent)] transition-colors"
+                  className="border border-ink-primary/15 px-5 py-4 text-sm font-mono uppercase tracking-widest text-ink-primary hover:border-[color:var(--accent)] transition-colors"
                   style={{ ['--accent' as string]: ACCENT }}
                 >
                   {p}

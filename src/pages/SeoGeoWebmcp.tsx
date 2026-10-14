@@ -91,12 +91,12 @@ const SeoGeoWebmcp = () => {
 
       {/* HERO */}
       <section className="gb-surface-page relative overflow-hidden">
-        <div aria-hidden className="gb-grid-overlay" />
+        
         <div
           aria-hidden
           className="absolute -right-40 top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full blur-3xl opacity-40"
           style={{
-            background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)',
+            background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(250,247,241,0) 65%)',
           }}
         />
 
@@ -106,13 +106,13 @@ const SeoGeoWebmcp = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="gb-eyebrow text-brand-600"
-            style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
+            style={{ borderColor: `${ACCENT}66` }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
             SEO 2.0 · WebMCP · AI Ready
           </motion.div>
 
-          <h1 className="gb-text-display mt-5 text-ink-primary">
+          <h1 className="ed-display mt-6 text-ink-primary text-[clamp(2.75rem,7vw,6.5rem)]">
             {manifestoLines.map((line, i) => (
               <motion.span
                 key={line}
@@ -122,9 +122,10 @@ const SeoGeoWebmcp = () => {
                 className="block"
               >
                 {i === manifestoLines.length - 1 ? (
-                  <span style={{ color: ACCENT, textShadow: '0 0 40px rgba(255,64,0,0.4)' }}>
-                    {line}
-                  </span>
+                  <em>
+                    {line.endsWith('.') ? line.slice(0, -1) : line}
+                    <span style={{ color: ACCENT }}>.</span>
+                  </em>
                 ) : (
                   line
                 )}
@@ -210,7 +211,7 @@ const SeoGeoWebmcp = () => {
             ].map((p) => (
               <span
                 key={p}
-                className="rounded-full border border-white/20 px-4 py-2 text-[11px] md:text-xs uppercase tracking-[0.18em] text-white/70"
+                className="gb-chip"
               >
                 {p}
               </span>
@@ -298,7 +299,7 @@ const SeoGeoWebmcp = () => {
 
       {/* PROCESSO */}
       <section className="gb-surface-page gb-section !pt-0">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 border-t border-white/10 pt-16">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 border-t border-ink-primary/10 pt-16">
           <div className="text-center">
             <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
               Fluxo
@@ -319,17 +320,17 @@ const SeoGeoWebmcp = () => {
             ].map((s) => (
               <div
                 key={s.n}
-                className="relative border border-white/15 rounded-2xl p-6 min-h-[220px] flex flex-col justify-end hover:border-white/40 transition-colors"
+                className="relative border border-ink-primary/15 rounded-2xl p-6 min-h-[220px] flex flex-col justify-end hover:border-brand-600/50 transition-colors"
               >
                 <span
                   className="absolute top-4 left-4 h-2 w-2 rounded-full"
                   style={{ background: ACCENT, boxShadow: `0 0 12px ${ACCENT}` }}
                 />
-                <span className="absolute top-8 right-6 font-mono text-5xl md:text-6xl font-bold text-white/[0.06]">
+                <span className="absolute top-8 right-6 font-mono text-5xl md:text-6xl font-bold text-ink-primary/[0.07]">
                   {s.n}
                 </span>
                 <h3 className="text-base md:text-lg font-bold leading-tight">{s.t}</h3>
-                <p className="mt-2 text-xs md:text-sm text-white/60 leading-relaxed">{s.d}</p>
+                <p className="mt-2 text-xs md:text-sm text-ink-secondary leading-relaxed">{s.d}</p>
               </div>
             ))}
           </div>
@@ -338,7 +339,7 @@ const SeoGeoWebmcp = () => {
 
       {/* STACK */}
       <section className="gb-surface-page gb-section !pt-0">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 border-t border-white/10 pt-16">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 border-t border-ink-primary/10 pt-16">
           <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
             Stack & Ferramentas
           </span>
@@ -355,7 +356,7 @@ const SeoGeoWebmcp = () => {
             ].map((item) => (
               <div
                 key={item}
-                className="border border-white/15 px-5 py-4 text-sm text-white/80 hover:border-[color:var(--accent)] transition-colors"
+                className="border border-ink-primary/15 px-5 py-4 text-sm text-ink-primary hover:border-[color:var(--accent)] transition-colors"
                 style={{ ['--accent' as string]: ACCENT }}
               >
                 {item}

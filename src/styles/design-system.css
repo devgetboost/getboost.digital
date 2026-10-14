@@ -1,5 +1,5 @@
 /**
- * Getboost 2027 — Wave 3A · Design System Foundation
+ * Getboost 2027 — Wave 3A · Design System Foundation — R22 paper revision (warm paper canvas, ink warmed, brand ramp untouched)
  * ==================================================
  * The frozen token layer from GETBOOST_2027_DESIGN_FREEZE_V1.
  *
@@ -20,36 +20,36 @@
   --gb-brand-300: #ff9c78;
   --gb-brand-400: #ff7647;
   --gb-brand-500: #ff4000; /* the brand constant — chrome, CTA, focus */
-  --gb-brand-600: #db3800; /* orange TEXT on light (AA) */
+  --gb-brand-600: #d33600; /* orange TEXT on paper (4.57:1, AA) — R22 review-gate */
   --gb-brand-700: #b72f00; /* pressed / active */
 
-  /* ------------------------------------------------- warm neutral (sand) */
-  --gb-sand-0: #ffffff;
-  --gb-sand-50: #fafaf9;
-  --gb-sand-100: #f5f5f4;
-  --gb-sand-200: #e7e5e4;
-  --gb-sand-300: #d6d3d1;
-  --gb-sand-400: #a8a29e;
-  --gb-sand-500: #78716c;
-  --gb-sand-600: #57534e;
-  --gb-sand-700: #44403c;
-  --gb-sand-800: #292524;
-  --gb-sand-900: #1c1917;
-  --gb-sand-950: #0c0a09;
+  /* -------------------------------------------- warm neutral (sand) · R22 paper */
+  --gb-sand-0: #faf7f1;
+  --gb-sand-50: #f4efe5;
+  --gb-sand-100: #eae3d3;
+  --gb-sand-200: #ddd2bd;
+  --gb-sand-300: #c6b89e;
+  --gb-sand-400: #a2947a;
+  --gb-sand-500: #776c57;
+  --gb-sand-600: #575046;
+  --gb-sand-700: #403a32;
+  --gb-sand-800: #292520;
+  --gb-sand-900: #1b1814;
+  --gb-sand-950: #12100d;
 
   /* ------------------------------------------------------ background scale */
-  --gb-canvas-base: #ffffff;
-  --gb-canvas-subtle: #fafaf9;
-  --gb-canvas-section: #f5f5f4;
+  --gb-canvas-base: #faf7f1;
+  --gb-canvas-subtle: #f4efe5;
+  --gb-canvas-section: #eae3d3;
   --gb-canvas-tint: #fff2ed; /* orange wash — max one per page */
-  --gb-canvas-inverse: #0c0a09; /* CTA bands + footer only */
+  --gb-canvas-inverse: #14110d; /* CTA bands + footer only */
 
   /* ----------------------------------------------------------- text scale */
-  --gb-ink-primary: #1c1917;
-  --gb-ink-secondary: #57534e;
-  --gb-ink-tertiary: #a8a29e; /* captions/meta only */
-  --gb-ink-inverse: #fafaf9;
-  --gb-ink-on-brand: #ffffff;
+  --gb-ink-primary: #171310;
+  --gb-ink-secondary: #575046;
+  --gb-ink-tertiary: #a2947a; /* captions/meta only */
+  --gb-ink-inverse: #f4efe5;
+  --gb-ink-on-brand: #faf7f1;
 
   /* --------------------------------------------------------- status colors */
   --gb-success: #15803d;
@@ -105,18 +105,18 @@
      radius across every new surface; the token follows the built result. */
   --gb-radius-card: 1rem;
   --gb-radius-inner: 0.75rem;
-  --gb-shadow-rest: 0 1px 2px rgb(28 25 23 / 0.05);
-  --gb-shadow-hover: 0 8px 24px rgb(28 25 23 / 0.08);
+  --gb-shadow-rest: 0 1px 2px rgb(23 19 16 / 0.06);
+  --gb-shadow-hover: 0 8px 24px rgb(23 19 16 / 0.10);
   /* R18.8 — shadow scale. One ramp for the whole platform. */
   --gb-shadow-sm: 0 1px 2px rgb(16 24 40 / 0.05);
   --gb-shadow-md: 0 8px 24px -8px rgb(16 24 40 / 0.12);
   --gb-shadow-lg: 0 20px 50px -20px rgb(16 24 40 / 0.18);
   --gb-shadow-premium: 0 24px 60px -24px rgb(16 24 40 / 0.25);
   /* R18.8 — the single hairline token for light surfaces. */
-  --gb-line: rgb(17 24 39 / 0.08);
+  --gb-line: rgb(23 19 16 / 0.10);
   /* R18.8 — brand gradients. One gradient language for CTAs. */
   --gb-gradient-brand: linear-gradient(135deg, #ff4000 0%, #cc3300 100%);
-  --gb-gradient-card: linear-gradient(180deg, #ffffff 0%, #fafaf9 100%);
+  --gb-gradient-card: linear-gradient(180deg, #faf7f1 0%, #f4efe5 100%);
 }
 
 /* ============================================================ typography */
@@ -413,4 +413,89 @@
   .gb-flow-connector {
     animation: none;
   }
+}
+
+/* ============================================================ R22 editorial *//* Editorial language (Novair-inspired, Getboost content/tokens).
+ * Display headlines mix heavy sans with Instrument Serif italic accents:
+ * wrap the accent words in <em>. One accent colour only: brand. */
+
+.ed-display {
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+.ed-display em {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Numbered kicker: "(01) — Label" with a hairline rule.
+   Centered kickers drop the rule (ed-kicker-center). */
+.ed-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.ed-kicker::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: var(--gb-line);
+}
+.ed-kicker-center::after {
+  content: none;
+}
+.ed-kicker .ed-kicker-num {
+  color: var(--gb-brand-600);
+}
+
+/* Big stat figure. */
+.ed-stat-value {
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+}
+
+/* Film-strip frame. */
+.ed-frame {
+  scroll-snap-align: start;
+  border: 1px solid var(--gb-line);
+  border-radius: var(--gb-radius-card);
+  overflow: hidden;
+  background: var(--gb-canvas-base);
+}
+.ed-frame img {
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ed-frame:hover img {
+  transform: scale(1.04);
+}
+
+/* Marquee band. */
+@keyframes ed-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.ed-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: ed-marquee 28s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-marquee-track {
+    animation: none;
+  }
+}
+
+::selection {
+  background: var(--gb-brand-500);
+  color: var(--gb-ink-on-brand);
 }

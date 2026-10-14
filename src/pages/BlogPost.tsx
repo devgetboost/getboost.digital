@@ -112,7 +112,7 @@ const BlogPostPage = () => {
         return `<h${level}${attrs} id="${slugify(text)}">${text}</h${level}>`;
       });
       const safeHtml = DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
-      return <div className="blog-rich-content prose-invert" dangerouslySetInnerHTML={{ __html: safeHtml }} />;
+      return <div className="blog-rich-content" dangerouslySetInnerHTML={{ __html: safeHtml }} />;
     }
     return content.split('\n').map((line, i) => {
       if (line.startsWith('# ')) { const text = line.replace('# ', ''); return <h2 key={i} id={slugify(text)} className="text-3xl md:text-4xl font-black mt-12 mb-6 tracking-tight text-ink-primary scroll-mt-24">{renderInline(text)}</h2>; }
@@ -229,7 +229,7 @@ const BlogPostPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="gb-eyebrow text-brand-600"
-            style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
+            style={{ borderColor: `${ACCENT}66` }}
           >
             <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
             {post.category?.name || post.category?.key}

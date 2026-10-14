@@ -199,7 +199,7 @@ const AcademyInCompany = () => {
         <div
           aria-hidden
           className="absolute -right-40 top-1/3 h-[640px] w-[640px] rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(255,255,255,0) 65%)' }}
+          style={{ background: 'radial-gradient(circle, rgba(255,64,0,0.10) 0%, rgba(250,247,241,0) 65%)' }}
         />
 
         <div className="relative max-w-7xl mx-auto px-6 md:px-12 pt-16 pb-24 md:pt-24 md:pb-32">
@@ -216,7 +216,7 @@ const AcademyInCompany = () => {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="gb-eyebrow text-brand-600"
-                style={{ borderColor: `${ACCENT}66`, color: '#ffb494' }}
+                style={{ borderColor: `${ACCENT}66` }}
               >
                 <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT }} />
                 Formação In-Company · Diagnóstico gratuito
@@ -226,12 +226,12 @@ const AcademyInCompany = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="mt-8 font-black leading-[0.95] tracking-tight text-[clamp(2.5rem,6vw,5.5rem)]"
+                className="ed-display mt-8 text-ink-primary text-[clamp(2.75rem,7vw,6.5rem)]"
               >
                 Forma a tua equipa em{' '}
-                <span style={{ color: ACCENT, textShadow: '0 0 40px rgba(255,64,0,0.4)' }}>
-                  produtividade real.
-                </span>
+                <em>
+                  produtividade real<span style={{ color: ACCENT }}>.</span>
+                </em>
               </motion.h1>
 
               <motion.p

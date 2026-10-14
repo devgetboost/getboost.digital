@@ -2,12 +2,12 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Getboost 2027 — Wave 3A · SectionHeader
+ * Getboost 2027 — Wave 3A · SectionHeader · R22 editorial revision.
  *
- * The single reusable section header for the design system:
- * eyebrow (mono, brand) → title → description → optional proof line.
- * Renders on the frozen type scale (gb-text-* / gb-eyebrow) so every
- * section across the site shares one rhythm.
+ * Same API (eyebrow → title → description → proof, as/align control), new
+ * voice: numbered-kicker rhythm with a hairline rule and an oversized
+ * display title where <em> renders in Instrument Serif italic. One edit
+ * here re-voices every section on the platform.
  */
 
 export type SectionHeaderAlign = "left" | "center";
@@ -40,10 +40,18 @@ const SectionHeader = React.forwardRef<HTMLDivElement, SectionHeaderProps>(
         {...props}
       >
         {eyebrow ? (
-          <span className="gb-eyebrow text-brand-600">{eyebrow}</span>
+          <span className={`ed-kicker w-full ${align === "center" ? "justify-center ed-kicker-center" : ""}`}>
+            <span className="gb-eyebrow text-ink-secondary">{eyebrow}</span>
+          </span>
         ) : null}
         {/* R18.8 — frozen vertical rhythm: eyebrow ↓ title 24 · title ↓ desc 24 · desc ↓ content 48 (content spacing lives in sections). */}
-        <Heading className="gb-text-h2 mt-6 text-ink-primary">{title}</Heading>
+        <Heading
+          className={`ed-display mt-6 text-ink-primary text-[clamp(2.25rem,4.5vw,4rem)] ${
+            align === "center" ? "text-center text-balance" : ""
+          }`}
+        >
+          {title}
+        </Heading>
         {description ? (
           <p
             className={cn(

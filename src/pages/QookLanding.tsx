@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import SEO from '@/components/SEO';
+import { ScrollDepth } from '@/components/ScrollDepth';
 import { SectionHeader } from '@/components/ui/section-header';
 import ProcessTimeline from '@/components/ProcessTimeline';
 import { Button } from '@/components/ui/button';
@@ -110,7 +111,7 @@ const QookLanding = () => {
 
       {/* ==================================================== 01 HERO */}
       <section ref={heroRef} className="gb-surface-page relative overflow-hidden">
-        <div aria-hidden className="gb-grid-overlay" />
+        
         <div
           aria-hidden
           className="pointer-events-none absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full blur-3xl"
@@ -126,9 +127,9 @@ const QookLanding = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="gb-text-display mt-5 text-ink-primary"
+                className="ed-display mt-6 text-ink-primary text-[clamp(2.75rem,7vw,6.5rem)]"
               >
-                A Qook centraliza <span style={{ color: 'var(--gb-automation-strong)' }}>pedidos, ementa, pagamentos, stock, KDS, equipa e IA</span>.
+                A Qook centraliza <em style={{ color: 'var(--gb-automation-strong)' }}>pedidos, ementa, pagamentos, stock, KDS, equipa e IA</em>.
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 30 }}

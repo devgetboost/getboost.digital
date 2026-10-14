@@ -32,12 +32,22 @@ export default defineConfig(({ mode }) => ({
           const rest = id.split("node_modules/").pop() ?? "";
           const parts = rest.split("/");
           const pkg = parts[0];
-          if (pkg.startsWith("@")) return `vendor-${pkg.slice(1)}-${parts[1]}`;
+          if (pkg.startsWith("@")) {
+            // R22 review-gate fix (continued): @radix-ui/* and @floating-ui/*
+            // inter-import structurally — per-package chunks recreate the same
+            // load-time cycle inside that family. One shared chunk, no cycle.
+            if (rest.startsWith("@radix-ui/") || rest.startsWith("@floating-ui/")) return "vendor-ui";
+            return `vendor-${pkg.slice(1)}-${parts[1]}`;
+          }
           if (["framer-motion", "motion-dom", "motion-utils"].includes(pkg)) return "vendor-motion";
-          if (["react", "react-dom", "react-router", "react-router-dom", "scheduler"].includes(pkg)) {
+          // R22 review-gate fix: react-i18next imports react AND something in
+          // the react chunk imports back from the i18n chunk, so splitting
+          // them into vendor-react/vendor-i18n creates a circular chunk
+          // dependency that crashes the production bundle at load
+          // (React namespace undefined in vendor-i18n). One chunk, no cycle.
+          if (["react", "react-dom", "react-router", "react-router-dom", "scheduler", "i18next", "react-i18next", "html-parse-stringify"].includes(pkg)) {
             return "vendor-react";
           }
-          if (["i18next", "react-i18next", "html-parse-stringify"].includes(pkg)) return "vendor-i18n";
           if (["sonner", "clsx", "tailwind-merge", "class-variance-authority", "lucide-react"].includes(pkg)) {
             return "vendor-ui";
           }
